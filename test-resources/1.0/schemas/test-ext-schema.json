@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "#/test-ext-schema",
+  "definitions": {
+    "universityQualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grade": {
+          "type": "string"
+        }
+      }
+    },
+    "collegeQualification": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gradePercentage": {
+          "type": "number"
+        }
+      }
+    },
+    "highSchoolQualifications": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "passes": {
+          "type": "number"
+        }
+      }
+    },
+    "userId": {
+      "$id": "#/definitions/userId",
+      "type": "string",
+      "description": "user id",
+      "examples": [
+        "GMRI000023KN"
+      ],
+      "pattern": "^GMR[A-Z][0-9A-Z]{8}$"
+    },
+    "other": {
+      "type": "string"
+    }
+  }
+}

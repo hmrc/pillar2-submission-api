@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
-import com.google.inject.AbstractModule
+import controllers.Assets
+import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-class Module extends AbstractModule {
+@Singleton
+class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+  def definition(): Action[AnyContent] =
+    assets.at("/public/api", "definition.json")
+
+  def specification(version: String, file: String): Action[AnyContent] =
+    assets.at(s"/public/api/conf/$version", file)
 }

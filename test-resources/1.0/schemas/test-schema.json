@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "userId",
+    "name",
+    "address",
+    "role",
+    "lastVoted",
+    "registered",
+    "age",
+    "yearsInEducation"
+  ],
+  "properties": {
+    "userId": {
+      "$ref": "test-ext-schema.json#/definitions/userId"
+    },
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string",
+      "maxLength": 15
+    },
+    "role": {
+      "type": "string",
+      "minLength": 3,
+      "enum": [
+        "Admin",
+        "User"
+      ]
+    },
+    "lastVoted": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "registered": {
+      "type": "boolean"
+    },
+    "age": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 21
+    },
+    "yearsInEducation": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 21
+    },
+    "qualifications": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "test-ext-schema.json#/definitions/universityQualification"
+          },
+          {
+            "$ref": "test-ext-schema.json#/definitions/collegeQualification"
+          },
+          {
+            "$ref": "test-ext-schema.json#/definitions/highSchoolQualifications"
+          }
+        ]
+      }
+    },
+    "other": {
+      "$ref": "test-ext-schema.json#/definitions/other"
+    }
+  }
+}
