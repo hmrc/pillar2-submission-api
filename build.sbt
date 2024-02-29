@@ -21,7 +21,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
-    
     scalacOptions ++= Seq(
       "-Wconf:src=routes/.*:s",
       "-Ywarn-dead-code",
