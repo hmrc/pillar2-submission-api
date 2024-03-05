@@ -2,7 +2,7 @@ openapi: "3.0.3"
 
 info:
   version: 1.0.0
-  title: Hello World
+  title: Pillar 2 Submission
 
 servers:
   - url: https://test-api.service.hmrc.gov.uk/hello-world
