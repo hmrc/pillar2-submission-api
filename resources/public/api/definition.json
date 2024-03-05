@@ -2,7 +2,7 @@
   "scopes": [
   ],
   "api": {
-    "name": "Pillar 2 Submissions",
+    "name": "Pillar 2 Submission",
     "description": "An API for managing and retrieving Pillar 2 submissions",
     "context": "pillar/api",
     "categories": ["OTHER"],
