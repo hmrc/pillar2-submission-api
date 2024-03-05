@@ -4,7 +4,7 @@
   "api": {
     "name": "Pillar 2 Submissions",
     "description": "An API for managing and retrieving Pillar 2 submissions",
-    "context": "/pillar/api/",
+    "context": "pillar/api",
     "categories": ["OTHER"],
     "versions": [
       {
