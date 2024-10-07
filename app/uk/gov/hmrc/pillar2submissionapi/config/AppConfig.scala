@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject() (config: Configuration) {

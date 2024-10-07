@@ -17,9 +17,10 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
 import controllers.Assets
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents) extends BackendController(cc) {
