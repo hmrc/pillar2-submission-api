@@ -5,8 +5,13 @@ import uk.gov.hmrc.DefaultBuildSettings._
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
+val scalafixSettings = Seq(
+  semanticdbEnabled := true, // enable SemanticDB
+  semanticdbVersion := scalafixSemanticdb.revision
+)
+
 lazy val microservice = Project("pillar2-submission-api", file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin)
   .settings(
     majorVersion := 0,
     ScoverageKeys.coverageExcludedFiles :=
@@ -30,7 +35,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
       "-Ywarn-unused:params",    // Warn if a value parameter is unused.
       "-Ywarn-unused:patvars",   // Warn if a variable bound in a pattern is unused.
       "-Ywarn-unused:privates"   // Warn if a private member is unused.
-    )
+    ),
+    scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
