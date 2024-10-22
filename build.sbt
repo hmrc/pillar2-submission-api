@@ -20,8 +20,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     ScoverageKeys.coverageMinimumStmtTotal := 80,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
-    Compile / scalafmtOnCompile      := true,
-    Test / scalafmtOnCompile         := true,
+    Compile / scalafmtOnCompile := true,
+    Test / scalafmtOnCompile := true,
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
@@ -30,11 +30,11 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
       "-Wconf:src=routes/.*:s",
       "-Ywarn-dead-code",
       "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-      "-Ywarn-unused:imports",   // Warn if an import selector is not referenced.
-      "-Ywarn-unused:locals",    // Warn if a local definition is unused.
-      "-Ywarn-unused:params",    // Warn if a value parameter is unused.
-      "-Ywarn-unused:patvars",   // Warn if a variable bound in a pattern is unused.
-      "-Ywarn-unused:privates"   // Warn if a private member is unused.
+      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
+      "-Ywarn-unused:locals", // Warn if a local definition is unused.
+      "-Ywarn-unused:params", // Warn if a value parameter is unused.
+      "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
+      "-Ywarn-unused:privates" // Warn if a private member is unused.
     ),
     scalafixSettings
   )
@@ -62,6 +62,9 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
   .disablePlugins(JUnitXmlReportPlugin)
+
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
 /*lazy val it = project
   .enablePlugins(PlayScala)
