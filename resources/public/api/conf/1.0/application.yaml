@@ -5,9 +5,9 @@ info:
   title: Pillar 2 Submission
 
 servers:
-  - url: https://test-api.service.hmrc.gov.uk/hello-world
+  - url: https://test-api.service.hmrc.gov.uk/hello_world
     description: Sandbox
-  - url: https://api.service.hmrc.gov.uk/hello-world
+  - url: https://api.service.hmrc.gov.uk/hello_world
     description: Production
 
 components:
@@ -24,7 +24,7 @@ components:
       required: true
 
 paths:
-  /hello-world:
+  /hello_world:
     get:
       summary: Placeholder hello world endpoint
       description: |
@@ -34,7 +34,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
       responses:
-        200:
+        "200":
           description: "OK Response"
           content:
             application/json:
