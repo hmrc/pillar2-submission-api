@@ -19,4 +19,8 @@ object AppDependencies {
     "org.scalatestplus"      %% "mockito-3-4"            % "3.2.7.0"        % "test, it",
     "org.scalatestplus.play" %% "scalatestplus-play"     % "5.1.0"          % "test, it"
   )
+
+  val it: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test
+  )
 }

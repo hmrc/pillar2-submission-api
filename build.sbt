@@ -1,9 +1,13 @@
 import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings.*
 import scoverage.ScoverageKeys
+import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
@@ -41,18 +45,15 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Test / unmanagedSourceDirectories := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
+    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
   .settings(publishingSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
-  .settings(
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
-    unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
-    unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
-  )
   .settings(
     unmanagedSourceDirectories in IntegrationTest :=
       (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value,
@@ -66,8 +67,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
-/*lazy val it = project
+lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
-  .settings(libraryDependencies ++= AppDependencies.it)*/
+  .settings(libraryDependencies ++= AppDependencies.it)

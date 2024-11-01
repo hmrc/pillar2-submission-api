@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package base
+package test.uk.gov.hmrc.pillar2submissionapi.base
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig

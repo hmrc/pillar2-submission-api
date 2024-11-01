@@ -14,33 +14,24 @@
  * limitations under the License.
  */
 
-package base
+package test.uk.gov.hmrc.pillar2submissionapi.base
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http._
-import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
-import play.api.inject.bind
+import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsValue
 import play.api.mvc._
-import play.api.test.Helpers.baseApplicationBuilder.injector
-import play.api.test._
-import play.api.{Application, Configuration}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-trait ControllerSpecBase extends AnyWordSpec
+trait IntegrationSpecBase extends AnyWordSpec
   with BeforeAndAfterEach
   with Matchers
   with Results
