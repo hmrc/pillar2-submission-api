@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.{YAMLFactory, YAMLGenerator}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.iheart.sbtPlaySwagger.SwaggerPlugin.autoImport.swagger
 import sbt.Keys._
 import sbt._
 
@@ -8,9 +9,10 @@ import scala.collection.mutable
 import scala.util.Try
 
 object JsonToYaml {
-  val toYaml = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
+  val routesToYamlSpec = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
   def settings: Seq[Setting[_]] = Seq(
-    toYaml := {
+    routesToYamlSpec := {
+      swagger.value
 
       val yamlFactory = new YAMLFactory().configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
       val jsonMapper  = new ObjectMapper().registerModule(DefaultScalaModule)
@@ -33,7 +35,8 @@ object JsonToYaml {
 
         val yamlString = yamlMapper.writeValueAsString(specification)
         IO.write(yamlFile, yamlString)
-      }.recover { case ex: Exception => streams.value.log.error(s"Failed to convert JSON to YAML: $ex") }
+      }.map(_ => jsonFile.delete)
+        .recover { case ex: Exception => streams.value.log.error(s"Failed to convert JSON to YAML: $ex") }
     }
   )
 }
