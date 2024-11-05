@@ -4,8 +4,8 @@
   "api": {
     "name": "Pillar 2 Submission",
     "description": "An API for managing and retrieving Pillar 2 submissions",
-    "context": "organisations/pillar2",
-    "categories": ["OTHER"],
+    "context": "organisations/pillar-two",
+    "categories": ["CORPORATION_TAX"],
     "versions": [
       {
         "version": "1.0",
