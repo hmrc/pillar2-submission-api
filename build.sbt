@@ -1,9 +1,6 @@
-import com.typesafe.sbt.web.PathMapping
-import com.typesafe.sbt.web.pipeline.Pipeline
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
-import uk.gov.hmrc.DefaultBuildSettings.*
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 ThisBuild / scalaVersion := "2.13.12"
@@ -15,7 +12,7 @@ val scalafixSettings = Seq(
 )
 
 lazy val microservice = Project("pillar2-submission-api", file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin, SwaggerPlugin)
   .settings(
     majorVersion := 0,
     ScoverageKeys.coverageExcludedFiles :=
@@ -62,6 +59,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   )
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
+  .settings(JsonToYaml.settings *)
+  .settings(PlaySwagger.settings *)
   .disablePlugins(JUnitXmlReportPlugin)
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
