@@ -25,5 +25,6 @@ case class UktrSubmissionData(
   qualifyingGroup:      Boolean,
   obligationDTT:        Boolean,
   obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
   liabilities:          LiabilityData
 ) extends UktrSubmission

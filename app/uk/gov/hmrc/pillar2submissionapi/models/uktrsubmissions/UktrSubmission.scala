@@ -24,6 +24,7 @@ trait UktrSubmission {
   val qualifyingGroup:      Boolean
   val obligationDTT:        Boolean
   val obligationMTT:        Boolean
+  val electionUKGAAP:       Boolean
   val liabilities:          Liability
 }
 

@@ -40,5 +40,6 @@ case class UktrSubmissionNilReturn(
   qualifyingGroup:      Boolean,
   obligationDTT:        Boolean,
   obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
   liabilities:          LiabilityNilReturn
 ) extends UktrSubmission

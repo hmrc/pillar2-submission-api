@@ -23,10 +23,8 @@ case class LiableEntity(
   idType:                 String,
   idValue:                String,
   amountOwedDTT:          Double,
-  electedDTT:             Boolean,
   amountOwedIIR:          Double,
   amountOwedUTPR:         Double,
-  electedUTPR:            Boolean
 )
 
 object LiableEntity {
