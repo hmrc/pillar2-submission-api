@@ -16,20 +16,21 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{JsValue, Json, OFormat, Reads}
+import play.api.libs.json.{JsError, JsValue, Json, OFormat, Reads}
 
-trait UktrSubmission {
+trait UktrSubmission
 
+object UktrSubmission {
   implicit val uktrSubmissionDataFormat:      OFormat[UktrSubmissionData]      = Json.format[UktrSubmissionData]
   implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
 
-//  implicit val userRequestReads: Reads[UktrSubmission] = (json: JsValue) =>
-//    (json \ "liabilities").asOpt[ReturnType] match {
-//      case Some(nilReturnRequest) =>
-//        if (nilReturnRequest.entryName == ReturnType.NilReturn.entryName) {
-//          UktrSubmissionNilReturn.format.reads(json)
-//        } else ???
-//      case None =>
-//        UktrSubmissionData.format.reads(json)
-//    }
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
+    (json \ "liabilities").asOpt[LiabilityNilReturn] match {
+      case Some(nilReturnRequest) =>
+        if (nilReturnRequest.returnType == ReturnType.NilReturn.entryName) {
+          json.validate[UktrSubmissionNilReturn]
+        } else JsError("Uh oh!")
+      case None =>
+        json.validate[UktrSubmissionData]
+    }
 }

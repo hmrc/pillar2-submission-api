@@ -42,7 +42,3 @@ case class UktrSubmissionNilReturn(
   obligationMTT:        Boolean,
   liabilities:          LiabilityNilReturn
 ) extends UktrSubmission
-
-object UktrSubmissionNilReturn {
-  implicit val format: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
-}

@@ -27,7 +27,3 @@ case class UktrSubmissionData(
   obligationMTT:        Boolean,
   liabilities:          Liability
 ) extends UktrSubmission
-
-object UktrSubmissionData {
-  implicit val format: OFormat[UktrSubmissionData] = Json.format[UktrSubmissionData]
-}

@@ -16,25 +16,14 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import play.api.libs.json.{JsError, JsValue, Reads}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityNilReturn, ReturnType, UktrSubmission, UktrSubmissionData, UktrSubmissionNilReturn}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class UktrSubmissionController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
-
-  implicit val userRequestReads: Reads[UktrSubmission] = (json: JsValue) =>
-    (json \ "liabilities").asOpt[LiabilityNilReturn] match {
-      case Some(nilReturnRequest) =>
-        if (nilReturnRequest.returnType == ReturnType.NilReturn.entryName) {
-          UktrSubmissionNilReturn.format.reads(json)
-        } else JsError("Uh oh!")
-      case None =>
-        UktrSubmissionData.format.reads(json)
-    }
 
   def submitUktr(): Action[AnyContent] = Action { request =>
     request.body.asJson match {
