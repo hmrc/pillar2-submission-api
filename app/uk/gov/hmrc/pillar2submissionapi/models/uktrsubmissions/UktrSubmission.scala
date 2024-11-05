@@ -18,7 +18,14 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{JsError, JsValue, Json, OFormat, Reads}
 
-trait UktrSubmission
+trait UktrSubmission {
+  val accountingPeriodFrom: String
+  val accountingPeriodTo:   String
+  val qualifyingGroup:      Boolean
+  val obligationDTT:        Boolean
+  val obligationMTT:        Boolean
+  val liabilities:          Liability
+}
 
 object UktrSubmission {
   implicit val uktrSubmissionDataFormat:      OFormat[UktrSubmissionData]      = Json.format[UktrSubmissionData]

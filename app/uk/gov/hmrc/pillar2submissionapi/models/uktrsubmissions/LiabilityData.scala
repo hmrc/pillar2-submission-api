@@ -18,8 +18,14 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{Json, OFormat}
 
-case class LiabilityNilReturn(returnType: String) extends Liability
+case class LiabilityData(
+  totalLiability:     Double,
+  totalLiabilityDTT:  Double,
+  totalLiabilityIIR:  Double,
+  totalLiabilityUTPR: Double,
+  liableEntities:     Seq[LiableEntity]
+) extends Liability
 
-object LiabilityNilReturn {
-  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+object LiabilityData {
+  implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
 }

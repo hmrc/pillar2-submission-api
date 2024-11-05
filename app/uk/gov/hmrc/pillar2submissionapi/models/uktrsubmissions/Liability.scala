@@ -18,14 +18,4 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{Json, OFormat}
 
-case class Liability(
-  totalLiability:     Double,
-  totalLiabilityDTT:  Double,
-  totalLiabilityIIR:  Double,
-  totalLiabilityUTPR: Double,
-  liableEntities:     Seq[LiableEntity]
-)
-
-object Liability {
-  implicit val format: OFormat[Liability] = Json.format[Liability]
-}
+abstract class Liability
