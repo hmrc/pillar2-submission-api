@@ -72,8 +72,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
 object UktrSubmissionControllerSpec {
   val validRequestJson_data: AnyContentAsJson =
-    AnyContentAsJson(Json.parse(
-      """{
+    AnyContentAsJson(Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
         |  "obligationMTT": true,
@@ -100,8 +99,7 @@ object UktrSubmissionControllerSpec {
         |  }
         |}""".stripMargin))
 
-  val validRequestJson_nilReturn: AnyContentAsJson = AnyContentAsJson(Json.parse(
-    """{
+  val validRequestJson_nilReturn: AnyContentAsJson = AnyContentAsJson(Json.parse("""{
       |  "accountingPeriodFrom": "2024-08-14",
       |  "accountingPeriodTo": "2024-09-14",
       |  "obligationMTT": true,
@@ -113,8 +111,7 @@ object UktrSubmissionControllerSpec {
       |""".stripMargin))
 
   val invalidRequestJson_data: AnyContentAsJson =
-    AnyContentAsJson(Json.parse(
-      """{
+    AnyContentAsJson(Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
         |  "obligationMTT": true,
@@ -139,8 +136,7 @@ object UktrSubmissionControllerSpec {
         |}""".stripMargin))
 
   val invalidRequestJson_nilReturn: AnyContentAsJson =
-    AnyContentAsJson(Json.parse(
-      """{
+    AnyContentAsJson(Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
         |  "obligationMTT": true,
@@ -150,11 +146,10 @@ object UktrSubmissionControllerSpec {
         |}""".stripMargin))
 
   val invalidRequest_Json: AnyContentAsJson =
-    AnyContentAsJson(Json.parse(
-      """{
+    AnyContentAsJson(Json.parse("""{
         |  "badRequest": ""
         |}""".stripMargin))
 
   val invalidRequest_wrongType: AnyContent = AnyContent("This is not Json.")
-  val invalidRequest_noBody: Unit = ()
+  val invalidRequest_noBody:    Unit       = ()
 }

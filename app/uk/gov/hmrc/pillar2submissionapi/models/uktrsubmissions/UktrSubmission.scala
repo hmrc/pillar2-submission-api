@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{JsError, JsValue, Json, OFormat, Reads}
+import play.api.libs.json._
 
 import java.time.LocalDate
 

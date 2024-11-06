@@ -31,9 +31,6 @@
 // */
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
-
-import play.api.libs.json.{Json, OFormat}
-
 import java.time.LocalDate
 
 case class UktrSubmissionNilReturn(

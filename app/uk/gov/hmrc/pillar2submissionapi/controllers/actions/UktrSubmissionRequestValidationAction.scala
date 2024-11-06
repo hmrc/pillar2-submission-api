@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
-import play.api.mvc.{ActionRefiner, ActionTransformer, AnyContent, Request}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmissionData
+import play.api.mvc.{ActionTransformer, Request}
 
 trait UktrSubmissionRequestValidationAction extends ActionTransformer[UktrSubmissionDataRequest, Request] {}

@@ -16,6 +16,4 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Json, OFormat}
-
 abstract class Liability
