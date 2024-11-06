@@ -1,3 +1,3 @@
 # microservice specific routes
 
-GET        /hello_world             uk.gov.hmrc.pillar2submissionapi.controllers.MicroserviceHelloWorldController.hello
+GET        /joke             uk.gov.hmrc.pillar2submissionapi.controllers.JokeController.joke()
