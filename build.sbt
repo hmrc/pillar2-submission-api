@@ -47,7 +47,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     Test / unmanagedSourceDirectories := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
-  .settings(publishingSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
