@@ -29,7 +29,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
   val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc)
 
   "UktrSubmissionController" when {
-    "submitUktr() called with valid request" should {
+    "submitUktr() called with a valid request" should {
       "return 200 OK response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
@@ -39,7 +39,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "submitUktr() called with valid nil return request" should {
+    "submitUktr() called with a valid nil return request" should {
       "return 200 OK response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
@@ -49,22 +49,53 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
       }
     }
 
-    "submitUktr() called with invalid requests" should {
+    "submitUktr() called with an invalid request" should {
       "return 400 BAD_REQUEST response" in {
-        val requestTemplate = FakeRequest(method = "", path = "")
-        val testCases = Table(
-          ("input", "expectedResponse"),
-          (requestTemplate.withBody(invalidRequestJson_nilReturn), BAD_REQUEST),
-          (requestTemplate.withBody(invalidRequestJson_data), BAD_REQUEST),
-          (requestTemplate.withBody(invalidRequest_Json), BAD_REQUEST),
-          (requestTemplate.withBody(invalidRequest_wrongType), BAD_REQUEST),
-          (requestTemplate.withBody(invalidRequest_noBody), BAD_REQUEST)
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequestJson_data)
         )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
 
-        forAll(testCases) { (input: FakeRequest[Any], expectedResponse: Int) =>
-          val result = uktrSubmissionController.submitUktr()(input)
-          status(result) mustEqual expectedResponse
-        }
+    "submitUktr() called with an invalid nil return request" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequestJson_nilReturn)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "submitUktr() called with an invalid json request" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_Json)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "submitUktr() called with an non-json request" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_wrongType)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "submitUktr() called with no request body" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_noBody)
+        )
+        status(result) mustEqual BAD_REQUEST
       }
     }
   }
