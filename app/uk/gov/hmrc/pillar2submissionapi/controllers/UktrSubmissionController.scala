@@ -29,9 +29,9 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
     request.body.asJson match {
       case Some(request) =>
         if (request.validate[UktrSubmission].isError) {
-          BadRequest("Bad request!")
-        } else Ok("")
-      case None => BadRequest("No request body!")
+          BadRequest("Bad request")
+        } else Ok("Request OK")
+      case None => BadRequest("No request body")
     }
   }
 }

@@ -37,7 +37,7 @@ object UktrSubmission {
       case Some(nilReturnRequest) =>
         if (nilReturnRequest.returnType == ReturnType.NilReturn.entryName) {
           json.validate[UktrSubmissionNilReturn]
-        } else JsError("Uh oh!")
+        } else JsError("malformed request")
       case None =>
         json.validate[UktrSubmissionData]
     }
