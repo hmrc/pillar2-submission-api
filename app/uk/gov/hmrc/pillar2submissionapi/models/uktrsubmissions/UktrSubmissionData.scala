@@ -22,9 +22,9 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 import java.time.LocalDate
 
 case class UktrSubmissionData(
-                               accountingPeriodFrom: LocalDate,
-                               accountingPeriodTo:   LocalDate,
-                               obligationMTT:        Boolean,
-                               electionUKGAAP:       Boolean,
-                               liabilities:          LiabilityData
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityData
 ) extends UktrSubmission

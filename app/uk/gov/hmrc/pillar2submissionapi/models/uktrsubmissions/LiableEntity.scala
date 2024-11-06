@@ -24,7 +24,7 @@ case class LiableEntity(
   idValue:                String,
   amountOwedDTT:          BigDecimal,
   amountOwedIIR:          BigDecimal,
-  amountOwedUTPR:         BigDecimal,
+  amountOwedUTPR:         BigDecimal
 )
 
 object LiableEntity {

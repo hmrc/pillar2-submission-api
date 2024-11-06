@@ -19,16 +19,16 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 import play.api.libs.json.{Json, OFormat}
 
 case class LiabilityData(
-                          electionDTTSingleMember: Boolean,
-                          electionUTPRSingleMember: Boolean,
-                          numberSubGroupDTT: Int,
-                          numberSubGroupUTPR: Int,
-                          totalLiability: BigDecimal,
-                          totalLiabilityDTT: BigDecimal,
-                          totalLiabilityIIR: BigDecimal,
-                          totalLiabilityUTPR: BigDecimal,
-                          liableEntities: Seq[LiableEntity]
-                        ) extends Liability
+  electionDTTSingleMember:  Boolean,
+  electionUTPRSingleMember: Boolean,
+  numberSubGroupDTT:        Int,
+  numberSubGroupUTPR:       Int,
+  totalLiability:           BigDecimal,
+  totalLiabilityDTT:        BigDecimal,
+  totalLiabilityIIR:        BigDecimal,
+  totalLiabilityUTPR:       BigDecimal,
+  liableEntities:           Seq[LiableEntity]
+) extends Liability
 
 object LiabilityData {
   implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
