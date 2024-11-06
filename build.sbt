@@ -1,6 +1,7 @@
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 ThisBuild / scalaVersion := "2.13.12"

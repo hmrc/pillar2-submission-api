@@ -18,11 +18,11 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{JsError, JsValue, Json, OFormat, Reads}
 
+import java.time.LocalDate
+
 trait UktrSubmission {
-  val accountingPeriodFrom: String
-  val accountingPeriodTo:   String
-  val qualifyingGroup:      Boolean
-  val obligationDTT:        Boolean
+  val accountingPeriodFrom: LocalDate
+  val accountingPeriodTo:   LocalDate
   val obligationMTT:        Boolean
   val electionUKGAAP:       Boolean
   val liabilities:          Liability

@@ -76,8 +76,6 @@ object UktrSubmissionControllerSpec {
       """{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
-        |  "qualifyingGroup": true,
-        |  "obligationDTT": true,
         |  "obligationMTT": true,
         |  "electionUKGAAP": true,
         |  "liabilities": {
@@ -106,8 +104,6 @@ object UktrSubmissionControllerSpec {
     """{
       |  "accountingPeriodFrom": "2024-08-14",
       |  "accountingPeriodTo": "2024-09-14",
-      |  "qualifyingGroup": true,
-      |  "obligationDTT": true,
       |  "obligationMTT": true,
       |  "electionUKGAAP": true,
       |  "liabilities": {
@@ -121,8 +117,6 @@ object UktrSubmissionControllerSpec {
       """{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
-        |  "qualifyingGroup": true,
-        |  "obligationDTT": true,
         |  "obligationMTT": true,
         |  "liabilities": {
         |    "totalLiability": "these",
@@ -149,8 +143,6 @@ object UktrSubmissionControllerSpec {
       """{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
-        |  "qualifyingGroup": true,
-        |  "obligationDTT": true,
         |  "obligationMTT": true,
         |  "liabilities": {
         |    "returnType": "INVALID"

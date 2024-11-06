@@ -34,12 +34,12 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.LocalDate
+
 case class UktrSubmissionNilReturn(
-  accountingPeriodFrom: String,
-  accountingPeriodTo:   String,
-  qualifyingGroup:      Boolean,
-  obligationDTT:        Boolean,
-  obligationMTT:        Boolean,
-  electionUKGAAP:       Boolean,
-  liabilities:          LiabilityNilReturn
+                                    accountingPeriodFrom: LocalDate,
+                                    accountingPeriodTo:   LocalDate,
+                                    obligationMTT:        Boolean,
+                                    electionUKGAAP:       Boolean,
+                                    liabilities:          LiabilityNilReturn
 ) extends UktrSubmission

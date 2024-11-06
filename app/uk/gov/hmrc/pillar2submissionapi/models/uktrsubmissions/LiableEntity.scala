@@ -22,9 +22,9 @@ case class LiableEntity(
   ukChargeableEntityName: String,
   idType:                 String,
   idValue:                String,
-  amountOwedDTT:          Double,
-  amountOwedIIR:          Double,
-  amountOwedUTPR:         Double,
+  amountOwedDTT:          BigDecimal,
+  amountOwedIIR:          BigDecimal,
+  amountOwedUTPR:         BigDecimal,
 )
 
 object LiableEntity {

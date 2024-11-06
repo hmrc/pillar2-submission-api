@@ -23,10 +23,10 @@ case class LiabilityData(
                           electionUTPRSingleMember: Boolean,
                           numberSubGroupDTT: Int,
                           numberSubGroupUTPR: Int,
-                          totalLiability: Double,
-                          totalLiabilityDTT: Double,
-                          totalLiabilityIIR: Double,
-                          totalLiabilityUTPR: Double,
+                          totalLiability: BigDecimal,
+                          totalLiabilityDTT: BigDecimal,
+                          totalLiabilityIIR: BigDecimal,
+                          totalLiabilityUTPR: BigDecimal,
                           liableEntities: Seq[LiableEntity]
                         ) extends Liability
 
