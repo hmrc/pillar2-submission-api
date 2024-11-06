@@ -1,7 +1,6 @@
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
@@ -41,7 +40,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
-  .settings(publishingSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
