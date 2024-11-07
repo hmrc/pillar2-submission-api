@@ -28,71 +28,71 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
-    "UKTR Submission" when {
-        "Creating a new UKTR submission (POST)" that {
-            "has valid submission data" should {
-                val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-                  .withBody[AnyContentAsJson](validRequestJson)
+  "UKTR Submission" when {
+    "Creating a new UKTR submission (POST)" that {
+      "has valid submission data" should {
+        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
+          .withBody[AnyContentAsJson](validRequestJson)
 
-                "return a 201 CREATED response" in {
-                    val application = applicationBuilder().build()
-                    running(application) {
-                        val result = route(application, request).value
-                        status(result) mustEqual CREATED
-                    }
-                }
-            }
-            "has valid nil-return submission data" should {
-                val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-                  .withBody[AnyContentAsJson](validRequestNilReturnJson)
-
-                "return a 201 CREATED response" in {
-                    val application = applicationBuilder().build()
-                    running(application) {
-                        val result = route(application, request).value
-                        status(result) mustEqual CREATED
-                    }
-                }
-            }
-            "has an invalid request body" should {
-                val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-                  .withBody[AnyContentAsJson](invalidRequestJson)
-
-                "return a 400 BAD_REQUEST response" in {
-                    val application = applicationBuilder().build()
-                    running(application) {
-                        val result = route(application, request).value
-                        status(result) mustEqual BAD_REQUEST
-                    }
-                }
-            }
-            "has no request body" should {
-                val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-
-                "return a 400 BAD_REQUEST response" in {
-                    val application = applicationBuilder().build()
-                    running(application) {
-                        val result = route(application, request).value
-                        status(result) mustEqual BAD_REQUEST
-                    }
-                }
-            }
+        "return a 201 CREATED response" in {
+          val application = applicationBuilder().build()
+          running(application) {
+            val result = route(application, request).value
+            status(result) mustEqual CREATED
+          }
         }
+      }
+      "has valid nil-return submission data" should {
+        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
+          .withBody[AnyContentAsJson](validRequestNilReturnJson)
 
-        "Amend a UKTR submission (PUT)" that {
-            "has a valid request body" should {
-                "return a 200" in {
-                    // Not yet implemented
-                    true
-                }
-            }
+        "return a 201 CREATED response" in {
+          val application = applicationBuilder().build()
+          running(application) {
+            val result = route(application, request).value
+            status(result) mustEqual CREATED
+          }
         }
+      }
+      "has an invalid request body" should {
+        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
+          .withBody[AnyContentAsJson](invalidRequestJson)
+
+        "return a 400 BAD_REQUEST response" in {
+          val application = applicationBuilder().build()
+          running(application) {
+            val result = route(application, request).value
+            status(result) mustEqual BAD_REQUEST
+          }
+        }
+      }
+      "has no request body" should {
+        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
+
+        "return a 400 BAD_REQUEST response" in {
+          val application = applicationBuilder().build()
+          running(application) {
+            val result = route(application, request).value
+            status(result) mustEqual BAD_REQUEST
+          }
+        }
+      }
     }
+
+    "Amend a UKTR submission (PUT)" that {
+      "has a valid request body" should {
+        "return a 200" in {
+          // Not yet implemented
+          true
+        }
+      }
+    }
+  }
 }
 
 object UktrSubmissionISpec {
-    val validRequestJson: AnyContentAsJson =
-        AnyContentAsJson(Json.parse("""{
+  val validRequestJson: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
                                       |  "accountingPeriodFrom": "2024-08-14",
                                       |  "accountingPeriodTo": "2024-12-14",
                                       |  "obligationMTT": true,
@@ -119,8 +119,8 @@ object UktrSubmissionISpec {
                                       |  }
                                       |}""".stripMargin))
 
-    val validRequestNilReturnJson: AnyContentAsJson =
-        AnyContentAsJson(Json.parse("""{
+  val validRequestNilReturnJson: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
                                       |  "accountingPeriodFrom": "2024-08-14",
                                       |  "accountingPeriodTo": "2024-09-14",
                                       |  "obligationMTT": true,
@@ -131,9 +131,8 @@ object UktrSubmissionISpec {
                                       |}
                                       |""".stripMargin))
 
-    val invalidRequestJson: AnyContentAsJson =
-        AnyContentAsJson(Json.parse("""{
+  val invalidRequestJson: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
                                       |  "badRequest": ""
                                       |}""".stripMargin))
 }
-
