@@ -35,7 +35,7 @@ object JsonToYaml {
           "components" -> jsonMap("components")
         )
 
-        val yamlString     = yamlMapper.writeValueAsString(specification)
+        val yamlString    = yamlMapper.writeValueAsString(specification)
         val formattedYaml = swaggerDomainNameSpaces.value.foldLeft(yamlString)((line, path) => line.replace(s"$path.", ""))
         IO.write(yamlFile, formattedYaml)
       }.map(_ => jsonFile.delete)
