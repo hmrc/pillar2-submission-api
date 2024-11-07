@@ -42,14 +42,17 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / unmanagedSourceDirectories := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
-    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
+  .settings(
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
+    unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
+    unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
+  )
   .settings(
     unmanagedSourceDirectories in IntegrationTest :=
       (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value,
