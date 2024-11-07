@@ -28,23 +28,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
-trait IntegrationSpecBase extends AnyWordSpec
-  with BeforeAndAfterEach
-  with Matchers
-  with Results {
+trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results {
 
-  implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit lazy val system: ActorSystem = ActorSystem()
-  implicit lazy val materializer: Materializer = Materializer(system)
+  implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val hc:           HeaderCarrier    = HeaderCarrier()
+  implicit lazy val system:       ActorSystem      = ActorSystem()
+  implicit lazy val materializer: Materializer     = Materializer(system)
 
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
         Configuration.from(
           Map(
-            "metrics.enabled" -> "false",
-            "auditing.enabled" -> false,
+            "metrics.enabled"         -> "false",
+            "auditing.enabled"        -> false,
             "features.grsStubEnabled" -> true
           )
         )
