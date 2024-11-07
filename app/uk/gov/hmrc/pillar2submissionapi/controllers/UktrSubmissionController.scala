@@ -30,7 +30,7 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
       case Some(request) =>
         if (request.validate[UktrSubmission].isError) {
           BadRequest("Bad request")
-        } else Ok("Request OK")
+        } else Created
       case None => BadRequest("No request body")
     }
   }

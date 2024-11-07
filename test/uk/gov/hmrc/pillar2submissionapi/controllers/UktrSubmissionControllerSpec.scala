@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import base.ControllerBaseSpec
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContent, AnyContentAsJson}
 import play.api.test.FakeRequest
@@ -30,22 +30,22 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {
-      "return 200 OK response" in {
+      "return 201 CREATED response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
             .withBody(validRequestJson_data)
         )
-        status(result) mustEqual OK
+        status(result) mustEqual CREATED
       }
     }
 
     "submitUktr() called with a valid nil return request" should {
-      "return 200 OK response" in {
+      "return 201 CREATED response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
             .withBody(validRequestJson_nilReturn)
         )
-        status(result) mustEqual OK
+        status(result) mustEqual CREATED
       }
     }
 

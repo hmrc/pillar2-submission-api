@@ -34,11 +34,11 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
                 val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
                   .withBody[AnyContentAsJson](validRequestJson)
 
-                "return a 200 OK response" in {
+                "return a 201 CREATED response" in {
                     val application = applicationBuilder().build()
                     running(application) {
                         val result = route(application, request).value
-                        status(result) mustEqual OK
+                        status(result) mustEqual CREATED
                     }
                 }
             }
@@ -46,11 +46,11 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
                 val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
                   .withBody[AnyContentAsJson](validRequestNilReturnJson)
 
-                "return a 200 OK response" in {
+                "return a 201 CREATED response" in {
                     val application = applicationBuilder().build()
                     running(application) {
                         val result = route(application, request).value
-                        status(result) mustEqual OK
+                        status(result) mustEqual CREATED
                     }
                 }
             }
