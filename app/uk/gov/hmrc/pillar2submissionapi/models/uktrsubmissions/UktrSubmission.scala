@@ -35,9 +35,9 @@ object UktrSubmission {
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
     (json \ "liabilities").asOpt[LiabilityNilReturn] match {
       case Some(nilReturnRequest) =>
-        if (nilReturnRequest.returnType == ReturnType.NilReturn.entryName) {
+        if (nilReturnRequest.returnType == ReturnType.NilReturn) {
           json.validate[UktrSubmissionNilReturn]
-        } else JsError("malformed request")
+        } else JsError("invalid return type")
       case None =>
         json.validate[UktrSubmissionData]
     }
