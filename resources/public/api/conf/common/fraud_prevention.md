@@ -1,5 +1,5 @@
-<div class="markdown-text-styles">
-                    <p>HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.</p>
+HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
+
 <div class="govuk-warning-text warning-icon-fix">
   <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
   <strong class="govuk-warning-text__text">
