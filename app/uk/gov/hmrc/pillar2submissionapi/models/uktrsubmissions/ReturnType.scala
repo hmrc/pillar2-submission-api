@@ -18,11 +18,24 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import enumeratum.EnumEntry.UpperSnakecase
 import enumeratum._
+import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes, __}
 
 sealed trait ReturnType extends EnumEntry with UpperSnakecase
 
 object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
 
+  implicit val returnTypeFormat: Format[ReturnType] = Format(
+    Reads[ReturnType] { json =>
+      json.validate[String].flatMap {
+        case "NIL_RETURN" => JsSuccess(ReturnType.NilReturn)
+        case _            => JsError("INVALID")
+      }
+    },
+    Writes[ReturnType] {
+      case ReturnType.NilReturn => JsString("NIL_RETURN")
+      case _                    => JsString("INVALID")
+    }
+  )
   val values: IndexedSeq[ReturnType] = findValues
 
   case object NilReturn extends ReturnType
