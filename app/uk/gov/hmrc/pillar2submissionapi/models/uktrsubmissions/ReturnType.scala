@@ -28,12 +28,12 @@ object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
     Reads[ReturnType] { json =>
       json.validate[String].flatMap {
         case "NIL_RETURN" => JsSuccess(ReturnType.NilReturn)
-        case _ => JsError("INVALID")
+        case _            => JsError("INVALID")
       }
     },
     Writes[ReturnType] {
       case ReturnType.NilReturn => JsString("NIL_RETURN")
-      case _ => JsString("INVALID")
+      case _                    => JsString("INVALID")
     }
   )
   val values: IndexedSeq[ReturnType] = findValues
