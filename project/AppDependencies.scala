@@ -7,7 +7,7 @@ object AppDependencies {
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30" % bootstrapVersion,
     "com.github.java-json-tools"    % "json-schema-validator"     % "2.2.14",
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.18.2",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.17.2",
     "org.typelevel"                %% "cats-core"                 % "2.12.0",
     "com.beachape"                 %% "enumeratum-play-json"      % "1.8.1"
   )
