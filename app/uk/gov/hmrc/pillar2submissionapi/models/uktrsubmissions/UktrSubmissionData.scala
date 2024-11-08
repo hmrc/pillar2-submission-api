@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
@@ -28,5 +29,5 @@ case class UktrSubmissionData(
 ) extends UktrSubmission
 
 object UktrSubmissionData {
-  implicit val uktrSubmissionDataFormat:      OFormat[UktrSubmissionData]      = Json.format[UktrSubmissionData]
+  implicit val uktrSubmissionDataFormat: OFormat[UktrSubmissionData] = Json.format[UktrSubmissionData]
 }
