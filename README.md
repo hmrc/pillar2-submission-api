@@ -72,7 +72,7 @@ To run basic validation on the generated OAS, run:
 ```shell
 sbt validateOas
 ```
-This validates the generated specification against OpenAPI standards to ensure compliance and detect any structural errors. It is, however, the API Platform team's advice that the OAS is also validated using [Swagged Editor](https://editor.swagger.io/) before publishing.
+This validates the generated specification (from `sbt routesToYamlOas`) against OpenAPI standards to ensure compliance and detect any structural errors. It is, however, the API Platform team's advice that the OAS is also validated using [Swagged Editor](https://editor.swagger.io/) before publishing.
 
 ### Publishing
 Generating the OAS does not automatically publish it. If the new changes warrant publication e.g. endpoints introduced/deprecated, the validated OAS needs to replace the application.yaml file in 'resources/public/api/conf/1.0'. The API Platform will detect the new changes and process the file for publication on Developer Hub.
