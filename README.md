@@ -57,6 +57,26 @@ To stop services:
 sm2 --stop PILLAR2_ALL
 ```
 
+## Generation, Validation and Publishing
+To ensure API documentation alignment with code, we generate the OpenAPI specification (OAS) directly from the route definitions using an SBT task, reducing risk and manual effort.
+
+### Generation
+To generate the YAML OAS, run:
+```shell
+sbt routesToYamlOas
+```
+The generated OAS will include definitions based on the application's routes. The output folder is 'target/swagger' by default.
+
+### Validation
+To run basic validation on the generated OAS, run: 
+```shell
+sbt validateOas
+```
+This validates the generated specification against OpenAPI standards to ensure compliance and detect any structural errors. It is, however, the API Platform team's advice that the OAS is also validated using [Swagged Editor](https://editor.swagger.io/) before publishing.
+
+### Publishing
+Generating the OAS does not automatically publish it. If the new changes warrant publication e.g. endpoints introduced/deprecated, the validated OAS needs to replace the application.yaml file in 'resources/public/api/conf/1.0'. The API Platform will detect the new changes and process the file for publication on Developer Hub.
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
