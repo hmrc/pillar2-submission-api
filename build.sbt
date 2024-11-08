@@ -58,6 +58,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
   .settings(JsonToYaml.settings *)
+  .settings(Validate.settings *)
   .settings(PlaySwagger.settings *)
   .disablePlugins(JUnitXmlReportPlugin)
 

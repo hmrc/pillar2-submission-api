@@ -9,9 +9,9 @@ import scala.collection.mutable
 import scala.util.Try
 
 object JsonToYaml {
-  val routesToYamlSpec = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
+  val routesToYamlOas = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
   def settings: Seq[Setting[_]] = Seq(
-    routesToYamlSpec := {
+    routesToYamlOas := {
       swagger.value
 
       val yamlFactory = new YAMLFactory()
