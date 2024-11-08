@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NilReturn
 
 import java.time.LocalDate
 
@@ -35,9 +36,10 @@ object UktrSubmission {
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
     (json \ "liabilities").asOpt[LiabilityNilReturn] match {
       case Some(nilReturnRequest) =>
-        if (nilReturnRequest.returnType == ReturnType.NilReturn) {
-          json.validate[UktrSubmissionNilReturn]
-        } else JsError("invalid return type")
+        nilReturnRequest.returnType match {
+          case NilReturn => json.validate[UktrSubmissionNilReturn]
+          case _         => JsError("invalid return type")
+        }
       case None =>
         json.validate[UktrSubmissionData]
     }
