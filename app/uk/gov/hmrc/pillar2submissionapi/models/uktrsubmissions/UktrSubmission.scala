@@ -37,8 +37,8 @@ object UktrSubmission {
     (json \ "liabilities").asOpt[LiabilityNilReturn] match {
       case Some(nilReturnRequest) =>
         nilReturnRequest.returnType match {
-          case NilReturn => json.validate[UktrSubmissionNilReturn]
-          case _         => JsError("invalid return type")
+          case "NIL_RETURN" => json.validate[UktrSubmissionNilReturn]
+          case _            => JsError("invalid return type")
         }
       case None =>
         json.validate[UktrSubmissionData]
