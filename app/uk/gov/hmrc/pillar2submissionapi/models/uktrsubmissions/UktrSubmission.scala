@@ -17,7 +17,6 @@
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NilReturn
 
 import java.time.LocalDate
 
