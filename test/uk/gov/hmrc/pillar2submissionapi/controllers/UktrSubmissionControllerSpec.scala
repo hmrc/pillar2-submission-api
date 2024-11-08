@@ -89,6 +89,36 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
       }
     }
 
+    "submitUktr() called with request that only contains a valid return type" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_nilReturn_onlyContainsLiabilities)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "submitUktr() called with request that only contains an invalid return type" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "submitUktr() called with request that is missing liabilities" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.submitUktr()(
+          FakeRequest(method = "", path = "")
+            .withBody(invalidRequest_noLiabilities)
+        )
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
     "submitUktr() called with no request body" should {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.submitUktr()(
@@ -104,33 +134,34 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 object UktrSubmissionControllerSpec {
   val validRequestJson_data: AnyContentAsJson =
     AnyContentAsJson(Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-12-14",
-        |  "obligationMTT": true,
-        |  "electionUKGAAP": true,
-        |  "liabilities": {
-        |    "electionDTTSingleMember": false,
-        |    "electionUTPRSingleMember": false,
-        |    "numberSubGroupDTT": 1,
-        |    "numberSubGroupUTPR": 1,
-        |    "totalLiability": 10000.99,
-        |    "totalLiabilityDTT": 5000.99,
-        |    "totalLiabilityIIR": 4000,
-        |    "totalLiabilityUTPR": 10000.99,
-        |    "liableEntities": [
-        |      {
-        |        "ukChargeableEntityName": "Newco PLC",
-        |        "idType": "CRN",
-        |        "idValue": "12345678",
-        |        "amountOwedDTT": 5000,
-        |        "amountOwedIIR": 3400,
-        |        "amountOwedUTPR": 6000.5
-        |      }
-        |    ]
-        |  }
-        |}""".stripMargin))
+      |  "accountingPeriodFrom": "2024-08-14",
+      |  "accountingPeriodTo": "2024-12-14",
+      |  "obligationMTT": true,
+      |  "electionUKGAAP": true,
+      |  "liabilities": {
+      |    "electionDTTSingleMember": false,
+      |    "electionUTPRSingleMember": false,
+      |    "numberSubGroupDTT": 1,
+      |    "numberSubGroupUTPR": 1,
+      |    "totalLiability": 10000.99,
+      |    "totalLiabilityDTT": 5000.99,
+      |    "totalLiabilityIIR": 4000,
+      |    "totalLiabilityUTPR": 10000.99,
+      |    "liableEntities": [
+      |      {
+      |        "ukChargeableEntityName": "Newco PLC",
+      |        "idType": "CRN",
+      |        "idValue": "12345678",
+      |        "amountOwedDTT": 5000,
+      |        "amountOwedIIR": 3400,
+      |        "amountOwedUTPR": 6000.5
+      |      }
+      |    ]
+      |  }
+      |}""".stripMargin))
 
-  val validRequestJson_nilReturn: AnyContentAsJson = AnyContentAsJson(Json.parse("""{
+  val validRequestJson_nilReturn: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
       |  "accountingPeriodFrom": "2024-08-14",
       |  "accountingPeriodTo": "2024-09-14",
       |  "obligationMTT": true,
@@ -143,44 +174,65 @@ object UktrSubmissionControllerSpec {
 
   val invalidRequestJson_data: AnyContentAsJson =
     AnyContentAsJson(Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-12-14",
-        |  "obligationMTT": true,
-        |  "liabilities": {
-        |    "totalLiability": "these",
-        |    "totalLiabilityDTT": "shouldnt",
-        |    "totalLiabilityIIR": "be",
-        |    "totalLiabilityUTPR": "strings",
-        |    "liableEntities": [
-        |      {
-        |        "ukChargeableEntityName": "Newco PLC",
-        |        "idType": "CRN",
-        |        "idValue": "12345678",
-        |        "amountOwedDTT": 5000,
-        |        "electedDTT": true,
-        |        "amountOwedIIR": 3400,
-        |        "amountOwedUTPR": 6000.5,
-        |        "electedUTPR": true
-        |      }
-        |    ]
-        |  }
-        |}""".stripMargin))
+      |  "accountingPeriodFrom": "2024-08-14",
+      |  "accountingPeriodTo": "2024-12-14",
+      |  "obligationMTT": true,
+      |  "liabilities": {
+      |    "totalLiability": "these",
+      |    "totalLiabilityDTT": "shouldnt",
+      |    "totalLiabilityIIR": "be",
+      |    "totalLiabilityUTPR": "strings",
+      |    "liableEntities": [
+      |      {
+      |        "ukChargeableEntityName": "Newco PLC",
+      |        "idType": "CRN",
+      |        "idValue": "12345678",
+      |        "amountOwedDTT": 5000,
+      |        "electedDTT": true,
+      |        "amountOwedIIR": 3400,
+      |        "amountOwedUTPR": 6000.5,
+      |        "electedUTPR": true
+      |      }
+      |    ]
+      |  }
+      |}""".stripMargin))
 
   val invalidRequestJson_nilReturn: AnyContentAsJson =
     AnyContentAsJson(Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-12-14",
-        |  "obligationMTT": true,
-        |  "liabilities": {
-        |    "returnType": "INVALID"
-        |  }
-        |}""".stripMargin))
+      |  "accountingPeriodFrom": "2024-08-14",
+      |  "accountingPeriodTo": "2024-12-14",
+      |  "obligationMTT": true,
+      |  "liabilities": {
+      |    "returnType": "INVALID"
+      |  }
+      |}""".stripMargin))
 
   val invalidRequest_Json: AnyContentAsJson =
     AnyContentAsJson(Json.parse("""{
-        |  "badRequest": ""
-        |}""".stripMargin))
+      |  "badRequest": ""
+      |}""".stripMargin))
 
-  val invalidRequest_wrongType: AnyContent = AnyContent("This is not Json.")
-  val invalidRequest_noBody:    Unit       = ()
+  val invalidRequest_wrongType: AnyContent =
+    AnyContent("This is not Json.")
+  val invalidRequest_nilReturn_onlyContainsLiabilities: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
+      |  "liabilities": {
+      |    "returnType": "NIL_RETURN"
+      |  }
+      |}
+      |""".stripMargin))
+  val invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
+      |  "liabilities": {
+      |    "returnType": "INVALID"
+      |  }
+      |}
+      |""".stripMargin))
+  val invalidRequest_noLiabilities: AnyContentAsJson =
+    AnyContentAsJson(Json.parse("""{
+        |  "accountingPeriodFrom": "2024-08-14",
+        |  "accountingPeriodTo": "2024-12-14",
+        |  "obligationMTT": true
+        |}""".stripMargin))
+  val invalidRequest_noBody: Unit = ()
 }

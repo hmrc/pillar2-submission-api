@@ -15,6 +15,8 @@
  */
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+import play.api.libs.json.{Json, OFormat}
+
 import java.time.LocalDate
 
 case class UktrSubmissionNilReturn(
@@ -24,3 +26,7 @@ case class UktrSubmissionNilReturn(
   electionUKGAAP:       Boolean,
   liabilities:          LiabilityNilReturn
 ) extends UktrSubmission
+
+object UktrSubmissionNilReturn {
+  implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
+}

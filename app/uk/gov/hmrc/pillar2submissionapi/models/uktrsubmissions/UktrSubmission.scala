@@ -29,17 +29,10 @@ trait UktrSubmission {
 }
 
 object UktrSubmission {
-  implicit val uktrSubmissionDataFormat:      OFormat[UktrSubmissionData]      = Json.format[UktrSubmissionData]
-  implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
-
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
-    (json \ "liabilities").asOpt[LiabilityNilReturn] match {
-      case Some(nilReturnRequest) =>
-        nilReturnRequest.returnType match {
-          case "NIL_RETURN" => json.validate[UktrSubmissionNilReturn]
-          case _            => JsError("invalid return type")
-        }
-      case None =>
-        json.validate[UktrSubmissionData]
+    if ((json \ "liabilities" \ "returnType").isEmpty) {
+      json.validate[UktrSubmissionData]
+    } else {
+      json.validate[UktrSubmissionNilReturn]
     }
 }

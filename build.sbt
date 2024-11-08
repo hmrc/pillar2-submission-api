@@ -15,12 +15,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin, SwaggerPlugin)
   .settings(
     majorVersion := 0,
-    ScoverageKeys.coverageExcludedFiles :=
-      "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;" +
-        "app.*;.*BuildInfo.*;.*Routes.*;.*repositories.*;.*controllers.platform.*;.*controllers.test.*;.*services.test.*;.*metrics.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     playDefaultPort := 10054,
@@ -40,7 +34,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(CodeCoverageSettings.settings: _*)
+  .settings(CodeCoverageSettings.settings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )

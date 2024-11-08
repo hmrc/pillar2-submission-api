@@ -25,5 +25,5 @@ object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
 
   val values: IndexedSeq[ReturnType] = findValues
 
-  case object NilReturn extends ReturnType
+  case object NIL_RETURN extends ReturnType
 }
