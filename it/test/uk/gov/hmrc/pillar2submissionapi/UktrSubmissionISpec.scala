@@ -131,17 +131,18 @@ object UktrSubmissionISpec {
         |  }
         |}""".stripMargin)
 
-  val validRequestNilReturnJson: JsValue = Json.parse(
-    """{
-      |  "accountingPeriodFrom": "2024-08-14",
-      |  "accountingPeriodTo": "2024-09-14",
-      |  "obligationMTT": true,
-      |  "electionUKGAAP": true,
-      |  "liabilities": {
-      |    "returnType": "NIL_RETURN"
-      |  }
-      |}
-      |""".stripMargin)
+  val validRequestNilReturnJson: JsValue =
+    Json.parse(
+      """{
+        |  "accountingPeriodFrom": "2024-08-14",
+        |  "accountingPeriodTo": "2024-09-14",
+        |  "obligationMTT": true,
+        |  "electionUKGAAP": true,
+        |  "liabilities": {
+        |    "returnType": "NIL_RETURN"
+        |  }
+        |}
+        |""".stripMargin)
 
   val invalidRequestJson: JsValue =
     Json.parse(
