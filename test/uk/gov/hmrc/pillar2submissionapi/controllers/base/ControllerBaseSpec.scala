@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package base
+package uk.gov.hmrc.pillar2submissionapi.controllers.base
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.{Materializer, SystemMaterializer}

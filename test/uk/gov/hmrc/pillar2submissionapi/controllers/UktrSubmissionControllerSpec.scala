@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import base.ControllerBaseSpec
 import play.api.http.Status.{BAD_REQUEST, CREATED}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, AnyContentAsJson}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
@@ -33,7 +33,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
       "return 201 CREATED response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
-            .withBody(validRequestJson_data)
+            .withBody[JsValue](validRequestJson_data)
         )
         status(result) mustEqual CREATED
       }
@@ -132,8 +132,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 }
 
 object UktrSubmissionControllerSpec {
-  val validRequestJson_data: AnyContentAsJson =
-    AnyContentAsJson(Json.parse("""{
+  val validRequestJson_data: JsValue = Json.parse("""{
       |  "accountingPeriodFrom": "2024-08-14",
       |  "accountingPeriodTo": "2024-12-14",
       |  "obligationMTT": true,
@@ -158,7 +157,7 @@ object UktrSubmissionControllerSpec {
       |      }
       |    ]
       |  }
-      |}""".stripMargin))
+      |}""".stripMargin)
 
   val validRequestJson_nilReturn: AnyContentAsJson =
     AnyContentAsJson(Json.parse("""{
