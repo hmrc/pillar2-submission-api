@@ -103,8 +103,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
 
 object UktrSubmissionISpec {
   val validRequestJson: JsValue =
-    Json.parse(
-      """{
+    Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-12-14",
         |  "obligationMTT": true,
@@ -132,8 +131,7 @@ object UktrSubmissionISpec {
         |}""".stripMargin)
 
   val validRequestNilReturnJson: JsValue =
-    Json.parse(
-      """{
+    Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",
         |  "accountingPeriodTo": "2024-09-14",
         |  "obligationMTT": true,
@@ -145,8 +143,7 @@ object UktrSubmissionISpec {
         |""".stripMargin)
 
   val invalidRequestJson: JsValue =
-    Json.parse(
-      """{
+    Json.parse("""{
         |  "badRequest": ""
         |}""".stripMargin)
 }
