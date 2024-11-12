@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.13.0
+  version: 1.0.0
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
 tags: []
