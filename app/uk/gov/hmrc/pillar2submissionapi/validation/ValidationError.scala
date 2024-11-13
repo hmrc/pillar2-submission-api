@@ -18,41 +18,41 @@ package uk.gov.hmrc.pillar2submissionapi.validation
 trait ValidationError {
   def errorCode:    String
   def errorMessage: String
-  def path:         String
+  def field:        String
 }
 
 object ValidationError {
-  case class MandatoryFieldMissing(path: String) extends ValidationError {
+  case class MandatoryFieldMissing(field: String) extends ValidationError {
     override def errorCode:    String = "MANDATORY_FIELD_MISSING"
     override def errorMessage: String = s"Mandatory field is missing"
   }
 
-  case class MaxLengthExceeded(path: String, maxLength: Int) extends ValidationError {
+  case class MaxLengthExceeded(field: String, maxLength: Int) extends ValidationError {
     override def errorCode:    String = "MAX_LENGTH_EXCEEDED"
     override def errorMessage: String = s"Field exceeds maximum length of $maxLength"
   }
 
-  case class InvalidFieldValue(path: String, value: String, allowed: Seq[String]) extends ValidationError {
+  case class InvalidFieldValue(field: String, value: String, allowed: Seq[String]) extends ValidationError {
     override def errorCode:    String = "INVALID_FIELD_VALUE"
     override def errorMessage: String = s"Value '$value' is not one of: ${allowed.mkString(", ")}"
   }
 
-  case class InvalidDateRange(path: String, details: String) extends ValidationError {
+  case class InvalidDateRange(field: String, details: String) extends ValidationError {
     override def errorCode:    String = "INVALID_DATE_RANGE"
     override def errorMessage: String = details
   }
 
-  case class InvalidAmount(path: String, amount: BigDecimal) extends ValidationError {
+  case class InvalidAmount(field: String, amount: BigDecimal) extends ValidationError {
     override def errorCode:    String = "INVALID_AMOUNT"
     override def errorMessage: String = s"Amount must be non-negative"
   }
 
-  case class InvalidFormat(path: String, expectedFormat: String) extends ValidationError {
+  case class InvalidFormat(field: String, expectedFormat: String) extends ValidationError {
     override def errorCode:    String = "INVALID_FORMAT"
     override def errorMessage: String = s"Value does not match expected format: $expectedFormat"
   }
 
-  case class BusinessRuleFailure(path: String, rule: String, details: String) extends ValidationError {
+  case class BusinessRuleFailure(field: String, rule: String, details: String) extends ValidationError {
     override def errorCode:    String = "BUSINESS_RULE_FAILURE"
     override def errorMessage: String = s"$rule: $details"
   }

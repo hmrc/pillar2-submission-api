@@ -17,7 +17,6 @@
 package uk.gov.hmrc.pillar2submissionapi.validation
 
 import cats.data.ValidatedNec
-import uk.gov.hmrc.pillar2submissionapi.models.validation.ValidationError
 
 trait Validator[T] {
   def validate(value: T): ValidatedNec[ValidationError, T]
