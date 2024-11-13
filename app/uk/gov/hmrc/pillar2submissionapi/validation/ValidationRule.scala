@@ -25,11 +25,12 @@ trait ValidationRule[T] {
 }
 
 object ValidationRule {
-  def apply[T](f: T => ValidationResult[T]): ValidationRule[T] = 
+  def apply[T](f: T => ValidationResult[T]): ValidationRule[T] =
     (value: T) => f(value)
-    
-  def combine[T](rules: ValidationRule[T]*): ValidationRule[T] = 
-    (value: T) => rules.foldLeft(value.validNec[ValidationError]) { 
-      case (acc, rule) => (acc, rule.validate(value)).mapN((_, _) => value)
-    }
-} 
+
+  def combine[T](rules: ValidationRule[T]*): ValidationRule[T] =
+    (value: T) =>
+      rules.foldLeft(value.validNec[ValidationError]) { case (acc, rule) =>
+        (acc, rule.validate(value)).mapN((_, _) => value)
+      }
+}

@@ -20,13 +20,13 @@ import cats.implicits._
 
 object ValidationResult {
   type ValidationResult[A] = ValidatedNec[ValidationError, A]
-  
+
   def valid[A](a: A): ValidationResult[A] = a.validNec
-  
+
   def invalid[A](error: ValidationError): ValidationResult[A] = error.invalidNec
-  
+
   def invalidNec[A](errors: NonEmptyChain[ValidationError]): ValidationResult[A] = errors.invalid
-  
-  def sequence[A](results: Seq[ValidationResult[A]]): ValidationResult[Seq[A]] = 
+
+  def sequence[A](results: Seq[ValidationResult[A]]): ValidationResult[Seq[A]] =
     results.sequence
-} 
+}

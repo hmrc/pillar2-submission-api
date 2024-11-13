@@ -24,16 +24,16 @@ object ValidationError {
   case class MandatoryFieldMissing(field: String) extends ValidationError {
     override def errorMessage: String = s"Mandatory field missing: $field"
   }
-  
+
   case class InvalidFieldValue(field: String, value: String) extends ValidationError {
     override def errorMessage: String = s"Invalid value '$value' for field: $field"
   }
-  
+
   case class InvalidDateRange(field: String, message: String) extends ValidationError {
     override def errorMessage: String = s"Invalid date range for $field: $message"
   }
-  
+
   case class InvalidAmount(field: String, amount: BigDecimal) extends ValidationError {
     override def errorMessage: String = s"Invalid amount $amount for field: $field"
   }
-} 
+}
