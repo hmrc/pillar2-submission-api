@@ -24,22 +24,22 @@ sealed trait TestValidationError extends ValidationError {
 
 object TestValidationError {
   case class MandatoryFieldMissing(field: String) extends TestValidationError {
-    override def errorCode: String = "MANDATORY_FIELD_MISSING"
+    override def errorCode:    String = "MANDATORY_FIELD_MISSING"
     override def errorMessage: String = s"Mandatory field is missing"
   }
 
   case class MaxLengthExceeded(field: String, maxLength: Int) extends TestValidationError {
-    override def errorCode: String = "MAX_LENGTH_EXCEEDED"
+    override def errorCode:    String = "MAX_LENGTH_EXCEEDED"
     override def errorMessage: String = s"Field exceeds maximum length of $maxLength"
   }
 
   case class InvalidDateRange(field: String, details: String) extends TestValidationError {
-    override def errorCode: String = "INVALID_DATE_RANGE"
+    override def errorCode:    String = "INVALID_DATE_RANGE"
     override def errorMessage: String = details
   }
 
   case class InvalidAmount(field: String, amount: BigDecimal) extends TestValidationError {
-    override def errorCode: String = "INVALID_AMOUNT"
+    override def errorCode:    String = "INVALID_AMOUNT"
     override def errorMessage: String = s"Amount must be non-negative"
   }
-} 
+}

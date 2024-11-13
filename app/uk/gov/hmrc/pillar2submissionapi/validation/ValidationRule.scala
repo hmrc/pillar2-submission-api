@@ -33,9 +33,6 @@ object ValidationRule {
         (acc, rule.validate(value)).mapN((_, _) => value)
       }
 
-  def fromRules[T](rules: Seq[ValidationRule[T]]): ValidationRule[T] =
-    (value: T) => combine(rules: _*).validate(value)
-
   implicit class ValidationRuleOps[T](value: T) {
     def validate(implicit validator: ValidationRule[T]): ValidationResult[T] =
       validator.validate(value)
