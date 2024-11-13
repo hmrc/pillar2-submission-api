@@ -89,22 +89,9 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
         }
       }
 
-      "has a valid request body containing duplicates fields" should {
+      "has a valid request body containing duplicates fields and additional fields" should {
         val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withJsonBody(validRequestJson_duplicateFields)
-
-        "return a 201 CREATED response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual CREATED
-          }
-        }
-      }
-
-      "has a valid request body containing extra fields" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withJsonBody(validRequestJson_extraFields)
+          .withJsonBody(validRequestJson_duplicateFieldsAndAdditionalFields)
 
         "return a 201 CREATED response" in {
           val application = applicationBuilder().build()
@@ -173,13 +160,14 @@ object UktrSubmissionISpec {
         |  "badRequest": ""
         |}""".stripMargin)
 
-  val validRequestJson_duplicateFields: JsValue =
+  val validRequestJson_duplicateFieldsAndAdditionalFields: JsValue =
     Json.parse("""{
                  |  "accountingPeriodFrom": "2024-08-14",
                  |  "accountingPeriodTo": "2024-12-14",
                  |  "obligationMTT": true,
                  |  "obligationMTT": true,
                  |  "electionUKGAAP": true,
+                 |  "extraField": "this should not be here",
                  |  "liabilities": {
                  |    "electionDTTSingleMember": false,
                  |    "electionUTPRSingleMember": false,
@@ -199,35 +187,6 @@ object UktrSubmissionISpec {
                  |        "amountOwedIIR": 3400,
                  |        "amountOwedUTPR": 6000.5
                  |      },
-                 |      {
-                 |        "ukChargeableEntityName": "Newco PLC",
-                 |        "idType": "CRN",
-                 |        "idValue": "12345678",
-                 |        "amountOwedDTT": 5000,
-                 |        "amountOwedIIR": 3400,
-                 |        "amountOwedUTPR": 6000.5
-                 |      }
-                 |    ]
-                 |  }
-                 |}""".stripMargin)
-
-  val validRequestJson_extraFields: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-12-14",
-                 |  "obligationMTT": true,
-                 |  "electionUKGAAP": true,
-                 |  "extraField": "this should not be here",
-                 |  "liabilities": {
-                 |    "electionDTTSingleMember": false,
-                 |    "electionUTPRSingleMember": false,
-                 |    "numberSubGroupDTT": 1,
-                 |    "numberSubGroupUTPR": 1,
-                 |    "totalLiability": 10000.99,
-                 |    "totalLiabilityDTT": 5000.99,
-                 |    "totalLiabilityIIR": 4000,
-                 |    "totalLiabilityUTPR": 10000.99,
-                 |    "liableEntities": [
                  |      {
                  |        "ukChargeableEntityName": "Newco PLC",
                  |        "idType": "CRN",
