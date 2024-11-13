@@ -16,17 +16,12 @@
 
 package uk.gov.hmrc.pillar2submissionapi.validation
 
-import cats.data.ValidatedNec
-
-trait Validator[T] {
-  def validate(value: T): ValidatedNec[ValidationError, T]
-}
-
-object Validator {
-  def apply[T](implicit validator: Validator[T]): Validator[T] = validator
-
-  implicit class ValidatorOps[T](value: T) {
-    def validate(implicit validator: Validator[T]): ValidatedNec[ValidationError, T] =
-      validator.validate(value)
+import ValidationResult._
+trait ValidationSyntax {
+  implicit class ValidateOps[A](value: A) {
+    def validate(implicit rule: ValidationRule[A]): ValidationResult[A] =
+      rule.validate(value)
   }
 }
+
+object syntax extends ValidationSyntax

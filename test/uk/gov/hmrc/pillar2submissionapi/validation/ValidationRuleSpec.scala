@@ -19,9 +19,8 @@ package uk.gov.hmrc.pillar2submissionapi.validation
 import cats.implicits._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.hmrc.pillar2submissionapi.validation.ValidationError._
 import uk.gov.hmrc.pillar2submissionapi.validation.ValidationResult._
-
+import uk.gov.hmrc.pillar2submissionapi.validation.models.TestValidationError._
 class ValidationRuleSpec extends AnyWordSpec with Matchers {
   "ValidationRule" should {
     "create simple validation rules" in {

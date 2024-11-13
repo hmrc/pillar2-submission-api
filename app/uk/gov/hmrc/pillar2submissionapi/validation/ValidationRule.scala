@@ -17,7 +17,6 @@
 package uk.gov.hmrc.pillar2submissionapi.validation
 
 import cats.implicits._
-import uk.gov.hmrc.pillar2submissionapi.validation.ValidationError
 import uk.gov.hmrc.pillar2submissionapi.validation.ValidationResult._
 
 trait ValidationRule[T] {
@@ -33,4 +32,12 @@ object ValidationRule {
       rules.foldLeft(value.validNec[ValidationError]) { case (acc, rule) =>
         (acc, rule.validate(value)).mapN((_, _) => value)
       }
+
+  def fromRules[T](rules: Seq[ValidationRule[T]]): ValidationRule[T] =
+    (value: T) => combine(rules: _*).validate(value)
+
+  implicit class ValidationRuleOps[T](value: T) {
+    def validate(implicit validator: ValidationRule[T]): ValidationResult[T] =
+      validator.validate(value)
+  }
 }
