@@ -1,6 +1,9 @@
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
-import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.*
+
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
@@ -11,12 +14,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin, SwaggerPlugin)
   .settings(
     majorVersion := 0,
-    ScoverageKeys.coverageExcludedFiles :=
-      "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;" +
-        "app.*;.*BuildInfo.*;.*Routes.*;.*repositories.*;.*controllers.platform.*;.*controllers.test.*;.*services.test.*;.*metrics.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     playDefaultPort := 10054,
@@ -36,7 +33,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(CodeCoverageSettings.settings: _*)
+  .settings(CodeCoverageSettings.settings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
@@ -65,8 +62,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
-/*lazy val it = project
+lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
-  .settings(libraryDependencies ++= AppDependencies.it)*/
+  .settings(libraryDependencies ++= AppDependencies.it)
