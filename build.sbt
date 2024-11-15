@@ -19,6 +19,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     Test / scalafmtOnCompile := true,
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
