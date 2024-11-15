@@ -1,4 +1,3 @@
-import org.typelevel.scalacoptions.ScalacOptions
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
