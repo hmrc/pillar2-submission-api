@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
+import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -25,13 +24,11 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class UktrSubmissionController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = Action { request =>
-    request.body.asJson match {
-      case Some(request) =>
-        if (request.validate[UktrSubmission].isError) {
-          BadRequest("Bad request")
-        } else Created
-      case None => BadRequest("No request body")
+  def submitUktr(): Action[String] = Action(parse.tolerantText) { request =>
+    if (request.body.nonEmpty) {
+      Ok(s"Received text: ${request.body}")
+    } else {
+      BadRequest("No text received")
     }
   }
 }
