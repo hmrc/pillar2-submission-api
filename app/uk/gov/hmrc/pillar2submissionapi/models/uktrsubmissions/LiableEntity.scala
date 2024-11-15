@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+case class LiableEntity(
+  ukChargeableEntityName: String,
+  idType:                 String,
+  idValue:                String,
+  amountOwedDTT:          BigDecimal,
+  amountOwedIIR:          BigDecimal,
+  amountOwedUTPR:         BigDecimal
+)
 
-@Singleton()
-class JokeController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
-
-  def joke(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("Let's make like a tree and leaf!"))
-  }
+object LiableEntity {
+  implicit val format: OFormat[LiableEntity] = Json.format[LiableEntity]
 }

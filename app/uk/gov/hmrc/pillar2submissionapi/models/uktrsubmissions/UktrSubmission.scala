@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
-import play.api.http.Status
-import play.api.test.Helpers._
-import play.api.test.{FakeRequest, Helpers}
+import play.api.libs.json._
 
-class JokeControllerSpec extends AnyWordSpec with Matchers {
+import java.time.LocalDate
 
-  private val fakeRequest = FakeRequest("GET", "/")
-  private val controller  = new JokeController(Helpers.stubControllerComponents())
+trait UktrSubmission {
+  val accountingPeriodFrom: LocalDate
+  val accountingPeriodTo:   LocalDate
+  val obligationMTT:        Boolean
+  val electionUKGAAP:       Boolean
+  val liabilities:          Liability
+}
 
-  "GET /" should {
-    "return 200" in {
-      val result = controller.joke()(fakeRequest)
-      status(result) shouldBe Status.OK
+object UktrSubmission {
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
+    if ((json \ "liabilities" \ "returnType").isEmpty) {
+      json.validate[UktrSubmissionData]
+    } else {
+      json.validate[UktrSubmissionNilReturn]
     }
-  }
 }
