@@ -18,18 +18,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     Test / scalafmtOnCompile := true,
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
-    // suppress warnings in generated routes files
-    scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s",
-      "-Ywarn-dead-code",
-      "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-      "-Ywarn-unused:locals", // Warn if a local definition is unused.
-      "-Ywarn-unused:params", // Warn if a value parameter is unused.
-      "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
-      "-Ywarn-unused:privates" // Warn if a private member is unused.
-    ),
+    scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)

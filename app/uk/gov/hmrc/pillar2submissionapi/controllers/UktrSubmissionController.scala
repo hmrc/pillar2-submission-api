@@ -25,7 +25,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class UktrSubmissionController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
 
-  def submitUktr(): Action[AnyContent] = Action { request =>
+  def submitUktr: Action[AnyContent] = Action { request =>
     request.body.asJson match {
       case Some(request) =>
         if (request.validate[UktrSubmission].isError) {
