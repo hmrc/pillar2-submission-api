@@ -16,14 +16,32 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.base
 
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.mvc.{ControllerComponents, Results}
+import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 
-trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with TableDrivenPropertyChecks {
+import scala.concurrent.{ExecutionContext, Future}
 
-  implicit val cc: ControllerComponents = stubControllerComponents()
+trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar {
+
+  implicit lazy val ec:           ExecutionContext     = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val system:       ActorSystem          = ActorSystem()
+  implicit lazy val materializer: Materializer         = Materializer(system)
+  implicit val cc:                ControllerComponents = stubControllerComponents()
+  val mockAuthConnector:          AuthConnector        = mock[AuthConnector]
+
+  implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+    mockAuthConnector,
+    new BodyParsers.Default
+  ) {
+    override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+      Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId")))
+  }
 }
