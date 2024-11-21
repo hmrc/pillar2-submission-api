@@ -7,6 +7,6 @@ import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 trait ActionBaseSpec extends PlaySpec with MockitoSugar {
 
-  val identifierAction: IdentifierAction = mock[IdentifierAction]
-  val mockAuditConnector:                          AuditConnector                          = mock[AuditConnector]
+  val identifierAction:   IdentifierAction = mock[IdentifierAction]
+  val mockAuditConnector: AuditConnector   = mock[AuditConnector]
 }

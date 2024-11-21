@@ -25,6 +25,6 @@ class AppConfig @Inject() (config: Configuration) {
 
   val appName: String = config.get[String]("appName")
 
-  val loginUrl:                    String = config.get[String]("urls.login")
-  val loginContinueUrl:            String = config.get[String]("urls.loginContinue")
+  val loginUrl:         String = config.get[String]("urls.login")
+  val loginContinueUrl: String = config.get[String]("urls.loginContinue")
 }

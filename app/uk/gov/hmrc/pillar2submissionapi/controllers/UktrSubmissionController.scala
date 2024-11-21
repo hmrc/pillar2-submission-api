@@ -24,8 +24,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents,
-                                          identify: IdentifierAction) extends BackendController(cc) {
+class UktrSubmissionController @Inject() (cc: ControllerComponents, identify: IdentifierAction) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = identify { request =>
     request.body.asJson match {
