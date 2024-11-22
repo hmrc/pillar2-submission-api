@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.models.requests
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionLocalData
 
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-
-  val appName: String = config.get[String]("appName")
-
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
-}
+case class SubscriptionDataRequest[A](
+  request:               Request[A],
+  userId:                String,
+  subscriptionLocalData: SubscriptionLocalData,
+  enrolments:            Set[Enrolment]
+) extends WrappedRequest[A](request)
