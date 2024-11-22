@@ -16,8 +16,12 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import cats.data.Validated
+import cats.implicits.toFoldableOps
+import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{UktrSubmission, UktrSubmissionData, UktrSubmissionNilReturn}
+import uk.gov.hmrc.pillar2submissionapi.validation._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -27,11 +31,38 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
 
   def submitUktr: Action[AnyContent] = Action { request =>
     request.body.asJson match {
-      case Some(request) =>
-        if (request.validate[UktrSubmission].isError) {
-          BadRequest("Bad request")
-        } else Created
-      case None => BadRequest("No request body")
+      case Some(json) =>
+        json.validate[UktrSubmission] match {
+          case JsSuccess(submission, _) =>
+            submission match {
+              case data: UktrSubmissionData =>
+                LiabilityDataValidator.validate(data.liabilities) match {
+                  case Validated.Valid(_) => Created
+                  case Validated.Invalid(errors) =>
+                    BadRequest(Json.obj("errors" -> errors.toList.map(e => s"${e.field}: ${e.error}")))
+                }
+              case nilReturn: UktrSubmissionNilReturn =>
+                LiabilityNilReturnValidator.validate(nilReturn.liabilities) match {
+                  case Validated.Valid(_) => Created
+                  case Validated.Invalid(errors) =>
+                    BadRequest(Json.obj("errors" -> errors.toList.map(e => s"${e.field}: ${e.error}")))
+                }
+              case _ =>
+                BadRequest(Json.obj("message" -> "Unknown submission type"))
+            }
+          case JsError(errors) =>
+            val errorDetails = errors.map { case (path, validationErrors) =>
+              s"Path: $path, Errors: ${validationErrors.map(_.message).mkString(", ")}"
+            }
+            BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
+        }
+      case None =>
+        request.body.asText match {
+          case Some(_) =>
+            BadRequest(Json.obj("message" -> "Invalid JSON format")) // Treat malformed JSON as invalid
+          case None =>
+            BadRequest(Json.obj("message" -> "No request body"))
+        }
     }
   }
 }

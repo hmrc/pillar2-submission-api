@@ -77,6 +77,301 @@ This validates the generated specification (from `sbt routesToYamlOas`) against 
 ### Publishing
 Generating the OAS does not automatically publish it. If the new changes warrant publication e.g. endpoints introduced/deprecated, the validated OAS needs to replace the application.yaml file in 'resources/public/api/conf/1.0'. The API Platform will detect the new changes and process the file for publication on Developer Hub.
 
+## UKTR Validation Overview
+This section of the document contains detailed test scenarios for submitting a UK Tax Return (Uktr) to the `/RESTAdapter/PLR/UKTaxReturn` endpoint. Each test includes a description, a curl example, and a key reference table.
+
+## Key Description
+The following table summarises the test cases:
+
+| **Case**                     | **Field**                 | **Issue**                                        | **Expected Result**             |
+|------------------------------|---------------------------|--------------------------------------------------|---------------------------------|
+| **Valid Input (Happy Path)** | All                       | All fields valid and provided.                   | `201 Created`                   |
+| **Missing Field**            | `electionDTTSingleMember` | Field is missing entirely.                       | `400 Bad Request` + Field Error |
+| **Null Field**               | `electionDTTSingleMember` | Field is explicitly set to `null`.               | `400 Bad Request` + Field Error |
+| **Negative Integer**         | `numberSubGroupDTT`       | Field has a negative value.                      | `400 Bad Request` + Field Error |
+| **Empty Array**              | `liableEntities`          | Array is empty.                                  | `400 Bad Request` + Field Error |
+| **Negative BigDecimal**      | `totalLiability`          | Field has a negative decimal value.              | `400 Bad Request` + Field Error |
+| **Empty String**             | `ukChargeableEntityName`  | Field is an empty string for one `liableEntity`. | `400 Bad Request` + Field Error |
+
+---
+
+## Test Scenarios and Curl Commands
+
+### 1. Valid Input (Happy Path)
+**Description:**  
+All fields are valid. Expected result is `201 Created`.
+
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": true,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Entity 1",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+### 2. Missing Field
+**Description:**  
+The field `electionDTTSingleMember` is missing entirely. Expected result is `400 Bad Request`.
+
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Entity 1",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+### 3. Null Field
+**Description:**  
+The field `electionDTTSingleMember` is explicitly set to `null`. Expected result is `400 Bad Request`.
+
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": null,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Entity 1",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+
+### Scenario 4: Invalid Input - Negative Integer
+
+**Description:**  
+The field `numberSubGroupDTT` has a negative value, which is not valid. This scenario tests validation for non-negative integer inputs.
+
+**Curl Example:**
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": true,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": -1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Entity 1",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+### Scenario 5: Invalid Input - Empty Liable Entities
+
+**Description:**  
+The `liableEntities` array is empty, violating the requirement for at least one entity.
+
+**Curl Example:**
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": true,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": []
+    }
+  }'
+```
+
+---
+
+### Scenario 6: Invalid Input - Negative BigDecimal
+
+**Description:**  
+The field `totalLiability` has a negative value, which is not valid.
+
+**Curl Example:**
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": true,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": -10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Entity 1",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+### Scenario 7: Invalid Input - Empty `ukChargeableEntityName`
+
+**Description:**  
+The field `ukChargeableEntityName` in the `liableEntities` array is empty.
+
+**Curl Example:**
+```bash
+curl -X POST \
+  http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": true,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 2,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.50,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 2000.75,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 1500.25,
+          "amountOwedIIR": 1200.75,
+          "amountOwedUTPR": 800.00
+        }
+      ]
+    }
+  }'
+```
+
+---
+
+## Key Table for Scenarios 4 to 7
+
+| Scenario | Field/Description                       | Example Value |
+|----------|-----------------------------------------|---------------|
+| 4        | `numberSubGroupDTT` (Negative Integer)  | `-1`          |
+| 5        | `liableEntities` (Empty Array)          | `[]`          |
+| 6        | `totalLiability` (Negative BigDecimal)  | `-10000.99`   |
+| 7        | `ukChargeableEntityName` (Empty String) | `""`          |
+
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

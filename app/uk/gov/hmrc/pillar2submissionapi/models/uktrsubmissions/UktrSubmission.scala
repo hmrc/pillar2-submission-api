@@ -30,9 +30,37 @@ trait UktrSubmission {
 
 object UktrSubmission {
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
-    if ((json \ "liabilities" \ "returnType").isEmpty) {
+    if ((json \ "liabilities" \ "returnType").isDefined) {
+      json.validate[UktrSubmissionNilReturn]
+    } else if ((json \ "liabilities" \ "electionDTTSingleMember").isDefined) {
       json.validate[UktrSubmissionData]
     } else {
-      json.validate[UktrSubmissionNilReturn]
+      // Handle unknown submission types gracefully
+      val accountingPeriodFrom = (json \ "accountingPeriodFrom").asOpt[LocalDate]
+      val accountingPeriodTo   = (json \ "accountingPeriodTo").asOpt[LocalDate]
+      val obligationMTT        = (json \ "obligationMTT").asOpt[Boolean]
+      val electionUKGAAP       = (json \ "electionUKGAAP").asOpt[Boolean]
+
+      (accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP) match {
+        case (Some(from), Some(to), Some(mtt), Some(gaap)) =>
+          JsSuccess(new UktrSubmission {
+            override val accountingPeriodFrom: LocalDate = from
+            override val accountingPeriodTo:   LocalDate = to
+            override val obligationMTT:        Boolean   = mtt
+            override val electionUKGAAP:       Boolean   = gaap
+            override val liabilities:          Liability = null // Unknown liabilities
+          })
+        case _ =>
+          JsError("Invalid JSON format: missing required fields")
+      }
     }
 }
+
+//object UktrSubmission {
+//  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
+//    if ((json \ "liabilities" \ "returnType").isEmpty) {
+//      json.validate[UktrSubmissionData]
+//    } else {
+//      json.validate[UktrSubmissionNilReturn]
+//    }
+//}
