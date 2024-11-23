@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.validation
 
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity
 import cats.data.ValidatedNec
 import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity
 
 object LiableEntityValidator extends Validator[LiableEntity] {
   override def validate(obj: LiableEntity): ValidatedNec[ValidationError, LiableEntity] =
@@ -32,12 +32,11 @@ object LiableEntityValidator extends Validator[LiableEntity] {
     ).mapN((_, _, _, _, _, _) => obj)
 
   private def validateNonEmptyString(value: String, fieldName: String): ValidatedNec[ValidationError, String] =
-    if (value == null || value.trim.isEmpty)
+    if (value.trim.isEmpty)
       ValidationError(fieldName, s"$fieldName is missing or empty").invalidNec
     else value.validNec
 
   private def validatePositiveBigDecimal(value: BigDecimal, fieldName: String): ValidatedNec[ValidationError, BigDecimal] =
-    if (value == null || value <= 0)
-      ValidationError(fieldName, s"$fieldName must be a positive number").invalidNec
+    if (value <= 0) ValidationError(fieldName, s"$fieldName must be a positive number").invalidNec
     else value.validNec
 }

@@ -144,30 +144,40 @@ curl -X POST \
   http://localhost:10054/RESTAdapter/PLR/UKTaxReturn \
   -H "Content-Type: application/json" \
   -d '{
-    "accountingPeriodFrom": "2024-08-14",
-    "accountingPeriodTo": "2024-12-14",
-    "obligationMTT": true,
-    "electionUKGAAP": true,
-    "liabilities": {
-      "electionUTPRSingleMember": false,
-      "numberSubGroupDTT": 1,
-      "numberSubGroupUTPR": 2,
-      "totalLiability": 10000.99,
-      "totalLiabilityDTT": 5000.50,
-      "totalLiabilityIIR": 4000.00,
-      "totalLiabilityUTPR": 2000.75,
-      "liableEntities": [
-        {
-          "ukChargeableEntityName": "Entity 1",
-          "idType": "CRN",
-          "idValue": "12345678",
-          "amountOwedDTT": 1500.25,
-          "amountOwedIIR": 1200.75,
-          "amountOwedUTPR": 800.00
-        }
-      ]
-    }
-  }'
+  "accountingPeriodFrom": "2024-08-14",
+  "accountingPeriodTo": "2024-12-14",
+  "obligationMTT": true,
+  "electionUKGAAP": true,
+  "liabilities": {
+    "electionUTPRSingleMember": false,
+    "numberSubGroupDTT": 1,
+    "numberSubGroupUTPR": 2,
+    "totalLiability": 10000.99,
+    "totalLiabilityDTT": 5000.50,
+    "totalLiabilityIIR": 4000.00,
+    "totalLiabilityUTPR": 2000.75,
+    "liableEntities": [
+      {
+        "ukChargeableEntityName": "Entity 1",
+        "idType": "CRN",
+        "idValue": "12345678",
+        "amountOwedDTT": 1500.25,
+        "amountOwedIIR": 1200.75,
+        "amountOwedUTPR": 800.00
+      }
+    ]
+  }
+}'
+```
+
+```
+Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "Path: /liabilities/electionDTTSingleMember, Errors: error.path.missing"
+  ]
+}
 ```
 
 ---
@@ -206,6 +216,16 @@ curl -X POST \
       ]
     }
   }'
+```
+
+```  
+  Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "Path: /liabilities/electionDTTSingleMember, Errors: error.expected.jsboolean"
+  ]
+}
 ```
 
 ---
@@ -248,6 +268,15 @@ curl -X POST \
     }
   }'
 ```
+```
+  Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "numberSubGroupDTT: numberSubGroupDTT must be non-negative"
+  ]
+}
+```
 
 ---
 
@@ -278,6 +307,16 @@ curl -X POST \
       "liableEntities": []
     }
   }'
+```
+```
+  Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "liableEntities: liableEntities must not be empty"
+  ]
+}
+
 ```
 
 ---
@@ -319,6 +358,15 @@ curl -X POST \
     }
   }'
 ```
+```
+  Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "totalLiability: totalLiability must be a positive number"
+  ]
+}
+```
 
 ---
 
@@ -358,6 +406,16 @@ curl -X POST \
       ]
     }
   }'
+```
+```
+  Expected Response:
+{
+  "message": "Invalid JSON format",
+  "details": [
+    "liableEntities[0].ukChargeableEntityName: ukChargeableEntityName is missing or empty"
+  ]
+}
+
 ```
 
 ---

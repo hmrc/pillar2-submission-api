@@ -29,38 +29,69 @@ trait UktrSubmission {
 }
 
 object UktrSubmission {
-  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
-    if ((json \ "liabilities" \ "returnType").isDefined) {
-      json.validate[UktrSubmissionNilReturn]
-    } else if ((json \ "liabilities" \ "electionDTTSingleMember").isDefined) {
-      json.validate[UktrSubmissionData]
-    } else {
-      // Handle unknown submission types gracefully
-      val accountingPeriodFrom = (json \ "accountingPeriodFrom").asOpt[LocalDate]
-      val accountingPeriodTo   = (json \ "accountingPeriodTo").asOpt[LocalDate]
-      val obligationMTT        = (json \ "obligationMTT").asOpt[Boolean]
-      val electionUKGAAP       = (json \ "electionUKGAAP").asOpt[Boolean]
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads { json =>
+    val requiredTopLevelFields = Seq(
+      "accountingPeriodFrom",
+      "accountingPeriodTo",
+      "obligationMTT",
+      "electionUKGAAP",
+      "liabilities"
+    )
 
-      (accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP) match {
-        case (Some(from), Some(to), Some(mtt), Some(gaap)) =>
-          JsSuccess(new UktrSubmission {
-            override val accountingPeriodFrom: LocalDate = from
-            override val accountingPeriodTo:   LocalDate = to
-            override val obligationMTT:        Boolean   = mtt
-            override val electionUKGAAP:       Boolean   = gaap
-            override val liabilities:          Liability = null // Unknown liabilities
-          })
-        case _ =>
-          JsError("Invalid JSON format: missing required fields")
+//    val requiredLiabilitiesFields = Seq(
+//      "electionDTTSingleMember",
+//      "electionUTPRSingleMember",
+//      "numberSubGroupDTT",
+//      "numberSubGroupUTPR",
+//      "totalLiabilityDTT",
+//      "totalLiabilityIIR",
+//      "totalLiabilityUTPR",
+//      "liableEntities"
+//    )
+
+    val requiredLiabilitiesFields = if ((json \ "liabilities" \ "returnType").isDefined) {
+      Seq("returnType")
+    } else {
+      Seq(
+        "electionDTTSingleMember",
+        "electionUTPRSingleMember",
+        "numberSubGroupDTT",
+        "numberSubGroupUTPR",
+        "totalLiabilityDTT",
+        "totalLiabilityIIR",
+        "totalLiabilityUTPR",
+        "liableEntities"
+      )
+    }
+
+    // Validate top-level fields
+    val missingTopLevelFields = requiredTopLevelFields
+      .filterNot(field => (json \ field).isDefined)
+      .map(field => (JsPath \ field, Seq(JsonValidationError("error.path.missing"))))
+
+    if (missingTopLevelFields.nonEmpty) {
+      JsError(missingTopLevelFields)
+    } else {
+      (json \ "liabilities").validate[JsObject] match {
+        case JsSuccess(liabilities, _) =>
+          // Validate liabilities fields
+          val missingLiabilitiesFields = requiredLiabilitiesFields
+            .filterNot(field => (liabilities \ field).isDefined)
+            .map(field => (JsPath \ "liabilities" \ field, Seq(JsonValidationError("error.path.missing"))))
+
+          if (missingLiabilitiesFields.nonEmpty) {
+            JsError(missingLiabilitiesFields)
+          } else if ((liabilities \ "returnType").isDefined) {
+            json.validate[UktrSubmissionNilReturn]
+          } else if ((liabilities \ "electionDTTSingleMember").isDefined) {
+            json.validate[UktrSubmissionData]
+          } else {
+            JsError(Seq((JsPath \ "liabilities", Seq(JsonValidationError("Unknown submission type")))))
+          }
+
+        case JsError(errors) =>
+          JsError(Seq((JsPath \ "liabilities", Seq(JsonValidationError("error.path.missing")))) ++ errors)
       }
     }
+  }
 }
-
-//object UktrSubmission {
-//  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
-//    if ((json \ "liabilities" \ "returnType").isEmpty) {
-//      json.validate[UktrSubmissionData]
-//    } else {
-//      json.validate[UktrSubmissionNilReturn]
-//    }
-//}

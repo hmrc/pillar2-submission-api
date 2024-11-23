@@ -16,15 +16,26 @@
 
 package uk.gov.hmrc.pillar2submissionapi.validation
 
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityNilReturn, ReturnType}
 import cats.data.ValidatedNec
 import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityNilReturn, ReturnType}
 
 object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
-  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
+  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] = {
+    println(s"Validating LiabilityNilReturn: ${obj.returnType}") // Debug log
     validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
+  }
 
   private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
     if (validValues.contains(value)) value.validNec
     else ValidationError(fieldName, s"$fieldName has an invalid value").invalidNec
 }
+
+//object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
+//  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
+//    validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
+//
+//  private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
+//    if (validValues.contains(value)) value.validNec
+//    else ValidationError(fieldName, s"$fieldName has an invalid value").invalidNec
+//}

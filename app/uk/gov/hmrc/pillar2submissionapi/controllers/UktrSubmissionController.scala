@@ -37,15 +37,27 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
             submission match {
               case data: UktrSubmissionData =>
                 LiabilityDataValidator.validate(data.liabilities) match {
-                  case Validated.Valid(_) => Created
+                  case Validated.Valid(_) =>
+                    Created(Json.obj("status" -> "Created"))
                   case Validated.Invalid(errors) =>
-                    BadRequest(Json.obj("errors" -> errors.toList.map(e => s"${e.field}: ${e.error}")))
+                    BadRequest(
+                      Json.obj(
+                        "message" -> "Invalid JSON format",
+                        "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
+                      )
+                    )
                 }
               case nilReturn: UktrSubmissionNilReturn =>
                 LiabilityNilReturnValidator.validate(nilReturn.liabilities) match {
-                  case Validated.Valid(_) => Created
+                  case Validated.Valid(_) =>
+                    Created(Json.obj("status" -> "Created"))
                   case Validated.Invalid(errors) =>
-                    BadRequest(Json.obj("errors" -> errors.toList.map(e => s"${e.field}: ${e.error}")))
+                    BadRequest(
+                      Json.obj(
+                        "message" -> "Invalid JSON format",
+                        "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
+                      )
+                    )
                 }
               case _ =>
                 BadRequest(Json.obj("message" -> "Unknown submission type"))
@@ -57,12 +69,7 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
             BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
         }
       case None =>
-        request.body.asText match {
-          case Some(_) =>
-            BadRequest(Json.obj("message" -> "Invalid JSON format")) // Treat malformed JSON as invalid
-          case None =>
-            BadRequest(Json.obj("message" -> "No request body"))
-        }
+        BadRequest(Json.obj("message" -> "Invalid JSON format"))
     }
   }
 }

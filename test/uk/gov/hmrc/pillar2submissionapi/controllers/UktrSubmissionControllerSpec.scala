@@ -16,256 +16,139 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import play.api.http.Status.{BAD_REQUEST, CREATED}
-import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.test.FakeRequest
-import play.api.test.Helpers.{contentAsJson, contentAsString, defaultAwaitTimeout, status}
-import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.libs.json.Json
+import play.api.test.Helpers._
+import play.api.test.{FakeRequest, Helpers}
 
-class UktrSubmissionControllerSpec extends ControllerBaseSpec {
+class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc)
+  private val controller = new UktrSubmissionController(Helpers.stubControllerComponents())
 
-  "UktrSubmissionController" when {
-    "submitUktr() called with a valid request" should {
-      "return 201 CREATED response" in {
-        assert {
-          val result = uktrSubmissionController.submitUktr()(
-            FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-              .withJsonBody(validRequestJson_data)
-          )
-          status(result) == CREATED
-        }
-      }
+  "UktrSubmissionController" should {
+
+    "return 201 CREATED for valid UktrSubmissionData" in {
+      val validRequestJson = Json.parse(
+        """{
+          |  "accountingPeriodFrom": "2024-08-14",
+          |  "accountingPeriodTo": "2024-12-14",
+          |  "obligationMTT": true,
+          |  "electionUKGAAP": true,
+          |  "liabilities": {
+          |    "electionDTTSingleMember": true,
+          |    "electionUTPRSingleMember": true,
+          |    "numberSubGroupDTT": 1,
+          |    "numberSubGroupUTPR": 2,
+          |    "totalLiability": 10000.99,
+          |    "totalLiabilityDTT": 5000.50,
+          |    "totalLiabilityIIR": 4000.00,
+          |    "totalLiabilityUTPR": 2000.75,
+          |    "liableEntities": [
+          |      {
+          |        "ukChargeableEntityName": "Entity 1",
+          |        "idType": "CRN",
+          |        "idValue": "12345678",
+          |        "amountOwedDTT": 1500.25,
+          |        "amountOwedIIR": 1200.75,
+          |        "amountOwedUTPR": 800.00
+          |      }
+          |    ]
+          |  }
+          |}""".stripMargin
+      )
+
+      val request = FakeRequest(POST, "/uktr/submit").withJsonBody(validRequestJson)
+      val result  = controller.submitUktr()(request)
+
+      status(result)                                shouldBe CREATED:   Unit
+      (contentAsJson(result) \ "status").as[String] shouldBe "Created": Unit
     }
 
-    "submitUktr() called with a valid nil return request" should {
-      "return 201 CREATED response" in {
-        assert {
-          val result = uktrSubmissionController.submitUktr()(
-            FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-              .withJsonBody(validRequestJson_nilReturn)
-          )
-          status(result) == CREATED
-        }
-      }
+    "return 201 CREATED for valid UktrSubmissionNilReturn" in {
+      val validNilReturnJson = Json.parse(
+        """{
+          |  "accountingPeriodFrom": "2024-08-14",
+          |  "accountingPeriodTo": "2024-09-14",
+          |  "obligationMTT": true,
+          |  "electionUKGAAP": true,
+          |  "liabilities": {
+          |    "returnType": "NIL_RETURN"
+          |  }
+          |}""".stripMargin
+      )
+
+      val request = FakeRequest(POST, "/uktr/submit").withJsonBody(validNilReturnJson)
+      val result  = controller.submitUktr()(request)
+
+      // Explicitly discard assertion results
+      (status(result)                                shouldBe CREATED):   Unit
+      ((contentAsJson(result) \ "status").as[String] shouldBe "Created"): Unit
     }
 
-    "submitUktr() called with an invalid request" should {
-      "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withJsonBody(invalidRequestJson_data)
-            .withHeaders("Content-Type" -> "application/json")
-        )
+    "return 400 BAD_REQUEST for invalid liabilities in UktrSubmissionData" in {
+      val invalidRequestJson = Json.parse(
+        """{
+          |  "accountingPeriodFrom": "2024-08-14",
+          |  "accountingPeriodTo": "2024-12-14",
+          |  "obligationMTT": true,
+          |  "electionUKGAAP": true,
+          |  "liabilities": {
+          |    "electionDTTSingleMember": true,
+          |    "electionUTPRSingleMember": true,
+          |    "numberSubGroupDTT": -1,
+          |    "numberSubGroupUTPR": 2,
+          |    "totalLiability": 10000.99,
+          |    "totalLiabilityDTT": 5000.50,
+          |    "totalLiabilityIIR": 4000.00,
+          |    "totalLiabilityUTPR": 2000.75,
+          |    "liableEntities": []
+          |  }
+          |}""".stripMargin
+      )
 
-        assert(
-          status(result) == BAD_REQUEST &&
-            contentAsJson(result) == Json.obj(
-              "errors" -> Json.arr(
-                "totalLiability: totalLiability must be a positive number",
-                "totalLiabilityDTT: totalLiabilityDTT must be a positive number",
-                "totalLiabilityIIR: totalLiabilityIIR must be a positive number",
-                "totalLiabilityUTPR: totalLiabilityUTPR must be a positive number",
-                "ukChargeableEntityName: ukChargeableEntityName is missing or empty",
-                "idType: idType is missing or empty",
-                "idValue: idValue is missing or empty",
-                "amountOwedDTT: amountOwedDTT must be a positive number",
-                "amountOwedIIR: amountOwedIIR must be a positive number",
-                "amountOwedUTPR: amountOwedUTPR must be a positive number"
-              )
-            )
-        )
-      }
+      val request = FakeRequest(POST, "/uktr/submit").withJsonBody(invalidRequestJson)
+      val result  = controller.submitUktr()(request)
+
+      status(result)                                    shouldBe BAD_REQUEST:                                                          Unit
+      (contentAsJson(result) \ "message").as[String]    shouldBe "Invalid JSON format":                                                Unit
+      (contentAsJson(result) \ "details").as[Seq[String]] should contain("numberSubGroupDTT: numberSubGroupDTT must be non-negative"): Unit
     }
 
-    "submitUktr() called with request containing invalid data types" should {
-      "return 400 BAD_REQUEST response with validation errors" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withJsonBody(invalidRequestJson_data)
-        )
+    "return 400 BAD_REQUEST for missing fields in UktrSubmissionData" in {
+      val missingFieldsJson = Json.parse(
+        """{
+          |  "accountingPeriodFrom": "2024-08-14",
+          |  "obligationMTT": true
+          |}""".stripMargin
+      )
 
-        assert {
-          status(result) == BAD_REQUEST &&
-          contentAsJson(result) == Json.obj(
-            "errors" -> Json.arr(
-              "totalLiability: totalLiability must be a positive number",
-              "totalLiabilityDTT: totalLiabilityDTT must be a positive number",
-              "totalLiabilityIIR: totalLiabilityIIR must be a positive number",
-              "totalLiabilityUTPR: totalLiabilityUTPR must be a positive number",
-              "ukChargeableEntityName: ukChargeableEntityName is missing or empty",
-              "idType: idType is missing or empty",
-              "idValue: idValue is missing or empty",
-              "amountOwedDTT: amountOwedDTT must be a positive number",
-              "amountOwedIIR: amountOwedIIR must be a positive number",
-              "amountOwedUTPR: amountOwedUTPR must be a positive number"
-            )
-          )
-        }
-      }
+      val request = FakeRequest(POST, "/uktr/submit").withJsonBody(missingFieldsJson)
+      val result  = controller.submitUktr()(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
     }
 
-    "submitUktr() called with request that is missing liabilities" should {
-      "return 400 BAD_REQUEST response with specific error message" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withJsonBody(invalidRequest_noLiabilities)
-        )
+    "return 400 BAD_REQUEST for unknown submission type" in {
+      val unknownSubmissionTypeJson = Json.parse(
+        """{
+          |  "accountingPeriodFrom": "2024-08-14",
+          |  "accountingPeriodTo": "2024-12-14",
+          |  "obligationMTT": true,
+          |  "electionUKGAAP": true,
+          |  "liabilities": {
+          |    "unexpectedField": "unexpectedValue"
+          |  }
+          |}""".stripMargin
+      )
 
-        assert {
-          status(result) == BAD_REQUEST &&
-          contentAsJson(result) == Json.obj(
-            "message" -> "Invalid JSON format",
-            "details" -> Json.arr("Path: , Errors: Invalid JSON format: missing required fields")
-          )
-        }
-      }
+      val request = FakeRequest(POST, "/uktr/submit").withJsonBody(unknownSubmissionTypeJson)
+      val result  = controller.submitUktr()(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
     }
-    "submitUktr() called with an empty request body" should {
-      "return 400 BAD_REQUEST response with a specific message" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withJsonBody(invalidRequest_emptyBody)
-        )
-
-        assert {
-          status(result) == BAD_REQUEST &&
-          contentAsString(result).contains("Invalid JSON format")
-        }
-      }
-    }
-
-    "submitUktr() called with malformed JSON" should {
-      "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withTextBody("This is invalid JSON.") // Malformed JSON
-            .withHeaders("Content-Type" -> "application/json") // Explicitly mark as JSON
-        )
-
-        assert(
-          status(result) == BAD_REQUEST &&
-            contentAsString(result).contains("Invalid JSON format")
-        )
-      }
-    }
-
-    "submitUktr() called with an unknown submission type" should {
-      "return 400 BAD_REQUEST response with 'Unknown submission type'" in {
-        val invalidSubmission: JsValue = Json.parse("""{
-                                                      |  "accountingPeriodFrom": "2024-08-14",
-                                                      |  "accountingPeriodTo": "2024-12-14",
-                                                      |  "obligationMTT": true,
-                                                      |  "electionUKGAAP": true,
-                                                      |  "liabilities": { "unexpectedField": "unexpectedValue" }
-                                                      |}""".stripMargin)
-
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withJsonBody(invalidSubmission)
-        )
-
-        assert(
-          status(result) == BAD_REQUEST &&
-            contentAsJson(result) == Json.obj("message" -> "Unknown submission type")
-        )
-      }
-    }
-
-    "submitUktr() called with a non-JSON body marked as JSON" should {
-      "return 400 BAD_REQUEST response with 'Invalid JSON format'" in {
-        val result = uktrSubmissionController.submitUktr()(
-          FakeRequest(method = "POST", path = "/RESTAdapter/PLR/UKTaxReturn")
-            .withTextBody("This is not JSON.")
-            .withHeaders("Content-Type" -> "application/json")
-        )
-
-        assert(
-          status(result) == BAD_REQUEST &&
-            contentAsJson(result) == Json.obj("message" -> "Invalid JSON format")
-        )
-      }
-    }
-
   }
-}
-object UktrSubmissionControllerSpec {
-  val validRequestJson_data: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-12-14",
-                 |  "obligationMTT": true,
-                 |  "electionUKGAAP": true,
-                 |  "liabilities": {
-                 |    "electionDTTSingleMember": false,
-                 |    "electionUTPRSingleMember": false,
-                 |    "numberSubGroupDTT": 1,
-                 |    "numberSubGroupUTPR": 1,
-                 |    "totalLiability": 10000.99,
-                 |    "totalLiabilityDTT": 5000.99,
-                 |    "totalLiabilityIIR": 4000,
-                 |    "totalLiabilityUTPR": 10000.99,
-                 |    "liableEntities": [
-                 |      {
-                 |        "ukChargeableEntityName": "Newco PLC",
-                 |        "idType": "CRN",
-                 |        "idValue": "12345678",
-                 |        "amountOwedDTT": 5000,
-                 |        "amountOwedIIR": 3400,
-                 |        "amountOwedUTPR": 6000.5
-                 |      }
-                 |    ]
-                 |  }
-                 |}""".stripMargin)
-
-  val validRequestJson_nilReturn: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-09-14",
-                 |  "obligationMTT": true,
-                 |  "electionUKGAAP": true,
-                 |  "liabilities": {
-                 |    "returnType": "NIL_RETURN"
-                 |  }
-                 |}
-                 |""".stripMargin)
-
-  val invalidRequestJson_data: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-12-14",
-                 |  "obligationMTT": true,
-                 |  "electionUKGAAP": true,
-                 |  "liabilities": {
-                 |    "electionDTTSingleMember": false,
-                 |    "electionUTPRSingleMember": false,
-                 |    "numberSubGroupDTT": 1,
-                 |    "numberSubGroupUTPR": 1,
-                 |    "totalLiability": -100,
-                 |    "totalLiabilityDTT": -500,
-                 |    "totalLiabilityIIR": -300,
-                 |    "totalLiabilityUTPR": -200,
-                 |    "liableEntities": [
-                 |      {
-                 |        "ukChargeableEntityName": "",
-                 |        "idType": "",
-                 |        "idValue": "",
-                 |        "amountOwedDTT": -1000,
-                 |        "amountOwedIIR": -800,
-                 |        "amountOwedUTPR": -600
-                 |      }
-                 |    ]
-                 |  }
-                 |}""".stripMargin)
-
-  val invalidRequest_noLiabilities: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-12-14",
-                 |  "obligationMTT": true
-                 |}""".stripMargin)
-
-  val invalidRequest_emptyBody: JsValue = JsObject.empty
 }

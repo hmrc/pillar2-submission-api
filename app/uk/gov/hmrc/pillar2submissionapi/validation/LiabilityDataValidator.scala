@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.validation
 
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import cats.data.ValidatedNec
 import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
 case class ValidationError(field: String, error: String)
 
@@ -27,8 +27,8 @@ trait Validator[A] {
 }
 
 object LiabilityDataValidator extends Validator[LiabilityData] {
-  override def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] = {
-    val result = (
+  override def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] =
+    (
       validateBoolean(obj.electionDTTSingleMember, "electionDTTSingleMember"),
       validateBoolean(obj.electionUTPRSingleMember, "electionUTPRSingleMember"),
       validateNonNegativeInt(obj.numberSubGroupDTT, "numberSubGroupDTT"),
@@ -39,12 +39,10 @@ object LiabilityDataValidator extends Validator[LiabilityData] {
       validatePositiveBigDecimal(obj.totalLiabilityUTPR, "totalLiabilityUTPR"),
       validateLiableEntities(obj.liableEntities)
     ).mapN((_, _, _, _, _, _, _, _, _) => obj)
-    result
-  }
 
   private def validateBoolean(value: Boolean, fieldName: String): ValidatedNec[ValidationError, Boolean] =
-    if (Option(value).isDefined) value.validNec
-    else ValidationError(fieldName, s"$fieldName is missing").invalidNec
+    if (value || !value) value.validNec // Booleans are inherently valid as true/false
+    else ValidationError(fieldName, s"$fieldName must explicitly be true or false").invalidNec
 
   private def validateNonNegativeInt(value: Int, fieldName: String): ValidatedNec[ValidationError, Int] =
     if (value < 0) ValidationError(fieldName, s"$fieldName must be non-negative").invalidNec
@@ -58,10 +56,10 @@ object LiabilityDataValidator extends Validator[LiabilityData] {
   private def validateLiableEntities(
     entities: Seq[LiableEntity]
   ): ValidatedNec[ValidationError, Seq[LiableEntity]] =
-    if (entities == null || entities.isEmpty)
+    if (entities.isEmpty)
       ValidationError("liableEntities", "liableEntities must not be empty").invalidNec
     else
-      entities
-        .map(LiableEntityValidator.validate) // Validate each entity
-        .sequence // Combine all validations
+      entities.zipWithIndex.map { case (entity, index) =>
+        LiableEntityValidator.validate(entity).leftMap(_.map(e => e.copy(field = s"liableEntities[$index].${e.field}")))
+      }.sequence
 }
