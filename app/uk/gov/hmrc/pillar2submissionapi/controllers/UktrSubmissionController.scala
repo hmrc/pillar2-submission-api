@@ -63,10 +63,18 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
                 BadRequest(Json.obj("message" -> "Unknown submission type"))
             }
           case JsError(errors) =>
-            val errorDetails = errors.map { case (path, validationErrors) =>
-              s"Path: $path, Errors: ${validationErrors.map(_.message).mkString(", ")}"
+            val unknownTypeError = errors.exists { case (_, validationErrors) =>
+              validationErrors.exists(_.message == "Unknown submission type")
             }
-            BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
+
+            if (unknownTypeError) {
+              BadRequest(Json.obj("message" -> "Unknown submission type"))
+            } else {
+              val errorDetails = errors.map { case (path, validationErrors) =>
+                s"Path: $path, Errors: ${validationErrors.map(_.message).mkString(", ")}"
+              }
+              BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
+            }
         }
       case None =>
         BadRequest(Json.obj("message" -> "Invalid JSON format"))

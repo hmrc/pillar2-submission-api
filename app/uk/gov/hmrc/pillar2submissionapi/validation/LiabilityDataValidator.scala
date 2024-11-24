@@ -41,7 +41,7 @@ object LiabilityDataValidator extends Validator[LiabilityData] {
     ).mapN((_, _, _, _, _, _, _, _, _) => obj)
 
   private def validateBoolean(value: Boolean, fieldName: String): ValidatedNec[ValidationError, Boolean] =
-    if (value || !value) value.validNec // Booleans are inherently valid as true/false
+    if (value || !value) value.validNec
     else ValidationError(fieldName, s"$fieldName must explicitly be true or false").invalidNec
 
   private def validateNonNegativeInt(value: Int, fieldName: String): ValidatedNec[ValidationError, Int] =

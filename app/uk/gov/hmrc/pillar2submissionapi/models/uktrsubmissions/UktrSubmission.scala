@@ -38,33 +38,6 @@ object UktrSubmission {
       "liabilities"
     )
 
-//    val requiredLiabilitiesFields = Seq(
-//      "electionDTTSingleMember",
-//      "electionUTPRSingleMember",
-//      "numberSubGroupDTT",
-//      "numberSubGroupUTPR",
-//      "totalLiabilityDTT",
-//      "totalLiabilityIIR",
-//      "totalLiabilityUTPR",
-//      "liableEntities"
-//    )
-
-    val requiredLiabilitiesFields = if ((json \ "liabilities" \ "returnType").isDefined) {
-      Seq("returnType")
-    } else {
-      Seq(
-        "electionDTTSingleMember",
-        "electionUTPRSingleMember",
-        "numberSubGroupDTT",
-        "numberSubGroupUTPR",
-        "totalLiabilityDTT",
-        "totalLiabilityIIR",
-        "totalLiabilityUTPR",
-        "liableEntities"
-      )
-    }
-
-    // Validate top-level fields
     val missingTopLevelFields = requiredTopLevelFields
       .filterNot(field => (json \ field).isDefined)
       .map(field => (JsPath \ field, Seq(JsonValidationError("error.path.missing"))))
@@ -74,14 +47,7 @@ object UktrSubmission {
     } else {
       (json \ "liabilities").validate[JsObject] match {
         case JsSuccess(liabilities, _) =>
-          // Validate liabilities fields
-          val missingLiabilitiesFields = requiredLiabilitiesFields
-            .filterNot(field => (liabilities \ field).isDefined)
-            .map(field => (JsPath \ "liabilities" \ field, Seq(JsonValidationError("error.path.missing"))))
-
-          if (missingLiabilitiesFields.nonEmpty) {
-            JsError(missingLiabilitiesFields)
-          } else if ((liabilities \ "returnType").isDefined) {
+          if ((liabilities \ "returnType").isDefined) {
             json.validate[UktrSubmissionNilReturn]
           } else if ((liabilities \ "electionDTTSingleMember").isDefined) {
             json.validate[UktrSubmissionData]
