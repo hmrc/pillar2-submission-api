@@ -14,6 +14,21 @@
  * limitations under the License.
  */
 
+//package uk.gov.hmrc.pillar2submissionapi.validation
+//
+//import cats.data.ValidatedNec
+//import cats.implicits._
+//import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityNilReturn, ReturnType}
+//
+//object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
+//  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
+//    validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
+//
+//  private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
+//    if (validValues.contains(value)) value.validNec
+//    else ValidationError(fieldName, s"$fieldName has an invalid value").invalidNec
+//}
+
 package uk.gov.hmrc.pillar2submissionapi.validation
 
 import cats.data.ValidatedNec
@@ -22,9 +37,13 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityNilRetu
 
 object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
   override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
-    validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
+    validateEnum(obj.returnType.entryName, "returnType").map(_ => obj) // Use entryName here
 
-  private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
-    if (validValues.contains(value)) value.validNec
-    else ValidationError(fieldName, s"$fieldName has an invalid value").invalidNec
+  // Using enumeratum's withNameOption to safely handle invalid enum values
+  private def validateEnum(value: String, fieldName: String): ValidatedNec[ValidationError, String] =
+    // Check if the value is a valid enum option
+    ReturnType.withNameOption(value) match {
+      case Some(_) => value.validNec // Valid value
+      case None    => ValidationError(fieldName, s"$fieldName has an invalid value: $value").invalidNec
+    }
 }

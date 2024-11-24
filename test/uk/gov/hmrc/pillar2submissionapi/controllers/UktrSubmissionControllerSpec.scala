@@ -339,5 +339,95 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       details should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
     }
 
+    "return BadRequest when UktrSubmissionNilReturn has validation errors" in {
+      val invalidNilReturnJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> false,
+        "electionUKGAAP"       -> true,
+        "liabilities" -> Json.obj(
+          "returnType" -> "INVALID_RETURN_TYPE" // Invalid enum value
+        )
+      )
+
+      val request = FakeRequest(POST, "/submitUktr")
+        .withJsonBody(invalidNilReturnJson)
+
+      val result = controller.submitUktr.apply(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+      val details = (contentAsJson(result) \ "details").as[Seq[String]]
+      details should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
+    }
+
+    "return BadRequest when UktrSubmissionData has validation errors" in {
+      val invalidSubmissionData = UktrSubmissionData(
+        accountingPeriodFrom = LocalDate.parse("2023-01-01"),
+        accountingPeriodTo = LocalDate.parse("2023-12-31"),
+        obligationMTT = true,
+        electionUKGAAP = false,
+        liabilities = LiabilityData(
+          electionDTTSingleMember = true,
+          electionUTPRSingleMember = false,
+          numberSubGroupDTT = -1, // Invalid: negative
+          numberSubGroupUTPR = 3,
+          totalLiability = BigDecimal(-1000.50),
+          totalLiabilityDTT = BigDecimal(0), // Invalid: non-positive
+          totalLiabilityIIR = BigDecimal(0), // Invalid: non-positive
+          totalLiabilityUTPR = BigDecimal(249.50),
+          liableEntities = Seq.empty // Invalid: empty
+        )
+      )
+
+      val request = FakeRequest(POST, "/submitUktr")
+        .withJsonBody(Json.toJson(invalidSubmissionData))
+
+      val result = controller.submitUktr.apply(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+      val details = (contentAsJson(result) \ "details").as[Seq[String]]
+
+      details should contain allElementsOf Seq(
+        "numberSubGroupDTT: numberSubGroupDTT must be non-negative",
+        "totalLiability: totalLiability must be a positive number",
+        "totalLiabilityDTT: totalLiabilityDTT must be a positive number",
+        "totalLiabilityIIR: totalLiabilityIIR must be a positive number",
+        "liableEntities: liableEntities must not be empty"
+      ): Unit
+    }
+
+    "return BadRequest for invalid UktrSubmissionNilReturn submission" in {
+      // Manually create a test case with an invalid ReturnType enum value (e.g., not defined in the enum)
+      val invalidReturnType = "INVALID_RETURN_TYPE" // A string that is not part of the enum
+
+      // Manually inject an invalid returnType in the request
+      val invalidNilReturnJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> false,
+        "electionUKGAAP"       -> true,
+        "liabilities" -> Json.obj(
+          "returnType" -> invalidReturnType // Invalid enum value
+        )
+      )
+
+      val request = FakeRequest(POST, "/submitUktr")
+        .withJsonBody(invalidNilReturnJson)
+
+      val result = controller.submitUktr.apply(request)
+
+      // Assert the response status
+      status(result) shouldBe BAD_REQUEST: Unit
+
+      // Assert the response body
+      val jsonResponse = contentAsJson(result)
+      (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
+      // Ensure the error details contain validation errors for the invalid ReturnType
+      val errorDetails = (jsonResponse \ "details").as[Seq[String]]
+      errorDetails should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
+    }
   }
 }
