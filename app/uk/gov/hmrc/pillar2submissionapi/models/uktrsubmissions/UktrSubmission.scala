@@ -42,6 +42,17 @@ object UktrSubmission {
     }
   }
 
+//  private val liabilityReads: Reads[Liability] = Reads[Liability] { json =>
+//    (json \ "returnType").validateOpt[String].flatMap {
+//      case Some("NIL_RETURN") =>
+//        json.validate[LiabilityNilReturn]
+//      case Some(invalidReturnType) =>
+//        JsError((JsPath \ "returnType") -> JsonValidationError(s"Unknown return type: $invalidReturnType"))
+//      case None =>
+//        json.validate[LiabilityData]
+//    }
+//  }
+
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
       (JsPath \ "accountingPeriodTo").read[LocalDate] and
