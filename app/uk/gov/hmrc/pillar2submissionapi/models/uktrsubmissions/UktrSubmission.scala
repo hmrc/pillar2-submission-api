@@ -30,21 +30,22 @@ sealed trait UktrSubmission {
 
 object UktrSubmission {
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads { json =>
-    (json \ "liabilities" \ "returnType").asOpt[String] match {
-      case Some("NIL_RETURN") =>
-        json.validate[UktrSubmissionNilReturn]
-      case Some(other) if !ReturnType.values.map(_.entryName).contains(other) =>
-        JsError(
-          JsPath \ "liabilities" \ "returnType",
-          JsonValidationError(s"Unknown submission type: $other")
-        )
-      case None =>
-        json.validate[UktrSubmissionData] // Assume UktrSubmissionData if no `returnType`
-      case _ =>
-        JsError(
-          JsPath \ "liabilities" \ "returnType",
-          JsonValidationError("returnType is missing or invalid")
-        )
+    (json \ "liabilities" \ "returnType").validateOpt[String] match {
+      case JsSuccess(Some(returnTypeStr), _) =>
+        ReturnType.withNameOption(returnTypeStr) match {
+          case Some(ReturnType.NIL_RETURN) =>
+            json.validate[UktrSubmissionNilReturn]
+          case None =>
+            JsError(JsPath \ "liabilities" \ "returnType", JsonValidationError(s"Unknown submission type: $returnTypeStr"))
+          case Some(_) =>
+            json.validate[UktrSubmissionData]
+        }
+      case JsSuccess(None, _) =>
+        // No returnType field, so assume it's UktrSubmissionData
+        json.validate[UktrSubmissionData]
+      case JsError(_) =>
+        // Can't read returnType, try to parse as UktrSubmissionData or UktrSubmissionNilReturn
+        json.validate[UktrSubmissionData].orElse(json.validate[UktrSubmissionNilReturn])
     }
   }
 

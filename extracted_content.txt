@@ -1,18 +1,316 @@
-/*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package uk.gov.hmrc.pillar2submissionapi.controllers
+
+import cats.data.Validated
+import cats.implicits.toFoldableOps
+import play.api.libs.json._
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.validation._
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class UktrSubmissionController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
+
+  def submitUktr: Action[AnyContent] = Action { request =>
+    request.body.asJson match {
+      case Some(json) =>
+        // Validate for unexpected fields
+        val knownTopLevelKeys = Set("accountingPeriodFrom", "accountingPeriodTo", "obligationMTT", "electionUKGAAP", "liabilities")
+        val extraTopLevelKeys = json.as[JsObject].keys.diff(knownTopLevelKeys)
+
+        val knownLiabilitiesKeys = Set(
+          "electionDTTSingleMember",
+          "electionUTPRSingleMember",
+          "numberSubGroupDTT",
+          "numberSubGroupUTPR",
+          "totalLiability",
+          "totalLiabilityDTT",
+          "totalLiabilityIIR",
+          "totalLiabilityUTPR",
+          "liableEntities",
+          "returnType"
+        )
+        val extraLiabilitiesKeys = (json \ "liabilities")
+          .asOpt[JsObject]
+          .map(_.keys.diff(knownLiabilitiesKeys))
+          .getOrElse(Set.empty)
+
+        val allExtraKeys = extraTopLevelKeys.map(key => s"Path: /$key, Errors: unexpected field") ++
+          extraLiabilitiesKeys.map(key => s"Path: /liabilities/$key, Errors: unexpected field")
+
+        if (allExtraKeys.nonEmpty) {
+          BadRequest(
+            Json.obj(
+              "message" -> "Invalid JSON format",
+              "details" -> allExtraKeys
+            )
+          )
+        } else {
+          // Proceed with validation
+          json.validate[UktrSubmission] match {
+            case JsSuccess(submission: UktrSubmissionData, _) =>
+              LiabilityDataValidator.validate(submission.liabilities) match {
+                case Validated.Valid(_) =>
+                  Created(Json.obj("status" -> "Created"))
+                case Validated.Invalid(errors) =>
+                  BadRequest(
+                    Json.obj(
+                      "message" -> "Invalid JSON format",
+                      "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
+                    )
+                  )
+              }
+
+            case JsSuccess(submission: UktrSubmissionNilReturn, _) =>
+              LiabilityNilReturnValidator.validate(submission.liabilities) match {
+                case Validated.Valid(_) =>
+                  Created(Json.obj("status" -> "Created"))
+                case Validated.Invalid(errors) =>
+                  BadRequest(
+                    Json.obj(
+                      "message" -> "Invalid JSON format",
+                      "details" -> errors.toList.map(e => s"${e.field}, Errors: ${e.error}")
+                    )
+                  )
+              }
+
+            case JsError(errors) =>
+              val errorDetails = errors.map { case (path, validationErrors) =>
+                validationErrors.map(err => s"Path: $path, Errors: ${err.message}")
+              }.flatten
+              BadRequest(
+                Json.obj(
+                  "message" -> "Invalid JSON format",
+                  "details" -> errorDetails
+                )
+              )
+          }
+        }
+
+      case None =>
+        BadRequest(Json.obj("message" -> "Invalid JSON format"))
+    }
+  }
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+abstract class Liability
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+import play.api.libs.json.{Json, OFormat}
+
+case class LiabilityData(
+  electionDTTSingleMember:  Boolean,
+  electionUTPRSingleMember: Boolean,
+  numberSubGroupDTT:        Int,
+  numberSubGroupUTPR:       Int,
+  totalLiability:           BigDecimal,
+  totalLiabilityDTT:        BigDecimal,
+  totalLiabilityIIR:        BigDecimal,
+  totalLiabilityUTPR:       BigDecimal,
+  liableEntities:           Seq[LiableEntity]
+) extends Liability
+
+object LiabilityData {
+  implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+import play.api.libs.json.{Json, OFormat}
+
+case class LiabilityNilReturn(returnType: ReturnType) extends Liability
+
+object LiabilityNilReturn {
+  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+import play.api.libs.json.{Json, OFormat}
+
+case class LiableEntity(
+  ukChargeableEntityName: String,
+  idType:                 String,
+  idValue:                String,
+  amountOwedDTT:          BigDecimal,
+  amountOwedIIR:          BigDecimal,
+  amountOwedUTPR:         BigDecimal
+)
+
+object LiableEntity {
+  implicit val format: OFormat[LiableEntity] = Json.format[LiableEntity]
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+import enumeratum.EnumEntry.UpperSnakecase
+import enumeratum._
+
+sealed trait ReturnType extends EnumEntry with UpperSnakecase
+
+object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
+
+  val values: IndexedSeq[ReturnType] = findValues
+
+  case object NIL_RETURN extends ReturnType
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+
+import play.api.libs.json._
+
+import java.time.LocalDate
+
+sealed trait UktrSubmission {
+  val accountingPeriodFrom: LocalDate
+  val accountingPeriodTo:   LocalDate
+  val obligationMTT:        Boolean
+  val electionUKGAAP:       Boolean
+  val liabilities:          Liability
+}
+
+object UktrSubmission {
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads { json =>
+    (json \ "liabilities" \ "returnType").validateOpt[String] match {
+      case JsSuccess(Some(returnTypeStr), _) =>
+        ReturnType.withNameOption(returnTypeStr) match {
+          case Some(ReturnType.NIL_RETURN) =>
+            json.validate[UktrSubmissionNilReturn]
+          case Some(_) =>
+            json.validate[UktrSubmissionData]
+          case None =>
+            JsError(JsPath \ "liabilities" \ "returnType", JsonValidationError(s"Unknown submission type: $returnTypeStr"))
+        }
+      case JsSuccess(None, _) =>
+        JsError(JsPath \ "liabilities" \ "returnType", JsonValidationError("error.path.missing"))
+      case JsError(errors) =>
+        JsError(errors)
+    }
+  }
+
+  implicit val writes: Writes[UktrSubmission] = Writes[UktrSubmission] {
+    case data:      UktrSubmissionData      => Json.toJson(data)
+    case nilReturn: UktrSubmissionNilReturn => Json.toJson(nilReturn)
+  }
+}
+
+case class UktrSubmissionData(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityData
+) extends UktrSubmission
+
+object UktrSubmissionData {
+  implicit val uktrSubmissionDataFormat: OFormat[UktrSubmissionData] = Json.format[UktrSubmissionData]
+}
+
+case class UktrSubmissionNilReturn(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityNilReturn
+) extends UktrSubmission
+
+object UktrSubmissionNilReturn {
+  implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.validation
+
+import cats.data.ValidatedNec
+import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+
+object LiabilityDataValidator extends Validator[LiabilityData] {
+  override def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] =
+    (
+      validateNonNegativeInt(obj.numberSubGroupDTT, "numberSubGroupDTT"),
+      validateNonNegativeInt(obj.numberSubGroupUTPR, "numberSubGroupUTPR"),
+      validatePositiveBigDecimal(obj.totalLiability, "totalLiability"),
+      validatePositiveBigDecimal(obj.totalLiabilityDTT, "totalLiabilityDTT"),
+      validatePositiveBigDecimal(obj.totalLiabilityIIR, "totalLiabilityIIR"),
+      validatePositiveBigDecimal(obj.totalLiabilityUTPR, "totalLiabilityUTPR"),
+      validateLiableEntities(obj.liableEntities)
+    ).mapN((_, _, _, _, _, _, _) => obj)
+
+  private def validateNonNegativeInt(value: Int, fieldName: String): ValidatedNec[ValidationError, Int] =
+    if (value >= 0) value.validNec
+    else ValidationError(s"Path: /liabilities/$fieldName", s"$fieldName must be non-negative").invalidNec
+
+  private def validatePositiveBigDecimal(value: BigDecimal, fieldName: String): ValidatedNec[ValidationError, BigDecimal] =
+    if (value > 0) value.validNec
+    else ValidationError(s"Path: /liabilities/$fieldName", s"$fieldName must be a positive number").invalidNec
+
+  private def validateLiableEntities(
+    entities: Seq[LiableEntity]
+  ): ValidatedNec[ValidationError, Seq[LiableEntity]] =
+    if (entities.isEmpty)
+      ValidationError("Path: /liabilities/liableEntities", "liableEntities must not be empty").invalidNec
+    else
+      entities.zipWithIndex.map { case (entity, index) =>
+        LiableEntityValidator.validate(entity).leftMap(_.map(e => e.copy(field = s"liableEntities[$index].${e.field}")))
+      }.sequence
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.validation
+
+import cats.data.ValidatedNec
+import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+
+object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
+  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
+    validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
+
+  private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
+    if (validValues.contains(value)) value.validNec
+    else ValidationError(s"Path: /liabilities/$fieldName", s"$fieldName has an invalid value").invalidNec
+}
+
+
+package uk.gov.hmrc.pillar2submissionapi.validation
+
+import cats.data.ValidatedNec
+import cats.implicits._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity
+
+object LiableEntityValidator extends Validator[LiableEntity] {
+  override def validate(obj: LiableEntity): ValidatedNec[ValidationError, LiableEntity] =
+    (
+      validateNonEmptyString(obj.ukChargeableEntityName, "ukChargeableEntityName"),
+      validateNonEmptyString(obj.idType, "idType"),
+      validateNonEmptyString(obj.idValue, "idValue"),
+      validatePositiveBigDecimal(obj.amountOwedDTT, "amountOwedDTT"),
+      validatePositiveBigDecimal(obj.amountOwedIIR, "amountOwedIIR"),
+      validatePositiveBigDecimal(obj.amountOwedUTPR, "amountOwedUTPR")
+    ).mapN((_, _, _, _, _, _) => obj)
+
+  private def validateNonEmptyString(value: String, fieldName: String): ValidatedNec[ValidationError, String] =
+    if (value.trim.isEmpty)
+      ValidationError(fieldName, s"$fieldName is missing or empty").invalidNec
+    else value.validNec
+
+  private def validatePositiveBigDecimal(value: BigDecimal, fieldName: String): ValidatedNec[ValidationError, BigDecimal] =
+    if (value <= 0) ValidationError(fieldName, s"$fieldName must be a positive number").invalidNec
+    else value.validNec
+}
+
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
@@ -383,7 +681,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_RETURN_TYPE"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: returnType has an invalid value"): Unit
     }
 
     "return BadRequest when UktrSubmissionNilReturn has validation errors in liabilities" in {
@@ -407,7 +705,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val details = (jsonResponse \ "details").as[Seq[String]]
       details should contain allElementsOf Seq(
-        "Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_RETURN_TYPE"
+        "Path: /liabilities/returnType, Errors: returnType has an invalid value"
       ): Unit
     }
 
@@ -431,7 +729,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
       val details = (jsonResponse \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_RETURN_TYPE"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: returnType has an invalid value"): Unit
     }
 
     "return BadRequest for completely invalid UktrSubmissionNilReturn" in {
@@ -448,8 +746,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       status(result) shouldBe BAD_REQUEST: Unit
 
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /accountingPeriodFrom, Errors: error.expected.date.isoformat"):                  Unit
-      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_RETURN_TYPE"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: returnType has an invalid value"): Unit
     }
 
     "return BadRequest when UktrSubmissionNilReturn has invalid returnType" in {
@@ -468,8 +765,9 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       status(result) shouldBe BAD_REQUEST: Unit
 
+      println((contentAsJson(result) \ "details").as[Seq[String]])
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_RETURN_TYPE"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: returnType has an invalid value"): Unit
     }
 
     "return BadRequest when JSON is missing required fields in liabilities" in {
@@ -488,6 +786,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
 
       details should contain allElementsOf Seq(
+        "Path: /liabilities/returnType, Errors: error.path.missing",
         "Path: /liabilities/totalLiabilityUTPR, Errors: error.path.missing",
         "Path: /liabilities/liableEntities, Errors: error.path.missing",
         "Path: /liabilities/electionUTPRSingleMember, Errors: error.path.missing",
@@ -502,3 +801,20 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
   }
 }
+
+
+package uk.gov.hmrc.pillar2submissionapi.validation
+
+case class ValidationError(field: String, error: String)
+
+
+package uk.gov.hmrc.pillar2submissionapi.validation
+
+import cats.data.ValidatedNec
+import uk.gov.hmrc.pillar2submissionapi.validation.ValidationError
+
+trait Validator[A] {
+  def validate(obj: A): ValidatedNec[ValidationError, A]
+}
+
+
