@@ -23,6 +23,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+
 import java.time.LocalDate
 
 class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
@@ -64,8 +65,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      // Assign each assertion to 'val _ =' to indicate intentional use
-      val _ = status(result)        shouldBe CREATED
+      val _ = status(result) shouldBe CREATED: Unit
       val _ = contentAsJson(result) shouldBe Json.obj("status" -> "Created")
     }
 
@@ -83,14 +83,13 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      val _ = status(result)        shouldBe CREATED
+      val _ = status(result) shouldBe CREATED: Unit
       val _ = contentAsJson(result) shouldBe Json.obj("status" -> "Created")
     }
 
     "return BadRequest when JSON is missing required fields" in {
       val invalidJson = Json.obj(
         "accountingPeriodFrom" -> "2023-01-01"
-        // Missing "accountingPeriodTo", "obligationMTT", "electionUKGAAP", "liabilities"
       )
 
       val request = FakeRequest(POST, "/submitUktr")
@@ -98,8 +97,8 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      val _ = status(result)                                 shouldBe BAD_REQUEST
-      val _ = (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format"
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
       details should contain allElementsOf Seq(
@@ -107,46 +106,26 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         "Path: /obligationMTT, Errors: error.path.missing",
         "Path: /electionUKGAAP, Errors: error.path.missing",
         "Path: /liabilities, Errors: error.path.missing"
-      )
+      ): Unit
     }
 
-    "return BadRequest for unknown submission type" in {
-      val unknownTypeJson = Json.obj(
-        "accountingPeriodFrom" -> "2023-01-01",
-        "accountingPeriodTo"   -> "2023-12-31",
-        "obligationMTT"        -> true,
-        "electionUKGAAP"       -> false,
-        "liabilities" -> Json.obj(
-          // Neither "returnType" nor "electionDTTSingleMember" present
-          "someOtherField" -> "value"
-        )
-      )
-
-      val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(unknownTypeJson)
-
-      val result = controller.submitUktr.apply(request)
-
-      status(result)                                 shouldBe BAD_REQUEST:               Unit
-      (contentAsJson(result) \ "message").as[String] shouldBe "Unknown submission type": Unit
-    }
     "return BadRequest when liabilities validation fails for UktrSubmissionData" in {
-      // Construct the JSON with invalid liabilities
+
       val invalidLiabilitiesJson = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14", // Valid ISO date
-        "accountingPeriodTo"   -> "2024-12-14", // Valid ISO date
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-12-14",
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> true,
         "liabilities" -> Json.obj(
           "electionDTTSingleMember"  -> true,
           "electionUTPRSingleMember" -> false,
-          "numberSubGroupDTT"        -> -1, // Invalid: negative number
+          "numberSubGroupDTT"        -> -1,
           "numberSubGroupUTPR"       -> 3,
-          "totalLiability"           -> -1000.99, // Invalid: negative number
+          "totalLiability"           -> -1000.99,
           "totalLiabilityDTT"        -> 500.25,
-          "totalLiabilityIIR"        -> 0, // Invalid: zero (assuming must be positive)
+          "totalLiabilityIIR"        -> 0,
           "totalLiabilityUTPR"       -> 200.10,
-          "liableEntities"           -> Json.arr() // Invalid: empty array
+          "liableEntities"           -> Json.arr()
         )
       )
 
@@ -155,7 +134,6 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      // Assertions
       status(result) shouldBe BAD_REQUEST: Unit
 
       val jsonResponse = contentAsJson(result)
@@ -163,10 +141,8 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val errorDetails = (jsonResponse \ "details").as[Seq[String]]
 
-      // Debug: Print actual error details
       println(s"Error Details: $errorDetails")
 
-      // Check for specific error messages related to liabilities
       errorDetails should contain allElementsOf Seq(
         "numberSubGroupDTT: numberSubGroupDTT must be non-negative",
         "totalLiability: totalLiability must be a positive number",
@@ -176,16 +152,16 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
     }
 
     "should return 400 BAD_REQUEST for malformed JSON structure" in {
-      // Construct the JSON directly with incorrect field types, but include all required fields
+
       val malformedJson = Json.obj(
         "accountingPeriodFrom" -> "2024-08-14",
         "accountingPeriodTo"   -> "2024-12-14",
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> true,
         "liabilities" -> Json.obj(
-          "electionDTTSingleMember"  -> "true", // Should be boolean
+          "electionDTTSingleMember"  -> "true",
           "electionUTPRSingleMember" -> false,
-          "numberSubGroupDTT"        -> "1", // Should be number
+          "numberSubGroupDTT"        -> "1",
           "numberSubGroupUTPR"       -> 3,
           "totalLiability"           -> 10000.99,
           "totalLiabilityDTT"        -> 500.25,
@@ -207,11 +183,9 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       val request = FakeRequest(POST, "/submitUktr").withJsonBody(malformedJson)
       val result  = controller.submitUktr.apply(request)
 
-      // Assign each assertion to 'val _ =' to indicate intentional use
-      val _ = status(result) shouldBe BAD_REQUEST:                                           Unit
-      val _ = (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
-      // Ensure the error details contain the correct message for malformed JSON
       val errorDetails = (contentAsJson(result) \ "details").as[Seq[String]]
       errorDetails should contain("Path: /liabilities/electionDTTSingleMember, Errors: error.expected.jsboolean"): Unit
       errorDetails should contain("Path: /liabilities/numberSubGroupDTT, Errors: error.expected.jsnumber"):        Unit
@@ -223,8 +197,8 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      val _ = status(result) shouldBe BAD_REQUEST:                                           Unit
-      val _ = (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
     }
 
     "return BadRequest when JSON has unknown fields" in {
@@ -263,16 +237,13 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
 
       val result = controller.submitUktr.apply(request)
 
-      // Assign each assertion to 'val _ =' to indicate intentional use
-      val _ = status(result) shouldBe CREATED:                                Unit
-      val _ = contentAsJson(result) shouldBe Json.obj("status" -> "Created"): Unit
+      status(result)        shouldBe CREATED:                         Unit
+      contentAsJson(result) shouldBe Json.obj("status" -> "Created"): Unit
     }
-
     "return BadRequest when date formats are invalid" in {
-      // Construct the JSON with an invalid date format
       val invalidDateJson = Json.obj(
-        "accountingPeriodFrom" -> "01-01-2023", // Invalid format: should be "yyyy-MM-dd"
-        "accountingPeriodTo"   -> "2023-12-31", // Valid ISO date
+        "accountingPeriodFrom" -> "01-01-2023", // Invalid date format
+        "accountingPeriodTo"   -> "2023-12-31",
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> false,
         "liabilities" -> Json.obj(
@@ -297,24 +268,35 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         )
       )
 
-      val request = FakeRequest(POST, "/uktr/submit")
+      val request = FakeRequest(POST, "/submitUktr")
         .withJsonBody(invalidDateJson)
 
       val result = controller.submitUktr.apply(request)
 
-      // Assertions
-      status(result) shouldBe BAD_REQUEST: Unit
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
-      val jsonResponse = contentAsJson(result)
-      (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format": Unit
-
-      val errorDetails = (jsonResponse \ "details").as[Seq[String]]
-
-      // Debug: Print actual error details
-      println(s"Error Details: $errorDetails")
-
-      // Check for specific error message related to date format
+      val errorDetails = (contentAsJson(result) \ "details").as[Seq[String]]
       errorDetails should contain("Path: /accountingPeriodFrom, Errors: error.expected.date.isoformat"): Unit
+    }
+
+    "return BadRequest for unknown submission type" in {
+      val unknownTypeJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> true,
+        "electionUKGAAP"       -> false,
+        "liabilities"          -> Json.obj("returnType" -> "UNKNOWN_TYPE")
+      )
+
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(unknownTypeJson)
+      val result  = controller.submitUktr.apply(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
+      val details = (contentAsJson(result) \ "details").as[Seq[String]]
+      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: UNKNOWN_TYPE"): Unit
     }
 
     "return BadRequest when enums have invalid values" in {
@@ -323,20 +305,72 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         "accountingPeriodTo"   -> "2023-12-31",
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> false,
+        "liabilities"          -> Json.obj("returnType" -> "INVALID_ENUM")
+      )
+
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(invalidEnumJson)
+      val result  = controller.submitUktr.apply(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
+      val details = (contentAsJson(result) \ "details").as[Seq[String]]
+      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: INVALID_ENUM"): Unit
+    }
+
+    "return BadRequest when UktrSubmissionNilReturn has different validation errors" in {
+      val anotherInvalidNilReturnJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> false,
+        "electionUKGAAP"       -> true,
         "liabilities" -> Json.obj(
-          "returnType" -> "INVALID_ENUM" // Invalid enum value
+          "returnType" -> "ANOTHER_INVALID_RETURN_TYPE"
         )
       )
 
-      val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(invalidEnumJson)
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(anotherInvalidNilReturnJson)
+      val result  = controller.submitUktr.apply(request)
 
-      val result = controller.submitUktr.apply(request)
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
-      val _       = status(result) shouldBe BAD_REQUEST:                                           Unit
-      val _       = (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: ANOTHER_INVALID_RETURN_TYPE"): Unit
+    }
+
+    "return BadRequest when UktrSubmissionData has validation errors" in {
+      val invalidSubmissionDataJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> true,
+        "electionUKGAAP"       -> false,
+        "liabilities" -> Json.obj(
+          "electionDTTSingleMember"  -> true,
+          "electionUTPRSingleMember" -> false,
+          "numberSubGroupDTT"        -> -1, // Invalid: negative
+          "numberSubGroupUTPR"       -> 3, // Valid
+          "totalLiability"           -> -1000.50, // Invalid: negative
+          "totalLiabilityDTT"        -> 500.25, // Valid
+          "totalLiabilityIIR"        -> 0, // Invalid: zero
+          "totalLiabilityUTPR"       -> 200.10, // Valid
+          "liableEntities"           -> Json.arr() // Invalid: empty array
+        )
+      )
+
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(invalidSubmissionDataJson)
+      val result  = controller.submitUktr.apply(request)
+
+      status(result)                                 shouldBe BAD_REQUEST:           Unit
+      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
+      val details = (contentAsJson(result) \ "details").as[Seq[String]]
+      details should contain allElementsOf Seq(
+        "numberSubGroupDTT: numberSubGroupDTT must be non-negative",
+        "totalLiability: totalLiability must be a positive number",
+        "totalLiabilityIIR: totalLiabilityIIR must be a positive number",
+        "liableEntities: liableEntities must not be empty"
+      ): Unit
     }
 
     "return BadRequest when UktrSubmissionNilReturn has validation errors" in {
@@ -346,88 +380,19 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         "obligationMTT"        -> false,
         "electionUKGAAP"       -> true,
         "liabilities" -> Json.obj(
-          "returnType" -> "INVALID_RETURN_TYPE" // Invalid enum value
+          "returnType" -> "NIL_RETURN"
         )
       )
 
-      val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(invalidNilReturnJson)
-
-      val result = controller.submitUktr.apply(request)
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(invalidNilReturnJson)
+      val result  = controller.submitUktr.apply(request)
 
       status(result)                                 shouldBe BAD_REQUEST:           Unit
       (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: returnType has an invalid value"): Unit
     }
 
-    "return BadRequest when UktrSubmissionData has validation errors" in {
-      val invalidSubmissionData = UktrSubmissionData(
-        accountingPeriodFrom = LocalDate.parse("2023-01-01"),
-        accountingPeriodTo = LocalDate.parse("2023-12-31"),
-        obligationMTT = true,
-        electionUKGAAP = false,
-        liabilities = LiabilityData(
-          electionDTTSingleMember = true,
-          electionUTPRSingleMember = false,
-          numberSubGroupDTT = -1, // Invalid: negative
-          numberSubGroupUTPR = 3,
-          totalLiability = BigDecimal(-1000.50),
-          totalLiabilityDTT = BigDecimal(0), // Invalid: non-positive
-          totalLiabilityIIR = BigDecimal(0), // Invalid: non-positive
-          totalLiabilityUTPR = BigDecimal(249.50),
-          liableEntities = Seq.empty // Invalid: empty
-        )
-      )
-
-      val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(Json.toJson(invalidSubmissionData))
-
-      val result = controller.submitUktr.apply(request)
-
-      status(result)                                 shouldBe BAD_REQUEST:           Unit
-      (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
-      val details = (contentAsJson(result) \ "details").as[Seq[String]]
-
-      details should contain allElementsOf Seq(
-        "numberSubGroupDTT: numberSubGroupDTT must be non-negative",
-        "totalLiability: totalLiability must be a positive number",
-        "totalLiabilityDTT: totalLiabilityDTT must be a positive number",
-        "totalLiabilityIIR: totalLiabilityIIR must be a positive number",
-        "liableEntities: liableEntities must not be empty"
-      ): Unit
-    }
-
-    "return BadRequest for invalid UktrSubmissionNilReturn submission" in {
-      // Manually create a test case with an invalid ReturnType enum value (e.g., not defined in the enum)
-      val invalidReturnType = "INVALID_RETURN_TYPE" // A string that is not part of the enum
-
-      // Manually inject an invalid returnType in the request
-      val invalidNilReturnJson = Json.obj(
-        "accountingPeriodFrom" -> "2023-01-01",
-        "accountingPeriodTo"   -> "2023-12-31",
-        "obligationMTT"        -> false,
-        "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
-          "returnType" -> invalidReturnType // Invalid enum value
-        )
-      )
-
-      val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(invalidNilReturnJson)
-
-      val result = controller.submitUktr.apply(request)
-
-      // Assert the response status
-      status(result) shouldBe BAD_REQUEST: Unit
-
-      // Assert the response body
-      val jsonResponse = contentAsJson(result)
-      (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format": Unit
-
-      // Ensure the error details contain validation errors for the invalid ReturnType
-      val errorDetails = (jsonResponse \ "details").as[Seq[String]]
-      errorDetails should contain("Path: /liabilities/returnType, Errors: error.expected.validenumvalue"): Unit
-    }
   }
 }

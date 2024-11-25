@@ -33,48 +33,35 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
     request.body.asJson match {
       case Some(json) =>
         json.validate[UktrSubmission] match {
-          case JsSuccess(submission, _) =>
-            submission match {
-              case data: UktrSubmissionData =>
-                LiabilityDataValidator.validate(data.liabilities) match {
-                  case Validated.Valid(_) =>
-                    Created(Json.obj("status" -> "Created"))
-                  case Validated.Invalid(errors) =>
-                    BadRequest(
-                      Json.obj(
-                        "message" -> "Invalid JSON format",
-                        "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
-                      )
-                    )
-                }
-              case nilReturn: UktrSubmissionNilReturn =>
-                LiabilityNilReturnValidator.validate(nilReturn.liabilities) match {
-                  case Validated.Valid(_) =>
-                    Created(Json.obj("status" -> "Created"))
-                  case Validated.Invalid(errors) =>
-                    BadRequest(
-                      Json.obj(
-                        "message" -> "Invalid JSON format",
-                        "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
-                      )
-                    )
-                }
-              case _ =>
-                BadRequest(Json.obj("message" -> "Unknown submission type"))
+          case JsSuccess(submission: UktrSubmissionData, _) =>
+            LiabilityDataValidator.validate(submission.liabilities) match {
+              case Validated.Valid(_) =>
+                Created(Json.obj("status" -> "Created"))
+              case Validated.Invalid(errors) =>
+                BadRequest(
+                  Json.obj(
+                    "message" -> "Invalid JSON format",
+                    "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
+                  )
+                )
+            }
+          case JsSuccess(submission: UktrSubmissionNilReturn, _) =>
+            LiabilityNilReturnValidator.validate(submission.liabilities) match {
+              case Validated.Valid(_) =>
+                Created(Json.obj("status" -> "Created"))
+              case Validated.Invalid(errors) =>
+                BadRequest(
+                  Json.obj(
+                    "message" -> "Invalid JSON format",
+                    "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
+                  )
+                )
             }
           case JsError(errors) =>
-            val unknownTypeError = errors.exists { case (_, validationErrors) =>
-              validationErrors.exists(_.message == "Unknown submission type")
+            val errorDetails = errors.map { case (path, validationErrors) =>
+              s"Path: $path, Errors: ${validationErrors.map(_.message).mkString(", ")}"
             }
-
-            if (unknownTypeError) {
-              BadRequest(Json.obj("message" -> "Unknown submission type"))
-            } else {
-              val errorDetails = errors.map { case (path, validationErrors) =>
-                s"Path: $path, Errors: ${validationErrors.map(_.message).mkString(", ")}"
-              }
-              BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
-            }
+            BadRequest(Json.obj("message" -> "Invalid JSON format", "details" -> errorDetails))
         }
       case None =>
         BadRequest(Json.obj("message" -> "Invalid JSON format"))

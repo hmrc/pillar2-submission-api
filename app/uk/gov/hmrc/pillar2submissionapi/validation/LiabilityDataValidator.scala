@@ -20,12 +20,6 @@ import cats.data.ValidatedNec
 import cats.implicits._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
-case class ValidationError(field: String, error: String)
-
-trait Validator[A] {
-  def validate(obj: A): ValidatedNec[ValidationError, A]
-}
-
 object LiabilityDataValidator extends Validator[LiabilityData] {
   override def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] =
     (
@@ -45,13 +39,12 @@ object LiabilityDataValidator extends Validator[LiabilityData] {
     else ValidationError(fieldName, s"$fieldName must explicitly be true or false").invalidNec
 
   private def validateNonNegativeInt(value: Int, fieldName: String): ValidatedNec[ValidationError, Int] =
-    if (value < 0) ValidationError(fieldName, s"$fieldName must be non-negative").invalidNec
-    else value.validNec
+    if (value >= 0) value.validNec
+    else ValidationError(fieldName, s"$fieldName must be non-negative").invalidNec
 
   private def validatePositiveBigDecimal(value: BigDecimal, fieldName: String): ValidatedNec[ValidationError, BigDecimal] =
-    if (value == null || value <= 0)
-      ValidationError(fieldName, s"$fieldName must be a positive number").invalidNec
-    else value.validNec
+    if (value > 0) value.validNec
+    else ValidationError(fieldName, s"$fieldName must be a positive number").invalidNec
 
   private def validateLiableEntities(
     entities: Seq[LiableEntity]

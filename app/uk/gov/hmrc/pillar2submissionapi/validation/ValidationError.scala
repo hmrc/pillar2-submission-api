@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.validation
 
-import play.api.libs.json.{Json, OFormat}
-
-import java.time.LocalDate
-
-case class UktrSubmissionNilReturn(
-  accountingPeriodFrom: LocalDate,
-  accountingPeriodTo:   LocalDate,
-  obligationMTT:        Boolean,
-  electionUKGAAP:       Boolean,
-  liabilities:          LiabilityNilReturn
-) extends UktrSubmission
-
-object UktrSubmissionNilReturn {
-  implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
-}
+case class ValidationError(field: String, error: String)

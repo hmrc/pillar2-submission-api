@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.validation
 
-import play.api.libs.json.{Json, OFormat}
+import cats.data.ValidatedNec
+import uk.gov.hmrc.pillar2submissionapi.validation.ValidationError
 
-import java.time.LocalDate
-
-case class UktrSubmissionData(
-  accountingPeriodFrom: LocalDate,
-  accountingPeriodTo:   LocalDate,
-  obligationMTT:        Boolean,
-  electionUKGAAP:       Boolean,
-  liabilities:          LiabilityData
-) extends UktrSubmission
-
-object UktrSubmissionData {
-  implicit val uktrSubmissionDataFormat: OFormat[UktrSubmissionData] = Json.format[UktrSubmissionData]
+trait Validator[A] {
+  def validate(obj: A): ValidatedNec[ValidationError, A]
 }

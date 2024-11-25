@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
-trait UktrSubmission {
+sealed trait UktrSubmission {
   val accountingPeriodFrom: LocalDate
   val accountingPeriodTo:   LocalDate
   val obligationMTT:        Boolean
@@ -30,34 +30,50 @@ trait UktrSubmission {
 
 object UktrSubmission {
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads { json =>
-    val requiredTopLevelFields = Seq(
-      "accountingPeriodFrom",
-      "accountingPeriodTo",
-      "obligationMTT",
-      "electionUKGAAP",
-      "liabilities"
-    )
-
-    val missingTopLevelFields = requiredTopLevelFields
-      .filterNot(field => (json \ field).isDefined)
-      .map(field => (JsPath \ field, Seq(JsonValidationError("error.path.missing"))))
-
-    if (missingTopLevelFields.nonEmpty) {
-      JsError(missingTopLevelFields)
-    } else {
-      (json \ "liabilities").validate[JsObject] match {
-        case JsSuccess(liabilities, _) =>
-          if ((liabilities \ "returnType").isDefined) {
-            json.validate[UktrSubmissionNilReturn]
-          } else if ((liabilities \ "electionDTTSingleMember").isDefined) {
-            json.validate[UktrSubmissionData]
-          } else {
-            JsError(Seq((JsPath \ "liabilities", Seq(JsonValidationError("Unknown submission type")))))
-          }
-
-        case JsError(errors) =>
-          JsError(Seq((JsPath \ "liabilities", Seq(JsonValidationError("error.path.missing")))) ++ errors)
-      }
+    (json \ "liabilities" \ "returnType").asOpt[String] match {
+      case Some("NIL_RETURN") =>
+        json.validate[UktrSubmissionNilReturn]
+      case Some(other) if !ReturnType.values.map(_.entryName).contains(other) =>
+        JsError(
+          JsPath \ "liabilities" \ "returnType",
+          JsonValidationError(s"Unknown submission type: $other")
+        )
+      case None =>
+        json.validate[UktrSubmissionData] // Assume UktrSubmissionData if no `returnType`
+      case _ =>
+        JsError(
+          JsPath \ "liabilities" \ "returnType",
+          JsonValidationError("returnType is missing or invalid")
+        )
     }
   }
+
+  implicit val writes: Writes[UktrSubmission] = Writes[UktrSubmission] {
+    case data:      UktrSubmissionData      => Json.toJson(data)
+    case nilReturn: UktrSubmissionNilReturn => Json.toJson(nilReturn)
+  }
+}
+
+case class UktrSubmissionData(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityData
+) extends UktrSubmission
+
+object UktrSubmissionData {
+  implicit val uktrSubmissionDataFormat: OFormat[UktrSubmissionData] = Json.format[UktrSubmissionData]
+}
+
+case class UktrSubmissionNilReturn(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityNilReturn
+) extends UktrSubmission
+
+object UktrSubmissionNilReturn {
+  implicit val uktrSubmissionNilReturnFormat: OFormat[UktrSubmissionNilReturn] = Json.format[UktrSubmissionNilReturn]
 }
