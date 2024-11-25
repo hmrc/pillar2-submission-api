@@ -2,3 +2,8 @@ openapi: 3.0.3
 info:
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
+paths:
+  /RESTAdapter/PLR/UKTaxReturn:
+    post:
+      security:
+        - {}
