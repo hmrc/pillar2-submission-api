@@ -17,9 +17,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     majorVersion := 0,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-    Compile / tpolecatExcludeOptions ++= Set(
-      ScalacOptions.warnNonUnitStatement,
-      ScalacOptions.warnValueDiscard),
+    Compile / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard),
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions += "-Wconf:src=routes/.*:s",

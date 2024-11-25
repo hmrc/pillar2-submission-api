@@ -1,3 +1,19 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import org.mockito.ArgumentMatchers
@@ -37,7 +53,9 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
           )
 
         val result = await(identifierAction.refine(fakeRequest))
@@ -46,7 +64,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id         must be(clientId)
+          identifierRequest.clientPillar2Id    must be(clientId)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
@@ -197,10 +215,10 @@ object IdentifierActionSpec {
       Retrievals.clientId and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-  val clientId: String = UUID.randomUUID().toString
-  val id:           String     = UUID.randomUUID().toString
-  val groupId:      String     = UUID.randomUUID().toString
-  val providerId:   String     = UUID.randomUUID().toString
-  val providerType: String     = UUID.randomUUID().toString
+  val clientId:     String = UUID.randomUUID().toString
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
 }
