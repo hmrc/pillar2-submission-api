@@ -42,6 +42,6 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
     new BodyParsers.Default
   ) {
     override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
-      Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId")))
+      Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "")))
   }
 }

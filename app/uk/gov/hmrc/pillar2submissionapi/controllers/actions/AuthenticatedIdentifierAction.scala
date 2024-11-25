@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -46,18 +46,18 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(
         Retrievals.internalId and Retrievals.groupIdentifier
-          and Retrievals.allEnrolments and Retrievals.affinityGroup
+          and Retrievals.clientId and Retrievals.affinityGroup
           and Retrievals.credentialRole and Retrievals.credentials
       ) {
 
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
+        case Some(internalId) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation | Agent) ~ Some(User) ~ credentials =>
           Future.successful(
             Right(
               IdentifierRequest(
                 request,
                 internalId,
                 Some(groupId),
-                enrolments = enrolments.enrolments,
+                clientPillar2Id = clientId,
                 userIdForEnrolment = credentials.get.providerId
               )
             )

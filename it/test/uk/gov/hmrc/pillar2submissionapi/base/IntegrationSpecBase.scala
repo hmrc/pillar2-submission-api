@@ -54,8 +54,7 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
-  when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())
-    (any[HeaderCarrier](), any[ExecutionContext]()))
+  when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
       Future.successful(Some(id) ~ Some(groupId) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )

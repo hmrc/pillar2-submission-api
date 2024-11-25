@@ -24,7 +24,7 @@ case class IdentifierRequest[A](
   userId:             String,
   groupId:            Option[String] = None,
   enrolments:         Set[Enrolment] = Set.empty,
-  clientPillar2Id:    Option[String] = None,
+  clientPillar2Id:    String,
   isAgent:            Boolean = false,
   userIdForEnrolment: String
 ) extends WrappedRequest[A](request)
