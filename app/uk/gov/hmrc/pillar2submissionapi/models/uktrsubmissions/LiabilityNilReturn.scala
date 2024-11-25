@@ -16,10 +16,16 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
 case class LiabilityNilReturn(returnType: ReturnType) extends Liability
 
 object LiabilityNilReturn {
-  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+
+  implicit val reads: Reads[LiabilityNilReturn] =
+    (JsPath \ "returnType").read[ReturnType].collect(JsonValidationError("returnType must be NIL_RETURN")) { case ReturnType.NIL_RETURN =>
+      LiabilityNilReturn(ReturnType.NIL_RETURN)
+    }
+
+  implicit val writes: Writes[LiabilityNilReturn] = Json.writes[LiabilityNilReturn]
 }

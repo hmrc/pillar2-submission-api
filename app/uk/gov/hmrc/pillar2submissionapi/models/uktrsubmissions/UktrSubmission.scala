@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 import java.time.LocalDate
 
@@ -29,27 +30,49 @@ sealed trait UktrSubmission {
 }
 
 object UktrSubmission {
-  implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads { json =>
-    (json \ "liabilities" \ "returnType").validateOpt[String] match {
-      case JsSuccess(Some(returnTypeStr), _) =>
-        ReturnType.withNameOption(returnTypeStr) match {
-          case Some(ReturnType.NIL_RETURN) =>
-            json.validate[UktrSubmissionNilReturn]
-          case None =>
-            JsError(JsPath \ "liabilities" \ "returnType", JsonValidationError(s"Unknown submission type: $returnTypeStr"))
-          case Some(_) =>
-            json.validate[UktrSubmissionData]
-        }
-      case JsSuccess(None, _) =>
-        // No returnType field, so assume it's UktrSubmissionData
-        json.validate[UktrSubmissionData]
-      case JsError(_) =>
-        // Can't read returnType, try to parse as UktrSubmissionData or UktrSubmissionNilReturn
-        json.validate[UktrSubmissionData].orElse(json.validate[UktrSubmissionNilReturn])
+
+  private val liabilityReads: Reads[Liability] = Reads[Liability] { json =>
+    (json \ "returnType").validateOpt[String].flatMap {
+      case Some("NIL_RETURN") =>
+        json.validate[LiabilityNilReturn]
+      case Some(invalidReturnType) =>
+        JsError((JsPath \ "returnType") -> JsonValidationError(s"Unknown submission type: $invalidReturnType"))
+      case None =>
+        json.validate[LiabilityData]
     }
   }
 
-  implicit val writes: Writes[UktrSubmission] = Writes[UktrSubmission] {
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (
+    (JsPath \ "accountingPeriodFrom").read[LocalDate] and
+      (JsPath \ "accountingPeriodTo").read[LocalDate] and
+      (JsPath \ "obligationMTT").read[Boolean] and
+      (JsPath \ "electionUKGAAP").read[Boolean] and
+      (JsPath \ "liabilities").read[Liability](liabilityReads)
+  )((accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
+    liabilities match {
+      case data: LiabilityData =>
+        UktrSubmissionData(
+          accountingPeriodFrom,
+          accountingPeriodTo,
+          obligationMTT,
+          electionUKGAAP,
+          data
+        )
+      case nilReturn: LiabilityNilReturn =>
+        UktrSubmissionNilReturn(
+          accountingPeriodFrom,
+          accountingPeriodTo,
+          obligationMTT,
+          electionUKGAAP,
+          nilReturn
+        )
+      case _ =>
+        // Handle unexpected Liability subtype
+        throw new IllegalArgumentException("Unknown Liability type")
+    }
+  )
+
+  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = Writes[UktrSubmission] {
     case data:      UktrSubmissionData      => Json.toJson(data)
     case nilReturn: UktrSubmissionNilReturn => Json.toJson(nilReturn)
   }

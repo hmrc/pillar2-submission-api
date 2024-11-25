@@ -289,7 +289,7 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       (contentAsJson(result) \ "message").as[String] shouldBe "Invalid JSON format": Unit
 
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
-      details should contain("Path: /liabilities/returnType, Errors: Unknown submission type: UNKNOWN_TYPE"): Unit
+      details should contain("Path: /liabilities/returnType, Errors: Unknown return type: UNKNOWN_TYPE"): Unit
     }
 
     "return BadRequest when enums have invalid values" in {
