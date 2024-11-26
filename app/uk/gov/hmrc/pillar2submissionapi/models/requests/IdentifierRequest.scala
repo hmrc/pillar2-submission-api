@@ -17,14 +17,11 @@
 package uk.gov.hmrc.pillar2submissionapi.models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.Enrolment
 
 case class IdentifierRequest[A](
   request:            Request[A],
   userId:             String,
   groupId:            Option[String] = None,
-  enrolments:         Set[Enrolment] = Set.empty,
   clientPillar2Id:    String,
-  isAgent:            Boolean = false,
   userIdForEnrolment: String
 ) extends WrappedRequest[A](request)

@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -40,24 +40,28 @@ class AuthenticatedIdentifierAction @Inject() (
     with AuthorisedFunctions
     with Logging {
 
+  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
+  val ENROLMENT_IDENTIFIER = "PLRID"
+
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(
         Retrievals.internalId and Retrievals.groupIdentifier
-          and Retrievals.clientId and Retrievals.affinityGroup
+          and Retrievals.allEnrolments and Retrievals.affinityGroup
           and Retrievals.credentialRole and Retrievals.credentials
       ) {
 
-        case Some(internalId) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation | Agent) ~ Some(User) ~ credentials =>
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials
+            if enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).isDefined =>
           Future.successful(
             Right(
               IdentifierRequest(
-                request,
-                internalId,
-                Some(groupId),
-                clientPillar2Id = clientId,
+                request = request,
+                userId = internalId,
+                groupId = Some(groupId),
+                clientPillar2Id = enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).get.getIdentifier(HMRC_PILLAR2_ORG_KEY).get.value,
                 userIdForEnrolment = credentials.get.providerId
               )
             )

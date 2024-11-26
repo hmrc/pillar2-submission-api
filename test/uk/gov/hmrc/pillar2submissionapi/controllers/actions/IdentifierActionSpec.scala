@@ -54,7 +54,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         )
           .thenReturn(
             Future.successful(
-              Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
             )
           )
 
@@ -64,7 +64,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(clientId)
+          identifierRequest.clientPillar2Id    must be(ENROLMENT_IDENTIFIER)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
@@ -79,40 +79,37 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
         val result = await(identifierAction.refine(fakeRequest))
 
-        result.isRight must be(true)
-        result.map { identifierRequest =>
-          identifierRequest.userId             must be(id)
-          identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(clientId)
-          identifierRequest.userIdForEnrolment must be(providerId)
-        }
-      }
-    }
-
-    "a user is a registered Individual" should {
-      "user is unauthorized" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        val result = await(
-          identifierAction.refine(fakeRequest)
-        )
-
         result.isRight            must be(false)
         result.left.getOrElse("") must be(Unauthorized)
       }
+    }
+  }
+
+  "a user is a registered Individual" should {
+    "user is unauthorized" in {
+      when(
+        mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          any[HeaderCarrier](),
+          any[ExecutionContext]()
+        )
+      )
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      val result = await(
+        identifierAction.refine(fakeRequest)
+      )
+
+      result.isRight            must be(false)
+      result.left.getOrElse("") must be(Unauthorized)
     }
   }
 
@@ -126,7 +123,9 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(None ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            Future.successful(
+              None ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
           )
 
         val result = await(
@@ -147,7 +146,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(Some(id) ~ None ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            Future.successful(Some(id) ~ None ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
         val result = await(
@@ -168,7 +167,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
         val result = await(
@@ -189,7 +188,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
           .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
         val result = await(
@@ -204,18 +203,22 @@ class IdentifierActionSpec extends ActionBaseSpec {
 }
 
 object IdentifierActionSpec {
-  type RetrievalsType = Option[String] ~ Option[String] ~ Option[String] ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+  type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
+  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
+  val ENROLMENT_IDENTIFIER = "PLRID"
 
   val requiredPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
   val requiredRetrievals
-    : Retrieval[Option[String] ~ Option[String] ~ Option[String] ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
+    : Retrieval[Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
     Retrievals.internalId and Retrievals.groupIdentifier and
-      Retrievals.clientId and Retrievals.affinityGroup and
+      Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-  val clientId:     String = UUID.randomUUID().toString
+  val pillar2Enrolments: Enrolments = Enrolments(
+    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(HMRC_PILLAR2_ORG_KEY, ENROLMENT_IDENTIFIER)), "", None))
+  )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
