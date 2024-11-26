@@ -22,7 +22,9 @@ import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.mvc.Results.Unauthorized
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
@@ -43,12 +45,26 @@ class SubscriptionDataRetrievalActionSpec extends AnyWordSpec with SubscriptionL
 
     "build a SubscriptionLocalData object and add it to the request" in {
 
-      when(mockSubscriptionConnector.getSubscriptionCache(any())(any(), any())) thenReturn Future(subscriptionLocalData)(ec)
+      when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
+        Right(subscriptionLocalData)
+      )
       val action = new Harness(mockSubscriptionConnector)
 
       val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
 
-      result.subscriptionLocalData mustBe subscriptionLocalData
+      result.subscriptionLocalData mustBe Right(subscriptionLocalData)
+    }
+
+    "throw an exception when an error occurs while retrieving SubscriptionLocalData" in {
+
+      when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
+        Left(Unauthorized)
+      )
+      val action = new Harness(mockSubscriptionConnector)
+
+      val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
+
+      result.subscriptionLocalData mustBe Left(Unauthorized)
     }
   }
 }

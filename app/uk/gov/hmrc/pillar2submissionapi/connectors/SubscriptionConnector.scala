@@ -18,6 +18,8 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import play.api.Logging
 import play.api.libs.json.Json
+import play.api.mvc.Result
+import play.api.mvc.Results.Unauthorized
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
@@ -31,14 +33,14 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
 
   def getSubscriptionCache(
     userId:      String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionLocalData] =
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionLocalData]] =
     http
       .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
       .map {
         case response if response.status == 200 =>
-          Json.parse(response.body).as[SubscriptionLocalData]
+          Right(Json.parse(response.body).as[SubscriptionLocalData])
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
-          throw new RuntimeException(s"Error: ${e.status} ${e.body}") //TODO: Replace placeholder error
+          Left(Unauthorized) //TODO: Replace placeholder error - check with Richard which error to use
       }
 }
