@@ -15,20 +15,41 @@
  */
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
-
+import cats.data.{NonEmptyChain, Validated, ValidatedNec}
+import org.mockito.ArgumentMatchers.{any => mockitoAny}
+import org.mockito.Mockito.{doReturn, when}
+import org.mockito.invocation.InvocationOnMock
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.validation.{LiabilityDataValidator, LiabilityNilReturnValidator, ValidationError}
 
-import java.time.LocalDate
+class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with MockitoSugar with GuiceOneAppPerSuite {
 
-class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+  private val mockLiabilityDataValidator      = mock[LiabilityDataValidator]
+  private val mockLiabilityNilReturnValidator = mock[LiabilityNilReturnValidator]
+  locally {
+    when(mockLiabilityDataValidator.validate(mockitoAny[LiabilityData]))
+      .thenAnswer { (invocation: InvocationOnMock) =>
+        Validated.Valid(invocation.getArgument[LiabilityData](0))
+      }: Unit
 
-  private val controller = new UktrSubmissionController(Helpers.stubControllerComponents())
+    when(mockLiabilityNilReturnValidator.validate(mockitoAny[LiabilityNilReturn]))
+      .thenAnswer { (invocation: InvocationOnMock) =>
+        Validated.Valid(invocation.getArgument[LiabilityNilReturn](0))
+      }: Unit
+  }
+
+  private val controller = new UktrSubmissionController(
+    Helpers.stubControllerComponents(),
+    liabilityDataValidator = mockLiabilityDataValidator,
+    liabilityNilReturnValidator = mockLiabilityNilReturnValidator
+  )
 
   "UktrSubmissionController#submitUktr" should {
 
@@ -68,21 +89,21 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
     }
 
     "return Created for a valid UktrSubmissionNilReturn submission" in {
-      val validNilReturn = UktrSubmissionNilReturn(
-        accountingPeriodFrom = LocalDate.parse("2023-01-01"),
-        accountingPeriodTo = LocalDate.parse("2023-12-31"),
-        obligationMTT = false,
-        electionUKGAAP = true,
-        liabilities = LiabilityNilReturn(ReturnType.NIL_RETURN)
+      val validNilReturn = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> false,
+        "electionUKGAAP"       -> true,
+        "liabilities"          -> Json.obj("returnType" -> "NIL_RETURN")
       )
 
       val request = FakeRequest(POST, "/submitUktr")
-        .withJsonBody(Json.toJson(validNilReturn))
+        .withJsonBody(validNilReturn)
 
       val result = controller.submitUktr.apply(request)
 
-      val _ = status(result) shouldBe CREATED: Unit
-      val _ = contentAsJson(result) shouldBe Json.obj("status" -> "Created")
+      status(result)        shouldBe CREATED:                         Unit
+      contentAsJson(result) shouldBe Json.obj("status" -> "Created"): Unit
     }
 
     "return BadRequest when JSON is missing required fields" in {
@@ -126,6 +147,15 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         )
       )
 
+      val validationErrors = Seq(
+        ValidationError("/liabilities/numberSubGroupDTT", "numberSubGroupDTT must be non-negative"),
+        ValidationError("/liabilities/totalLiability", "totalLiability must be a positive number"),
+        ValidationError("/liabilities/totalLiabilityIIR", "totalLiabilityIIR must be a positive number"),
+        ValidationError("/liabilities/liableEntities", "liableEntities must not be empty")
+      )
+
+      when(mockLiabilityDataValidator.validate(mockitoAny[LiabilityData]))
+        .thenReturn(Validated.invalid(NonEmptyChain.fromSeq(validationErrors).get))
       val request = FakeRequest(POST, "/submitUktr").withJsonBody(invalidLiabilitiesJson)
       val result  = controller.submitUktr.apply(request)
 
@@ -133,10 +163,10 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
 
       details should contain allElementsOf Seq(
-        "Path: /liabilities/numberSubGroupDTT: numberSubGroupDTT must be non-negative",
-        "Path: /liabilities/totalLiability: totalLiability must be a positive number",
-        "Path: /liabilities/totalLiabilityIIR: totalLiabilityIIR must be a positive number",
-        "Path: /liabilities/liableEntities: liableEntities must not be empty"
+        "/liabilities/numberSubGroupDTT: numberSubGroupDTT must be non-negative",
+        "/liabilities/totalLiability: totalLiability must be a positive number",
+        "/liabilities/totalLiabilityIIR: totalLiabilityIIR must be a positive number",
+        "/liabilities/liableEntities: liableEntities must not be empty"
       ): Unit
     }
 
@@ -358,10 +388,10 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
       val details = (contentAsJson(result) \ "details").as[Seq[String]]
 
       details should contain allElementsOf Seq(
-        "Path: /liabilities/numberSubGroupDTT: numberSubGroupDTT must be non-negative",
-        "Path: /liabilities/totalLiability: totalLiability must be a positive number",
-        "Path: /liabilities/totalLiabilityIIR: totalLiabilityIIR must be a positive number",
-        "Path: /liabilities/liableEntities: liableEntities must not be empty"
+        "/liabilities/numberSubGroupDTT: numberSubGroupDTT must be non-negative",
+        "/liabilities/totalLiability: totalLiability must be a positive number",
+        "/liabilities/totalLiabilityIIR: totalLiabilityIIR must be a positive number",
+        "/liabilities/liableEntities: liableEntities must not be empty"
       ): Unit
     }
 
@@ -498,6 +528,33 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with GuiceO
         "Path: /liabilities/totalLiabilityDTT, Errors: error.path.missing",
         "Path: /liabilities/numberSubGroupUTPR, Errors: error.path.missing"
       ): Unit
+    }
+
+    "return BadRequest when LiabilityNilReturnValidator returns Invalid" in {
+
+      val validNilReturnJson = Json.obj(
+        "accountingPeriodFrom" -> "2023-01-01",
+        "accountingPeriodTo"   -> "2023-12-31",
+        "obligationMTT"        -> false,
+        "electionUKGAAP"       -> true,
+        "liabilities"          -> Json.obj("returnType" -> "NIL_RETURN")
+      )
+
+      val validationError = ValidationError("field", "error message")
+      val invalidResult: ValidatedNec[ValidationError, LiabilityNilReturn] = Validated.invalidNec(validationError)
+
+      val _ = doReturn(invalidResult).when(mockLiabilityNilReturnValidator).validate(mockitoAny[LiabilityNilReturn])
+
+      val request = FakeRequest(POST, "/submitUktr").withJsonBody(validNilReturnJson)
+      val result  = controller.submitUktr.apply(request)
+
+      status(result) shouldBe BAD_REQUEST: Unit
+
+      val jsonResponse = contentAsJson(result)
+      (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format": Unit
+
+      val details = (jsonResponse \ "details").as[Seq[String]]
+      details should contain(s"${validationError.field}, Errors: ${validationError.error}"): Unit
     }
 
   }

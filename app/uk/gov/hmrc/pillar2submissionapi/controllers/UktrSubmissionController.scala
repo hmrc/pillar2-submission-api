@@ -27,12 +27,15 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
+class UktrSubmissionController @Inject() (
+  cc:                          ControllerComponents,
+  liabilityDataValidator:      LiabilityDataValidator,
+  liabilityNilReturnValidator: LiabilityNilReturnValidator
+) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = Action { request =>
     request.body.asJson match {
       case Some(json) =>
-        // Validate for unexpected fields
         val knownTopLevelKeys = Set("accountingPeriodFrom", "accountingPeriodTo", "obligationMTT", "electionUKGAAP", "liabilities")
         val extraTopLevelKeys = json.as[JsObject].keys.diff(knownTopLevelKeys)
 
@@ -64,10 +67,9 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
             )
           )
         } else {
-          // Proceed with validation
           json.validate[UktrSubmission] match {
             case JsSuccess(submission: UktrSubmissionData, _) =>
-              LiabilityDataValidator.validate(submission.liabilities) match {
+              liabilityDataValidator.validate(submission.liabilities) match {
                 case Validated.Valid(_) =>
                   Created(Json.obj("status" -> "Created"))
                 case Validated.Invalid(errors) =>
@@ -80,7 +82,7 @@ class UktrSubmissionController @Inject() (cc: ControllerComponents) extends Back
               }
 
             case JsSuccess(submission: UktrSubmissionNilReturn, _) =>
-              LiabilityNilReturnValidator.validate(submission.liabilities) match {
+              liabilityNilReturnValidator.validate(submission.liabilities) match {
                 case Validated.Valid(_) =>
                   Created(Json.obj("status" -> "Created"))
                 case Validated.Invalid(errors) =>

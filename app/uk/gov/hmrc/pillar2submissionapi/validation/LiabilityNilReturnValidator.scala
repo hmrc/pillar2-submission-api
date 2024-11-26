@@ -20,12 +20,19 @@ import cats.data.ValidatedNec
 import cats.implicits._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
-object LiabilityNilReturnValidator extends Validator[LiabilityNilReturn] {
-  override def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
+import javax.inject.Singleton
+
+@Singleton
+class LiabilityNilReturnValidator {
+
+  def validate(obj: LiabilityNilReturn): ValidatedNec[ValidationError, LiabilityNilReturn] =
     validateEnum(obj.returnType, ReturnType.values, "returnType").map(_ => obj)
 
   private def validateEnum[T](value: T, validValues: Seq[T], fieldName: String): ValidatedNec[ValidationError, T] =
     if (validValues.contains(value)) value.validNec
     else ValidationError(s"Path: /liabilities/$fieldName", s"Unknown submission type: $value").invalidNec
+}
 
+object LiabilityNilReturnValidator {
+  def apply(): LiabilityNilReturnValidator = new LiabilityNilReturnValidator()
 }

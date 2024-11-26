@@ -20,8 +20,12 @@ import cats.data.ValidatedNec
 import cats.implicits._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
-object LiabilityDataValidator extends Validator[LiabilityData] {
-  override def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] =
+import javax.inject.Singleton
+
+@Singleton
+class LiabilityDataValidator {
+
+  def validate(obj: LiabilityData): ValidatedNec[ValidationError, LiabilityData] =
     (
       validateNonNegativeInt(obj.numberSubGroupDTT, "numberSubGroupDTT"),
       validateNonNegativeInt(obj.numberSubGroupUTPR, "numberSubGroupUTPR"),
@@ -49,4 +53,8 @@ object LiabilityDataValidator extends Validator[LiabilityData] {
       entities.zipWithIndex.map { case (entity, index) =>
         LiableEntityValidator.validate(entity).leftMap(_.map(e => e.copy(field = s"liableEntities[$index].${e.field}")))
       }.sequence
+}
+
+object LiabilityDataValidator {
+  def apply(): LiabilityDataValidator = new LiabilityDataValidator()
 }

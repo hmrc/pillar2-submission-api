@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.LocalDate
 
@@ -41,17 +41,6 @@ object UktrSubmission {
         json.validate[LiabilityData]
     }
   }
-
-//  private val liabilityReads: Reads[Liability] = Reads[Liability] { json =>
-//    (json \ "returnType").validateOpt[String].flatMap {
-//      case Some("NIL_RETURN") =>
-//        json.validate[LiabilityNilReturn]
-//      case Some(invalidReturnType) =>
-//        JsError((JsPath \ "returnType") -> JsonValidationError(s"Unknown return type: $invalidReturnType"))
-//      case None =>
-//        json.validate[LiabilityData]
-//    }
-//  }
 
   implicit val uktrSubmissionReads: Reads[UktrSubmission] = (
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
