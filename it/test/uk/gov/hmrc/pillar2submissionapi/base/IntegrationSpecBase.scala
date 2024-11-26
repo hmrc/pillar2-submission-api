@@ -31,9 +31,10 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, User}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{ENROLMENT_IDENTIFIER, HMRC_PILLAR2_ORG_KEY}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 
 import java.util.UUID
@@ -45,11 +46,13 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
   implicit lazy val materializer: Materializer     = Materializer(system)
   implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  type RetrievalsType = Option[String] ~ Option[String] ~ Option[String] ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+  type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
 
-  val clientId:     String = UUID.randomUUID().toString
+  val pillar2Enrolments: Enrolments = Enrolments(
+    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(HMRC_PILLAR2_ORG_KEY, ENROLMENT_IDENTIFIER)), "", None))
+  )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
@@ -59,7 +62,7 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
 
   when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
-      Future.successful(Some(id) ~ Some(groupId) ~ Some(clientId) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+      Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )
 
   protected def applicationBuilder(): GuiceApplicationBuilder =
