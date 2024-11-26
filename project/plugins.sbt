@@ -7,7 +7,7 @@ libraryDependencies ++= Seq(
   "io.swagger.parser.v3"             % "swagger-parser"          % "2.1.23"
 )
 
-addSbtPlugin("uk.gov.hmrc"            % "sbt-auto-build"     % "3.22.0")
+addSbtPlugin("uk.gov.hmrc"            % "sbt-auto-build"     % "3.24.0")
 addSbtPlugin("uk.gov.hmrc"            % "sbt-distributables" % "2.5.0")
 addSbtPlugin("org.playframework"      % "sbt-plugin"         % "3.0.5")
 addSbtPlugin("org.scoverage"          % "sbt-scoverage"      % "2.2.2")
