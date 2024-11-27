@@ -40,35 +40,48 @@ class AuthenticatedIdentifierAction @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
-  val ENROLMENT_IDENTIFIER = "PLRID"
+  private val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
+  private val ENROLMENT_IDENTIFIER = "PLRID"
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(
-        Retrievals.internalId and Retrievals.groupIdentifier
-          and Retrievals.allEnrolments and Retrievals.affinityGroup
-          and Retrievals.credentialRole and Retrievals.credentials
-      ) {
+    val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
+      Retrievals.allEnrolments and Retrievals.affinityGroup and
+      Retrievals.credentialRole and Retrievals.credentials
 
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials
-            if enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).isDefined =>
-          Future.successful(
-            Right(
-              IdentifierRequest(
-                request = request,
-                userId = internalId,
-                groupId = Some(groupId),
-                clientPillar2Id = enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).get.getIdentifier(HMRC_PILLAR2_ORG_KEY).get.value,
-                userIdForEnrolment = credentials.get.providerId
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
+      .retrieve(retrievals) {
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
+          getPillar2Id(enrolments) match {
+            case Some(pillar2Id) =>
+              Future.successful(
+                Right(
+                  IdentifierRequest(
+                    request = request,
+                    userId = internalId,
+                    groupId = Some(groupId),
+                    clientPillar2Id = pillar2Id,
+                    userIdForEnrolment = credentials.providerId
+                  )
+                )
               )
-            )
-          )
-        case _ => Future.successful(Left(Unauthorized))
-      } recover { case _: AuthorisationException =>
-      Left(Unauthorized)
+            case None =>
+              logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
+              Future.successful(Left(Unauthorized("Pillar2 ID not found in enrolments")))
+          }
+        case _ =>
+          logger.warn("User failed authorization checks")
+          Future.successful(Left(Unauthorized("Invalid credentials")))
+      } recover { case e: AuthorisationException =>
+      logger.warn(s"Authorization failed: ${e.getMessage}")
+      Left(Unauthorized("Not authorized"))
     }
   }
+
+  private def getPillar2Id(enrolments: Enrolments): Option[String] =
+    for {
+      pillar2Enrolment <- enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY)
+      identifier       <- pillar2Enrolment.getIdentifier(ENROLMENT_IDENTIFIER)
+    } yield identifier.value
 }

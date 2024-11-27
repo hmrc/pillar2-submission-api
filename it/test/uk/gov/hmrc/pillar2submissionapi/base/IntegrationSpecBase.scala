@@ -29,12 +29,12 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{ENROLMENT_IDENTIFIER, HMRC_PILLAR2_ORG_KEY}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 
 import java.util.UUID
@@ -51,7 +51,7 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
 
   val pillar2Enrolments: Enrolments = Enrolments(
-    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(HMRC_PILLAR2_ORG_KEY, ENROLMENT_IDENTIFIER)), "", None))
+    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "", None))
   )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
