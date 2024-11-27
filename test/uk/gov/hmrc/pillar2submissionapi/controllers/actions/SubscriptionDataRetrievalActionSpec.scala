@@ -19,21 +19,16 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import org.scalatest.wordspec.AnyWordSpec
-import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.mvc.Results.Unauthorized
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionDataRetrievalActionSpec extends AnyWordSpec with SubscriptionLocalDataFixture {
-
-  implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global //TODO: remove once SpecBase introduced
+class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionLocalDataFixture {
 
   class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)
