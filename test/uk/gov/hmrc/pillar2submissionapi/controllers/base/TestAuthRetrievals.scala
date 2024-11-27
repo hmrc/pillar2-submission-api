@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.controllers.base
 
-import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.retrieve.~
 
-case class IdentifierRequest[A](
-  request:            Request[A],
-  userId:             String,
-  groupId:            Option[String] = None,
-  clientPillar2Id:    String,
-  userIdForEnrolment: String
-) extends WrappedRequest[A](request)
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
+}

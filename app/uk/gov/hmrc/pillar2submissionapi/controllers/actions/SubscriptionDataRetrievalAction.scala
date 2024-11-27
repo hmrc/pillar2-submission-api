@@ -39,8 +39,7 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
       SubscriptionDataRequest(
         request.request,
         request.userId,
-        subscriptionLocalData,
-        request.enrolments
+        subscriptionLocalData
       )
     }
 

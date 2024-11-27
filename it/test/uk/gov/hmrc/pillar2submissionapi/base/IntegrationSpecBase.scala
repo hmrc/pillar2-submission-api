@@ -16,15 +16,59 @@
 
 package uk.gov.hmrc.pillar2submissionapi.base
 
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
+import play.api.test.FakeRequest
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, AuthConnector, CredentialRole, Enrolment, EnrolmentIdentifier, Enrolments, User}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{ENROLMENT_IDENTIFIER, HMRC_PILLAR2_ORG_KEY}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results {
+import java.util.UUID
+import scala.concurrent.{ExecutionContext, Future}
+
+trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar {
+
+  implicit lazy val system:       ActorSystem      = ActorSystem()
+  implicit lazy val materializer: Materializer     = Materializer(system)
+  implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+
+  type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+
+  val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
+
+  val pillar2Enrolments: Enrolments = Enrolments(
+    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(HMRC_PILLAR2_ORG_KEY, ENROLMENT_IDENTIFIER)), "", None))
+  )
+  val id:           String = UUID.randomUUID().toString
+  val groupId:      String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
+
+  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+
+  when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(
+      Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+    )
 
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure()
+      .overrides(
+        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default()))
+      )
 }

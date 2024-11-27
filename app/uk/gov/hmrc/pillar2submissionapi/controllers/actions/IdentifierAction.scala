@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.mvc._
+import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 
-case class IdentifierRequest[A](
-  request:            Request[A],
-  userId:             String,
-  groupId:            Option[String] = None,
-  clientPillar2Id:    String,
-  userIdForEnrolment: String
-) extends WrappedRequest[A](request)
+trait IdentifierAction
+    extends ActionRefiner[Request, IdentifierRequest]
+    with ActionBuilder[IdentifierRequest, AnyContent]
+    with ActionFunction[Request, IdentifierRequest]

@@ -50,7 +50,9 @@ class SubscriptionDataRetrievalActionSpec extends AnyWordSpec with SubscriptionL
       )
       val action = new Harness(mockSubscriptionConnector)
 
-      val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
+      val result = action
+        .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+        .futureValue
 
       result.subscriptionLocalData mustBe Right(subscriptionLocalData)
     }
@@ -62,7 +64,9 @@ class SubscriptionDataRetrievalActionSpec extends AnyWordSpec with SubscriptionL
       )
       val action = new Harness(mockSubscriptionConnector)
 
-      val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
+      val result = action
+        .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+        .futureValue
 
       result.subscriptionLocalData mustBe Left(Unauthorized)
     }
