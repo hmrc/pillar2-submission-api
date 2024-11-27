@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.errorhandling
 
 import play.api.Logging
-import play.api.http.{DefaultHttpErrorHandler, MimeTypes}
+import play.api.http.DefaultHttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
@@ -31,49 +31,18 @@ class ErrorHandler extends DefaultHttpErrorHandler with Logging {
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     val errorResponse = Json.obj(
       "status"  -> statusCode,
-      "message" -> message
+      "message" -> message,
+      "details" -> Json.toJson(Seq("A client error occurred"))
     )
-    Future.successful(Status(statusCode)(errorResponse).as(MimeTypes.JSON))
+    Future.successful(Status(statusCode)(errorResponse))
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     val errorResponse = Json.obj(
       "status"  -> 500,
       "message" -> "Internal Server Error",
-      "details" -> exception.getMessage
+      "details" -> Json.toJson(Seq(exception.getMessage))
     )
-    Future.successful(InternalServerError(errorResponse).as(MimeTypes.JSON))
+    Future.successful(InternalServerError(errorResponse))
   }
 }
-//
-//package uk.gov.hmrc.pillar2submissionapi.error
-//
-//import play.api.Logging
-//import play.api.libs.json.Json
-//import play.api.mvc.Results._
-//import play.api.mvc.{RequestHeader, Result}
-//import play.api.http.HttpErrorHandler
-//
-//import javax.inject.Singleton
-//import scala.concurrent.Future
-//
-//@Singleton
-//class ErrorHandler extends HttpErrorHandler with Logging {
-//  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-//    logger.error(s"Client error occurred: $message for ${request.uri}")
-//    Future.successful(
-//      Status(statusCode)(
-//        Json.obj("message" -> s"Client error: $message")
-//      )
-//    )
-//  }
-//
-//  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
-//    logger.error(s"Server error occurred for ${request.uri}", exception)
-//    Future.successful(
-//      InternalServerError(
-//        Json.obj("message" -> "Internal server error")
-//      )
-//    )
-//  }
-//}

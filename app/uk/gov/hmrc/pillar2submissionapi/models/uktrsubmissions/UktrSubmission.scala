@@ -67,7 +67,6 @@ object UktrSubmission {
           nilReturn
         )
       case _ =>
-        // Handle unexpected Liability subtype
         throw new IllegalArgumentException("Unknown Liability type")
     }
   )

@@ -19,9 +19,10 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import cats.data.Validated
 import cats.implicits.toFoldableOps
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.validation._
+import uk.gov.hmrc.pillar2submissionapi.errorhandling.ResponseHandler
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -30,85 +31,86 @@ import javax.inject.{Inject, Singleton}
 class UktrSubmissionController @Inject() (
   cc:                          ControllerComponents,
   liabilityDataValidator:      LiabilityDataValidator,
-  liabilityNilReturnValidator: LiabilityNilReturnValidator
+  liabilityNilReturnValidator: LiabilityNilReturnValidator,
+  responseHandler:             ResponseHandler
 ) extends BackendController(cc) {
 
+  private lazy val knownTopLevelKeys = Set(
+    "accountingPeriodFrom",
+    "accountingPeriodTo",
+    "obligationMTT",
+    "electionUKGAAP",
+    "liabilities"
+  )
+
+  private lazy val knownLiabilitiesKeys = Set(
+    "electionDTTSingleMember",
+    "electionUTPRSingleMember",
+    "numberSubGroupDTT",
+    "numberSubGroupUTPR",
+    "totalLiability",
+    "totalLiabilityDTT",
+    "totalLiabilityIIR",
+    "totalLiabilityUTPR",
+    "liableEntities",
+    "returnType"
+  )
+
   def submitUktr: Action[AnyContent] = Action { request =>
-    request.body.asJson match {
-      case Some(json) =>
-        val knownTopLevelKeys = Set("accountingPeriodFrom", "accountingPeriodTo", "obligationMTT", "electionUKGAAP", "liabilities")
-        val extraTopLevelKeys = json.as[JsObject].keys.diff(knownTopLevelKeys)
+    request.body.asJson
+      .map(validateJson)
+      .getOrElse(responseHandler.badRequest("Invalid JSON format", Some(Seq("Body must be valid JSON"))))
+  }
 
-        val knownLiabilitiesKeys = Set(
-          "electionDTTSingleMember",
-          "electionUTPRSingleMember",
-          "numberSubGroupDTT",
-          "numberSubGroupUTPR",
-          "totalLiability",
-          "totalLiabilityDTT",
-          "totalLiabilityIIR",
-          "totalLiabilityUTPR",
-          "liableEntities",
-          "returnType"
-        )
-        val extraLiabilitiesKeys = (json \ "liabilities")
-          .asOpt[JsObject]
-          .map(_.keys.diff(knownLiabilitiesKeys))
-          .getOrElse(Set.empty)
-
-        val allExtraKeys = extraTopLevelKeys.map(key => s"Path: /$key, Errors: unexpected field") ++
-          extraLiabilitiesKeys.map(key => s"Path: /liabilities/$key, Errors: unexpected field")
-
-        if (allExtraKeys.nonEmpty) {
-          BadRequest(
-            Json.obj(
-              "message" -> "Invalid JSON format",
-              "details" -> allExtraKeys
-            )
-          )
-        } else {
-          json.validate[UktrSubmission] match {
-            case JsSuccess(submission: UktrSubmissionData, _) =>
-              liabilityDataValidator.validate(submission.liabilities) match {
-                case Validated.Valid(_) =>
-                  Created(Json.obj("status" -> "Created"))
-                case Validated.Invalid(errors) =>
-                  BadRequest(
-                    Json.obj(
-                      "message" -> "Invalid JSON format",
-                      "details" -> errors.toList.map(e => s"${e.field}: ${e.error}")
-                    )
-                  )
-              }
-
-            case JsSuccess(submission: UktrSubmissionNilReturn, _) =>
-              liabilityNilReturnValidator.validate(submission.liabilities) match {
-                case Validated.Valid(_) =>
-                  Created(Json.obj("status" -> "Created"))
-                case Validated.Invalid(errors) =>
-                  BadRequest(
-                    Json.obj(
-                      "message" -> "Invalid JSON format",
-                      "details" -> errors.toList.map(e => s"${e.field}, Errors: ${e.error}")
-                    )
-                  )
-              }
-
-            case JsError(errors) =>
-              val errorDetails = errors.map { case (path, validationErrors) =>
-                validationErrors.map(err => s"Path: $path, Errors: ${err.message}")
-              }.flatten
-              BadRequest(
-                Json.obj(
-                  "message" -> "Invalid JSON format",
-                  "details" -> errorDetails
-                )
-              )
-          }
-        }
-
-      case None =>
-        BadRequest(Json.obj("message" -> "Invalid JSON format"))
+  private def validateJson(json: JsValue): Result = {
+    val extraKeys = findExtraKeys(json)
+    if (extraKeys.nonEmpty) {
+      responseHandler.badRequest(
+        "Invalid JSON format",
+        Some(extraKeys.map(key => s"Path: $key, Errors: unexpected field"))
+      )
+    } else {
+      processSubmission(json)
     }
   }
+
+  private def findExtraKeys(json: JsValue): Seq[String] = {
+    val topLevelExtra = json.as[JsObject].keys.diff(knownTopLevelKeys).toSeq
+    val liabilitiesExtra = (json \ "liabilities")
+      .asOpt[JsObject]
+      .map(_.keys.diff(knownLiabilitiesKeys).toSeq)
+      .getOrElse(Seq.empty)
+
+    topLevelExtra.map(key => s"/$key") ++ liabilitiesExtra.map(key => s"/liabilities/$key")
+  }
+
+  private def processSubmission(json: JsValue): Result =
+    json.validate[UktrSubmission] match {
+      case JsSuccess(data: UktrSubmissionData, _) =>
+        handleValidation(liabilityDataValidator.validate(data.liabilities).leftMap(_.toList))
+      case JsSuccess(nilReturn: UktrSubmissionNilReturn, _) =>
+        handleValidation(liabilityNilReturnValidator.validate(nilReturn.liabilities).leftMap(_.toList))
+      case JsError(errors) =>
+        val immutableErrors: scala.collection.immutable.Seq[(JsPath, scala.collection.immutable.Seq[JsonValidationError])] =
+          errors.map { case (path, validationErrors) => (path, validationErrors.toVector) }.toSeq
+        responseHandler.badRequest("Invalid JSON format", Some(formatJsonValidationErrors(immutableErrors)))
+    }
+
+  private def handleValidation(validationResult: Validated[Seq[ValidationError], _]): Result =
+    validationResult match {
+      case Validated.Valid(_) =>
+        responseHandler.created()
+      case Validated.Invalid(errors) =>
+        responseHandler.badRequest("Validation failed", Some(formatValidationErrors(errors)))
+    }
+
+  private def formatJsonValidationErrors(
+    errors: Seq[(JsPath, scala.collection.immutable.Seq[JsonValidationError])]
+  ): Seq[String] =
+    errors.flatMap { case (path, validationErrors) =>
+      validationErrors.map(err => s"Path: $path, Errors: ${err.message}")
+    }
+
+  private def formatValidationErrors(validationErrors: Seq[ValidationError]): Seq[String] =
+    validationErrors.map(err => s"${err.field}: ${err.error}")
 }
