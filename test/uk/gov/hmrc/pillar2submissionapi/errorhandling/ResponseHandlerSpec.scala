@@ -31,41 +31,36 @@ class ResponseHandlerSpec extends BaseSpec {
       val responseHandler = new ResponseHandler
 
       "should return BadRequest with default error message when no details are provided" in {
- 
+
         val result: Future[Result] = Future.successful(responseHandler.badRequest("Invalid JSON format", None))
 
-  
-        status(result) shouldBe BAD_REQUEST: Unit 
-        val jsonResponse = contentAsJson(result) 
-        (jsonResponse \ "message").as[String]    shouldBe "Invalid JSON format":                   Unit 
-        (jsonResponse \ "details").as[Seq[String]] should contain("An unexpected error occurred"): Unit 
+        status(result) shouldBe BAD_REQUEST: Unit
+        val jsonResponse = contentAsJson(result)
+        (jsonResponse \ "message").as[String]    shouldBe "Invalid JSON format":                   Unit
+        (jsonResponse \ "details").as[Seq[String]] should contain("An unexpected error occurred"): Unit
       }
 
       "should return BadRequest with provided details" in {
-     
+
         val details = Seq("Detail 1", "Detail 2")
 
-   
         val result: Future[Result] = Future.successful(responseHandler.badRequest("Invalid JSON format", Some(details)))
 
-    
-        status(result) shouldBe BAD_REQUEST: Unit 
-        val jsonResponse = contentAsJson(result) 
-        (jsonResponse \ "message").as[String]    shouldBe "Invalid JSON format":         Unit 
-        (jsonResponse \ "details").as[Seq[String]] should contain allElementsOf details: Unit 
+        status(result) shouldBe BAD_REQUEST: Unit
+        val jsonResponse = contentAsJson(result)
+        (jsonResponse \ "message").as[String]    shouldBe "Invalid JSON format":         Unit
+        (jsonResponse \ "details").as[Seq[String]] should contain allElementsOf details: Unit
       }
     }
 
     "created" - {
 
       "should return Created with the correct JSON response" in {
-        
-        val responseHandler = new ResponseHandler 
 
-        
+        val responseHandler = new ResponseHandler
+
         val result: Future[Result] = Future.successful(responseHandler.created())
 
-        
         status(result) shouldBe CREATED: Unit
         val jsonResponse = contentAsJson(result)
         (jsonResponse \ "status").as[String] shouldBe "Created"

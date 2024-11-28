@@ -17,10 +17,10 @@
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import com.typesafe.config.ConfigFactory
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 trait Configs {
   self: GuiceOneAppPerSuite =>

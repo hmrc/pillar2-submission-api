@@ -19,10 +19,10 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import cats.data.Validated
 import cats.implicits.toFoldableOps
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import play.api.mvc._
+import uk.gov.hmrc.pillar2submissionapi.errorhandling.ResponseHandler
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.validation._
-import uk.gov.hmrc.pillar2submissionapi.errorhandling.ResponseHandler
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}

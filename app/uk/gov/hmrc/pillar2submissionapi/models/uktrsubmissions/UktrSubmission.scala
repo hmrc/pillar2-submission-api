@@ -42,34 +42,40 @@ object UktrSubmission {
     }
   }
 
-  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (
-    (JsPath \ "accountingPeriodFrom").read[LocalDate] and
-      (JsPath \ "accountingPeriodTo").read[LocalDate] and
-      (JsPath \ "obligationMTT").read[Boolean] and
-      (JsPath \ "electionUKGAAP").read[Boolean] and
-      (JsPath \ "liabilities").read[Liability](liabilityReads)
-  )((accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
-    liabilities match {
-      case data: LiabilityData =>
-        UktrSubmissionData(
-          accountingPeriodFrom,
-          accountingPeriodTo,
-          obligationMTT,
-          electionUKGAAP,
-          data
-        )
-      case nilReturn: LiabilityNilReturn =>
-        UktrSubmissionNilReturn(
-          accountingPeriodFrom,
-          accountingPeriodTo,
-          obligationMTT,
-          electionUKGAAP,
-          nilReturn
-        )
-      case _ =>
-        throw new IllegalArgumentException("Unknown Liability type")
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = Reads[UktrSubmission] { json =>
+    (
+      (JsPath \ "accountingPeriodFrom").read[LocalDate] and
+        (JsPath \ "accountingPeriodTo").read[LocalDate] and
+        (JsPath \ "obligationMTT").read[Boolean] and
+        (JsPath \ "electionUKGAAP").read[Boolean] and
+        (JsPath \ "liabilities").read[Liability](liabilityReads)
+    ).tupled.reads(json).flatMap { case (accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
+      liabilities match {
+        case data: LiabilityData =>
+          JsSuccess(
+            UktrSubmissionData(
+              accountingPeriodFrom,
+              accountingPeriodTo,
+              obligationMTT,
+              electionUKGAAP,
+              data
+            )
+          )
+        case nilReturn: LiabilityNilReturn =>
+          JsSuccess(
+            UktrSubmissionNilReturn(
+              accountingPeriodFrom,
+              accountingPeriodTo,
+              obligationMTT,
+              electionUKGAAP,
+              nilReturn
+            )
+          )
+        case _ =>
+          JsError((JsPath \ "liabilities") -> JsonValidationError("Unknown Liability type"))
+      }
     }
-  )
+  }
 
   implicit val uktrSubmissionWrites: Writes[UktrSubmission] = Writes[UktrSubmission] {
     case data:      UktrSubmissionData      => Json.toJson(data)

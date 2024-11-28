@@ -17,8 +17,9 @@
 package uk.gov.hmrc.pillar2submissionapi.errorhandling
 
 import play.api.http.{HttpErrorHandler, Status}
-import play.api.mvc._
 import play.api.libs.json.Json
+import play.api.mvc._
+
 import scala.concurrent.Future
 
 class ErrorHandler extends HttpErrorHandler {

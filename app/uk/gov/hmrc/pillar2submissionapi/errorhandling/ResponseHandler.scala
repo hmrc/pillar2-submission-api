@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.pillar2submissionapi.errorhandling
 
-import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json.Json
-import play.api.mvc.Results._
+import play.api.libs.json.Json.JsValueWrapper
 import play.api.mvc.Result
+import play.api.mvc.Results._
 
 import javax.inject.Singleton
 
