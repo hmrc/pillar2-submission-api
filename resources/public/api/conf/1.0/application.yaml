@@ -1,49 +1,137 @@
-openapi: "3.0.3"
-
+openapi: 3.0.3
 info:
-  version: 1.0.0
+  version: 0.26.0
   title: Pillar 2 Submission
-
-servers:
-  - url: https://test-api.service.hmrc.gov.uk/hello_world
-    description: Sandbox
-  - url: https://api.service.hmrc.gov.uk/hello_world
-    description: Production
-
-components:
-  parameters:
-    acceptHeader:
-      name: Accept
-      in: header
-      schema:
-        type: string
-        enum: [
-          "application/vnd.hmrc.1.0+json",
-          "application/vnd.hmrc.1.0+xml"
-        ]
-      required: true
-
+  description: An API for managing and retrieving Pillar 2 submissions
+tags: []
 paths:
-  /hello_world:
-    get:
-      summary: Placeholder hello world endpoint
-      description: |
-        An endpoint that returns "Hello world"
-      tags:
-        - pillar2-submission-api
-      parameters:
-        - $ref: '#/components/parameters/acceptHeader'
-      responses:
-        "200":
-          description: "OK Response"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-              example:
-                "Hello world"
+  /RESTAdapter/PLR/UKTaxReturn:
+    post:
       security:
         - {}
+      tags:
+        - app
+      operationId: submitUktr
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/UktrSubmissionData"
+                - $ref: "#/components/schemas/UktrSubmissionNilReturn"
+      summary: Submit a Pillar2 UKTR
+      responses:
+        "201":
+          description: created
+components:
+  schemas:
+    LiableEntity:
+      properties:
+        idType:
+          type: string
+        idValue:
+          type: string
+        ukChargeableEntityName:
+          type: string
+        amountOwedUTPR:
+          type: number
+          format: double
+        amountOwedIIR:
+          type: number
+          format: double
+        amountOwedDTT:
+          type: number
+          format: double
+      required:
+        - ukChargeableEntityName
+        - idType
+        - idValue
+        - amountOwedDTT
+        - amountOwedIIR
+        - amountOwedUTPR
+    UktrSubmissionData:
+      properties:
+        electionUKGAAP:
+          type: boolean
+        accountingPeriodFrom:
+          type: string
+          format: date
+        liabilities:
+          $ref: "#/components/schemas/LiabilityData"
+        accountingPeriodTo:
+          type: string
+          format: date
+        obligationMTT:
+          type: boolean
+      required:
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
+    UktrSubmissionNilReturn:
+      properties:
+        electionUKGAAP:
+          type: boolean
+        accountingPeriodFrom:
+          type: string
+          format: date
+        liabilities:
+          $ref: "#/components/schemas/LiabilityNilReturn"
+        accountingPeriodTo:
+          type: string
+          format: date
+        obligationMTT:
+          type: boolean
+      required:
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
+    LiabilityNilReturn:
+      properties:
+        returnType:
+          type: string
+          enum:
+            - NIL_RETURN
+      required:
+        - returnType
+    LiabilityData:
+      properties:
+        electionUTPRSingleMember:
+          type: boolean
+        electionDTTSingleMember:
+          type: boolean
+        numberSubGroupDTT:
+          type: integer
+          format: int32
+        totalLiabilityDTT:
+          type: number
+          format: double
+        totalLiabilityUTPR:
+          type: number
+          format: double
+        numberSubGroupUTPR:
+          type: integer
+          format: int32
+        liableEntities:
+          type: array
+          items:
+            $ref: "#/components/schemas/LiableEntity"
+        totalLiabilityIIR:
+          type: number
+          format: double
+        totalLiability:
+          type: number
+          format: double
+      required:
+        - electionDTTSingleMember
+        - electionUTPRSingleMember
+        - numberSubGroupDTT
+        - numberSubGroupUTPR
+        - totalLiability
+        - totalLiabilityDTT
+        - totalLiabilityIIR
+        - totalLiabilityUTPR
+        - liableEntities
