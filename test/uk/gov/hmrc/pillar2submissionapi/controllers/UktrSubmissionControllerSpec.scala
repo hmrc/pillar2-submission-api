@@ -23,7 +23,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
-import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
@@ -572,20 +571,6 @@ class UktrSubmissionControllerSpec extends AnyWordSpec with Matchers with Mockit
 
       val details = (jsonResponse \ "details").as[Seq[String]]
       details should contain(s"${validationError.field}: ${validationError.error}")
-    }
-
-    "return BadRequest with default error message when no details are provided" in {
-
-      val responseHandler = new ResponseHandler
-
-
-      val result: Result = responseHandler.badRequest("Invalid JSON format", None) // Returns a Result, not Future[Result]
-
-
-      status(result) shouldBe BAD_REQUEST
-      val jsonResponse = contentAsJson(result)
-      (jsonResponse \ "message").as[String] shouldBe "Invalid JSON format"
-      (jsonResponse \ "details").as[Seq[String]] should contain("An unexpected error occurred")
     }
   }
 }

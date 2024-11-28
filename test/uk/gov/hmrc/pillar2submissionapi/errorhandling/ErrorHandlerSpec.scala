@@ -32,35 +32,33 @@ class ErrorHandlerSpec extends BaseSpec {
 
     "onClientError" - {
       "should return a JSON response for client errors" in {
-        val request = FakeRequest("GET", "/some-endpoint")
+        val request    = FakeRequest("GET", "/some-endpoint")
         val statusCode = Status.BAD_REQUEST
-        val message = "Invalid input"
+        val message    = "Invalid input"
 
         val result: Future[Result] = errorHandler.onClientError(request, statusCode, message)
 
-
-        status(result) shouldBe statusCode: Unit
+        status(result)      shouldBe statusCode:               Unit
         contentType(result) shouldBe Some("application/json"): Unit
         val jsonResponse = contentAsJson(result)
-        (jsonResponse \ "status").as[Int] shouldBe statusCode: Unit
-        (jsonResponse \ "message").as[String] shouldBe message: Unit
+        (jsonResponse \ "status").as[Int]        shouldBe statusCode:                         Unit
+        (jsonResponse \ "message").as[String]    shouldBe message:                            Unit
         (jsonResponse \ "details").as[Seq[String]] should contain("A client error occurred"): Unit
       }
     }
 
     "onServerError" - {
       "should return a JSON response for server errors" in {
-        val request = FakeRequest("GET", "/some-endpoint")
+        val request   = FakeRequest("GET", "/some-endpoint")
         val exception = new RuntimeException("Unexpected error")
 
         val result: Future[Result] = errorHandler.onServerError(request, exception)
 
-
-        status(result) shouldBe Status.INTERNAL_SERVER_ERROR: Unit
-        contentType(result) shouldBe Some("application/json"): Unit
+        status(result)      shouldBe Status.INTERNAL_SERVER_ERROR: Unit
+        contentType(result) shouldBe Some("application/json"):     Unit
         val jsonResponse = contentAsJson(result)
-        (jsonResponse \ "status").as[Int] shouldBe Status.INTERNAL_SERVER_ERROR: Unit
-        (jsonResponse \ "message").as[String] shouldBe "Internal Server Error": Unit
+        (jsonResponse \ "status").as[Int]        shouldBe Status.INTERNAL_SERVER_ERROR:  Unit
+        (jsonResponse \ "message").as[String]    shouldBe "Internal Server Error":       Unit
         (jsonResponse \ "details").as[Seq[String]] should contain(exception.getMessage): Unit
       }
     }

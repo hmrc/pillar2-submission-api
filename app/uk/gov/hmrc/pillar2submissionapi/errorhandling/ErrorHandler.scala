@@ -30,7 +30,6 @@ class ErrorHandler extends HttpErrorHandler {
       "details" -> Seq("A client error occurred")
     )
 
-
     Future.successful(
       Results
         .Status(statusCode)(Json.toJson(errorResponse))
