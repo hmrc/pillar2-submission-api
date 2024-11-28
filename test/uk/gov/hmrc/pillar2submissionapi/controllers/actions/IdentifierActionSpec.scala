@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
+import com.google.inject.Inject
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -64,14 +65,14 @@ class IdentifierActionSpec extends ActionBaseSpec {
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(ENROLMENT_IDENTIFIER)
+          identifierRequest.clientPillar2Id    must be(identifierValue)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
     }
 
     "a user is a registered Agent" should {
-      "user is successfully authorized" in {
+      "user is unauthorized" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
@@ -85,7 +86,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         val result = await(identifierAction.refine(fakeRequest))
 
         result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized)
+        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
       }
     }
   }
@@ -109,7 +110,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
       )
 
       result.isRight            must be(false)
-      result.left.getOrElse("") must be(Unauthorized)
+      result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
     }
   }
 
@@ -133,7 +134,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         )
 
         result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized)
+        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
       }
     }
 
@@ -154,7 +155,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         )
 
         result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized)
+        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
       }
     }
 
@@ -175,7 +176,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
         )
 
         result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized)
+        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
       }
     }
 
@@ -196,18 +197,68 @@ class IdentifierActionSpec extends ActionBaseSpec {
         )
 
         result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized)
+        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
       }
     }
   }
+
+  "IdentifierAction - invalid details" when {
+    "pillar2Id is missing" should {
+      "user is unauthorized" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ Enrolments(Set.empty) ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        val result = await(
+          identifierAction.refine(fakeRequest)
+        )
+
+        result.isRight            must be(false)
+        result.left.getOrElse("") must be(Unauthorized("Pillar2 ID not found in enrolments"))
+      }
+    }
+  }
+
+  "IdentifierAction - exceptions" when {
+    "AuthorisationException is thrown" should {
+      "user is unauthorized" in {
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector,
+          new BodyParsers.Default
+        )(ec)
+
+        val result = await(
+          identifierAction.refine(fakeRequest)
+        )
+
+        result.isRight            must be(false)
+        result.left.getOrElse("") must be(Unauthorized("Not authorized"))
+      }
+    }
+  }
+
+  class FakeFailingAuthConnector @Inject() extends AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+      Future.failed(new MissingBearerToken)
+  }
+
 }
 
 object IdentifierActionSpec {
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
-  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
-  val ENROLMENT_IDENTIFIER = "PLRID"
+  val enrolmentKey    = "HMRC-PILLAR2-ORG"
+  val identifierName  = "PLRID"
+  val identifierValue = "XCCVRUGFJG788"
 
   val requiredPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
   val requiredRetrievals
@@ -217,7 +268,7 @@ object IdentifierActionSpec {
       Retrievals.credentialRole and Retrievals.credentials
 
   val pillar2Enrolments: Enrolments = Enrolments(
-    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(HMRC_PILLAR2_ORG_KEY, ENROLMENT_IDENTIFIER)), "", None))
+    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "", None))
   )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
