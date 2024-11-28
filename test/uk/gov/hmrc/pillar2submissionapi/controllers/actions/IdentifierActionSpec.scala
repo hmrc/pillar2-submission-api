@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
+import com.google.inject.Inject
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -225,6 +226,30 @@ class IdentifierActionSpec extends ActionBaseSpec {
       }
     }
   }
+
+  "IdentifierAction - exceptions" when {
+    "AuthorisationException is thrown" should {
+      "user is unauthorized" in {
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector,
+          new BodyParsers.Default
+        )(ec)
+
+        val result = await(
+          identifierAction.refine(fakeRequest)
+        )
+
+        result.isRight            must be(false)
+        result.left.getOrElse("") must be(Unauthorized("Not authorized"))
+      }
+    }
+  }
+
+  class FakeFailingAuthConnector @Inject() extends AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+      Future.failed(new MissingBearerToken)
+  }
+
 }
 
 object IdentifierActionSpec {
