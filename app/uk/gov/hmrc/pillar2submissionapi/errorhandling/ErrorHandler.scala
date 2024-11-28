@@ -16,33 +16,39 @@
 
 package uk.gov.hmrc.pillar2submissionapi.errorhandling
 
-import play.api.Logging
-import play.api.http.DefaultHttpErrorHandler
+import play.api.http.{HttpErrorHandler, Status}
+import play.api.mvc._
 import play.api.libs.json.Json
-import play.api.mvc.Results._
-import play.api.mvc.{RequestHeader, Result}
-
-import javax.inject.Singleton
 import scala.concurrent.Future
 
-@Singleton
-class ErrorHandler extends DefaultHttpErrorHandler with Logging {
+class ErrorHandler extends HttpErrorHandler {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     val errorResponse = Json.obj(
       "status"  -> statusCode,
       "message" -> message,
-      "details" -> Json.toJson(Seq("A client error occurred"))
+      "details" -> Seq("A client error occurred")
     )
-    Future.successful(Status(statusCode)(errorResponse))
+
+
+    Future.successful(
+      Results
+        .Status(statusCode)(Json.toJson(errorResponse))
+        .withHeaders("Content-Type" -> "application/json")
+    )
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     val errorResponse = Json.obj(
-      "status"  -> 500,
+      "status"  -> Status.INTERNAL_SERVER_ERROR,
       "message" -> "Internal Server Error",
-      "details" -> Json.toJson(Seq(exception.getMessage))
+      "details" -> Seq(exception.getMessage)
     )
-    Future.successful(InternalServerError(errorResponse))
+
+    Future.successful(
+      Results
+        .Status(Status.INTERNAL_SERVER_ERROR)(Json.toJson(errorResponse))
+        .withHeaders("Content-Type" -> "application/json")
+    )
   }
 }
