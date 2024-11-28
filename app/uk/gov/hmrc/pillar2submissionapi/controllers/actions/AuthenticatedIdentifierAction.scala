@@ -44,7 +44,7 @@ class AuthenticatedIdentifierAction @Inject() (
   private val ENROLMENT_IDENTIFIER = "PLRID"
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
       Retrievals.allEnrolments and Retrievals.affinityGroup and

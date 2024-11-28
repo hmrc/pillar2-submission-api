@@ -268,7 +268,7 @@ object IdentifierActionSpec {
       Retrievals.credentialRole and Retrievals.credentials
 
   val pillar2Enrolments: Enrolments = Enrolments(
-    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "", None))
+    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "Activated", None))
   )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
