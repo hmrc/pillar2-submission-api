@@ -24,6 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
@@ -40,11 +41,12 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar {
+trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar with GuiceOneServerPerSuite {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
   implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 

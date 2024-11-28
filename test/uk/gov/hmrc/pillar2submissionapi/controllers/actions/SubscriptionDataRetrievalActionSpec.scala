@@ -36,8 +36,6 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
   "Subscription Data Retrieval Action" should {
 
-    val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
-
     "build a SubscriptionLocalData object and add it to the request" in {
 
       when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
@@ -49,13 +47,14 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
         .futureValue
 
-      result.subscriptionLocalData mustBe Right(subscriptionLocalData)
+      result.subscriptionLocalData.isRight mustBe true
+      result.subscriptionLocalData.map(_ mustBe subscriptionLocalData)
     }
 
-    "throw an exception when an error occurs while retrieving SubscriptionLocalData" in {
+    "return a BadRequest when an error occurs while retrieving SubscriptionLocalData" in {
 
       when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
-        Left(Unauthorized)
+        Left(BadRequest)
       )
       val action = new Harness(mockSubscriptionConnector)
 
@@ -63,7 +62,8 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
         .futureValue
 
-      result.subscriptionLocalData mustBe Left(Unauthorized)
+      result.subscriptionLocalData.isLeft mustBe true
+      result.subscriptionLocalData.map(_ mustBe BadRequest)
     }
   }
 }

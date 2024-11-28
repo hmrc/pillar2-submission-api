@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import play.api.mvc.Results.Unauthorized
+import play.api.mvc.Results.BadRequest
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
@@ -41,6 +41,6 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
           Right(Json.parse(response.body).as[SubscriptionLocalData])
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
-          Left(Unauthorized) //TODO: Replace placeholder error - check with Richard which result to use for this error
+          Left(BadRequest)
       }
 }
