@@ -47,7 +47,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
 
         result.isRight mustBe true
         result.map(_ mustBe subscriptionLocalData)
-
       }
 
       "return a Left containing a BadRequest when the backend has returned an error" in {
@@ -68,5 +67,5 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
 object SubscriptionConnectorSpec {
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
-  private val getSubscription = "/report-pillar2-top-up-taxes/user-cache/read-subscription/"
+  private val getSubscription = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
 }

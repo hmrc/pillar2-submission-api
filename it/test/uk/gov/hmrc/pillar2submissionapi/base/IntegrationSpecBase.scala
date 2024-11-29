@@ -41,7 +41,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar with GuiceOneServerPerSuite {
+trait IntegrationSpecBase extends AnyWordSpec with GuiceOneServerPerSuite with BeforeAndAfterEach with Matchers with Results with MockitoSugar {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
