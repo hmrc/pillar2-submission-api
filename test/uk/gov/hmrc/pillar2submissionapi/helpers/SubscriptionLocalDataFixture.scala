@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
-import uk.gov.hmrc.pillar2submissionapi.models.{MneOrDomestic, NonUKAddress}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.{AccountingPeriod, SubscriptionLocalData}
+import uk.gov.hmrc.pillar2submissionapi.models.{MneOrDomestic, NonUKAddress}
 
 import java.time.LocalDate
 
