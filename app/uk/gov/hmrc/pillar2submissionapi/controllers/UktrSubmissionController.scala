@@ -17,16 +17,20 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents, identify: IdentifierAction) extends BackendController(cc) {
+class UktrSubmissionController @Inject() (
+  cc:       ControllerComponents,
+  identify: IdentifierAction,
+  getData:  SubscriptionDataRetrievalAction
+) extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = identify { request =>
+  def submitUktr: Action[AnyContent] = (identify andThen getData) { request =>
     request.body.asJson match {
       case Some(request) =>
         if (request.validate[UktrSubmission].isError) {

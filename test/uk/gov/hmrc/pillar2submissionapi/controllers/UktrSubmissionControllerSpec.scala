@@ -25,7 +25,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 
 class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, identifierAction)
+  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, identifierAction, subscriptionAction)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {

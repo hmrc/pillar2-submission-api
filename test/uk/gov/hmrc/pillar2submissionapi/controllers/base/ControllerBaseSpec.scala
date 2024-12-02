@@ -24,18 +24,21 @@ import org.scalatestplus.play.PlaySpec
 import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar {
+trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionLocalDataFixture {
 
-  implicit lazy val ec:           ExecutionContext     = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val system:       ActorSystem          = ActorSystem()
-  implicit lazy val materializer: Materializer         = Materializer(system)
-  implicit val cc:                ControllerComponents = stubControllerComponents()
-  val mockAuthConnector:          AuthConnector        = mock[AuthConnector]
+  implicit lazy val ec:           ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val system:       ActorSystem           = ActorSystem()
+  implicit lazy val materializer: Materializer          = Materializer(system)
+  implicit val cc:                ControllerComponents  = stubControllerComponents()
+  val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
 
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
@@ -43,5 +46,12 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   ) {
     override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
       Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "")))
+  }
+
+  implicit val subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
+    override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] =
+      Future.successful(SubscriptionDataRequest(request, "internalId", Right(subscriptionLocalData)))
+
+    override protected def executionContext: ExecutionContext = ec
   }
 }

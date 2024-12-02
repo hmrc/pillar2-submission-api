@@ -35,13 +35,22 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with GuiceOneServerPerSuite with BeforeAndAfterEach with Matchers with Results with MockitoSugar {
+trait IntegrationSpecBase
+    extends AnyWordSpec
+    with GuiceOneServerPerSuite
+    with BeforeAndAfterEach
+    with Matchers
+    with Results
+    with MockitoSugar
+    with SubscriptionLocalDataFixture {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -60,17 +69,24 @@ trait IntegrationSpecBase extends AnyWordSpec with GuiceOneServerPerSuite with B
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
       Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )
 
+  when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(
+      Future.successful(Right(subscriptionLocalData))
+    )
+
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure()
       .overrides(
-        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default()))
+        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
+        inject.bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
       )
 }
