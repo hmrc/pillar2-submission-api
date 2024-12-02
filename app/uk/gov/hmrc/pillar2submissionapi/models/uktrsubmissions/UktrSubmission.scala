@@ -35,4 +35,5 @@ object UktrSubmission {
     } else {
       json.validate[UktrSubmissionNilReturn]
     }
+  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = Json.writes[UktrSubmission]
 }

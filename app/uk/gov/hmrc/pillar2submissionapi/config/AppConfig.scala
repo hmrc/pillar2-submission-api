@@ -17,11 +17,13 @@
 package uk.gov.hmrc.pillar2submissionapi.config
 
 import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject() (config: Configuration) {
+class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
 
   val appName: String = config.get[String]("appName")
+  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
 }
