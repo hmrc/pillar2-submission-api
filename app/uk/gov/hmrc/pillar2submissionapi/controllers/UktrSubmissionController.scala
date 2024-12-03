@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
@@ -31,12 +32,17 @@ class UktrSubmissionController @Inject() (
 ) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = (identify andThen getData) { request =>
-    request.body.asJson match {
-      case Some(request) =>
-        if (request.validate[UktrSubmission].isError) {
-          BadRequest("Bad request")
-        } else Created
-      case None => BadRequest("No request body")
+    request.subscriptionLocalData match {
+      case Right(_) =>
+        request.body.asJson match {
+          case Some(json) =>
+            json.validate[UktrSubmission] match {
+              case JsSuccess(_, _) => Created
+              case JsError(_)      => BadRequest("Bad request")
+            }
+          case None => BadRequest("No request body")
+        }
+      case Left(_) => BadRequest("No subscription data")
     }
   }
 }

@@ -17,6 +17,8 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
@@ -24,13 +26,14 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.{IntegrationSpecBase, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec.{errorCodes, getSubscription}
 import uk.gov.hmrc.pillar2submissionapi.helpers._
 
-class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionLocalDataFixture {
+import scala.concurrent.{ExecutionContext, Future}
 
-  lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionLocalDataFixture {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -43,19 +46,24 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
 
       "return a Right containing SubscriptionLocalData when the backend has returned 200 OK" in {
         stubGet(s"$getSubscription/$id", OK, Json.toJson(subscriptionLocalData).toString)
-        val result = connector.getSubscriptionCache(id).futureValue
+        val result = mockSubscriptionConnector.getSubscriptionCache(id).futureValue
 
         result.isRight mustBe true
         result.map(_ mustBe subscriptionLocalData)
       }
 
       "return a Left containing a BadRequest when the backend has returned an error" in {
+        when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(
+            Future.successful(Left(BadRequest))
+          )
+
         server.stubFor(
           get(urlEqualTo(s"$getSubscription/$id"))
             .willReturn(aResponse().withStatus(errorCodes.sample.value))
         )
 
-        val result = connector.getSubscriptionCache(id).futureValue
+        val result = mockSubscriptionConnector.getSubscriptionCache(id).futureValue
 
         result.isLeft mustBe true
         result.map(_ mustBe BadRequest)
