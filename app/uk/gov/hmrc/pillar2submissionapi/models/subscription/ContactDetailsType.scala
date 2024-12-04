@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc.{Request, Result, WrappedRequest}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionData
+import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionDataRequest[A](
-  request:          Request[A],
-  userId:           String,
-  subscriptionData: Either[Result, SubscriptionData]
-) extends WrappedRequest[A](request)
+final case class ContactDetailsType(
+  name:         String,
+  telephone:    Option[String],
+  emailAddress: String
+)
+
+object ContactDetailsType {
+  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
+}

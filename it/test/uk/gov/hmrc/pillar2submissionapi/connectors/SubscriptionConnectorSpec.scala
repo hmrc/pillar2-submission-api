@@ -16,24 +16,20 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import uk.gov.hmrc.pillar2submissionapi.base.{IntegrationSpecBase, WireMockServerHandler}
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec.{errorCodes, getSubscription}
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
 import uk.gov.hmrc.pillar2submissionapi.helpers._
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
 
-import scala.concurrent.{ExecutionContext, Future}
-
-class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionLocalDataFixture {
+class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionDataFixture {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -41,32 +37,25 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
     )
     .build()
 
+  lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+  private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
+  val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
+
   "SubscriptionConnector" must {
-    "getSubscriptionCache" should {
+    "readSubscription" should {
 
-      "return a Right containing SubscriptionLocalData when the backend has returned 200 OK" in {
-        stubGet(s"$getSubscription/$id", OK, Json.toJson(subscriptionLocalData).toString)
-        val result = mockSubscriptionConnector.getSubscriptionCache(id).futureValue
-
+      "return json when the backend has returned 200 OK with data" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+        val result: Either[Result, SubscriptionData] = connector.readSubscription(plrReference).futureValue
         result.isRight mustBe true
-        result.map(_ mustBe subscriptionLocalData)
+        result mustBe Right(subscriptionDataJson)
       }
 
-      "return a Left containing a BadRequest when the backend has returned an error" in {
-        when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(
-            Future.successful(Left(BadRequest))
-          )
-
-        server.stubFor(
-          get(urlEqualTo(s"$getSubscription/$id"))
-            .willReturn(aResponse().withStatus(errorCodes.sample.value))
-        )
-
-        val result = mockSubscriptionConnector.getSubscriptionCache(id).futureValue
-
+      "return a BadRequest when the backend has returned a response else than 200 status" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference).futureValue
         result.isLeft mustBe true
-        result.map(_ mustBe BadRequest)
+        result mustBe Left(BadRequest)
       }
     }
   }
@@ -74,6 +63,58 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
 
 object SubscriptionConnectorSpec {
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
+  private val plrReference         = "testPlrRef"
+  private val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
 
-  private val getSubscription = "/report-pillar2-top-up-taxes/user-cache/read-subscription"
+  private val successfulResponseJson =
+    """
+      |{
+      |
+      |      "formBundleNumber": "119000004320",
+      |      "upeDetails": {
+      |          "domesticOnly": false,
+      |          "organisationName": "International Organisation Inc.",
+      |          "customerIdentification1": "12345678",
+      |          "customerIdentification2": "12345678",
+      |          "registrationDate": "2022-01-31",
+      |          "filingMember": false
+      |      },
+      |      "upeCorrespAddressDetails": {
+      |          "addressLine1": "1 High Street",
+      |          "addressLine2": "Egham",
+      |
+      |          "addressLine3": "Wycombe",
+      |          "addressLine4": "Surrey",
+      |          "postCode": "HP13 6TT",
+      |          "countryCode": "GB"
+      |      },
+      |      "primaryContactDetails": {
+      |          "name": "Fred Flintstone",
+      |          "telephone": "0115 9700 700",
+      |          "emailAddress": "fred.flintstone@aol.com"
+      |      },
+      |      "secondaryContactDetails": {
+      |          "name": "Donald Trump",
+      |          "telephone": "0115 9700 701",
+      |          "emailAddress": "donald.trump@potus.com"
+      |
+      |      },
+      |      "filingMemberDetails": {
+      |          "safeId": "XL6967739016188",
+      |          "organisationName": "Domestic Operations Ltd",
+      |          "customerIdentification1": "1234Z678",
+      |          "customerIdentification2": "1234567Y"
+      |      },
+      |      "accountingPeriod": {
+      |          "startDate": "2024-01-06",
+      |          "endDate": "2025-04-06",
+      |          "duetDate": "2024-04-06"
+      |      },
+      |      "accountStatus": {
+      |          "inactive": true
+      |      }
+      |  }
+      |""".stripMargin
+
+  private val unsuccessfulResponseJson = """{ "status": "error" }"""
 }

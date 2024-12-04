@@ -32,7 +32,7 @@ class UktrSubmissionController @Inject() (
 ) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = (identify andThen getData) { request =>
-    request.subscriptionLocalData match {
+    request.subscriptionData match {
       case Right(_) =>
         request.body.asJson match {
           case Some(json) =>

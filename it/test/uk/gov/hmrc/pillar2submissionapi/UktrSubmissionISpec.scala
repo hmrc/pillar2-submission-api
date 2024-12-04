@@ -122,7 +122,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
     "Subscription data does not exist" should {
       "return a BadRequest exception" in {
 
-        when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+        when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(
             Future.successful(Left(BadRequest))
           )

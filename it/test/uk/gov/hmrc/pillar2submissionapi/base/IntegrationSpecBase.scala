@@ -38,7 +38,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +50,7 @@ trait IntegrationSpecBase
     with Matchers
     with Results
     with MockitoSugar
-    with SubscriptionLocalDataFixture {
+    with SubscriptionDataFixture {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -77,9 +77,9 @@ trait IntegrationSpecBase
       Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )
 
-  when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+  when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
-      Future.successful(Right(subscriptionLocalData))
+      Future.successful(Right(subscriptionData))
     )
 
   protected def applicationBuilder(): GuiceApplicationBuilder =

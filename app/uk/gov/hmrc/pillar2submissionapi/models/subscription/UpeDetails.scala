@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc.{Request, Result, WrappedRequest}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionData
+import play.api.libs.json._
 
-case class SubscriptionDataRequest[A](
-  request:          Request[A],
-  userId:           String,
-  subscriptionData: Either[Result, SubscriptionData]
-) extends WrappedRequest[A](request)
+import java.time.LocalDate
+
+final case class UpeDetails(
+  safeId:                  Option[String],
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String,
+  registrationDate:        LocalDate,
+  domesticOnly:            Boolean,
+  filingMember:            Boolean
+)
+
+object UpeDetails {
+  implicit val format: OFormat[UpeDetails] = Json.format[UpeDetails]
+}

@@ -26,12 +26,12 @@ import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionLocalDataFixture {
+trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture {
 
   implicit lazy val ec:           ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val system:       ActorSystem           = ActorSystem()
@@ -50,7 +50,7 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
 
   implicit val subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
     override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] =
-      Future.successful(SubscriptionDataRequest(request, "internalId", Right(subscriptionLocalData)))
+      Future.successful(SubscriptionDataRequest(request, "internalId", Right(subscriptionData)))
 
     override protected def executionContext: ExecutionContext = ec
   }

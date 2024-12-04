@@ -23,12 +23,12 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionLocalDataFixture
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionLocalDataFixture {
+class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixture {
 
   class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)
@@ -36,10 +36,10 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
   "Subscription Data Retrieval Action" should {
 
-    "build a SubscriptionLocalData object and add it to the request" in {
+    "build a SubscriptionData object and add it to the request" in {
 
-      when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
-        Right(subscriptionLocalData)
+      when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
+        Right(subscriptionData)
       )
       val action = new Harness(mockSubscriptionConnector)
 
@@ -47,13 +47,13 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
         .futureValue
 
-      result.subscriptionLocalData.isRight mustBe true
-      result.subscriptionLocalData.map(_ mustBe subscriptionLocalData)
+      result.subscriptionData.isRight mustBe true
+      result.subscriptionData.map(_ mustBe subscriptionData)
     }
 
-    "return a BadRequest when an error occurs while retrieving SubscriptionLocalData" in {
+    "return a BadRequest when an error occurs while retrieving SubscriptionData" in {
 
-      when(mockSubscriptionConnector.getSubscriptionCache(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
+      when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
         Left(BadRequest)
       )
       val action = new Harness(mockSubscriptionConnector)
@@ -62,8 +62,8 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
         .futureValue
 
-      result.subscriptionLocalData.isLeft mustBe true
-      result.subscriptionLocalData.map(_ mustBe BadRequest)
+      result.subscriptionData.isLeft mustBe true
+      result.subscriptionData.map(_ mustBe BadRequest)
     }
   }
 }

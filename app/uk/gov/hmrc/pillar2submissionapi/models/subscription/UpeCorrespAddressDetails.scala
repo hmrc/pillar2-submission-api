@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-case class NonUKAddress(
+final case class UpeCorrespAddressDetails(
   addressLine1: String,
   addressLine2: Option[String],
-  addressLine3: String,
+  addressLine3: Option[String],
   addressLine4: Option[String],
-  postalCode:   Option[String],
+  postCode:     Option[String],
   countryCode:  String
 )
 
-object NonUKAddress {
-  implicit val format: OFormat[NonUKAddress] = Json.format[NonUKAddress]
+object UpeCorrespAddressDetails {
+  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }

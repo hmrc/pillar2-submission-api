@@ -23,7 +23,7 @@ import play.api.mvc.Results.BadRequest
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionLocalData
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,16 +31,19 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClient) extends Logging {
 
-  def getSubscriptionCache(
-    userId:      String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionLocalData]] =
+  def readSubscription(
+    plrReference: String
+  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
+    val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
+
     http
-      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .GET[HttpResponse](subscriptionUrl)
       .map {
         case response if response.status == 200 =>
-          Right(Json.parse(response.body).as[SubscriptionLocalData])
+          Right(Json.parse(response.body).as[SubscriptionSuccess].success)
         case e =>
-          logger.warn(s"Connection issue when calling read subscription with status: ${e.status} ${e.body}")
+          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           Left(BadRequest)
       }
+  }
 }
