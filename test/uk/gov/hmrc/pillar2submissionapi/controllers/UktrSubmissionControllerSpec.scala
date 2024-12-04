@@ -20,10 +20,10 @@ import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 
-class UktrSubmissionControllerSpec extends ControllerBaseSpec {
+class UktrSubmissionControllerSpec extends UnitTestBaseSpec {
 
   val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, identifierAction)
 
