@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
@@ -24,10 +26,13 @@ import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.{IntegrationSpecBase, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
 import uk.gov.hmrc.pillar2submissionapi.helpers._
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionDataFixture {
 
@@ -37,7 +42,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
     )
     .build()
 
-  lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
   private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
   val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
 
@@ -45,15 +49,25 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
     "readSubscription" should {
 
       "return json when the backend has returned 200 OK with data" in {
+        when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(
+            Future.successful(Right(subscriptionDataJson))
+          )
+
         stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-        val result: Either[Result, SubscriptionData] = connector.readSubscription(plrReference).futureValue
+        val result: Either[Result, SubscriptionData] = mockSubscriptionConnector.readSubscription(plrReference).futureValue
         result.isRight mustBe true
         result mustBe Right(subscriptionDataJson)
       }
 
       "return a BadRequest when the backend has returned a response else than 200 status" in {
+        when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(
+            Future.successful(Left(BadRequest))
+          )
+
         stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
-        val result = connector.readSubscription(plrReference).futureValue
+        val result = mockSubscriptionConnector.readSubscription(plrReference).futureValue
         result.isLeft mustBe true
         result mustBe Left(BadRequest)
       }
