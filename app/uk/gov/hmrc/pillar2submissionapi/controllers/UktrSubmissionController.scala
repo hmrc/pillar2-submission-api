@@ -17,32 +17,41 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{ApiResponse, SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.ApiResponse.internalServerError
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.ApiResponse.internalServerError
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents, identify: IdentifierAction, pillar2Connector: Pillar2Connector)
-                                         (implicit val hc: HeaderCarrier)
-  extends BackendController(cc){
+class UktrSubmissionController @Inject() (cc: ControllerComponents, identify: IdentifierAction, pillar2Connector: Pillar2Connector)(implicit
+  val hc:                                     HeaderCarrier,
+  ec:                                         ExecutionContext
+) extends BackendController(cc) {
 
-  def submitUktr: Action[UktrSubmission] = identify andThen Action.async(parse.json[UktrSubmission]) { implicit request =>
-
-    pillar2Connector
-      .submitUktr(uktrSubmission = request.body)
-      .map(convertToResult)
-
+  def submitUktr: Action[AnyContent] = identify.async { implicit request =>
+    request.body.asJson match {
+      case Some(value) =>
+        value.validate[UktrSubmission] match {
+          case JsSuccess(value, _) =>
+            pillar2Connector
+              .submitUktr(value)
+              .map(convertToResult)
+          case JsError(_) =>
+            Future.successful(BadRequest(""))
+        }
+      case None =>
+        Future.successful(BadRequest(""))
+    }
   }
 
   private def convertToResult(response: HttpResponse): Result =

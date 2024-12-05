@@ -37,9 +37,11 @@ object UktrSubmission {
     }
 
   implicit val uktrSubmissionWrites: Writes[UktrSubmission] = {
-    case UktrSubmissionData(accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
-      Json.writes[UktrSubmissionData]
-    case UktrSubmissionNilReturn(accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
-      Json.writes[UktrSubmissionNilReturn]
+    case submission @ UktrSubmissionData(_, _, _, _, _) =>
+      Json.toJson(submission)
+    case nilReturn @ UktrSubmissionNilReturn(_, _, _, _, _) =>
+      Json.toJson(nilReturn)
+    case _ =>
+      throw new RuntimeException("")
   }
 }

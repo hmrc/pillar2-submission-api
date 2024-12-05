@@ -32,7 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.TestAuthRetrievals._
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
