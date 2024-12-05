@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.controllers.error
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+sealed trait Pillar2Error extends Exception {
+  val code:    String
+  val message: String
+}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+case object InvalidJson extends Pillar2Error {
+
+  val message = "Invalid JSON payload"
+
+  val code = "001"
+}
+
+case object EmptyRequestBody extends Pillar2Error {
+  val message = "No body provided in request"
+
+  val code = "002"
+}
+
+case class AuthenticationError(message: String) extends Pillar2Error {
+
+  val code = "003"
+}

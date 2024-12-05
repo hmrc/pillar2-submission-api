@@ -20,102 +20,78 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues.convertOptionToValuable
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.HttpVerbs.POST
-import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec.{invalidRequestJson, validRequestJson, validRequestJson_duplicateFieldsAndAdditionalFields, validRequestNilReturnJson}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+
+import java.net.URI
+import scala.concurrent.Await
+import scala.concurrent.duration.DurationInt
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
+  implicit val hc: HeaderCarrier = new HeaderCarrier
+  val provider    = app.injector.instanceOf[HttpClientV2Provider]
+  val client      = provider.get()
+  val str         = s"http://localhost:$port${routes.UktrSubmissionController.submitUktr.url}"
+  val baseRequest = client.post(URI.create(str).toURL)
+
   "UKTR Submission" when {
     "Subscription data exists" should {
       "Create a new UKTR submission (POST)" that {
-        "has valid submission data" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-            .withBody[JsValue](validRequestJson)
+      "has valid submission data" should {
 
           "return a 201 CREATED response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual CREATED
-            }
-          }
+            val request = baseRequest.withBody(validRequestJson)
+          val result  = Await.result(request.execute[JsValue], 5.seconds)
+          (result \ "success").as[Boolean] mustEqual true
         }
-        "has valid nil-return submission data" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-            .withBody[JsValue](validRequestNilReturnJson)
+      }
+      "has valid nil-return submission data" should {
 
           "return a 201 CREATED response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual CREATED
-            }
-          }
+            val request = baseRequest.withBody(validRequestNilReturnJson)
+          val result  = Await.result(request.execute[JsValue], 5.seconds)
+          (result \ "success").as[Boolean] mustEqual true
         }
-        "has an invalid request body" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-            .withBody[JsValue](invalidRequestJson)
+      }
+      "has an invalid request body" should {
 
           "return a 400 BAD_REQUEST response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual BAD_REQUEST
-            }
-          }
+            val request = baseRequest.withBody(invalidRequestJson)
+          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+          result.status mustEqual 400
         }
-        "has an empty request body" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-            .withBody(JsObject.empty)
+      }
+      "has an empty request body" should {
 
           "return a 400 BAD_REQUEST response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual BAD_REQUEST
-            }
+            val request = baseRequest.withBody(JsObject.empty)
+          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+          result.status mustEqual 400
           }
         }
         "has no request body" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-
-          "return a 400 BAD_REQUEST response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual BAD_REQUEST
-            }
-          }
-        }
-
-        "has a valid request body containing duplicates fields and additional fields" should {
-          val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-            .withJsonBody(validRequestJson_duplicateFieldsAndAdditionalFields)
-
-          "return a 201 CREATED response" in {
-            val application = applicationBuilder().build()
-            running(application) {
-              val result = route(application, request).value
-              status(result) mustEqual CREATED
-            }
-          }
+          "return a 400 BAD_REQUEST response " in {
+          val request = baseRequest
+          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+          result.status mustEqual 400
         }
       }
+    }
 
-      "Amend a UKTR submission (PUT)" that {
-        "has a valid request body" should {
-          "return a 200" in {
-            // Not yet implemented
-            true
-          }
-        }
+    "has a valid request body containing duplicates fields and additional fields" should {
+
+      "return a 201 CREATED response" in {
+        val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
+        val result  = Await.result(request.execute[JsValue], 5.seconds)
+        (result \ "success").as[Boolean] mustEqual true
       }
     }
 

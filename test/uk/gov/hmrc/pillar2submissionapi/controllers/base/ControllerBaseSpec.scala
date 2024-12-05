@@ -18,7 +18,9 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.base
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc._
@@ -29,7 +31,8 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture {
 
@@ -44,8 +47,15 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
     mockAuthConnector,
     new BodyParsers.Default
   ) {
-    override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
-      Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "")))
+    override def transform[A](request: Request[A]): Future[IdentifierRequest[A]] =
+      Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = ""))
+  }
+
+  implicit class AwaitFuture(fut: Future[Result]) {
+    def shouldFailWith(expected: Throwable): Assertion = {
+      val err = Await.result(fut.failed, 5.seconds)
+      err shouldEqual expected
+    }
   }
 
   implicit val subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {

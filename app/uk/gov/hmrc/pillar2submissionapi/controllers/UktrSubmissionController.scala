@@ -16,13 +16,17 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import play.api.libs.json.Json
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
 class UktrSubmissionController @Inject() (
@@ -31,14 +35,13 @@ class UktrSubmissionController @Inject() (
   getData:  SubscriptionDataRetrievalAction
 ) extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = (identify andThen getData) { request =>
+  def submitUktr: Action[AnyContent] = (identify andThen getData).async { request =>
     request.body.asJson match {
-      case Some(json) =>
-        json.validate[UktrSubmission] match {
-          case JsSuccess(_, _) => Created
-          case JsError(_)      => BadRequest("Bad request")
-        }
-      case None => BadRequest("No request body")
+      case Some(request) =>
+        if (request.validate[UktrSubmission].isError) {
+          Future.failed(InvalidJson)
+        } else Future.successful(Created(Json.obj("success" -> true)))
+      case None => Future.failed(EmptyRequestBody)
     }
   }
 }

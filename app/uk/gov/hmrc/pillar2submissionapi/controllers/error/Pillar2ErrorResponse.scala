@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.controllers.error
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.libs.json.{Json, OFormat}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+case class Pillar2ErrorResponse(code: String, message: String)
+
+object Pillar2ErrorResponse {
+  implicit val format: OFormat[Pillar2ErrorResponse] = Json.format[Pillar2ErrorResponse]
+}
