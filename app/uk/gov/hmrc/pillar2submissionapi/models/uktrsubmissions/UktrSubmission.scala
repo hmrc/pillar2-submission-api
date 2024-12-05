@@ -35,5 +35,11 @@ object UktrSubmission {
     } else {
       json.validate[UktrSubmissionNilReturn]
     }
-  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = Json.writes[UktrSubmission]
+
+  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = {
+    case UktrSubmissionData(accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
+      Json.writes[UktrSubmissionData]
+    case UktrSubmissionNilReturn(accountingPeriodFrom, accountingPeriodTo, obligationMTT, electionUKGAAP, liabilities) =>
+      Json.writes[UktrSubmissionNilReturn]
+  }
 }
