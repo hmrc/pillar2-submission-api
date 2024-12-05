@@ -24,7 +24,6 @@ import uk.gov.hmrc.http.HttpVerbs.POST
 import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
-
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
   "UKTR Submission" when {
