@@ -25,7 +25,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec
 
 class UktrSubmissionControllerSpec extends UnitTestBaseSpec {
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, mockIdentifierAction, mockPillar2Connector)
+  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, mockIdentifierAction, mockPillar2Connector)(hc, ec)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {

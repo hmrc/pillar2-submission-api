@@ -16,32 +16,39 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import play.api.mvc.{ControllerComponents, Results}
 import play.api.test.Helpers.stubControllerComponents
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait UnitTestBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar {
 
   implicit val cc: ControllerComponents = stubControllerComponents()
-  implicit val ec: ExecutionContext     = ExecutionContext.Implicits.global
-  implicit val hc: HeaderCarrier        = HeaderCarrier()
+  implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  val mockConfiguration:  Configuration  = mock[Configuration]
+  val mockConfiguration: Configuration = mock[Configuration]
   val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
   val mockHttpClient:     HttpClientV2   = mock[HttpClientV2]
   val mockIdentifierAction: IdentifierAction = mock[IdentifierAction]
   val mockPillar2Connector: Pillar2Connector = mock[Pillar2Connector]
+
+  when(mockPillar2Connector.submitUktr(ArgumentMatchers.eq(any[UktrSubmission])))
+    .thenReturn(Future.successful(HttpResponse.apply(201, "Created")))
 
   val appConfig: AppConfig = new AppConfig(mockConfiguration, mockServicesConfig) {
     override val pillar2BaseUrl: String = "http://localhost:10051"

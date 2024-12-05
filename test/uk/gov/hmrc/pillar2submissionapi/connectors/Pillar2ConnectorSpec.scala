@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.connectors.UktrSubmissionConnectorSpec.validUktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2ConnectorSpec.validUktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiableEntity, UktrSubmission, UktrSubmissionData}
 
 import java.net.URL
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HttpReads.Implicits._
 
 
-class UktrSubmissionConnectorSpec extends UnitTestBaseSpec {
+class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
   val uktrSubmissionConnector: Pillar2Connector = new Pillar2Connector(appConfig, mockHttpClient)
   val pillar2UktrSubmissionUrl: String           = appConfig.pillar2BaseUrl + "/UPDATE_THIS_URL"
@@ -56,7 +56,7 @@ class UktrSubmissionConnectorSpec extends UnitTestBaseSpec {
   }
 }
 
-object UktrSubmissionConnectorSpec {
+object Pillar2ConnectorSpec {
 
   val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
   val liability: LiabilityData =
