@@ -50,7 +50,7 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
 
   implicit val subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
     override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] =
-      Future.successful(SubscriptionDataRequest(request, "internalId", Right(subscriptionData)))
+      Future.successful(SubscriptionDataRequest(request, "internalId", "pillar2Id", subscriptionData))
 
     override protected def executionContext: ExecutionContext = ec
   }

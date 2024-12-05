@@ -32,17 +32,13 @@ class UktrSubmissionController @Inject() (
 ) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = (identify andThen getData) { request =>
-    request.subscriptionData match {
-      case Right(_) =>
-        request.body.asJson match {
-          case Some(json) =>
-            json.validate[UktrSubmission] match {
-              case JsSuccess(_, _) => Created
-              case JsError(_)      => BadRequest("Bad request")
-            }
-          case None => BadRequest("No request body")
+    request.body.asJson match {
+      case Some(json) =>
+        json.validate[UktrSubmission] match {
+          case JsSuccess(_, _) => Created
+          case JsError(_)      => BadRequest("Bad request")
         }
-      case Left(_) => BadRequest("No subscription data")
+      case None => BadRequest("No request body")
     }
   }
 }

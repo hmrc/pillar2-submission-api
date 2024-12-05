@@ -16,11 +16,12 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.requests
 
-import play.api.mvc.{Request, Result, WrappedRequest}
+import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionData
 
 case class SubscriptionDataRequest[A](
   request:          Request[A],
   userId:           String,
-  subscriptionData: Either[Result, SubscriptionData]
+  clientPillar2Id:  String,
+  subscriptionData: SubscriptionData
 ) extends WrappedRequest[A](request)

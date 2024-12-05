@@ -26,7 +26,8 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixture {
 
@@ -47,11 +48,10 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
         .futureValue
 
-      result.subscriptionData.isRight mustBe true
-      result.subscriptionData.map(_ mustBe subscriptionData)
+      result.subscriptionData mustBe subscriptionData
     }
 
-    "return a BadRequest when an error occurs while retrieving SubscriptionData" in {
+    "return a BadRequest when an error occurs while retrieving SubscriptionData which results in a RuntimeException being thrown" in {
 
       when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
         Left(BadRequest)
@@ -60,10 +60,12 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
       val result = action
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
-        .futureValue
 
-      result.subscriptionData.isLeft mustBe true
-      result.subscriptionData.map(_ mustBe BadRequest)
+      val thrown = intercept[RuntimeException] {
+        Await.result(result, 5.seconds)
+      }
+
+      thrown mustBe a[RuntimeException]
     }
   }
 }

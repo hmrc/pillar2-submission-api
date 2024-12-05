@@ -2,7 +2,6 @@ import org.typelevel.scalacoptions.ScalacOptions
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
-import org.typelevel.scalacoptions.ScalacOptions
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0

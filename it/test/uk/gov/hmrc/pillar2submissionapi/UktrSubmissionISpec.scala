@@ -120,7 +120,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
     }
 
     "Subscription data does not exist" should {
-      "return a BadRequest exception" in {
+      "return a BadRequest resulting in a RuntimeException being thrown" in {
 
         when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
           .thenReturn(
@@ -132,8 +132,10 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
 
         val application = applicationBuilder().build()
         running(application) {
-          val result = route(application, request).value
-          status(result) mustEqual BAD_REQUEST
+          intercept[RuntimeException] {
+            val result = route(application, request).value
+            await(result)
+          }
         }
       }
     }
