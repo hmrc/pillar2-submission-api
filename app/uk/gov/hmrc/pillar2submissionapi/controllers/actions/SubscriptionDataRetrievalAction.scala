@@ -33,7 +33,7 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     with Logging {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
       case Left(_) => Future.failed(new RuntimeException("No subscription data"))
