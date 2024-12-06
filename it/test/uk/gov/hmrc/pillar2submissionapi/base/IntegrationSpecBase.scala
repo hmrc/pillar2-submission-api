@@ -24,6 +24,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
@@ -34,17 +35,27 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar {
+trait IntegrationSpecBase
+    extends AnyWordSpec
+    with GuiceOneServerPerSuite
+    with BeforeAndAfterEach
+    with Matchers
+    with Results
+    with MockitoSugar
+    with SubscriptionDataFixture {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
   implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -58,17 +69,24 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
       Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )
 
+  when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(
+      Future.successful(Right(subscriptionData))
+    )
+
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure()
       .overrides(
-        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default()))
+        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
+        inject.bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
       )
 }
