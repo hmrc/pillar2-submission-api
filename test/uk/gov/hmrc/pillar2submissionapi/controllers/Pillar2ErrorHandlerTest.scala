@@ -16,17 +16,32 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 
-class Pillar2ErrorHandlerTest extends AnyFunSuite {
+class Pillar2ErrorHandlerTest extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
 
   val classUnderTest = new Pillar2ErrorHandler
   val dummyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+
+  test("client errors should be returned") {
+    val validStatus = Gen.choose(400, 499)
+    val messageGen  = Gen.alphaStr
+    forAll(validStatus, messageGen) { (statusCode, message) =>
+      val result = classUnderTest.onClientError(dummyRequest, statusCode, message)
+      status(result) mustEqual 400
+      val response = contentAsJson(result).as[Pillar2ErrorResponse]
+      response.message mustEqual message
+      response.code mustEqual statusCode.toString
+    }
+  }
+
   test("Catch-all error response") {
     val response = classUnderTest.onServerError(dummyRequest, new RuntimeException("Generic Error"))
     status(response) mustEqual 500

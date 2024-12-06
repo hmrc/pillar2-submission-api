@@ -25,7 +25,8 @@ import scala.concurrent.Future
 
 class Pillar2ErrorHandler extends HttpErrorHandler {
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = ???
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
+    Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(statusCode.toString, message))))
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
