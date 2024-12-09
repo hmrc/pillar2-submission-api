@@ -22,6 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmissionData
@@ -31,13 +32,13 @@ import scala.concurrent.Future
 
 class UktrSubmissionControllerSpec extends UnitTestBaseSpec {
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, stubIdentifierAction, mockSubmitUktrService)(hc, ec)
+  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, stubIdentifierAction, mockSubmitUktrService)(ec)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {
       "return 201 CREATED response" in {
 
-        when(mockSubmitUktrService.submitUktr(any[UktrSubmissionData]))
+        when(mockSubmitUktrService.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
               SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))

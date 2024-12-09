@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi
 
 import org.scalatest.OptionValues.convertOptionToValuable
+import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -24,11 +25,13 @@ import uk.gov.hmrc.http.HttpVerbs.POST
 import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
   "UKTR Submission" when {
     "Creating a new UKTR submission (POST)" that {
       "has valid submission data" should {
+        stubResponse("/UPDATE_THIS_URL", CREATED, Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))))
         val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
           .withBody[JsValue](validRequestJson)
 
@@ -114,6 +117,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
 }
 
 object UktrSubmissionISpec {
+
   val validRequestJson: JsValue =
     Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",

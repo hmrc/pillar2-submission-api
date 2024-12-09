@@ -20,7 +20,6 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUktrService
@@ -33,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UktrSubmissionController @Inject() (cc: ControllerComponents,
                                           val identify: IdentifierAction,
                                           val submitUktrService: SubmitUktrService)
-                                         (implicit val hc: HeaderCarrier, ec: ExecutionContext)
+                                         (implicit val ec: ExecutionContext)
 extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = identify.async { implicit request =>

@@ -11,9 +11,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class SubmitUktrService @Inject()(pillar2Connector: Pillar2Connector)(implicit hc: HeaderCarrier) {
+class SubmitUktrService @Inject()(pillar2Connector: Pillar2Connector) {
 
-  def submitUktr(request: UktrSubmission): Future[SubmitUktrSuccessResponse] =
+  def submitUktr(request: UktrSubmission)(implicit hc: HeaderCarrier): Future[SubmitUktrSuccessResponse] =
     pillar2Connector.submitUktr(request).map(convertToResult)
 
 

@@ -17,7 +17,9 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import play.api.{Application, Configuration}
 import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
@@ -30,6 +32,13 @@ import java.time.temporal.ChronoUnit
 class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
   lazy val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .configure(
+      Configuration(
+        "microservice.services.pillar2.port" -> server.port()
+      )
+    )
+    .build()
 
   "UktrSubmissionConnector" when {
     "submitUktr() called with a valid request" must {

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.base
 
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
@@ -24,8 +26,10 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
@@ -34,6 +38,7 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.test.HttpClientSupport
+import uk.gov.hmrc.pillar2submissionapi.WireMockServerHandler
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
@@ -41,7 +46,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar with HttpClientSupport {
+trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar with WireMockServerHandler with HttpClientSupport with GuiceOneAppPerSuite {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -68,10 +73,23 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
 
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
-      .configure()
+      .configure("microservice.services.pillar2.port" -> server.port())
       .overrides(
         inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
-        inject.bind[HttpClient].toInstance(httpClient),
-        inject.bind[HeaderCarrier].to(HeaderCarrier())
+        inject.bind[HttpClient].toInstance(httpClient)
       )
+
+  protected def stubResponse(
+                              expectedUrl:    String,
+                              expectedStatus: Int,
+                              body:           JsValue
+                            ): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(body.toString())
+        )
+    )
 }

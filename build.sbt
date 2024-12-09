@@ -56,5 +56,6 @@ addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-  .settings(DefaultBuildSettings.itSettings())
+  .settings(DefaultBuildSettings.itSettings(),
+    tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
   .settings(libraryDependencies ++= AppDependencies.it)
