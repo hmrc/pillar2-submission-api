@@ -16,41 +16,62 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.Materializer
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
-import play.api.mvc.{ControllerComponents, Results}
+import play.api.libs.json.JsValue
+import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait UnitTestBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar {
+trait UnitTestBaseSpec extends AnyWordSpec with Results with Matchers with MockitoSugar with WireMockServerHandler {
 
-  implicit val cc: ControllerComponents = stubControllerComponents()
-  implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
-  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val cc:                ControllerComponents = stubControllerComponents()
+  implicit val ec:                ExecutionContext     = ExecutionContext.Implicits.global
+  implicit val hc:                HeaderCarrier        = HeaderCarrier()
+  implicit lazy val system:       ActorSystem          = ActorSystem()
+  implicit lazy val materializer: Materializer         = Materializer(system)
 
-  val mockConfiguration: Configuration = mock[Configuration]
-  val mockServicesConfig: ServicesConfig = mock[ServicesConfig]
-  val mockHttpClient:     HttpClientV2   = mock[HttpClientV2]
-  val mockIdentifierAction: IdentifierAction = mock[IdentifierAction]
+  val mockConfiguration:    Configuration    = mock[Configuration]
+  val mockServicesConfig:   ServicesConfig   = mock[ServicesConfig]
+  val mockHttpClient:       HttpClient       = mock[HttpClient]
+  val mockAuthConnector:    AuthConnector    = mock[AuthConnector]
   val mockPillar2Connector: Pillar2Connector = mock[Pillar2Connector]
 
-  when(mockPillar2Connector.submitUktr(ArgumentMatchers.eq(any[UktrSubmission])))
-    .thenReturn(Future.successful(HttpResponse.apply(201, "Created")))
-
-  val appConfig: AppConfig = new AppConfig(mockConfiguration, mockServicesConfig) {
-    override val pillar2BaseUrl: String = "http://localhost:10051"
+  val stubIdentifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+    mockAuthConnector,
+    new BodyParsers.Default
+  ) {
+    override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] =
+      Future.successful(Right(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "")))
   }
+
+//  val appConfig: AppConfig = new AppConfig(mockConfiguration, mockServicesConfig) {
+//    override val pillar2BaseUrl: String = "http://localhost:10051"
+//  }
+
+  protected def stubResponse(
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  ): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(body.toString())
+        )
+    )
 }

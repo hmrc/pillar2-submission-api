@@ -16,20 +16,36 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmissionData
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
+
+import scala.concurrent.Future
 
 class UktrSubmissionControllerSpec extends UnitTestBaseSpec {
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, mockIdentifierAction, mockPillar2Connector)(hc, ec)
+  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, stubIdentifierAction, mockPillar2Connector)(hc, ec)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {
       "return 201 CREATED response" in {
+
+        when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.successful(
+              HttpResponse
+                .apply(201, Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))), Map.empty)
+            )
+          )
+
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_data)

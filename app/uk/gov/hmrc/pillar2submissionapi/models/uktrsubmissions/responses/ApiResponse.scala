@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
 import play.api.libs.json._
 
-sealed trait ApiResponse
+sealed trait ApiResponse //TODO - remove & split into own respective files
 
 case class SubmitUktrSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String]) extends ApiResponse
 
@@ -27,13 +27,6 @@ case class SubmitUktrErrorResponse(code: String, message: String) extends ApiRes
 object ApiResponse {
   implicit val errorFormat:   OFormat[SubmitUktrErrorResponse]   = Json.format[SubmitUktrErrorResponse]
   implicit val successFormat: OFormat[SubmitUktrSuccessResponse] = Json.format[SubmitUktrSuccessResponse]
-  implicit val apiResponseReads: Reads[ApiResponse] = (json: JsValue) =>
-    json.validate[SubmitUktrSuccessResponse] match {
-      case JsSuccess(_, _) =>
-        json.validate[SubmitUktrSuccessResponse]
-      case JsError(_) =>
-        json.validate[SubmitUktrErrorResponse]
-    }
 
   val internalServerError: SubmitUktrErrorResponse = SubmitUktrErrorResponse("500", "Internal server error")
 }

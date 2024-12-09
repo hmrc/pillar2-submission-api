@@ -16,37 +16,38 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpResponse
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.{Configuration, inject}
+import play.api.http.Status.CREATED
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsObject
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2ConnectorSpec.validUktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiableEntity, UktrSubmission, UktrSubmissionData}
 
-import java.net.URL
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import scala.concurrent.Future
-import uk.gov.hmrc.http.HttpReads.Implicits._
-
 
 class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
-  val uktrSubmissionConnector: Pillar2Connector = new Pillar2Connector(appConfig, mockHttpClient)
-  val pillar2UktrSubmissionUrl: String           = appConfig.pillar2BaseUrl + "/UPDATE_THIS_URL"
+  server.start()
+  override def fakeApplication() = new GuiceApplicationBuilder()
+    .configure(
+      Configuration(
+        "microservice.services.create-subscription.port" -> server.port()
+      )
+    ).overrides(inject.bind[HeaderCarrier].to(HeaderCarrier()))
+    .build()
 
   "UktrSubmissionConnector" when {
     "submitUktr() called with a valid request" must {
       "return 201 CREATED response" in {
 
-        when(
-          mockHttpClient
-            .post(ArgumentMatchers.eq(new URL(pillar2UktrSubmissionUrl)))
-            .withBody(Json.toJson(validUktrSubmission))
-            .execute[HttpResponse]
-        ).thenReturn(Future.successful(HttpResponse.apply(201, Created.body.toString)))
+        val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
+        stubResponse("http://localhost:10051/UPDATE_THIS_URL", CREATED, JsObject.empty)
 
         val result = uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc)
 

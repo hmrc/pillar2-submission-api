@@ -18,15 +18,12 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission.uktrSubmissionReads
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
-import java.net.URL
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,8 +33,5 @@ class Pillar2Connector @Inject() (val config: AppConfig, val http: HttpClientV2)
   private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/UPDATE_THIS_URL"
 
   def submitUktr(uktrSubmission: UktrSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    http
-      .post(new URL(uktrSubmissionUrl))
-      .withBody(Json.toJson(uktrSubmission))
-      .execute[HttpResponse]
+    http.POST[UktrSubmission, HttpResponse](uktrSubmissionUrl, uktrSubmission)
 }
