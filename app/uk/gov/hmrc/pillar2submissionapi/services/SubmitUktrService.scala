@@ -23,11 +23,10 @@ import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitUktrService @Inject() (pillar2Connector: Pillar2Connector) {
+class SubmitUktrService @Inject() (pillar2Connector: Pillar2Connector)(implicit val ec: ExecutionContext) {
 
   def submitUktr(request: UktrSubmission)(implicit hc: HeaderCarrier): Future[SubmitUktrSuccessResponse] =
     pillar2Connector.submitUktr(request).map(convertToResult)
