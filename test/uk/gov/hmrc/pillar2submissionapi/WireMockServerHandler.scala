@@ -19,9 +19,8 @@ package uk.gov.hmrc.pillar2submissionapi
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
-import uk.gov.hmrc.http.test.HttpClientSupport
 
-trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach with HttpClientSupport {
+trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: Suite =>
 
   protected val server: WireMockServer = new WireMockServer(

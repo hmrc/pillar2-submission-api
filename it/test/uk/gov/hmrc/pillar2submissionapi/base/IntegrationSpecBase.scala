@@ -71,6 +71,7 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
       .configure()
       .overrides(
         inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
-        inject.bind[HttpClient].toInstance(httpClient)
+        inject.bind[HttpClient].toInstance(httpClient),
+        inject.bind[HeaderCarrier].to(HeaderCarrier())
       )
 }

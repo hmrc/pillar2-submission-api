@@ -17,13 +17,9 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.{Configuration, inject}
-import play.api.http.Status.CREATED
-import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2ConnectorSpec.validUktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiableEntity, UktrSubmission, UktrSubmissionData}
@@ -31,27 +27,38 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, L
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class Pillar2ConnectorSpec extends UnitTestBaseSpec with GuiceOneAppPerSuite {
+class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
-  server.start()
-  override def fakeApplication() = new GuiceApplicationBuilder()
-    .configure(
-      Configuration(
-        "microservice.services.create-subscription.port" -> server.port()
-      )
-    ).overrides(inject.bind[HeaderCarrier].to(HeaderCarrier()))
-    .build()
+  lazy val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
 
   "UktrSubmissionConnector" when {
     "submitUktr() called with a valid request" must {
       "return 201 CREATED response" in {
+        stubResponse("/UPDATE_THIS_URL", CREATED, JsObject.empty)
 
-        val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
-        stubResponse("http://localhost:10051/UPDATE_THIS_URL", CREATED, JsObject.empty)
-
-        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission))
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
 
         result.status should be(201)
+      }
+    }
+
+    "submitUktr() called with an invalid request" must {
+      "return 400 BAD_REQUEST response" in {
+        stubResponse("/UPDATE_THIS_URL", BAD_REQUEST, JsObject.empty)
+
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
+
+        result.status should be(400)
+      }
+    }
+
+    "submitUktr() called with an invalid url configured" must {
+      "return 404 NOT_FOUND response" in {
+        stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
+
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
+
+        result.status should be(404)
       }
     }
   }
