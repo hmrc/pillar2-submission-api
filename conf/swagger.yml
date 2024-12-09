@@ -6,7 +6,7 @@ paths:
   /RESTAdapter/PLR/UKTaxReturn:
     post:
       security:
-        - userRestricted: [hello]
+        - userRestricted: [write:pillar2]
 components:
   securitySchemes:
     userRestricted:
@@ -20,4 +20,5 @@ components:
           tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
           refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
           scopes:
-            hello: access hello user
+            read:pillar2: Read data related to Pillar2 subscription
+            write:pillar2: Write data related to Pillar2 subscription

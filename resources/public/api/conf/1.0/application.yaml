@@ -8,17 +8,18 @@ paths:
   /RESTAdapter/PLR/UKTaxReturn:
     post:
       security:
-      - {}
+        - userRestricted:
+            - write:pillar2
       tags:
-      - app
+        - app
       operationId: submitUktr
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-              - $ref: "#/components/schemas/UktrSubmissionData"
-              - $ref: "#/components/schemas/UktrSubmissionNilReturn"
+                - $ref: "#/components/schemas/UktrSubmissionData"
+                - $ref: "#/components/schemas/UktrSubmissionNilReturn"
       summary: Submit a Pillar2 UKTR
       responses:
         "201":
@@ -43,12 +44,12 @@ components:
           type: number
           format: double
       required:
-      - ukChargeableEntityName
-      - idType
-      - idValue
-      - amountOwedDTT
-      - amountOwedIIR
-      - amountOwedUTPR
+        - ukChargeableEntityName
+        - idType
+        - idValue
+        - amountOwedDTT
+        - amountOwedIIR
+        - amountOwedUTPR
     UktrSubmissionData:
       properties:
         electionUKGAAP:
@@ -64,11 +65,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
     UktrSubmissionNilReturn:
       properties:
         electionUKGAAP:
@@ -84,19 +85,19 @@ components:
         obligationMTT:
           type: boolean
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
     LiabilityNilReturn:
       properties:
         returnType:
           type: string
           enum:
-          - NIL_RETURN
+            - NIL_RETURN
       required:
-      - returnType
+        - returnType
     LiabilityData:
       properties:
         electionUTPRSingleMember:
@@ -126,12 +127,26 @@ components:
           type: number
           format: double
       required:
-      - electionDTTSingleMember
-      - electionUTPRSingleMember
-      - numberSubGroupDTT
-      - numberSubGroupUTPR
-      - totalLiability
-      - totalLiabilityDTT
-      - totalLiabilityIIR
-      - totalLiabilityUTPR
-      - liableEntities
+        - electionDTTSingleMember
+        - electionUTPRSingleMember
+        - numberSubGroupDTT
+        - numberSubGroupUTPR
+        - totalLiability
+        - totalLiabilityDTT
+        - totalLiabilityIIR
+        - totalLiabilityUTPR
+        - liableEntities
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            read:pillar2: Read data related to Pillar2 subscription
+            write:pillar2: Write data related to Pillar2 subscription
