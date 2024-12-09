@@ -35,4 +35,13 @@ object UktrSubmission {
     } else {
       json.validate[UktrSubmissionNilReturn]
     }
+
+  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = {
+    case submission @ UktrSubmissionData(_, _, _, _, _) =>
+      Json.toJson(submission)
+    case nilReturn @ UktrSubmissionNilReturn(_, _, _, _, _) =>
+      Json.toJson(nilReturn)
+    case _ =>
+      throw new RuntimeException("")
+  }
 }
