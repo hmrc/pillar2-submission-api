@@ -16,12 +16,13 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 
 class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
@@ -54,7 +55,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_data)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -64,7 +65,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_nilReturn)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -74,7 +75,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_Json)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -84,7 +85,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyContainsLiabilities)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -94,7 +95,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -104,17 +105,17 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_noLiabilities)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
-    "submitUktr() called with an empty request body" should {
+    "submitUktr() called with an empty json object" should {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_emptyBody)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith InvalidJson
       }
     }
 
@@ -124,7 +125,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
           FakeRequest(method = "", path = "")
             .withTextBody(invalidRequest_wrongType)
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith EmptyRequestBody
       }
     }
 
@@ -133,7 +134,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
         )
-        status(result) mustEqual BAD_REQUEST
+        result shouldFailWith EmptyRequestBody
       }
     }
 
