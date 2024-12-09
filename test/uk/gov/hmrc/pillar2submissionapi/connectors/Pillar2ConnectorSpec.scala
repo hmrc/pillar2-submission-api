@@ -17,14 +17,14 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.{Application, Configuration}
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2ConnectorSpec.validUktrSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiableEntity, UktrSubmission, UktrSubmissionData}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

@@ -29,11 +29,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents,
-                                          val identify: IdentifierAction,
-                                          val submitUktrService: SubmitUktrService)
-                                         (implicit val ec: ExecutionContext)
-extends BackendController(cc) {
+class UktrSubmissionController @Inject() (cc: ControllerComponents, val identify: IdentifierAction, val submitUktrService: SubmitUktrService)(implicit
+  val ec:                                     ExecutionContext
+) extends BackendController(cc) {
 
   def submitUktr: Action[AnyContent] = identify.async { implicit request =>
     request.body.asJson match {

@@ -18,11 +18,10 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission.uktrSubmissionReads
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

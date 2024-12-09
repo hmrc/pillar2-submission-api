@@ -54,11 +54,11 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  val mockConfiguration:    Configuration    = mock[Configuration]
-  val mockServicesConfig:   ServicesConfig   = mock[ServicesConfig]
-  val mockHttpClient:       HttpClient       = mock[HttpClient]
-  val mockAuthConnector:    AuthConnector    = mock[AuthConnector]
-  val mockPillar2Connector: Pillar2Connector = mock[Pillar2Connector]
+  val mockConfiguration:     Configuration     = mock[Configuration]
+  val mockServicesConfig:    ServicesConfig    = mock[ServicesConfig]
+  val mockHttpClient:        HttpClient        = mock[HttpClient]
+  val mockAuthConnector:     AuthConnector     = mock[AuthConnector]
+  val mockPillar2Connector:  Pillar2Connector  = mock[Pillar2Connector]
   val mockSubmitUktrService: SubmitUktrService = mock[SubmitUktrService]
 
   val stubIdentifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(

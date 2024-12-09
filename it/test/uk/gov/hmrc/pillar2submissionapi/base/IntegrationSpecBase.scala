@@ -46,7 +46,15 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Matchers with Results with MockitoSugar with WireMockServerHandler with HttpClientSupport with GuiceOneAppPerSuite {
+trait IntegrationSpecBase
+    extends AnyWordSpec
+    with BeforeAndAfterEach
+    with Matchers
+    with Results
+    with MockitoSugar
+    with WireMockServerHandler
+    with HttpClientSupport
+    with GuiceOneAppPerSuite {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -80,10 +88,10 @@ trait IntegrationSpecBase extends AnyWordSpec with BeforeAndAfterEach with Match
       )
 
   protected def stubResponse(
-                              expectedUrl:    String,
-                              expectedStatus: Int,
-                              body:           JsValue
-                            ): StubMapping =
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  ): StubMapping =
     server.stubFor(
       post(urlEqualTo(expectedUrl))
         .willReturn(

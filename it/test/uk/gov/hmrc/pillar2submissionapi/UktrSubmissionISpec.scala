@@ -31,7 +31,11 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
   "UKTR Submission" when {
     "Creating a new UKTR submission (POST)" that {
       "has valid submission data" should {
-        stubResponse("/UPDATE_THIS_URL", CREATED, Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))))
+        stubResponse(
+          "/UPDATE_THIS_URL",
+          CREATED,
+          Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+        )
         val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
           .withBody[JsValue](validRequestJson)
 
