@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class Pillar2Connector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class Pillar2Connector @Inject() (val config: AppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/UPDATE_THIS_URL"
 

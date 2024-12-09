@@ -31,7 +31,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, L
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class Pillar2ConnectorSpec extends UnitTestBaseSpec {
+class Pillar2ConnectorSpec extends UnitTestBaseSpec with GuiceOneAppPerSuite {
 
   server.start()
   override def fakeApplication() = new GuiceApplicationBuilder()
@@ -49,9 +49,9 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
         val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
         stubResponse("http://localhost:10051/UPDATE_THIS_URL", CREATED, JsObject.empty)
 
-        val result = uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc)
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission))
 
-        result.map(rs => rs.status should be(201))
+        result.status should be(201)
       }
     }
   }
