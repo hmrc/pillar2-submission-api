@@ -23,6 +23,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.NoSubscriptionData
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
@@ -61,11 +62,9 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
       val result = action
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
 
-      val thrown = intercept[RuntimeException] {
+      intercept[NoSubscriptionData] {
         Await.result(result, 5.seconds)
       }
-
-      thrown mustBe a[RuntimeException]
     }
   }
 }
