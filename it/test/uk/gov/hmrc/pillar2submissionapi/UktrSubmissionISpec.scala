@@ -18,25 +18,21 @@ package uk.gov.hmrc.pillar2submissionapi
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.OptionValues.convertOptionToValuable
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec.{invalidRequestJson, validRequestJson, validRequestJson_duplicateFieldsAndAdditionalFields, validRequestNilReturnJson}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
-import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
-  implicit val hc: HeaderCarrier = new HeaderCarrier
   val provider    = app.injector.instanceOf[HttpClientV2Provider]
   val client      = provider.get()
   val str         = s"http://localhost:$port${routes.UktrSubmissionController.submitUktr.url}"
@@ -45,73 +41,69 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
   "UKTR Submission" when {
     "Subscription data exists" should {
       "Create a new UKTR submission (POST)" that {
-      "has valid submission data" should {
+        "has valid submission data" should {
 
           "return a 201 CREATED response" in {
             val request = baseRequest.withBody(validRequestJson)
-          val result  = Await.result(request.execute[JsValue], 5.seconds)
-          (result \ "success").as[Boolean] mustEqual true
+            val result  = Await.result(request.execute[JsValue], 5.seconds)
+            (result \ "success").as[Boolean] mustEqual true
+          }
         }
-      }
-      "has valid nil-return submission data" should {
+        "has valid nil-return submission data" should {
 
           "return a 201 CREATED response" in {
             val request = baseRequest.withBody(validRequestNilReturnJson)
-          val result  = Await.result(request.execute[JsValue], 5.seconds)
-          (result \ "success").as[Boolean] mustEqual true
+            val result  = Await.result(request.execute[JsValue], 5.seconds)
+            (result \ "success").as[Boolean] mustEqual true
+          }
         }
-      }
-      "has an invalid request body" should {
+        "has an invalid request body" should {
 
           "return a 400 BAD_REQUEST response" in {
             val request = baseRequest.withBody(invalidRequestJson)
-          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-          result.status mustEqual 400
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
+          }
         }
-      }
-      "has an empty request body" should {
+        "has an empty request body" should {
 
           "return a 400 BAD_REQUEST response" in {
             val request = baseRequest.withBody(JsObject.empty)
-          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-          result.status mustEqual 400
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
           }
         }
         "has no request body" should {
           "return a 400 BAD_REQUEST response " in {
-          val request = baseRequest
-          val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-          result.status mustEqual 400
+            val request = baseRequest
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
+          }
         }
       }
-    }
 
-    "has a valid request body containing duplicates fields and additional fields" should {
+      "has a valid request body containing duplicates fields and additional fields" should {
 
-      "return a 201 CREATED response" in {
-        val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
-        val result  = Await.result(request.execute[JsValue], 5.seconds)
-        (result \ "success").as[Boolean] mustEqual true
+        "return a 201 CREATED response" in {
+          val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
+          val result  = Await.result(request.execute[JsValue], 5.seconds)
+          (result \ "success").as[Boolean] mustEqual true
+        }
       }
-    }
 
-    "Subscription data does not exist" should {
-      "return a BadRequest resulting in a RuntimeException being thrown" in {
+      "Subscription data does not exist" should {
+        "return a BadRequest resulting in a RuntimeException being thrown" in {
+          val request = baseRequest.withBody(validRequestJson)
+          when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+            .thenReturn(
+              Future.successful(Left(BadRequest))
+            )
 
-        when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(
-            Future.successful(Left(BadRequest))
-          )
-
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withBody[JsValue](validRequestJson)
-
-        val application = applicationBuilder().build()
-        running(application) {
-          intercept[RuntimeException] {
-            val result = route(application, request).value
-            await(result)
-          }
+          val result = Await.result(request.execute[HttpResponse], 5.seconds)
+          result.status mustEqual 500
+          val errorResponse = result.json.as[Pillar2ErrorResponse]
+          errorResponse.code mustEqual "500"
+          errorResponse.message mustEqual "Internal Server Error"
         }
       }
     }

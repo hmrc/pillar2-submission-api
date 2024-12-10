@@ -17,11 +17,9 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import play.api.libs.json.Json
-import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
