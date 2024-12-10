@@ -58,4 +58,5 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
+  .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
   .settings(libraryDependencies ++= AppDependencies.it)

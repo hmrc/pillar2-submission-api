@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+final case class UpeCorrespAddressDetails(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode:     Option[String],
+  countryCode:  String
+)
 
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-
-  val appName: String = config.get[String]("appName")
-
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+object UpeCorrespAddressDetails {
+  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }
