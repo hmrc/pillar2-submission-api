@@ -34,11 +34,12 @@ class Pillar2ErrorHandler extends HttpErrorHandler {
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         pillar2Error match {
           case e @ InvalidJson =>
-            Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(e.code, "Invalid JSON Payload"))))
-          case e @ EmptyRequestBody => Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(e.code, "Empty body in request"))))
-          case e @ AuthenticationError(message) => Future.successful(Results.Unauthorized(Json.toJson(Pillar2ErrorResponse(e.code, message))))
+            Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload")))
+          case e @ EmptyRequestBody             => Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request")))
+          case e @ AuthenticationError(message) => Future.successful(Results.Unauthorized(Pillar2ErrorResponse(e.code, message)))
+          case e @ NoSubscriptionData(_)        => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
         }
       case _ =>
-        Future.successful(Results.InternalServerError(Json.toJson((Pillar2ErrorResponse("500", "Internal Server Error")))))
+        Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
     }
 }

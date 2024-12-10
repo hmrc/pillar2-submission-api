@@ -102,8 +102,8 @@ class UktrSubmissionISpec extends IntegrationSpecBase {
           val result = Await.result(request.execute[HttpResponse], 5.seconds)
           result.status mustEqual 500
           val errorResponse = result.json.as[Pillar2ErrorResponse]
-          errorResponse.code mustEqual "500"
-          errorResponse.message mustEqual "Internal Server Error"
+          errorResponse.code mustEqual "004"
+          errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
         }
       }
     }

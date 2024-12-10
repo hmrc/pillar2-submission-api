@@ -38,3 +38,9 @@ case class AuthenticationError(message: String) extends Pillar2Error {
 
   val code = "003"
 }
+
+case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
+  val message: String = s"No Pillar2 subscription found for $pillar2Id"
+
+  val code = "004"
+}
