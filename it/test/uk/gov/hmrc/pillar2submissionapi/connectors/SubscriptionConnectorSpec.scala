@@ -21,26 +21,17 @@ import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.Application
 import play.api.http.Status.OK
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.base.{IntegrationSpecBase, WireMockServerHandler}
+import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
-import uk.gov.hmrc.pillar2submissionapi.helpers._
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionDataFixture {
-
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(
-      conf = "microservice.services.pillar2.port" -> server.port()
-    )
-    .build()
+class SubscriptionConnectorSpec extends IntegrationSpecBase {
 
   private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
   val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))

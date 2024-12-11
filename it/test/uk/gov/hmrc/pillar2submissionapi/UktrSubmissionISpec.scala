@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import org.scalatest.OptionValues.convertOptionToValuable
-import play.api.http.Status.CREATED
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -33,7 +31,6 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
   val provider    = app.injector.instanceOf[HttpClientV2Provider]

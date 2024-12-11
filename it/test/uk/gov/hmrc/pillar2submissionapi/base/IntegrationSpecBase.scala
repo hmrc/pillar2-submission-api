@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.pillar2submissionapi.base
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, post, urlEqualTo}
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
@@ -27,19 +25,16 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.inject
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.FakeRequest
+import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.test.HttpClientSupport
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.pillar2submissionapi.WireMockServerHandler
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
@@ -58,7 +53,8 @@ trait IntegrationSpecBase
     with MockitoSugar
     with WireMockServerHandler
     with HttpClientSupport
-    with GuiceOneAppPerSuite {
+    with GuiceOneAppPerSuite
+    with SubscriptionDataFixture {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -96,22 +92,8 @@ trait IntegrationSpecBase
       .overrides(
         inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
         inject.bind[HttpClient].toInstance(httpClient),
-          inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
+        inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
         inject.bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
       )
       .build()
-
-  protected def stubResponse(
-                              expectedUrl:    String,
-                              expectedStatus: Int,
-                              body:           JsValue
-                            ): StubMapping =
-    server.stubFor(
-      post(urlEqualTo(expectedUrl))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(body.toString())
-        )
-    )
 }
