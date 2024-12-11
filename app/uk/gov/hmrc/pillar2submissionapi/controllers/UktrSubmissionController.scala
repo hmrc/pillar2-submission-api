@@ -19,33 +19,32 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUktrService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UktrSubmissionController @Inject() (cc: ControllerComponents, val identify: IdentifierAction, val submitUktrService: SubmitUktrService)(implicit
-  val ec:                                     ExecutionContext
+class UktrSubmissionController @Inject() (
+  cc:       ControllerComponents,
+  identify: IdentifierAction,
+  getData:  SubscriptionDataRetrievalAction
 ) extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = identify.async { implicit request =>
+  def submitUktr: Action[AnyContent] = (identify andThen getData).async { request =>
     request.body.asJson match {
-      case Some(value) =>
-        value.validate[UktrSubmission] match {
-          case JsSuccess(value, _) =>
-            submitUktrService
-              .submitUktr(value)
-              .map(response => Created(Json.toJson(response)))
-          case JsError(_) =>
-            Future.successful(BadRequest(""))
-        }
-      case None =>
-        Future.successful(BadRequest(""))
+      case Some(request) =>
+        if (request.validate[UktrSubmission].isError) {
+          Future.failed(InvalidJson)
+        } else Future.successful(Created(Json.obj("success" -> true)))
+      case None => Future.failed(EmptyRequestBody)
     }
   }
 }

@@ -18,102 +18,95 @@ package uk.gov.hmrc.pillar2submissionapi
 
 import org.scalatest.OptionValues.convertOptionToValuable
 import play.api.http.Status.CREATED
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.HttpVerbs.POST
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+
+import java.net.URI
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
+
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
 class UktrSubmissionISpec extends IntegrationSpecBase {
 
+  val provider    = app.injector.instanceOf[HttpClientV2Provider]
+  val client      = provider.get()
+  val str         = s"http://localhost:$port${routes.UktrSubmissionController.submitUktr.url}"
+  val baseRequest = client.post(URI.create(str).toURL)
+
   "UKTR Submission" when {
-    "Creating a new UKTR submission (POST)" that {
-      "has valid submission data" should {
-        stubResponse(
-          "/UPDATE_THIS_URL",
-          CREATED,
-          Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
-        )
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withBody[JsValue](validRequestJson)
+    "Subscription data exists" should {
+      "Create a new UKTR submission (POST)" that {
+        "has valid submission data" should {
 
-        "return a 201 CREATED response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual CREATED
+          "return a 201 CREATED response" in {
+            val request = baseRequest.withBody(validRequestJson)
+            val result  = Await.result(request.execute[JsValue], 5.seconds)
+            (result \ "success").as[Boolean] mustEqual true
           }
         }
-      }
-      "has valid nil-return submission data" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withBody[JsValue](validRequestNilReturnJson)
+        "has valid nil-return submission data" should {
 
-        "return a 201 CREATED response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual CREATED
+          "return a 201 CREATED response" in {
+            val request = baseRequest.withBody(validRequestNilReturnJson)
+            val result  = Await.result(request.execute[JsValue], 5.seconds)
+            (result \ "success").as[Boolean] mustEqual true
           }
         }
-      }
-      "has an invalid request body" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withBody[JsValue](invalidRequestJson)
+        "has an invalid request body" should {
 
-        "return a 400 BAD_REQUEST response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual BAD_REQUEST
+          "return a 400 BAD_REQUEST response" in {
+            val request = baseRequest.withBody(invalidRequestJson)
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
           }
         }
-      }
-      "has an empty request body" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withBody(JsObject.empty)
+        "has an empty request body" should {
 
-        "return a 400 BAD_REQUEST response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual BAD_REQUEST
+          "return a 400 BAD_REQUEST response" in {
+            val request = baseRequest.withBody(JsObject.empty)
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
           }
         }
-      }
-      "has no request body" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-
-        "return a 400 BAD_REQUEST response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual BAD_REQUEST
+        "has no request body" should {
+          "return a 400 BAD_REQUEST response " in {
+            val request = baseRequest
+            val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+            result.status mustEqual 400
           }
         }
       }
 
       "has a valid request body containing duplicates fields and additional fields" should {
-        val request = FakeRequest(POST, routes.UktrSubmissionController.submitUktr.url)
-          .withJsonBody(validRequestJson_duplicateFieldsAndAdditionalFields)
 
         "return a 201 CREATED response" in {
-          val application = applicationBuilder().build()
-          running(application) {
-            val result = route(application, request).value
-            status(result) mustEqual CREATED
-          }
+          val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
+          val result  = Await.result(request.execute[JsValue], 5.seconds)
+          (result \ "success").as[Boolean] mustEqual true
         }
       }
-    }
 
-    "Amend a UKTR submission (PUT)" that {
-      "has a valid request body" should {
-        "return a 200" in {
-          // Not yet implemented
-          true
+      "Subscription data does not exist" should {
+        "return a BadRequest resulting in a RuntimeException being thrown" in {
+          val request = baseRequest.withBody(validRequestJson)
+          when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+            .thenReturn(
+              Future.successful(Left(BadRequest))
+            )
+
+          val result = Await.result(request.execute[HttpResponse], 5.seconds)
+          result.status mustEqual 500
+          val errorResponse = result.json.as[Pillar2ErrorResponse]
+          errorResponse.code mustEqual "004"
+          errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
         }
       }
     }
@@ -169,40 +162,40 @@ object UktrSubmissionISpec {
 
   val validRequestJson_duplicateFieldsAndAdditionalFields: JsValue =
     Json.parse("""{
-                 |  "accountingPeriodFrom": "2024-08-14",
-                 |  "accountingPeriodTo": "2024-12-14",
-                 |  "obligationMTT": true,
-                 |  "obligationMTT": true,
-                 |  "electionUKGAAP": true,
-                 |  "extraField": "this should not be here",
-                 |  "liabilities": {
-                 |    "electionDTTSingleMember": false,
-                 |    "electionUTPRSingleMember": false,
-                 |    "numberSubGroupDTT": 1,
-                 |    "numberSubGroupUTPR": 1,
-                 |    "totalLiability": 10000.99,
-                 |    "totalLiabilityDTT": 5000.99,
-                 |    "totalLiabilityIIR": 4000,
-                 |    "totalLiabilityUTPR": 10000.99,
-                 |    "totalLiabilityUTPR": 10000.99,
-                 |    "liableEntities": [
-                 |      {
-                 |        "ukChargeableEntityName": "Newco PLC",
-                 |        "idType": "CRN",
-                 |        "idValue": "12345678",
-                 |        "amountOwedDTT": 5000,
-                 |        "amountOwedIIR": 3400,
-                 |        "amountOwedUTPR": 6000.5
-                 |      },
-                 |      {
-                 |        "ukChargeableEntityName": "Newco PLC",
-                 |        "idType": "CRN",
-                 |        "idValue": "12345678",
-                 |        "amountOwedDTT": 5000,
-                 |        "amountOwedIIR": 3400,
-                 |        "amountOwedUTPR": 6000.5
-                 |      }
-                 |    ]
-                 |  }
-                 |}""".stripMargin)
+        |  "accountingPeriodFrom": "2024-08-14",
+        |  "accountingPeriodTo": "2024-12-14",
+        |  "obligationMTT": true,
+        |  "obligationMTT": true,
+        |  "electionUKGAAP": true,
+        |  "extraField": "this should not be here",
+        |  "liabilities": {
+        |    "electionDTTSingleMember": false,
+        |    "electionUTPRSingleMember": false,
+        |    "numberSubGroupDTT": 1,
+        |    "numberSubGroupUTPR": 1,
+        |    "totalLiability": 10000.99,
+        |    "totalLiabilityDTT": 5000.99,
+        |    "totalLiabilityIIR": 4000,
+        |    "totalLiabilityUTPR": 10000.99,
+        |    "totalLiabilityUTPR": 10000.99,
+        |    "liableEntities": [
+        |      {
+        |        "ukChargeableEntityName": "Newco PLC",
+        |        "idType": "CRN",
+        |        "idValue": "12345678",
+        |        "amountOwedDTT": 5000,
+        |        "amountOwedIIR": 3400,
+        |        "amountOwedUTPR": 6000.5
+        |      },
+        |      {
+        |        "ukChargeableEntityName": "Newco PLC",
+        |        "idType": "CRN",
+        |        "idValue": "12345678",
+        |        "amountOwedDTT": 5000,
+        |        "amountOwedIIR": 3400,
+        |        "amountOwedUTPR": 6000.5
+        |      }
+        |    ]
+        |  }
+        |}""".stripMargin)
 }

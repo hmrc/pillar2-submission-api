@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.models.requests
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionData
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+case class SubscriptionDataRequest[A](
+  request:          Request[A],
+  userId:           String,
+  clientPillar2Id:  String,
+  subscriptionData: SubscriptionData
+) extends WrappedRequest[A](request)

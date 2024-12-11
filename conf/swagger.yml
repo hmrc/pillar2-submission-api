@@ -6,4 +6,19 @@ paths:
   /RESTAdapter/PLR/UKTaxReturn:
     post:
       security:
-        - {}
+        - userRestricted: [write:pillar2]
+components:
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            read:pillar2: Read data related to Pillar2 subscription
+            write:pillar2: Write data related to Pillar2 subscription

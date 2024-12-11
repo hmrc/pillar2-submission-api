@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.libs.json.{Json, OFormat}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+import java.time.LocalDate
+
+case class AccountingPeriod(
+  startDate: LocalDate,
+  endDate:   LocalDate,
+  dueDate:   Option[LocalDate] = None
+)
+
+object AccountingPeriod {
+  implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
+}

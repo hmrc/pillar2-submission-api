@@ -52,9 +52,11 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
+addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
 
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())
   .settings(DefaultBuildSettings.itSettings(), tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
   .settings(libraryDependencies ++= AppDependencies.it)

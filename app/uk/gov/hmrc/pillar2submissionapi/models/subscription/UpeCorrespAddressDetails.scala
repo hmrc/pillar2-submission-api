@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.libs.json.{Json, OFormat}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+final case class UpeCorrespAddressDetails(
+  addressLine1: String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode:     Option[String],
+  countryCode:  String
+)
+
+object UpeCorrespAddressDetails {
+  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
+}

@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.config
 
 import com.google.inject.AbstractModule
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions._
 import uk.gov.hmrc.play.bootstrap.auth.DefaultAuthConnector
 
 class Module extends AbstractModule {
@@ -27,5 +27,6 @@ class Module extends AbstractModule {
     bind(classOf[AppConfig]).asEagerSingleton()
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[AuthConnector]).to(classOf[DefaultAuthConnector]).asEagerSingleton()
+    bind(classOf[SubscriptionDataRetrievalAction]).to(classOf[SubscriptionDataRetrievalActionImpl]).asEagerSingleton()
   }
 }

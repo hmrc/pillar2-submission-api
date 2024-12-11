@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.libs.json.{Json, OFormat}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+final case class ContactDetailsType(
+  name:         String,
+  telephone:    Option[String],
+  emailAddress: String
+)
+
+object ContactDetailsType {
+  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
+}

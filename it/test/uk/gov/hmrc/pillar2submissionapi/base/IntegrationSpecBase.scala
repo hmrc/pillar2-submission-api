@@ -28,6 +28,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsValue
 import play.api.mvc._
@@ -40,8 +42,10 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.WireMockServerHandler
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,6 +63,7 @@ trait IntegrationSpecBase
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
   implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -72,26 +77,35 @@ trait IntegrationSpecBase
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
     .thenReturn(
       Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
     )
 
-  protected def applicationBuilder(): GuiceApplicationBuilder =
+  when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
+    .thenReturn(
+      Future.successful(Right(subscriptionData))
+    )
+
+  override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure("microservice.services.pillar2.port" -> server.port())
       .overrides(
         inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
-        inject.bind[HttpClient].toInstance(httpClient)
+        inject.bind[HttpClient].toInstance(httpClient),
+          inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default())),
+        inject.bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
       )
+      .build()
 
   protected def stubResponse(
-    expectedUrl:    String,
-    expectedStatus: Int,
-    body:           JsValue
-  ): StubMapping =
+                              expectedUrl:    String,
+                              expectedStatus: Int,
+                              body:           JsValue
+                            ): StubMapping =
     server.stubFor(
       post(urlEqualTo(expectedUrl))
         .willReturn(

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.actions
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.libs.json.{Json, OFormat}
 
-trait IdentifierAction
-    extends ActionTransformer[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+case class FilingMemberDetails(
+  safeId:                  String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String
+)
+
+object FilingMemberDetails {
+  implicit val format: OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
+}

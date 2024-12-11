@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
@@ -18,7 +18,8 @@ object AppDependencies {
     "com.vladsch.flexmark"    % "flexmark-all"           % "0.35.10"        % "test, it",
     "org.mockito"             % "mockito-core"           % "3.7.7"          % "test,it",
     "org.scalatestplus"      %% "mockito-3-4"            % "3.2.7.0"        % "test, it",
-    "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.1"          % "test, it"
+    "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.1"          % "test, it",
+    "org.scalatestplus"      %% "scalacheck-1-18"        % "3.2.19.0"       % "test"
   )
 
   val it: Seq[ModuleID] = Seq(

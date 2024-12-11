@@ -23,6 +23,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 
 import scala.concurrent.ExecutionContext
 
@@ -32,5 +33,6 @@ trait ActionBaseSpec extends PlaySpec with MockitoSugar with Results with Matche
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
 
-  val mockAuthConnector: AuthConnector = mock[AuthConnector]
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 }

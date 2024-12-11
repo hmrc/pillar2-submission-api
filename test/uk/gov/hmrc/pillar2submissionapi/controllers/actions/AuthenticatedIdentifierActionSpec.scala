@@ -31,13 +31,15 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.TestAuthRetrievals._
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierActionSpec._
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.controllers.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class IdentifierActionSpec extends ActionBaseSpec {
+class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
@@ -61,7 +63,6 @@ class IdentifierActionSpec extends ActionBaseSpec {
 
         val result = await(identifierAction.refine(fakeRequest))
 
-        result.isRight.must(be(true))
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
@@ -82,11 +83,9 @@ class IdentifierActionSpec extends ActionBaseSpec {
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
+        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
 
-        val result = await(identifierAction.refine(fakeRequest))
-
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+        result.message mustEqual "Invalid credentials"
       }
     }
   }
@@ -105,12 +104,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
           )
         )
 
-      val result = await(
-        identifierAction.refine(fakeRequest)
+      val result = intercept[AuthenticationError](
+        await(
+          identifierAction.refine(fakeRequest)
+        )
       )
 
-      result.isRight            must be(false)
-      result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+      result.message mustEqual "Invalid credentials"
     }
   }
 
@@ -129,12 +129,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+        result.message mustEqual "Invalid credentials"
       }
     }
 
@@ -150,12 +151,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ None ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+        result.message mustEqual "Invalid credentials"
       }
     }
 
@@ -171,12 +173,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+        result.message mustEqual "Invalid credentials"
       }
     }
 
@@ -192,12 +195,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Invalid credentials"))
+        result.message mustEqual "Invalid credentials"
       }
     }
   }
@@ -217,12 +221,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Pillar2 ID not found in enrolments"))
+        result.message mustEqual "Pillar2 ID not found in enrolments"
       }
     }
   }
@@ -235,12 +240,13 @@ class IdentifierActionSpec extends ActionBaseSpec {
           new BodyParsers.Default
         )(ec)
 
-        val result = await(
-          identifierAction.refine(fakeRequest)
+        val result = intercept[AuthenticationError](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
         )
 
-        result.isRight            must be(false)
-        result.left.getOrElse("") must be(Unauthorized("Not authorized"))
+        result.message mustEqual "Not authorized"
       }
     }
   }
@@ -252,7 +258,7 @@ class IdentifierActionSpec extends ActionBaseSpec {
 
 }
 
-object IdentifierActionSpec {
+object AuthenticatedIdentifierActionSpec {
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
