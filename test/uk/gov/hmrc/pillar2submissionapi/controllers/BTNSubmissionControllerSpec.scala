@@ -31,44 +31,37 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
   val BTNSubmissionController: BTNSubmissionController = new BTNSubmissionController(cc, identifierAction)
 
+  def result(jsRequest: JsValue): Future[Result] = BTNSubmissionController.submitBTN(
+    FakeRequest()
+      .withJsonBody(jsRequest)
+  )
+
   "BTNSubmissionController" when {
     "submitBTN() called with a valid request" should {
       "return 201 CREATED response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(validRequestJson_data)
-        )
-        status(result) mustEqual CREATED
+
+        status(result(validRequestJson_data)) mustEqual CREATED
       }
     }
 
     "submitBTN() called with an invalid request" should {
       "return InvalidJson response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(invalidRequestJson_data)
-        )
-        result shouldFailWith InvalidJson
+
+        result(invalidRequestJson_data) shouldFailWith InvalidJson
       }
     }
 
     "submitBTN called with an invalid json request" should {
       "return InvalidJson response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(invalidRequest_Json)
-        )
-        result shouldFailWith InvalidJson
+
+        result(invalidRequest_Json) shouldFailWith InvalidJson
       }
     }
 
     "submitBTN called with an empty json object" should {
       "return InvalidJson response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(invalidRequest_emptyBody)
-        )
-        result shouldFailWith InvalidJson
+
+        result(invalidRequest_emptyBody) shouldFailWith InvalidJson
       }
     }
 
@@ -93,21 +86,15 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitBTN called with valid request body that contains duplicate entries" should {
       "return 201 CREATED response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(validRequestJson_duplicateFields)
-        )
-        status(result) mustEqual CREATED
+
+        status(result(validRequestJson_duplicateFields)) mustEqual CREATED
       }
     }
 
     "submitBTN called with valid request body that contains additional fields" should {
       "return 201 CREATED response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
-            .withJsonBody(validRequestJson_additionalFields)
-        )
-        status(result) mustEqual CREATED
+
+        status(result(validRequestJson_additionalFields)) mustEqual CREATED
       }
     }
   }
