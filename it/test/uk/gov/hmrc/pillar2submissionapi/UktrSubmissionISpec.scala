@@ -16,21 +16,25 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status.{CREATED, OK}
+import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.Pillar2ErrorResponse
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
-import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
@@ -109,13 +113,66 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
     errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
   }
 
-  // error path for identity invalid
+  "User unable to be identified" should "return a InternalServerError resulting in a RuntimeException being thrown" in {
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
+      .thenReturn(
+        Future.failed(AuthenticationError("Invalid credentials"))
+      )
+    val request = baseRequest.withBody(validRequestJson)
 
-  // 422 error path when calling ETMP
+    val result = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 401
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "003"
+    errorResponse.message mustEqual "Invalid credentials"
+  }
 
-  // 400 error path when calling ETMP
+  "'Invalid Return' response from ETMP returned" should "return a 422 UNPROCESSABLE_ENTITY response" in {
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+    stubResponse(
+      "/UPDATE_THIS_URL",
+      UNPROCESSABLE_ENTITY,
+      Json.toJson(SubmitUktrErrorResponse("093", "Invalid Return"))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 422
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "093"
+    errorResponse.message mustEqual "Invalid Return"
+  }
 
-  // 500 error path when calling ETMP
+  "'Unauthorized' response from ETMP returned" should "return a 500 INTERNAL_SERVER_ERROR response" in {
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+    stubResponse(
+      "/UPDATE_THIS_URL",
+      UNAUTHORIZED,
+      Json.toJson(SubmitUktrErrorResponse("001", "Unauthorized"))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 500
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "500"
+    errorResponse.message mustEqual "Internal Server Error"
+  }
+
+  "'internal server error' response from ETMP returned" should "return a 500 INTERNAL_SERVER_ERROR response" in {
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+    stubResponse(
+      "/UPDATE_THIS_URL",
+      INTERNAL_SERVER_ERROR,
+      Json.toJson(SubmitUktrErrorResponse("999", "internal_server_error"))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 500
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "500"
+    errorResponse.message mustEqual "Internal Server Error"
+  }
 }
 
 object UktrSubmissionISpec {

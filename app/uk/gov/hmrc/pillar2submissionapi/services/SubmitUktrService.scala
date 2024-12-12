@@ -20,6 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnParsableResponse, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
 
@@ -37,16 +38,16 @@ class SubmitUktrService @Inject() (pillar2Connector: Pillar2Connector)(implicit 
         response.json.validate[SubmitUktrSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
-            throw new RuntimeException(s"Failed to parse success response: $errors")
+            throw UnParsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
       case 422 =>
         response.json.validate[SubmitUktrErrorResponse] match {
           case JsSuccess(response, _) =>
-            throw new RuntimeException(s"422: ${response.code}, ${response.message}")
-          case JsError(_) =>
-            throw new RuntimeException(s"500")
+            throw UktrValidationError(response.code, response.message)
+          case JsError(errors) =>
+            throw UnParsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
         }
       case _ =>
-        throw new RuntimeException(s"500")
+        throw UnexpectedResponse
     }
 }

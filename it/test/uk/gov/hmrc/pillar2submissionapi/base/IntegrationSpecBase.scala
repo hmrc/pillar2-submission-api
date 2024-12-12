@@ -20,6 +20,7 @@ import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
@@ -53,7 +54,8 @@ trait IntegrationSpecBase
     with WireMockServerHandler
     with HttpClientSupport
     with GuiceOneServerPerSuite
-    with SubscriptionDataFixture {
+    with SubscriptionDataFixture
+    with BeforeAndAfterEach {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()
   implicit lazy val materializer: Materializer     = Materializer(system)
@@ -74,10 +76,17 @@ trait IntegrationSpecBase
 
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
 
-  when(mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]()))
-    .thenReturn(
-      Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+  override def beforeEach(): Unit = {
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
     )
+      .thenReturn(
+        Future.successful(
+          Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+        )
+      )
+    super.beforeEach()
+  }
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure("microservice.services.pillar2.port" -> wiremockPort)

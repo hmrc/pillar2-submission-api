@@ -38,6 +38,9 @@ class Pillar2ErrorHandler extends HttpErrorHandler {
           case e @ EmptyRequestBody             => Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request")))
           case e @ AuthenticationError(message) => Future.successful(Results.Unauthorized(Pillar2ErrorResponse(e.code, message)))
           case e @ NoSubscriptionData(_)        => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
+          case e @ UktrValidationError(_, _)    => Future.successful(Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message)))
+          case e @ UnParsableResponse(_)        => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
+          case e @ UnexpectedResponse           => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
         }
       case _ =>
         Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
