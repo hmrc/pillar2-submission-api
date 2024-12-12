@@ -18,90 +18,93 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import uk.gov.hmrc.pillar2submissionapi.controllers.BtnSubmissionControllerSpec._
+import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 
-class BtnSubmissionControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
 
-  val btnSubmissionController: BtnSubmissionController = new BtnSubmissionController(cc, identifierAction)
+class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
-  "BtnSubmissionController" when {
-    "submitBtn() called with a valid request" should {
+  val BTNSubmissionController: BTNSubmissionController = new BTNSubmissionController(cc, identifierAction)
+
+  "BTNSubmissionController" when {
+    "submitBTN() called with a valid request" should {
       "return 201 CREATED response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(validRequestJson_data)
         )
         status(result) mustEqual CREATED
       }
     }
 
-    "submitBtn() called with an invalid request" should {
+    "submitBTN() called with an invalid request" should {
       "return InvalidJson response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(invalidRequestJson_data)
         )
         result shouldFailWith InvalidJson
       }
     }
 
-    "submitBtn called with an invalid json request" should {
+    "submitBTN called with an invalid json request" should {
       "return InvalidJson response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(invalidRequest_Json)
         )
         result shouldFailWith InvalidJson
       }
     }
 
-    "submitBtn called with an empty json object" should {
+    "submitBTN called with an empty json object" should {
       "return InvalidJson response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(invalidRequest_emptyBody)
         )
         result shouldFailWith InvalidJson
       }
     }
 
-    "submitBtn called with an non-json request" should {
+    "submitBTN called with an non-json request" should {
       "return EmptyRequestBody response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withTextBody(invalidRequest_wrongType)
         )
         result shouldFailWith EmptyRequestBody
       }
     }
 
-    "submitBtn called with no request body" should {
+    "submitBTN called with no request body" should {
       "return EmptyRequestBody response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
         )
         result shouldFailWith EmptyRequestBody
       }
     }
 
-    "submitBtn called with valid request body that contains duplicate entries" should {
+    "submitBTN called with valid request body that contains duplicate entries" should {
       "return 201 CREATED response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(validRequestJson_duplicateFields)
         )
         status(result) mustEqual CREATED
       }
     }
 
-    "submitBtn called with valid request body that contains additional fields" should {
+    "submitBTN called with valid request body that contains additional fields" should {
       "return 201 CREATED response" in {
-        val result = btnSubmissionController.submitBtn(
-          FakeRequest(method = "", path = "")
+        def result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
             .withJsonBody(validRequestJson_additionalFields)
         )
         status(result) mustEqual CREATED
@@ -110,7 +113,7 @@ class BtnSubmissionControllerSpec extends ControllerBaseSpec {
   }
 }
 
-object BtnSubmissionControllerSpec {
+object BTNSubmissionControllerSpec {
   val validRequestJson_data: JsValue =
     Json.parse("""{
         |  "accountingPeriodFrom": "2023-01-01",

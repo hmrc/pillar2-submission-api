@@ -20,22 +20,22 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmission.BtnSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.btnsubmission.BTNSubmission
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class BtnSubmissionController @Inject() (
+class BTNSubmissionController @Inject() (
   cc:       ControllerComponents,
   identify: IdentifierAction
 ) extends BackendController(cc) {
 
-  def submitBtn: Action[AnyContent] = identify.async { request =>
+  def submitBTN: Action[AnyContent] = identify.async { request =>
     request.body.asJson match {
       case Some(request) =>
-        if (request.validate[BtnSubmission].isError) {
+        if (request.validate[BTNSubmission].isError) {
           Future.failed(InvalidJson)
         } else Future.successful(Created(Json.obj("success" -> true)))
       case None => Future.failed(EmptyRequestBody)
