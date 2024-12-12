@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
@@ -26,8 +26,10 @@ import play.api.libs.json.JsValue
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: Suite =>
 
+  val wiremockPort: Int = 11111
+
   protected val server: WireMockServer = new WireMockServer(
-    wireMockConfig.dynamicPort()
+    wireMockConfig.port(wiremockPort)
   )
 
   override def beforeAll(): Unit = {

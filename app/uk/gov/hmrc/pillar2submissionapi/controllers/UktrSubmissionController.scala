@@ -33,14 +33,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UktrSubmissionController @Inject() (
-  cc:                ControllerComponents,
-  identify:          IdentifierAction,
-  getData:           SubscriptionDataRetrievalAction,
-  submitUktrService: SubmitUktrService
-)(implicit ec:       ExecutionContext)
+  cc:                       ControllerComponents,
+  identify:                 IdentifierAction,
+  verifySubscriptionExists: SubscriptionDataRetrievalAction,
+  submitUktrService:        SubmitUktrService
+)(implicit ec:              ExecutionContext)
     extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = (identify andThen getData).async { request =>
+  def submitUktr: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     request.body.asJson match {
       case Some(request) =>
