@@ -20,11 +20,11 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class BtnSubmission(
+case class BTNSubmission(
   accountingPeriodFrom: LocalDate,
   accountingPeriodTo:   LocalDate
 )
 
-object BtnSubmission {
-  implicit val BtnSubmission: OFormat[BtnSubmission] = Json.format[BtnSubmission]
+object BTNSubmission {
+  implicit val BTNSubmission: OFormat[BTNSubmission] = Json.format[BTNSubmission]
 }
