@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class Pillar2Connector @Inject() (val config: AppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
-  private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/UPDATE_THIS_URL"
+  private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/submit-uk-tax-return"
 
   def submitUktr(uktrSubmission: UktrSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.POST[UktrSubmission, HttpResponse](uktrSubmissionUrl, uktrSubmission)

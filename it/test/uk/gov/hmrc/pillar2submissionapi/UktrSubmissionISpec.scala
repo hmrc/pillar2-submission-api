@@ -46,7 +46,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "Create a new UKTR submission (POST)" should "create submission when given valid submission data" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       CREATED,
       Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
@@ -59,7 +59,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "has valid nil-return submission data" should "return a 201 CREATED response" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       CREATED,
       Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
@@ -93,7 +93,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "has a valid request body containing duplicates fields and additional fields" should "return a 201 CREATED response" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       CREATED,
       Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
@@ -132,7 +132,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "'Invalid Return' response from ETMP returned" should "return a 422 UNPROCESSABLE_ENTITY response" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       UNPROCESSABLE_ENTITY,
       Json.toJson(SubmitUktrErrorResponse("093", "Invalid Return"))
     )
@@ -147,7 +147,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "'Unauthorized' response from ETMP returned" should "return a 500 INTERNAL_SERVER_ERROR response" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       UNAUTHORIZED,
       Json.toJson(SubmitUktrErrorResponse("001", "Unauthorized"))
     )
@@ -162,7 +162,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   "'internal server error' response from ETMP returned" should "return a 500 INTERNAL_SERVER_ERROR response" in {
     stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
     stubResponse(
-      "/UPDATE_THIS_URL",
+      "/submit-uk-tax-return",
       INTERNAL_SERVER_ERROR,
       Json.toJson(SubmitUktrErrorResponse("999", "internal_server_error"))
     )
