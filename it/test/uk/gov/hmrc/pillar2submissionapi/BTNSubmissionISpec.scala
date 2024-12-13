@@ -44,109 +44,94 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
   lazy val str = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
   lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL)
 
-  "Create a new BTN submission (POST)" should {
-    "create submission when given valid submission data" in {
-      stubResponse(
-        "/below-threshold-notification/submit",
-        CREATED,
-        Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
-      )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[SubmitBTNSuccessResponse], 5.seconds)
-      result.chargeReference.value mustEqual "XTC01234123412"
-      result.formBundleNumber mustEqual "119000004320"
-    }
+  "Create a new BTN submission (POST)" should "create submission when given valid submission data" in {
+    stubResponse(
+      "/below-threshold-notification/submit",
+      CREATED,
+      Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[SubmitBTNSuccessResponse], 5.seconds)
+    result.chargeReference.value mustEqual "XTC01234123412"
+    result.formBundleNumber mustEqual "119000004320"
   }
 
-  "has an invalid request body" should {
-    "return a 400 BAD_REQUEST response" in {
-      val request = baseRequest.withBody(invalidRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 400
-    }
+  "has an invalid request body" should "return a 400 BAD_REQUEST response" in {
+    val request = baseRequest.withBody(invalidRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 400
   }
 
-  "has an empty request body" should {
+  "has an empty request body" should
     "return a 400 BAD_REQUEST response " in {
       val request = baseRequest.withBody(JsObject.empty)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 400
     }
+
+  "has no request body" should "return a 400 BAD_REQUEST response " in {
+    val request = baseRequest
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 400
   }
 
-  "has no request body" should {
-    "return a 400 BAD_REQUEST response " in {
-      val request = baseRequest
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 400
-    }
+  "has a valid request body containing duplicates fields and additional fields" should "return a 201 CREATED response" in {
+    stubResponse(
+      "/below-threshold-notification/submit",
+      CREATED,
+      Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+    )
+    val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
+    val result  = Await.result(request.execute[SubmitBTNSuccessResponse], 5.seconds)
+    result.chargeReference.value mustEqual "XTC01234123412"
+    result.formBundleNumber mustEqual "119000004320"
   }
 
-  "has a valid request body containing duplicates fields and additional fields" should {
-    "return a 201 CREATED response" in {
-      stubResponse(
-        "/below-threshold-notification/submit",
-        CREATED,
-        Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+  "User unable to be identified" should "return a InternalServerError resulting in a RuntimeException being thrown" in {
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
+      .thenReturn(
+        Future.failed(AuthenticationError("Invalid credentials"))
       )
-      val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
-      val result  = Await.result(request.execute[SubmitBTNSuccessResponse], 5.seconds)
-      result.chargeReference.value mustEqual "XTC01234123412"
-      result.formBundleNumber mustEqual "119000004320"
-    }
+    val request = baseRequest.withBody(validRequestJson)
+
+    val result = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 401
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "003"
+    errorResponse.message mustEqual "Invalid credentials"
   }
 
-  "User unable to be identified" should {
-    "return a InternalServerError resulting in a RuntimeException being thrown" in {
-      when(
-        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-      )
-        .thenReturn(
-          Future.failed(AuthenticationError("Invalid credentials"))
-        )
-      val request = baseRequest.withBody(validRequestJson)
-
-      val result = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 401
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "003"
-      errorResponse.message mustEqual "Invalid credentials"
-    }
+  "'Invalid Return' response from ETMP returned" should "return a 422 UNPROCESSABLE_ENTITY response" in {
+    stubResponse(
+      "/below-threshold-notification/submit",
+      UNPROCESSABLE_ENTITY,
+      Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return"))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 422
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "093"
+    errorResponse.message mustEqual "Invalid Return"
   }
 
-  "'Invalid Return' response from ETMP returned" should {
-    "return a 422 UNPROCESSABLE_ENTITY response" in {
-      stubResponse(
-        "/below-threshold-notification/submit",
-        UNPROCESSABLE_ENTITY,
-        Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return"))
-      )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 422
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "093"
-      errorResponse.message mustEqual "Invalid Return"
-    }
+  "'Unauthorized' response from ETMP returned" should "return a 500 INTERNAL_SERVER_ERROR response" in {
+    stubResponse(
+      "/below-threshold-notification/submit",
+      UNAUTHORIZED,
+      Json.toJson(SubmitBTNErrorResponse("001", "Unauthorized"))
+    )
+    val request = baseRequest.withBody(validRequestJson)
+    val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+    result.status mustEqual 500
+    val errorResponse = result.json.as[Pillar2ErrorResponse]
+    errorResponse.code mustEqual "500"
+    errorResponse.message mustEqual "Internal Server Error"
   }
 
-  "'Unauthorized' response from ETMP returned" should {
-    "return a 500 INTERNAL_SERVER_ERROR response" in {
-      stubResponse(
-        "/below-threshold-notification/submit",
-        UNAUTHORIZED,
-        Json.toJson(SubmitBTNErrorResponse("001", "Unauthorized"))
-      )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "500"
-      errorResponse.message mustEqual "Internal Server Error"
-    }
-  }
-
-  "'internal server error' response from ETMP returned" should {
+  "'internal server error' response from ETMP returned" should
     "return a 500 INTERNAL_SERVER_ERROR response" in {
       stubResponse(
         "/below-threshold-notification/submit",
@@ -160,7 +145,6 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
-  }
 }
 
 object BTNSubmissionISpec {

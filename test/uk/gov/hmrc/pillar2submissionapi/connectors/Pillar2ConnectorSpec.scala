@@ -23,15 +23,15 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnectorSpec.validBTNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2ConnectorSpec.validUktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
+class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
-  lazy val submitBTNConnector: SubmitBTNConnector = app.injector.instanceOf[SubmitBTNConnector]
+  lazy val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       Configuration(
@@ -40,32 +40,32 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
     )
     .build()
 
-  "SubmitBTNConnector" when {
-    "submitBTN() called with a valid request" must {
+  "UktrSubmissionConnector" when {
+    "submitUktr() called with a valid request" must {
       "return 201 CREATED response" in {
-        stubResponse("/below-threshold-notification/submit", CREATED, JsObject.empty)
+        stubResponse("/submit-uk-tax-return", CREATED, JsObject.empty)
 
-        val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
 
         result.status should be(201)
       }
     }
 
-    "submitBTN() called with an invalid request" must {
+    "submitUktr() called with an invalid request" must {
       "return 400 BAD_REQUEST response" in {
-        stubResponse("/below-threshold-notification/submit", BAD_REQUEST, JsObject.empty)
+        stubResponse("/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
 
-        val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
 
         result.status should be(400)
       }
     }
 
-    "submitBTN() called with an invalid url configured" must {
+    "submitUktr() called with an invalid url configured" must {
       "return 404 NOT_FOUND response" in {
         stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
 
-        val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
 
         result.status should be(404)
       }
@@ -73,7 +73,11 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
   }
 }
 
-object SubmitBTNConnectorSpec {
-  val validBTNSubmission: BTNSubmission = new BTNSubmission(LocalDate.now(), LocalDate.now().plus(365, ChronoUnit.DAYS))
+object Pillar2ConnectorSpec {
+
+  val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
+  val liability: LiabilityData =
+    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
+  val validUktrSubmission: UKTRSubmission = new UKTRSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, liability)
 
 }

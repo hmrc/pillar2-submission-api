@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.base
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
-import uk.gov.hmrc.auth.core.retrieve.~
+import play.api.libs.json.{Json, OFormat}
 
-object TestAuthRetrievals {
-  implicit class Ops[A](a: A) {
-    def ~[B](b: B): A ~ B = new ~(a, b)
-  }
+case class SubmitUktrSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
+
+case object SubmitUktrSuccessResponse {
+  implicit val successFormat: OFormat[SubmitUktrSuccessResponse] = Json.format[SubmitUktrSuccessResponse]
 }

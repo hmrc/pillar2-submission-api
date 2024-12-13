@@ -16,21 +16,37 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.controllers.UKTRSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
 
-class UktrSubmissionControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, identifierAction, subscriptionAction)
+class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
+
+  val uktrSubmissionController: UKTRSubmissionController =
+    new UKTRSubmissionController(cc, identifierAction, subscriptionAction, mockSubmitUktrService)(ec)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {
       "return 201 CREATED response" in {
+
+        when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.successful(
+              SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+            )
+          )
+
         val result = uktrSubmissionController.submitUktr()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_data)
@@ -170,7 +186,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
   }
 }
 
-object UktrSubmissionControllerSpec {
+object UKTRSubmissionControllerSpec {
   val validRequestJson_data: JsValue =
     Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",

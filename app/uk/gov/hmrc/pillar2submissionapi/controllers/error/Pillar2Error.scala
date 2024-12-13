@@ -45,9 +45,11 @@ case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
   val message: String = s"No Pillar2 subscription found for $pillar2Id"
 }
 
-case class BTNValidationError(code: String, message: String) extends Pillar2Error
+case class UktrValidationError(code: String, message: String) extends Pillar2Error
 
 case class UnparsableResponse(errors: String) extends Pillar2Error {
   val code:    String = "500"
   val message: String = errors
 }
+
+case class BTNValidationError(code: String, message: String) extends Pillar2Error

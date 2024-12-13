@@ -31,6 +31,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdenti
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
+import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRService
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -43,6 +44,8 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   implicit val cc:                ControllerComponents  = stubControllerComponents()
   val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
   val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
+
+  val mockSubmitUktrService: SubmitUKTRService = mock[SubmitUKTRService]
 
   val mockSubmitBTNService: SubmitBTNService = mock[SubmitBTNService]
 
@@ -67,4 +70,5 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
 
     override protected def executionContext: ExecutionContext = ec
   }
+
 }

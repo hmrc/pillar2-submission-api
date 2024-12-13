@@ -27,7 +27,7 @@ import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
+import uk.gov.hmrc.pillar2submissionapi.connectors.{Pillar2Connector, SubmitBTNConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -50,6 +50,7 @@ trait UnitTestBaseSpec
   protected val mockConfiguration:      Configuration      = mock[Configuration]
   protected val mockServicesConfig:     ServicesConfig     = mock[ServicesConfig]
   protected val mockHttpClient:         HttpClient         = mock[HttpClient]
+  protected val mockPillar2Connector:   Pillar2Connector   = mock[Pillar2Connector]
   protected val mockSubmitBTNConnector: SubmitBTNConnector = mock[SubmitBTNConnector]
 
 }

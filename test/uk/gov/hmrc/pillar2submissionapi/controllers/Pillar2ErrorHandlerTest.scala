@@ -74,6 +74,22 @@ class Pillar2ErrorHandlerTest extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "Authentication Error"
   }
 
+  test("NoSubscriptionData error response") {
+    val response = classUnderTest.onServerError(dummyRequest, NoSubscriptionData("XTC01234123412"))
+    status(response) mustEqual 500
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "004"
+    result.message mustEqual "No Pillar2 subscription found for XTC01234123412"
+  }
+
+  test("UktrValidationError error response") {
+    val response = classUnderTest.onServerError(dummyRequest, UktrValidationError("093", "Invalid Return"))
+    status(response) mustEqual 422
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "093"
+    result.message mustEqual "Invalid Return"
+  }
+
   test("BTNValidationError error response") {
     val response = classUnderTest.onServerError(dummyRequest, BTNValidationError("093", "Invalid Return"))
     status(response) mustEqual 422

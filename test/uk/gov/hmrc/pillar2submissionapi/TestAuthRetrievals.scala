@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi
 
-import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.auth.core.retrieve.~
 
-case class LiabilityNilReturn(returnType: ReturnType) extends Liability
-
-object LiabilityNilReturn {
-  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 }
