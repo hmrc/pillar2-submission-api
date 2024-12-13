@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.btnsubmission
+package uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+case class SubmitBTNSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
 
-case class BTNSubmission(
-  accountingPeriodFrom: LocalDate,
-  accountingPeriodTo:   LocalDate
-)
-
-object BTNSubmission {
-  implicit val BTNSubmission: OFormat[BTNSubmission] = Json.format[BTNSubmission]
+case object SubmitBTNSuccessResponse {
+  implicit val successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]
 }

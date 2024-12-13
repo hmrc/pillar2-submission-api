@@ -73,4 +73,29 @@ class Pillar2ErrorHandlerTest extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.code mustEqual "003"
     result.message mustEqual "Authentication Error"
   }
+
+  test("BTNValidationError error response") {
+    val response = classUnderTest.onServerError(dummyRequest, BTNValidationError("093", "Invalid Return"))
+    status(response) mustEqual 422
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "093"
+    result.message mustEqual "Invalid Return"
+  }
+
+  test("UnparsableResponse error response") {
+    val response =
+      classUnderTest.onServerError(dummyRequest, UnparsableResponse("Failed to parse success response: One of many errors!, Another error!"))
+    status(response) mustEqual 500
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "500"
+    result.message mustEqual "Failed to parse success response: One of many errors!, Another error!"
+  }
+
+  test("UnexpectedResponse error response") {
+    val response = classUnderTest.onServerError(dummyRequest, UnexpectedResponse)
+    status(response) mustEqual 500
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "500"
+    result.message mustEqual "Internal Server Error"
+  }
 }

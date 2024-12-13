@@ -25,15 +25,16 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
+import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.WireMockServerHandler
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
@@ -50,6 +51,7 @@ trait IntegrationSpecBase
     with Matchers
     with Results
     with MockitoSugar
+    with WireMockServerHandler
     with SubscriptionDataFixture {
 
   implicit lazy val system:       ActorSystem      = ActorSystem()

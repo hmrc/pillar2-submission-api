@@ -16,28 +16,38 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmission.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BTNSubmissionController @Inject() (
-  cc:       ControllerComponents,
-  identify: IdentifierAction
-) extends BackendController(cc) {
+  cc:               ControllerComponents,
+  identify:         IdentifierAction,
+  submitBTNService: SubmitBTNService
+)(implicit ec:      ExecutionContext)
+    extends BackendController(cc) {
 
   def submitBTN: Action[AnyContent] = identify.async { request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     request.body.asJson match {
       case Some(request) =>
-        if (request.validate[BTNSubmission].isError) {
-          Future.failed(InvalidJson)
-        } else Future.successful(Created(Json.obj("success" -> true)))
+        request.validate[BTNSubmission] match {
+          case JsSuccess(value, _) =>
+            submitBTNService
+              .submitBTN(value)
+              .map(response => Created(Json.toJson(response)))
+          case JsError(_) => Future.failed(InvalidJson)
+        }
       case None => Future.failed(EmptyRequestBody)
     }
   }

@@ -27,14 +27,14 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.base.{IntegrationSpecBase, WireMockServerHandler}
+import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
 import uk.gov.hmrc.pillar2submissionapi.helpers._
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerHandler with SubscriptionDataFixture {
+class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDataFixture {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(
@@ -46,7 +46,7 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with WireMockServerH
   val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
 
   "SubscriptionConnector" must {
-    "readSubscription" should {
+    "readSubscription" must {
 
       "return json when the backend has returned 200 OK with data" in {
         when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]()))
