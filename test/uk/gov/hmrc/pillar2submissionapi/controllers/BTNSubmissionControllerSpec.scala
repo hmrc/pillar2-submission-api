@@ -16,20 +16,25 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.SubmitBTNSuccessResponse
 
 import scala.concurrent.Future
 
 class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
-  val BTNSubmissionController: BTNSubmissionController = new BTNSubmissionController(cc, identifierAction)
+  val BTNSubmissionController: BTNSubmissionController = new BTNSubmissionController(cc, identifierAction, mockSubmitBTNService)
 
   def result(jsRequest: JsValue): Future[Result] = BTNSubmissionController.submitBTN(
     FakeRequest()
@@ -39,6 +44,13 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
   "BTNSubmissionController" when {
     "submitBTN() called with a valid request" should {
       "return 201 CREATED response" in {
+
+        when(mockSubmitBTNService.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.successful(
+              SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+            )
+          )
 
         status(result(validRequestJson_data)) mustEqual CREATED
       }
