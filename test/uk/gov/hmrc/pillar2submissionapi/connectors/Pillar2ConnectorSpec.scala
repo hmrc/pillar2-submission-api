@@ -78,6 +78,6 @@ object Pillar2ConnectorSpec {
   val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
   val liability: LiabilityData =
     LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
-  val validUktrSubmission: UktrSubmission = new UktrSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, liability)
+  val validUktrSubmission: UKTRSubmission = new UKTRSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, liability)
 
 }

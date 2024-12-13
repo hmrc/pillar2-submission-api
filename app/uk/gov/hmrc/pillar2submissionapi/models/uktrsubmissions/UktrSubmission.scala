@@ -20,7 +20,7 @@ import play.api.libs.json._
 
 import java.time.LocalDate
 
-trait UktrSubmission {
+sealed trait UKTRSubmission {
   val accountingPeriodFrom: LocalDate
   val accountingPeriodTo:   LocalDate
   val obligationMTT:        Boolean
@@ -28,20 +28,44 @@ trait UktrSubmission {
   val liabilities:          Liability
 }
 
-object UktrSubmission {
-  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
+case class UKTRSubmissionData(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityData
+) extends UKTRSubmission
+
+object UKTRSubmissionData {
+  implicit val uktrSubmissionDataFormat: OFormat[UKTRSubmissionData] = Json.format[UKTRSubmissionData]
+}
+
+case class UKTRSubmissionNilReturn(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate,
+  obligationMTT:        Boolean,
+  electionUKGAAP:       Boolean,
+  liabilities:          LiabilityNilReturn
+) extends UKTRSubmission
+
+object UKTRSubmissionNilReturn {
+  implicit val uktrSubmissionNilReturnFormat: OFormat[UKTRSubmissionNilReturn] = Json.format[UKTRSubmissionNilReturn]
+}
+
+object UKTRSubmission {
+  implicit val uktrSubmissionReads: Reads[UKTRSubmission] = (json: JsValue) =>
     if ((json \ "liabilities" \ "returnType").isEmpty) {
-      json.validate[UktrSubmissionData]
+      json.validate[UKTRSubmissionData]
     } else {
-      json.validate[UktrSubmissionNilReturn]
+      json.validate[UKTRSubmissionNilReturn]
     }
 
-  implicit val uktrSubmissionWrites: Writes[UktrSubmission] = {
-    case submission @ UktrSubmissionData(_, _, _, _, _) =>
-      Json.toJson(submission)
-    case nilReturn @ UktrSubmissionNilReturn(_, _, _, _, _) =>
-      Json.toJson(nilReturn)
-    case _ =>
-      throw new RuntimeException("")
+  implicit val uktrSubmissionWrites: Writes[UKTRSubmission] = new Writes[UKTRSubmission] {
+    def writes(sub: UKTRSubmission): JsValue = sub match {
+      case submission @ UKTRSubmissionData(_, _, _, _, _) =>
+        Json.toJson(submission)
+      case nilReturn @ UKTRSubmissionNilReturn(_, _, _, _, _) =>
+        Json.toJson(nilReturn)
+    }
   }
 }

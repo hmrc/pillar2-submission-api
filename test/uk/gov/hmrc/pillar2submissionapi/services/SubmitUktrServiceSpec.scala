@@ -27,21 +27,21 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitUktrServiceSpec._
+import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRServiceSpec._
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import scala.concurrent.Future
 
-class SubmitUktrServiceSpec extends UnitTestBaseSpec {
+class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
 
-  val submitUktrService: SubmitUktrService = new SubmitUktrService(mockPillar2Connector)
+  val submitUktrService: SubmitUKTRService = new SubmitUKTRService(mockPillar2Connector)
 
   "SubmitUktrService" when {
     "submitUktr() called with a valid tax return" should {
       "return 201 CREATED response" in {
 
-        when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+        when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
 
         val result = await(submitUktrService.submitUktr(validUktrSubmission(liabilityData)))
@@ -54,7 +54,7 @@ class SubmitUktrServiceSpec extends UnitTestBaseSpec {
   "submitUktr() called with a valid nil return" should {
     "return 201 CREATED response" in {
 
-      when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+      when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
 
       val result = await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn)))
@@ -66,17 +66,17 @@ class SubmitUktrServiceSpec extends UnitTestBaseSpec {
   "submitUktr() unparsable 201 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+      when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unparsable success response"), Map.empty)))
 
-      intercept[UnParsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      intercept[UnparsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
     }
   }
 
   "submitUktr() valid 422 response back" should {
     "Runtime exception thrown (To be updated to the appropriate exception)" in {
 
-      when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+      when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitUktrErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[UktrValidationError](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
@@ -86,17 +86,17 @@ class SubmitUktrServiceSpec extends UnitTestBaseSpec {
   "submitUktr() unparsable 422 response back" should {
     "Runtime exception thrown (To be updated to 500 Internal server error exception)" in {
 
-      when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+      when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unparsable error response"), Map.empty)))
 
-      intercept[UnParsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      intercept[UnparsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
     }
   }
 
   "submitUktr() 500 response back" should {
     "Runtime exception thrown " in {
 
-      when(mockPillar2Connector.submitUktr(any[UktrSubmissionData])(any[HeaderCarrier]))
+      when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
@@ -104,20 +104,18 @@ class SubmitUktrServiceSpec extends UnitTestBaseSpec {
   }
 }
 
-object SubmitUktrServiceSpec {
+object SubmitUKTRServiceSpec {
   val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
   val liabilityData: LiabilityData =
     LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
 
-  def validUktrSubmission(liability: Liability): UktrSubmission =
+  def validUktrSubmission(liability: Liability): UKTRSubmission =
     liability match {
       case data: LiabilityData =>
-        new UktrSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, data)
+        new UKTRSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, data)
       case nilReturn: LiabilityNilReturn =>
-        new UktrSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
-      case _ =>
-        throw new RuntimeException("bad test data")
+        new UKTRSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
     }
 
   val okResponse: SubmitUktrSuccessResponse = SubmitUktrSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))

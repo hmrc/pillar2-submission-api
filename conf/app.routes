@@ -5,10 +5,10 @@
 #     application/json:
 #         schema:
 #           oneOf:
-#               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmissionData'
-#               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmissionNilReturn'
+#               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData'
+#               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn'
 # responses:
 #   201:
 #     description: created
 ###
-POST       /RESTAdapter/PLR/UKTaxReturn              uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionController.submitUktr
+POST       /RESTAdapter/PLR/UKTaxReturn              uk.gov.hmrc.pillar2submissionapi.controllers.UKTRSubmissionController.submitUktr

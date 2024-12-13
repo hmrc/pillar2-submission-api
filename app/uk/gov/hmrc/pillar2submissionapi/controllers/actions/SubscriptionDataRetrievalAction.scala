@@ -34,7 +34,6 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     with Logging {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = {
-    println(request.clientPillar2Id + " -> dslkfjdsljf;lksdjf;lk")
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {

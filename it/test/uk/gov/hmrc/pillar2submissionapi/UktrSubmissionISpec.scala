@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.UktrSubmissionISpec._
+import uk.gov.hmrc.pillar2submissionapi.UKTRSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
@@ -36,11 +36,11 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
+class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider    = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client      = provider.get()
-  lazy val str         = s"http://localhost:$port${routes.UktrSubmissionController.submitUktr.url}"
+  lazy val str         = s"http://localhost:$port${routes.UKTRSubmissionController.submitUktr.url}"
   lazy val baseRequest = client.post(URI.create(str).toURL)
 
   "Create a new UKTR submission (POST)" should "create submission when given valid submission data" in {
@@ -175,7 +175,7 @@ class UktrSubmissionISpec extends IntegrationSpecBase with OptionValues {
   }
 }
 
-object UktrSubmissionISpec {
+object UKTRSubmissionISpec {
 
   val validRequestJson: JsValue =
     Json.parse("""{

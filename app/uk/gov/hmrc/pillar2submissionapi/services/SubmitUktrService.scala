@@ -20,16 +20,16 @@ import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnParsableResponse, UnexpectedResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UktrSubmission
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnexpectedResponse, UnparsableResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitUktrService @Inject() (pillar2Connector: Pillar2Connector)(implicit val ec: ExecutionContext) {
+class SubmitUKTRService @Inject() (pillar2Connector: Pillar2Connector)(implicit val ec: ExecutionContext) {
 
-  def submitUktr(request: UktrSubmission)(implicit hc: HeaderCarrier): Future[SubmitUktrSuccessResponse] =
+  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[SubmitUktrSuccessResponse] =
     pillar2Connector.submitUktr(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): SubmitUktrSuccessResponse =
@@ -38,14 +38,14 @@ class SubmitUktrService @Inject() (pillar2Connector: Pillar2Connector)(implicit 
         response.json.validate[SubmitUktrSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
-            throw UnParsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
+            throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
       case 422 =>
         response.json.validate[SubmitUktrErrorResponse] match {
           case JsSuccess(response, _) =>
             throw UktrValidationError(response.code, response.message)
           case JsError(errors) =>
-            throw UnParsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
+            throw UnparsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
         }
       case _ =>
         throw UnexpectedResponse
