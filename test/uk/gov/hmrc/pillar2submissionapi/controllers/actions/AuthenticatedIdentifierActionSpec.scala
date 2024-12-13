@@ -152,6 +152,30 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
           result.message mustBe "Missing delegated authority"
         }
+
+        "missing pillar2 enrolment" in {
+          val enrolmentsWithoutAuthRule = Enrolments(
+            Set(
+              Enrolment("HMRC-AS-AGENT"),
+              Enrolment(enrolmentKey, Seq(EnrolmentIdentifier("nonPillar2Enrolment", identifierValue)), "Activated", Some("pillar2-auth"))
+            )
+          )
+
+          when(
+            mockAuthConnector.authorise[RetrievalsType](
+              ArgumentMatchers.eq(requiredPredicate),
+              ArgumentMatchers.eq(requiredRetrievals)
+            )(any[HeaderCarrier](), any[ExecutionContext]())
+          ).thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ enrolmentsWithoutAuthRule ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+          val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+          result.message mustBe "Delegated Pillar2 ID not found in agent enrolments"
+        }
+
       }
     }
   }

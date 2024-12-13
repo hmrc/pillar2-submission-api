@@ -62,21 +62,16 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(retrievals) {
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          getPillar2Id(enrolments) match {
-            case Some(pillar2Id) =>
-              Future.successful(
-                IdentifierRequest(
-                  request = request,
-                  userId = internalId,
-                  groupId = Some(groupId),
-                  clientPillar2Id = pillar2Id,
-                  userIdForEnrolment = credentials.providerId
-                )
-              )
-            case None =>
-              logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-              Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
-          }
+          val validated = for {
+            pillar2Id <- getPillar2Id(enrolments).toRight(AuthenticationError(s"Pillar2 ID not found in enrolments"))
+          } yield IdentifierRequest(
+            request = request,
+            userId = internalId,
+            groupId = Some(groupId),
+            clientPillar2Id = pillar2Id,
+            userIdForEnrolment = credentials.providerId
+          )
+          validated.fold(Future.failed, Future.successful)
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
           def validateAgentEnrolment =
             Either.cond(
