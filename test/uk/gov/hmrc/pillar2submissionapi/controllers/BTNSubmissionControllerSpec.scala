@@ -67,7 +67,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitBTN called with an non-json request" should {
       "return EmptyRequestBody response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
+        val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
         )
@@ -77,7 +77,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitBTN called with no request body" should {
       "return EmptyRequestBody response" in {
-        def result: Future[Result] = BTNSubmissionController.submitBTN(
+        val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest()
         )
         result shouldFailWith EmptyRequestBody
