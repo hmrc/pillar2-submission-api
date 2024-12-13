@@ -71,20 +71,87 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       }
     }
 
-    "a user is a registered Agent" should {
-      "user is unauthorized" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
+    "a user is a registered Agent" when {
+      "should succeed" when {
+        "has valid agent enrolment, delegated authority and Pillar2 ID" in {
+          val agentEnrolments = Enrolments(
+            Set(
+              Enrolment("HMRC-AS-AGENT"),
+              Enrolment(
+                enrolmentKey,
+                Seq(EnrolmentIdentifier(identifierName, identifierValue)),
+                "Activated",
+                Some("pillar2-auth")
+              )
+            )
           )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
 
-        result.message mustEqual "Invalid credentials"
+          when(
+            mockAuthConnector.authorise[RetrievalsType](
+              ArgumentMatchers.eq(requiredPredicate),
+              ArgumentMatchers.eq(requiredRetrievals)
+            )(any[HeaderCarrier](), any[ExecutionContext]())
+          ).thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+          val result = await(identifierAction.refine(fakeRequest))
+          result.map { identifierRequest =>
+            identifierRequest.userId mustBe id
+            identifierRequest.groupId mustBe Some(groupId)
+            identifierRequest.clientPillar2Id mustBe identifierValue
+            identifierRequest.userIdForEnrolment mustBe providerId
+          }
+        }
+      }
+
+      "should fail" when {
+        "missing agent enrolment" in {
+          val enrolmentsWithoutAgent = Enrolments(
+            Set(
+              Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "Activated", Some("pillar2-auth"))
+            )
+          )
+
+          when(
+            mockAuthConnector.authorise[RetrievalsType](
+              ArgumentMatchers.eq(requiredPredicate),
+              ArgumentMatchers.eq(requiredRetrievals)
+            )(any[HeaderCarrier](), any[ExecutionContext]())
+          ).thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ enrolmentsWithoutAgent ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+          val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+          result.message mustBe "Agent enrolment not found"
+        }
+
+        "missing delegated authority" in {
+          val enrolmentsWithoutAuthRule = Enrolments(
+            Set(
+              Enrolment("HMRC-AS-AGENT"),
+              Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "Activated", None)
+            )
+          )
+
+          when(
+            mockAuthConnector.authorise[RetrievalsType](
+              ArgumentMatchers.eq(requiredPredicate),
+              ArgumentMatchers.eq(requiredRetrievals)
+            )(any[HeaderCarrier](), any[ExecutionContext]())
+          ).thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ enrolmentsWithoutAuthRule ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+          val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+          result.message mustBe "Missing delegated authority"
+        }
       }
     }
   }
