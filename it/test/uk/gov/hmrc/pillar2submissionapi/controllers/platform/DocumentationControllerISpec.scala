@@ -16,21 +16,18 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
-import scala.annotation.nowarn
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.io.Source
 
-@nowarn
 class DocumentationControllerISpec extends IntegrationSpecBase {
 
-  implicit val hc: HeaderCarrier = new HeaderCarrier
   val provider = app.injector.instanceOf[HttpClientV2Provider]
   val client   = provider.get()
   val baseUrl  = s"http://localhost:$port"
