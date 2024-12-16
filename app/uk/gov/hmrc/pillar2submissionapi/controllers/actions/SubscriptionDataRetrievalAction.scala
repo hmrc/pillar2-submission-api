@@ -20,6 +20,7 @@ import play.api.Logging
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.NoSubscriptionData
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -36,7 +37,7 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
-      case Left(_) => Future.failed(new RuntimeException("No subscription data"))
+      case Left(_) => Future.failed(NoSubscriptionData(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
           SubscriptionDataRequest(
