@@ -27,7 +27,7 @@ import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
+import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -47,9 +47,9 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:    Configuration    = mock[Configuration]
-  protected val mockServicesConfig:   ServicesConfig   = mock[ServicesConfig]
-  protected val mockHttpClient:       HttpClient       = mock[HttpClient]
-  protected val mockPillar2Connector: Pillar2Connector = mock[Pillar2Connector]
+  protected val mockConfiguration:    Configuration        = mock[Configuration]
+  protected val mockServicesConfig:   ServicesConfig       = mock[ServicesConfig]
+  protected val mockHttpClient:       HttpClient           = mock[HttpClient]
+  protected val mockPillar2Connector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
 
 }

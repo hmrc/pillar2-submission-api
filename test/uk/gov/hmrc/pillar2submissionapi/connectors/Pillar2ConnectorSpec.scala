@@ -31,7 +31,7 @@ import java.time.temporal.ChronoUnit
 
 class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
-  lazy val uktrSubmissionConnector: Pillar2Connector = app.injector.instanceOf[Pillar2Connector]
+  lazy val uktrSubmissionConnector: UKTaxReturnConnector = app.injector.instanceOf[UKTaxReturnConnector]
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       Configuration(
@@ -45,7 +45,7 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED response" in {
         stubResponse("/submit-uk-tax-return", CREATED, JsObject.empty)
 
-        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUKTaxReturn(validUktrSubmission)(hc))
 
         result.status should be(201)
       }
@@ -55,7 +55,7 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST response" in {
         stubResponse("/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
 
-        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUKTaxReturn(validUktrSubmission)(hc))
 
         result.status should be(400)
       }
@@ -65,7 +65,7 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND response" in {
         stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
 
-        val result = await(uktrSubmissionConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(uktrSubmissionConnector.submitUKTaxReturn(validUktrSubmission)(hc))
 
         result.status should be(404)
       }

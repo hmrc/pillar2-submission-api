@@ -27,7 +27,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.UKTRSubmissionControllerSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUktrSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitUKTRSuccessResponse
 
 import scala.concurrent.Future
 
@@ -43,7 +43,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+              SubmitUKTRSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
             )
           )
 

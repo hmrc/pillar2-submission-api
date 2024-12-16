@@ -29,7 +29,7 @@ import uk.gov.hmrc.pillar2submissionapi.UKTRSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUKTRErrorResponse, SubmitUKTRSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
@@ -48,10 +48,10 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       CREATED,
-      Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+      Json.toJson(SubmitUKTRSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
     val request = baseRequest.withBody(validRequestJson)
-    val result  = Await.result(request.execute[SubmitUktrSuccessResponse], 5.seconds)
+    val result  = Await.result(request.execute[SubmitUKTRSuccessResponse], 5.seconds)
     result.chargeReference.value mustEqual "XTC01234123412"
     result.formBundleNumber mustEqual "119000004320"
   }
@@ -61,10 +61,10 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       CREATED,
-      Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+      Json.toJson(SubmitUKTRSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
     val request = baseRequest.withBody(validRequestNilReturnJson)
-    val result  = Await.result(request.execute[SubmitUktrSuccessResponse], 5.seconds)
+    val result  = Await.result(request.execute[SubmitUKTRSuccessResponse], 5.seconds)
     result.chargeReference.value mustEqual "XTC01234123412"
     result.formBundleNumber mustEqual "119000004320"
   }
@@ -95,10 +95,10 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       CREATED,
-      Json.toJson(SubmitUktrSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+      Json.toJson(SubmitUKTRSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
     )
     val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
-    val result  = Await.result(request.execute[SubmitUktrSuccessResponse], 5.seconds)
+    val result  = Await.result(request.execute[SubmitUKTRSuccessResponse], 5.seconds)
     result.chargeReference.value mustEqual "XTC01234123412"
     result.formBundleNumber mustEqual "119000004320"
   }
@@ -134,7 +134,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       UNPROCESSABLE_ENTITY,
-      Json.toJson(SubmitUktrErrorResponse("093", "Invalid Return"))
+      Json.toJson(SubmitUKTRErrorResponse("093", "Invalid Return"))
     )
     val request = baseRequest.withBody(validRequestJson)
     val result  = Await.result(request.execute[HttpResponse], 5.seconds)
@@ -149,7 +149,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       UNAUTHORIZED,
-      Json.toJson(SubmitUktrErrorResponse("001", "Unauthorized"))
+      Json.toJson(SubmitUKTRErrorResponse("001", "Unauthorized"))
     )
     val request = baseRequest.withBody(validRequestJson)
     val result  = Await.result(request.execute[HttpResponse], 5.seconds)
@@ -164,7 +164,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     stubResponse(
       "/submit-uk-tax-return",
       INTERNAL_SERVER_ERROR,
-      Json.toJson(SubmitUktrErrorResponse("999", "internal_server_error"))
+      Json.toJson(SubmitUKTRErrorResponse("999", "internal_server_error"))
     )
     val request = baseRequest.withBody(validRequestJson)
     val result  = Await.result(request.execute[HttpResponse], 5.seconds)

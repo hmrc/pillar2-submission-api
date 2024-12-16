@@ -19,29 +19,29 @@ package uk.gov.hmrc.pillar2submissionapi.services
 import com.google.inject.{Inject, Singleton}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.connectors.Pillar2Connector
+import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnexpectedResponse, UnparsableResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUktrErrorResponse, SubmitUktrSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUKTRErrorResponse, SubmitUKTRSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitUKTRService @Inject() (pillar2Connector: Pillar2Connector)(implicit val ec: ExecutionContext) {
+class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) {
 
-  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[SubmitUktrSuccessResponse] =
-    pillar2Connector.submitUktr(request).map(convertToResult)
+  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[SubmitUKTRSuccessResponse] =
+    pillar2Connector.submitUKTaxReturn(request).map(convertToResult)
 
-  private def convertToResult(response: HttpResponse): SubmitUktrSuccessResponse =
+  private def convertToResult(response: HttpResponse): SubmitUKTRSuccessResponse =
     response.status match {
       case 201 =>
-        response.json.validate[SubmitUktrSuccessResponse] match {
+        response.json.validate[SubmitUKTRSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
             throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
       case 422 =>
-        response.json.validate[SubmitUktrErrorResponse] match {
+        response.json.validate[SubmitUKTRErrorResponse] match {
           case JsSuccess(response, _) =>
             throw UktrValidationError(response.code, response.message)
           case JsError(errors) =>

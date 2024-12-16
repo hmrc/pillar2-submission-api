@@ -27,10 +27,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class Pillar2Connector @Inject() (val config: AppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
   private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/submit-uk-tax-return"
 
-  def submitUktr(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def submitUKTaxReturn(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     http.POST[UKTRSubmission, HttpResponse](uktrSubmissionUrl, uktrSubmission)
 }
