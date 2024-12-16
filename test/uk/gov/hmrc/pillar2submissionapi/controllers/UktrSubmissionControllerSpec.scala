@@ -47,7 +47,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
             )
           )
 
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_data)
         )
@@ -57,7 +57,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with a valid nil return request" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_nilReturn)
         )
@@ -67,7 +67,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_data)
         )
@@ -77,7 +77,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid nil return request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_nilReturn)
         )
@@ -87,7 +87,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_Json)
         )
@@ -97,7 +97,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that only contains a valid return type" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyContainsLiabilities)
         )
@@ -107,7 +107,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that only contains an invalid return type" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType)
         )
@@ -117,7 +117,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that is missing liabilities" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_noLiabilities)
         )
@@ -127,7 +127,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an empty json object" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_emptyBody)
         )
@@ -137,7 +137,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withTextBody(invalidRequest_wrongType)
         )
@@ -147,7 +147,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with no request body" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
         )
         result shouldFailWith EmptyRequestBody
@@ -156,7 +156,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains duplicate entries" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_duplicateFields)
         )
@@ -166,7 +166,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains additional fields" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_additionalFields)
         )
@@ -176,7 +176,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains both a full and a nil submission" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_fullAndNilReturnTogether)
         )

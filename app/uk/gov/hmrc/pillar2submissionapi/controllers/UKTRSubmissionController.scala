@@ -36,17 +36,17 @@ class UKTRSubmissionController @Inject() (
   cc:                       ControllerComponents,
   identify:                 IdentifierAction,
   verifySubscriptionExists: SubscriptionDataRetrievalAction,
-  submitUktrService:        SubmitUKTRService
+  submitUKTRService:        SubmitUKTRService
 )(implicit ec:              ExecutionContext)
     extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+  def submitUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     request.body.asJson match {
       case Some(request) =>
         request.validate[UKTRSubmission] match {
           case JsSuccess(value, _) =>
-            submitUktrService
+            submitUKTRService
               .submitUktr(value)
               .map(response => Created(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)

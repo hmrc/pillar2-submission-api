@@ -40,7 +40,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider    = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client      = provider.get()
-  lazy val str         = s"http://localhost:$port${routes.UKTRSubmissionController.submitUktr.url}"
+  lazy val str         = s"http://localhost:$port${routes.UKTRSubmissionController.submitUKTR.url}"
   lazy val baseRequest = client.post(URI.create(str).toURL)
 
   "Create a new UKTR submission (POST)" should "create submission when given valid submission data" in {
