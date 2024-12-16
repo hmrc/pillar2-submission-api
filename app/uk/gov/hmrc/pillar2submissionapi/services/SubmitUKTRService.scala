@@ -22,26 +22,26 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnexpectedResponse, UnparsableResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUKTRErrorResponse, SubmitUKTRSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) {
 
-  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[SubmitUKTRSuccessResponse] =
+  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     pillar2Connector.submitUKTaxReturn(request).map(convertToResult)
 
-  private def convertToResult(response: HttpResponse): SubmitUKTRSuccessResponse =
+  private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
     response.status match {
       case 201 =>
-        response.json.validate[SubmitUKTRSuccessResponse] match {
+        response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
             throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
       case 422 =>
-        response.json.validate[SubmitUKTRErrorResponse] match {
+        response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) =>
             throw UktrValidationError(response.code, response.message)
           case JsError(errors) =>

@@ -26,7 +26,7 @@ import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitUKTRErrorResponse, SubmitUKTRSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRServiceSpec._
 
 import java.time.LocalDate
@@ -77,7 +77,7 @@ class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown (To be updated to the appropriate exception)" in {
 
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitUKTRErrorResponse("093", "Invalid Return")), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(UKTRSubmitErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[UktrValidationError](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
     }
@@ -118,5 +118,5 @@ object SubmitUKTRServiceSpec {
         new UKTRSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
     }
 
-  val okResponse: SubmitUKTRSuccessResponse = SubmitUKTRSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))
+  val okResponse: UKTRSubmitSuccessResponse = UKTRSubmitSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))
 }

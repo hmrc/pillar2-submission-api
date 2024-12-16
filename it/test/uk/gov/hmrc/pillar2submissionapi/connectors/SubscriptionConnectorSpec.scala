@@ -32,7 +32,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with EitherValues {
     val result = subcriptionConntector.readSubscription(plrReference).futureValue
     result.isRight mustBe true
     result.value mustBe subscriptionDataJson
-    println(server.listAllStubMappings().getMappings)
   }
 
   "readSubscription" should "return a BadRequest when the backend has returned a response else than 200 status" in {
