@@ -43,7 +43,7 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
   "UktrSubmissionConnector" when {
     "submitUktr() called with a valid request" must {
       "return 201 CREATED response" in {
-        stubResponse("/submit-uk-tax-return", CREATED, JsObject.empty)
+        stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
 
         val result = await(uktrSubmissionConnector.submitUKTaxReturn(validUktrSubmission)(hc))
 
@@ -53,7 +53,7 @@ class Pillar2ConnectorSpec extends UnitTestBaseSpec {
 
     "submitUktr() called with an invalid request" must {
       "return 400 BAD_REQUEST response" in {
-        stubResponse("/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
+        stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
 
         val result = await(uktrSubmissionConnector.submitUKTaxReturn(validUktrSubmission)(hc))
 

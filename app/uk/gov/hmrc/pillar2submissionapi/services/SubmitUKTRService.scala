@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.services
 
 import com.google.inject.{Inject, Singleton}
+import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
@@ -27,7 +28,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSu
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) {
+class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) extends Logging {
 
   def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     pillar2Connector.submitUKTaxReturn(request).map(convertToResult)
@@ -38,6 +39,8 @@ class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(impli
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
+            logger.error(s"Got an error while parsing ${response.json}")
+            // change response here. We should not return this error to third parties
             throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
       case 422 =>
@@ -45,9 +48,11 @@ class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(impli
           case JsSuccess(response, _) =>
             throw UktrValidationError(response.code, response.message)
           case JsError(errors) =>
+            // change response here. We should not return this error to third parties
             throw UnparsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
         }
-      case _ =>
+      case status =>
+        logger.error(s"Error while calling pillar2 backend. Got status: $status and response: ${response.json}")
         throw UnexpectedResponse
     }
 }
