@@ -21,8 +21,8 @@ import org.apache.pekko.stream.Materializer
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -47,7 +47,7 @@ import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IntegrationSpecBase
-    extends AnyFlatSpec
+    extends AnyWordSpec
     with Matchers
     with Results
     with MockitoSugar
