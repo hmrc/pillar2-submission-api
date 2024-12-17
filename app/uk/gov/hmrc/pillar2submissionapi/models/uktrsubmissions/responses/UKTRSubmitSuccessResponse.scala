@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class LiabilityData(
-  electionDTTSingleMember:  Boolean,
-  electionUTPRSingleMember: Boolean,
-  numberSubGroupDTT:        Int,
-  numberSubGroupUTPR:       Int,
-  totalLiability:           BigDecimal,
-  totalLiabilityDTT:        BigDecimal,
-  totalLiabilityIIR:        BigDecimal,
-  totalLiabilityUTPR:       BigDecimal,
-  liableEntities:           Seq[LiableEntity]
-) extends Liability
+case class UKTRSubmitSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
 
-object LiabilityData {
-  implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
+case object UKTRSubmitSuccessResponse {
+  implicit val successFormat: OFormat[UKTRSubmitSuccessResponse] = Json.format[UKTRSubmitSuccessResponse]
 }

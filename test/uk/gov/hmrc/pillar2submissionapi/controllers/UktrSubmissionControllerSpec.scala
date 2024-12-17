@@ -16,22 +16,38 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import uk.gov.hmrc.pillar2submissionapi.controllers.UktrSubmissionControllerSpec._
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.controllers.UKTRSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
-class UktrSubmissionControllerSpec extends ControllerBaseSpec {
+import scala.concurrent.Future
 
-  val uktrSubmissionController: UktrSubmissionController = new UktrSubmissionController(cc, identifierAction, subscriptionAction)
+class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
+
+  val uktrSubmissionController: UKTRSubmissionController =
+    new UKTRSubmissionController(cc, identifierAction, subscriptionAction, mockSubmitUktrService)(ec)
 
   "UktrSubmissionController" when {
     "submitUktr() called with a valid request" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+
+        when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.successful(
+              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+            )
+          )
+
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_data)
         )
@@ -41,7 +57,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with a valid nil return request" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_nilReturn)
         )
@@ -51,7 +67,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_data)
         )
@@ -61,7 +77,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid nil return request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequestJson_nilReturn)
         )
@@ -71,7 +87,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an invalid json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_Json)
         )
@@ -81,7 +97,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that only contains a valid return type" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyContainsLiabilities)
         )
@@ -91,7 +107,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that only contains an invalid return type" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType)
         )
@@ -101,7 +117,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with request that is missing liabilities" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_noLiabilities)
         )
@@ -111,7 +127,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an empty json object" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(invalidRequest_emptyBody)
         )
@@ -121,7 +137,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withTextBody(invalidRequest_wrongType)
         )
@@ -131,7 +147,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with no request body" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
         )
         result shouldFailWith EmptyRequestBody
@@ -140,7 +156,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains duplicate entries" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_duplicateFields)
         )
@@ -150,7 +166,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains additional fields" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_additionalFields)
         )
@@ -160,7 +176,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitUktr() called with valid request body that contains both a full and a nil submission" should {
       "return 201 CREATED response" in {
-        val result = uktrSubmissionController.submitUktr()(
+        val result = uktrSubmissionController.submitUKTR()(
           FakeRequest(method = "", path = "")
             .withJsonBody(validRequestJson_fullAndNilReturnTogether)
         )
@@ -170,7 +186,7 @@ class UktrSubmissionControllerSpec extends ControllerBaseSpec {
   }
 }
 
-object UktrSubmissionControllerSpec {
+object UKTRSubmissionControllerSpec {
   val validRequestJson_data: JsValue =
     Json.parse("""{
         |  "accountingPeriodFrom": "2024-08-14",

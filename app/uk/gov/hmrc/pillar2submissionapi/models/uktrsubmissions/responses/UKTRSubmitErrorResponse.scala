@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class LiabilityNilReturn(returnType: ReturnType) extends Liability
+case class UKTRSubmitErrorResponse(code: String, message: String)
 
-object LiabilityNilReturn {
-  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+case object UKTRSubmitErrorResponse {
+  implicit val errorFormat: OFormat[UKTRSubmitErrorResponse] = Json.format[UKTRSubmitErrorResponse]
 }
