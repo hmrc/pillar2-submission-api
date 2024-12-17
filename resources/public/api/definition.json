@@ -1,6 +1,4 @@
 {
-  "scopes": [
-  ],
   "api": {
     "name": "Pillar 2 Submission",
     "description": "An API for managing and retrieving Pillar 2 submissions",
@@ -9,8 +7,11 @@
     "versions": [
       {
         "version": "1.0",
-        "status": "ALPHA",
-        "endpointsEnabled": false
+        "status": "BETA",
+        "endpointsEnabled": true,
+        "access": {
+          "type": "PUBLIC"
+        }
       }
     ]
   }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.controllers.error
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.http.Writeable
+import play.api.libs.json.{JsValue, Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class Pillar2ErrorResponse(code: String, message: String)
 
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+object Pillar2ErrorResponse {
+  implicit val format: OFormat[Pillar2ErrorResponse] = Json.format[Pillar2ErrorResponse]
 
-  val appName: String = config.get[String]("appName")
-
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+  implicit val writable: Writeable[Pillar2ErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
 }

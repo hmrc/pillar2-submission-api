@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json._
 
-import javax.inject.{Inject, Singleton}
+import java.time.LocalDate
 
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+trait UktrSubmission {
+  val accountingPeriodFrom: LocalDate
+  val accountingPeriodTo:   LocalDate
+  val obligationMTT:        Boolean
+  val electionUKGAAP:       Boolean
+  val liabilities:          Liability
+}
 
-  val appName: String = config.get[String]("appName")
-
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+object UktrSubmission {
+  implicit val uktrSubmissionReads: Reads[UktrSubmission] = (json: JsValue) =>
+    if ((json \ "liabilities" \ "returnType").isEmpty) {
+      json.validate[UktrSubmissionData]
+    } else {
+      json.validate[UktrSubmissionNilReturn]
+    }
 }

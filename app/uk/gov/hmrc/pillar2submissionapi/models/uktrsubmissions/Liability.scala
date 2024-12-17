@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import javax.inject.{Inject, Singleton}
-
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
-
-  val appName: String = config.get[String]("appName")
-
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
-}
+abstract class Liability

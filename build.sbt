@@ -1,7 +1,10 @@
+import org.typelevel.scalacoptions.ScalacOptions
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
-import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.*
+
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB
@@ -12,36 +15,19 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin, SwaggerPlugin)
   .settings(
     majorVersion := 0,
-    ScoverageKeys.coverageExcludedFiles :=
-      "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;" +
-        "app.*;.*BuildInfo.*;.*Routes.*;.*repositories.*;.*controllers.platform.*;.*controllers.test.*;.*services.test.*;.*metrics.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
+    Compile / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard),
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
-    // suppress warnings in generated routes files
-    scalacOptions ++= Seq(
-      "-Wconf:src=routes/.*:s",
-      "-Ywarn-dead-code",
-      "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
-      "-Ywarn-unused:locals", // Warn if a local definition is unused.
-      "-Ywarn-unused:params", // Warn if a value parameter is unused.
-      "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
-      "-Ywarn-unused:privates" // Warn if a private member is unused.
-    ),
+    scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(CodeCoverageSettings.settings: _*)
+  .settings(CodeCoverageSettings.settings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
-  .settings(publishingSettings: _*)
   .settings(scalaSettings: _*)
   .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
@@ -60,14 +46,17 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
   .settings(JsonToYaml.settings *)
+  .settings(Validate.settings *)
   .settings(PlaySwagger.settings *)
   .disablePlugins(JUnitXmlReportPlugin)
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
+addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
 
-/*lazy val it = project
+lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
-  .settings(libraryDependencies ++= AppDependencies.it)*/
+  .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
+  .settings(libraryDependencies ++= AppDependencies.it)

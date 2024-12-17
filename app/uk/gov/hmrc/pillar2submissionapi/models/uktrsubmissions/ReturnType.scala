@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.config
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import enumeratum.EnumEntry.UpperSnakecase
+import enumeratum._
 
-import javax.inject.{Inject, Singleton}
+sealed trait ReturnType extends EnumEntry with UpperSnakecase
 
-@Singleton
-class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig) {
+object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
 
-  val appName: String = config.get[String]("appName")
+  val values: IndexedSeq[ReturnType] = findValues
 
-  val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+  case object NIL_RETURN extends ReturnType
 }

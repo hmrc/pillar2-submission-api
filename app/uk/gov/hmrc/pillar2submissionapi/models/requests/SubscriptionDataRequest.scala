@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers
+package uk.gov.hmrc.pillar2submissionapi.models.requests
 
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionData
 
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
-
-@Singleton()
-class MicroserviceHelloWorldController @Inject() (cc: ControllerComponents) extends BackendController(cc) {
-
-  def hello(): Action[AnyContent] = Action.async { _ =>
-    Future.successful(Ok("Hello world"))
-  }
-}
+case class SubscriptionDataRequest[A](
+  request:          Request[A],
+  userId:           String,
+  clientPillar2Id:  String,
+  subscriptionData: SubscriptionData
+) extends WrappedRequest[A](request)
