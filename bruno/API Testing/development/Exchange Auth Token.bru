@@ -1,0 +1,24 @@
+meta {
+  name: Exchange Auth Token
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://api.development.tax.service.gov.uk/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+  content-type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  code: 86227eb7a99240da8d1c9f591d6e11a3
+  client_id: 3P091N0H49jKqMfDky9pNz3aczpF
+  client_secret: d73d155b-a817-40c4-a880-80612eb59af4
+  redirect_uri: urn:ietf:wg:oauth:2.0:oob
+  grant_type: authorization_code
+}

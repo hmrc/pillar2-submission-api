@@ -47,7 +47,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "create submission when given valid submission data" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
         Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
       )
@@ -62,7 +62,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "return a 201 CREATED response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
         Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
       )
@@ -103,7 +103,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "return a 201 CREATED response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
         Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
       )
@@ -148,7 +148,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "return a 422 UNPROCESSABLE_ENTITY response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         UNPROCESSABLE_ENTITY,
         Json.toJson(UKTRSubmitErrorResponse("093", "Invalid Return"))
       )
@@ -165,7 +165,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         UNAUTHORIZED,
         Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
       )
@@ -182,7 +182,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
-        "/submit-uk-tax-return",
+        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         INTERNAL_SERVER_ERROR,
         Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
       )

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
@@ -53,6 +54,23 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
         )
         status(result) mustEqual CREATED
       }
+
+      "forward the X-Pillar2-Id header" in {
+        val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+        when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(captor.capture()))
+          .thenReturn(
+            Future.successful(
+              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+            )
+          )
+
+        val result = uktrSubmissionController.submitUKTR()(
+          FakeRequest(method = "", path = "")
+            .withJsonBody(validRequestJson_data)
+        )
+        status(result) mustEqual CREATED
+        captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
+      }
     }
 
     "submitUktr() called with a valid nil return request" should {
@@ -62,6 +80,23 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
             .withJsonBody(validRequestJson_nilReturn)
         )
         status(result) mustEqual CREATED
+      }
+
+      "forward the X-Pillar2-Id header" in {
+        val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+        when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(captor.capture()))
+          .thenReturn(
+            Future.successful(
+              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+            )
+          )
+
+        val result = uktrSubmissionController.submitUKTR()(
+          FakeRequest(method = "", path = "")
+            .withJsonBody(validRequestJson_nilReturn)
+        )
+        status(result) mustEqual CREATED
+        captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
       }
     }
 

@@ -41,7 +41,10 @@ class UKTRSubmissionController @Inject() (
     extends BackendController(cc) {
 
   def submitUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter
+        .fromRequest(request)
+        .withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[UKTRSubmission] match {
