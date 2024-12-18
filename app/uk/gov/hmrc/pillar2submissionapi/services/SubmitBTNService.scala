@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.services
 
 import com.google.inject.{Inject, Singleton}
+import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
@@ -27,7 +28,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.{SubmitB
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implicit val ec: ExecutionContext) {
+class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implicit val ec: ExecutionContext) extends Logging {
 
   def submitBTN(request: BTNSubmission)(implicit hc: HeaderCarrier): Future[SubmitBTNSuccessResponse] =
     submitBTNConnector.submitBTN(request).map(convertToResult)
@@ -47,7 +48,8 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implic
           case JsError(errors) =>
             throw UnparsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
         }
-      case _ =>
+      case status =>
+        logger.error(s"Error calling pillar2 backend. Got response: $status and payload :${response.json}")
         throw UnexpectedResponse
     }
 }

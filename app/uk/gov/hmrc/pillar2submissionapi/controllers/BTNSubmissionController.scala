@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
@@ -33,12 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNSubmissionController @Inject() (
   cc:               ControllerComponents,
   identify:         IdentifierAction,
+  getSubscription:  SubscriptionDataRetrievalAction,
   submitBTNService: SubmitBTNService
 )(implicit ec:      ExecutionContext)
     extends BackendController(cc) {
 
-  def submitBTN: Action[AnyContent] = identify.async { request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+  def submitBTN: Action[AnyContent] = (identify andThen getSubscription).async { request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[BTNSubmission] match {

@@ -29,8 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
 
-  private val BTNSubmissionUrl: String = s"${config.pillar2BaseUrl}/below-threshold-notification/submit"
+  private val BTNSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
-  def submitBTN(BTNSubmission: BTNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def submitBTN(BTNSubmission: BTNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    logger.info(s"Calling $BTNSubmissionUrl to submit a BTN")
     http.POST[BTNSubmission, HttpResponse](BTNSubmissionUrl, BTNSubmission)
+  }
 }
