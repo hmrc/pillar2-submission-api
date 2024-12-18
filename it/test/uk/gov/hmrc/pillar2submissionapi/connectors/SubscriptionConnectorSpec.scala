@@ -23,10 +23,11 @@ import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.http.Status.OK
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
+import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 
-class SubscriptionConnectorSpec extends IntegrationSpecBase with EitherValues {
+class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDataFixture with EitherValues {
 
-  "readSubscription" should {
+  "readSubscription" must {
     "return json when the backend has returned 200 OK with data" in {
       val subcriptionConntector = app.injector.instanceOf[SubscriptionConnector]
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
