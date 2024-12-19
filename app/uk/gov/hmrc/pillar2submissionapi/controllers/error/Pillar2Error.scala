@@ -52,3 +52,5 @@ case class UnparsableResponse(errors: String) extends Pillar2Error {
   val code:    String = "500"
   val message: String = errors
 }
+
+case class BTNValidationError(code: String, message: String) extends Pillar2Error

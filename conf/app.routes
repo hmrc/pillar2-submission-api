@@ -12,3 +12,16 @@
 #     description: created
 ###
 POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controllers.UKTRSubmissionController.submitUKTR
+
+###
+# summary: Submit a Pillar2 BTN
+# requestBody:
+#   content:
+#     application/json:
+#         schema:
+#           - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.btnsubmission.BTNSubmission'
+# responses:
+#   201:
+#     description: created
+###
+POST       /below-threshold-notification              uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionController.submitBTN
