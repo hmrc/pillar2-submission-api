@@ -18,11 +18,13 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
+import play.api.libs.json._
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
+//import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -73,6 +75,7 @@ class AuthenticatedIdentifierAction @Inject() (
           )
           validated.fold(Future.failed, Future.successful)
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
+          println(enrolments)
           def validateAgentEnrolment =
             Either.cond(
               enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined,
@@ -80,12 +83,24 @@ class AuthenticatedIdentifierAction @Inject() (
               AuthenticationError("Agent enrolment not found")
             )
 
-          def validateDelegatedAuthority =
+          def validateDelegatedAuthority = {
+            println(enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).foreach { enrolment =>
+              val enrolmentJson = Json.toJson(enrolment)
+              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
+            })
+            println(enrolments.getEnrolment(HMRC_AS_AGENT_KEY).foreach { enrolment =>
+              val enrolmentJson = Json.toJson(enrolment)
+              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
+            })
+
             Either.cond(
-              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
+              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)) || enrolments
+                .getEnrolment(HMRC_AS_AGENT_KEY)
+                .exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
               (),
               AuthenticationError("Missing delegated authority")
             )
+          }
 
           def validatePillar2Id =
             getPillar2Id(enrolments).toRight(AuthenticationError("Delegated Pillar2 ID not found in agent enrolments"))
