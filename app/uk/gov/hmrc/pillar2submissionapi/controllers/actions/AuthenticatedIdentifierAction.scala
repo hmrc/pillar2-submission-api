@@ -18,10 +18,13 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
+import play.api.libs.json._
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
+//import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,6 +45,8 @@ class AuthenticatedIdentifierAction @Inject() (
 
   private val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   private val ENROLMENT_IDENTIFIER = "PLRID"
+  private val DELEGATED_AUTH_RULE  = "pillar2-auth"
+  private val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
 
   private def getPillar2Id(enrolments: Enrolments): Option[String] =
     for {
@@ -59,21 +64,60 @@ class AuthenticatedIdentifierAction @Inject() (
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(retrievals) {
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          getPillar2Id(enrolments) match {
-            case Some(pillar2Id) =>
-              Future.successful(
-                IdentifierRequest(
-                  request = request,
-                  userId = internalId,
-                  groupId = Some(groupId),
-                  clientPillar2Id = pillar2Id,
-                  userIdForEnrolment = credentials.providerId
-                )
-              )
-            case None =>
-              logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-              Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
+          val validated = for {
+            pillar2Id <- getPillar2Id(enrolments).toRight(AuthenticationError(s"Pillar2 ID not found in enrolments"))
+          } yield IdentifierRequest(
+            request = request,
+            userId = internalId,
+            groupId = Some(groupId),
+            clientPillar2Id = pillar2Id,
+            userIdForEnrolment = credentials.providerId
+          )
+          validated.fold(Future.failed, Future.successful)
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
+          println(enrolments)
+          def validateAgentEnrolment =
+            Either.cond(
+              enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined,
+              (),
+              AuthenticationError("Agent enrolment not found")
+            )
+
+          def validateDelegatedAuthority = {
+            println(enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).foreach { enrolment =>
+              val enrolmentJson = Json.toJson(enrolment)
+              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
+            })
+            println(enrolments.getEnrolment(HMRC_AS_AGENT_KEY).foreach { enrolment =>
+              val enrolmentJson = Json.toJson(enrolment)
+              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
+            })
+
+            Either.cond(
+              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)) || enrolments
+                .getEnrolment(HMRC_AS_AGENT_KEY)
+                .exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
+              (),
+              AuthenticationError("Missing delegated authority")
+            )
           }
+
+          def validatePillar2Id =
+            getPillar2Id(enrolments).toRight(AuthenticationError("Delegated Pillar2 ID not found in agent enrolments"))
+
+          val validationResult = for {
+            _         <- validateAgentEnrolment
+            _         <- validateDelegatedAuthority
+            pillar2Id <- validatePillar2Id
+          } yield IdentifierRequest(
+            request = request,
+            userId = internalId,
+            groupId = Some(groupId),
+            clientPillar2Id = pillar2Id,
+            userIdForEnrolment = credentials.providerId
+          )
+
+          validationResult.fold(Future.failed, Future.successful)
         case _ =>
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
