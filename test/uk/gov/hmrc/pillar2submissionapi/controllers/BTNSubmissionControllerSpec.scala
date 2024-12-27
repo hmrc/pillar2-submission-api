@@ -34,7 +34,8 @@ import scala.concurrent.Future
 
 class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
-  val BTNSubmissionController: BTNSubmissionController = new BTNSubmissionController(cc, identifierAction, mockSubmitBTNService)
+  val BTNSubmissionController: BTNSubmissionController =
+    new BTNSubmissionController(cc, identifierAction, subscriptionDataRetrievalAction, mockSubmitBTNService)
 
   def result(jsRequest: JsValue): Future[Result] = BTNSubmissionController.submitBTN(
     FakeRequest()

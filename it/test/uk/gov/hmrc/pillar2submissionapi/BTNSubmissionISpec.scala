@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -31,6 +31,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
@@ -46,8 +47,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "Create a new BTN submission (POST)" should {
     "create submission when given valid submission data" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       stubResponse(
-        "/below-threshold-notification/submit",
+        "/report-pillar2-top-up-taxes/below-threshold-notification/submit",
         CREATED,
         Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
       )
@@ -60,14 +66,25 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "has an invalid request body" should {
     "return a 400 BAD_REQUEST response" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       val request = baseRequest.withBody(invalidRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+      println(result.body)
       result.status mustEqual 400
     }
   }
 
   "has an empty request body" should {
     "return a 400 BAD_REQUEST response " in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       val request = baseRequest.withBody(JsObject.empty)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 400
@@ -76,6 +93,11 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "has no request body" should {
     "return a 400 BAD_REQUEST response " in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       val request = baseRequest
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 400
@@ -84,8 +106,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "has a valid request body containing duplicates fields and additional fields" should {
     "return a 201 CREATED response" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       stubResponse(
-        "/below-threshold-notification/submit",
+        "/report-pillar2-top-up-taxes/below-threshold-notification/submit",
         CREATED,
         Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
       )
@@ -116,8 +143,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "'Invalid Return' response from ETMP returned" should {
     "return a 422 UNPROCESSABLE_ENTITY response" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       stubResponse(
-        "/below-threshold-notification/submit",
+        "/report-pillar2-top-up-taxes/below-threshold-notification/submit",
         UNPROCESSABLE_ENTITY,
         Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return"))
       )
@@ -132,8 +164,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "'Unauthorized' response from ETMP returned" should {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       stubResponse(
-        "/below-threshold-notification/submit",
+        "/report-pillar2-top-up-taxes/below-threshold-notification/submit",
         UNAUTHORIZED,
         Json.toJson(SubmitBTNErrorResponse("001", "Unauthorized"))
       )
@@ -148,8 +185,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   "'internal server error' response from ETMP returned" should {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
+      stubGet(
+        "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+        OK,
+        Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+      )
       stubResponse(
-        "/below-threshold-notification/submit",
+        "/report-pillar2-top-up-taxes/below-threshold-notification/submit",
         INTERNAL_SERVER_ERROR,
         Json.toJson(SubmitBTNErrorResponse("999", "internal_server_error"))
       )

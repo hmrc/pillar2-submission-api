@@ -43,7 +43,7 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
   "SubmitBTNConnector" when {
     "submitBTN() called with a valid request" must {
       "return 201 CREATED response" in {
-        stubResponse("/below-threshold-notification/submit", CREATED, JsObject.empty)
+        stubResponse("/report-pillar2-top-up-taxes/below-threshold-notification/submit", CREATED, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
 
@@ -53,7 +53,7 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
 
     "submitBTN() called with an invalid request" must {
       "return 400 BAD_REQUEST response" in {
-        stubResponse("/below-threshold-notification/submit", BAD_REQUEST, JsObject.empty)
+        stubResponse("/report-pillar2-top-up-taxes/below-threshold-notification/submit", BAD_REQUEST, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
 
@@ -63,7 +63,6 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
 
     "submitBTN() called with an invalid url configured" must {
       "return 404 NOT_FOUND response" in {
-        stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
 
