@@ -28,6 +28,7 @@ import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
+import uk.gov.hmrc.pillar2submissionapi.helpers.UKTaxReturnDataFixture
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -39,6 +40,7 @@ trait UnitTestBaseSpec
     with GuiceOneAppPerSuite
     with MockitoSugar
     with WireMockServerHandler
+    with UKTaxReturnDataFixture
     with HttpClientSupport {
 
   implicit val cc:                ControllerComponents = stubControllerComponents()
