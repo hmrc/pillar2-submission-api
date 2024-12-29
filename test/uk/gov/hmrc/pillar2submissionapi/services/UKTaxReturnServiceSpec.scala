@@ -25,9 +25,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnServiceSpec._
 
 import java.time.LocalDate
@@ -43,11 +42,11 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
       "return 201 CREATED response" in {
 
         when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
         val result = await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityData)))
 
-        assertEquals(okResponse, result)
+        assertEquals(uktrSubmissionSuccessResponse, result)
       }
     }
   }
@@ -56,11 +55,11 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
     "return 201 CREATED response" in {
 
       when(mockPillar2Connector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(okResponse), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
       val result = await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn)))
 
-      assertEquals(okResponse, result)
+      assertEquals(uktrSubmissionSuccessResponse, result)
     }
   }
 
@@ -108,11 +107,6 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
 }
 
 object UKTaxReturnServiceSpec {
-  val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
-  val liabilityData: LiabilityData =
-    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
-  val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
-
   def validUktrSubmission(liability: Liability): UKTRSubmission =
     liability match {
       case data: LiabilityData =>
@@ -120,6 +114,4 @@ object UKTaxReturnServiceSpec {
       case nilReturn: LiabilityNilReturn =>
         new UKTRSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
     }
-
-  val okResponse: UKTRSubmitSuccessResponse = UKTRSubmitSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))
 }
