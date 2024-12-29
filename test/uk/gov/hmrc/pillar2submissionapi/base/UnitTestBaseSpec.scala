@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi
+package uk.gov.hmrc.pillar2submissionapi.base
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
-import uk.gov.hmrc.pillar2submissionapi.helpers.UKTaxReturnDataFixture
+import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
