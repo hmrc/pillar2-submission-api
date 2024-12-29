@@ -55,5 +55,6 @@ trait UnitTestBaseSpec
   protected val mockHttpClient:         HttpClient           = mock[HttpClient]
   protected val mockPillar2Connector:   UKTaxReturnConnector = mock[UKTaxReturnConnector]
   protected val mockSubmitBTNConnector: SubmitBTNConnector   = mock[SubmitBTNConnector]
+  protected val mockUKTaxReturnConnector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
 
 }
