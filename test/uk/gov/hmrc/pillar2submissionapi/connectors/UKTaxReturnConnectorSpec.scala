@@ -24,7 +24,7 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
 class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
