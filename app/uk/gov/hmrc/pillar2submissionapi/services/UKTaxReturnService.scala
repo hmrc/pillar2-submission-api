@@ -18,6 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.services
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
+import play.api.http.Status.{CREATED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
@@ -28,14 +29,14 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSu
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) extends Logging {
+class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) extends Logging {
 
   def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
-    pillar2Connector.submitUKTaxReturn(request).map(convertToResult)
+    ukTaxReturnConnector.submitUktr(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
     response.status match {
-      case 201 =>
+      case CREATED =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
@@ -43,7 +44,7 @@ class SubmitUKTRService @Inject() (pillar2Connector: UKTaxReturnConnector)(impli
             // change response here. We should not return this error to third parties
             throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
         }
-      case 422 =>
+      case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) =>
             throw UktrValidationError(response.code, response.message)

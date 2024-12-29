@@ -31,7 +31,7 @@ class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClien
 
   private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/submit-uk-tax-return"
 
-  def submitUKTaxReturn(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitUktr(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling pillar2 backend: $uktrSubmissionUrl")
     http.POST[UKTRSubmission, HttpResponse](uktrSubmissionUrl, uktrSubmission)
   }

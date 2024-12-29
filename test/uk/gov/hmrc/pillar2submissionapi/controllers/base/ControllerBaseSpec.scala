@@ -28,15 +28,16 @@ import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
+import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnService
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRService
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture {
+trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture with UKTaxReturnDataFixture {
 
   implicit lazy val ec:           ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val system:       ActorSystem           = ActorSystem()
@@ -48,6 +49,7 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockSubmitBTNService: SubmitBTNService = mock[SubmitBTNService]
 
   val mockSubmitUktrService: SubmitUKTRService = mock[SubmitUKTRService]
+  val mockUkTaxReturnService: UKTaxReturnService = mock[UKTaxReturnService]
 
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
