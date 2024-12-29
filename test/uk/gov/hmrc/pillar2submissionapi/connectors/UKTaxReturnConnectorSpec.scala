@@ -23,11 +23,6 @@ import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnectorSpec.validUktrSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
-
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
@@ -40,12 +35,12 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
     )
     .build()
 
-  "UktrSubmissionConnector" when {
+  "UKTaxReturnConnector" when {
     "submitUktr() called with a valid request" must {
       "return 201 CREATED response" in {
         stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
         result.status should be(201)
       }
@@ -55,7 +50,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST response" in {
         stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
         result.status should be(400)
       }
@@ -65,19 +60,10 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND response" in {
         stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validUktrSubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
         result.status should be(404)
       }
     }
   }
-}
-
-object UKTaxReturnConnectorSpec {
-
-  val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
-  val liability: LiabilityData =
-    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
-  val validUktrSubmission: UKTRSubmission = new UKTRSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, liability)
-
 }

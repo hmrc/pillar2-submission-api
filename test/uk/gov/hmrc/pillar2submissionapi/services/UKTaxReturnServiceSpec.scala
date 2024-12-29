@@ -28,10 +28,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse
-import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnServiceSpec._
 
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import scala.concurrent.Future
 
 class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
@@ -44,7 +41,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
-        val result = await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityData)))
+        val result = await(mockUkTaxReturnService.submitUktr(validNilSubmission))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
       }
@@ -55,7 +52,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionNilReturn])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
-        val result = await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn)))
+        val result = await(mockUkTaxReturnService.submitUktr(validNilSubmission))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
       }
@@ -66,7 +63,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson("unparsable success response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validNilSubmission)))
       }
     }
 
@@ -79,7 +76,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
             )
           )
 
-        intercept[UktrValidationError](await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+        intercept[UktrValidationError](await(mockUkTaxReturnService.submitUktr(validNilSubmission)))
       }
     }
 
@@ -88,7 +85,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson("unparsable error response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)))
       }
     }
 
@@ -97,18 +94,8 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(INTERNAL_SERVER_ERROR, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)))
       }
     }
   }
-}
-
-object UKTaxReturnServiceSpec {
-  def validUktrSubmission(liability: Liability): UKTRSubmission =
-    liability match {
-      case data: LiabilityData =>
-        new UKTRSubmissionData(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, data)
-      case nilReturn: LiabilityNilReturn =>
-        new UKTRSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
-    }
 }
