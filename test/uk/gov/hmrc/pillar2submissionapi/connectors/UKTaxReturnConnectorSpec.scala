@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status.{BAD_REQUEST, CREATED, NOT_FOUND}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -52,7 +52,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
         val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
-        result.status should be(201)
+        result.status should be(CREATED)
       }
     }
 
@@ -62,7 +62,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
         val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
-        result.status should be(400)
+        result.status should be(BAD_REQUEST)
       }
     }
 
@@ -72,7 +72,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
         val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
 
-        result.status should be(404)
+        result.status should be(NOT_FOUND)
       }
     }
   }
