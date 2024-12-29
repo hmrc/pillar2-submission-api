@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers
+package uk.gov.hmrc.pillar2submissionapi
 
 import org.scalacheck.Gen
 import org.scalatest.funsuite.AnyFunSuite
@@ -23,9 +23,10 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
+import uk.gov.hmrc.pillar2submissionapi.controllers.Pillar2ErrorHandler
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 
-class Pillar2ErrorHandlerTest extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
+class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
 
   val classUnderTest = new Pillar2ErrorHandler
   val dummyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()

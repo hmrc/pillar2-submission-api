@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRService
+import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -32,15 +32,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UKTRSubmissionController @Inject() (
+class UKTaxReturnController @Inject() (
   cc:                       ControllerComponents,
   identify:                 IdentifierAction,
   verifySubscriptionExists: SubscriptionDataRetrievalAction,
-  submitUKTRService:        SubmitUKTRService
+  ukTaxReturnService:       UKTaxReturnService
 )(implicit ec:              ExecutionContext)
     extends BackendController(cc) {
 
-  def submitUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+  def submitUktr: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)
@@ -49,7 +49,7 @@ class UKTRSubmissionController @Inject() (
       case Some(request) =>
         request.validate[UKTRSubmission] match {
           case JsSuccess(value, _) =>
-            submitUKTRService
+            ukTaxReturnService
               .submitUktr(value)
               .map(response => Created(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)

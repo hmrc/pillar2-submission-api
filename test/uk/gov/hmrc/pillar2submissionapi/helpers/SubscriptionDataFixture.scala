@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription._
 
 import java.time.LocalDate
@@ -37,4 +38,57 @@ trait SubscriptionDataFixture {
     accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
     accountStatus = Some(AccountStatus(false))
   )
+
+  val successfulResponseJson: String =
+    """
+      |{
+      |
+      |      "formBundleNumber": "119000004320",
+      |      "upeDetails": {
+      |          "domesticOnly": false,
+      |          "organisationName": "International Organisation Inc.",
+      |          "customerIdentification1": "12345678",
+      |          "customerIdentification2": "12345678",
+      |          "registrationDate": "2022-01-31",
+      |          "filingMember": false
+      |      },
+      |      "upeCorrespAddressDetails": {
+      |          "addressLine1": "1 High Street",
+      |          "addressLine2": "Egham",
+      |
+      |          "addressLine3": "Wycombe",
+      |          "addressLine4": "Surrey",
+      |          "postCode": "HP13 6TT",
+      |          "countryCode": "GB"
+      |      },
+      |      "primaryContactDetails": {
+      |          "name": "Fred Flintstone",
+      |          "telephone": "0115 9700 700",
+      |          "emailAddress": "fred.flintstone@aol.com"
+      |      },
+      |      "secondaryContactDetails": {
+      |          "name": "Donald Trump",
+      |          "telephone": "0115 9700 701",
+      |          "emailAddress": "donald.trump@potus.com"
+      |
+      |      },
+      |      "filingMemberDetails": {
+      |          "safeId": "XL6967739016188",
+      |          "organisationName": "Domestic Operations Ltd",
+      |          "customerIdentification1": "1234Z678",
+      |          "customerIdentification2": "1234567Y"
+      |      },
+      |      "accountingPeriod": {
+      |          "startDate": "2024-01-06",
+      |          "endDate": "2025-04-06",
+      |          "duetDate": "2024-04-06"
+      |      },
+      |      "accountStatus": {
+      |          "inactive": true
+      |      }
+      |  }
+      |""".stripMargin
+
+  val subscriptionDataJson: SubscriptionData = Json.parse(successfulResponseJson).as[SubscriptionData]
+  val subscriptionSuccess:  JsValue          = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
 }

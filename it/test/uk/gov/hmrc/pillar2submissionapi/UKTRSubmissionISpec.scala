@@ -19,16 +19,17 @@ package uk.gov.hmrc.pillar2submissionapi
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.http.Status._
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.UKTRSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -38,107 +39,102 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
-  lazy val provider    = app.injector.instanceOf[HttpClientV2Provider]
-  lazy val client      = provider.get()
-  lazy val str         = s"http://localhost:$port${routes.UKTRSubmissionController.submitUKTR.url}"
-  lazy val baseRequest = client.post(URI.create(str).toURL)
+  lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
+  lazy val client:   HttpClientV2         = provider.get()
+  lazy val str = s"http://localhost:$port${routes.UKTaxReturnController.submitUktr.url}"
+  lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL)
+
+  val request:       RequestBuilder       = baseRequest.withBody(validLiabilityReturn)
+  def result:        HttpResponse         = Await.result(request.execute[HttpResponse], 5.seconds)
+  def errorResponse: Pillar2ErrorResponse = result.json.as[Pillar2ErrorResponse]
 
   "Create a new UKTR submission (POST)" should {
     "create submission when given valid submission data" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
-      )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
-      result.chargeReference.value mustEqual "XTC01234123412"
-      result.formBundleNumber mustEqual "119000004320"
+      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+
+      val result = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+      result.chargeReference.value mustEqual pillar2Id
+      result.formBundleNumber mustEqual formBundleNumber
     }
   }
 
   "has valid nil-return submission data" should {
     "return a 201 CREATED response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
-      )
-      val request = baseRequest.withBody(validRequestNilReturnJson)
+      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+
+      val request = baseRequest.withBody(validNilReturn)
       val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
-      result.chargeReference.value mustEqual "XTC01234123412"
-      result.formBundleNumber mustEqual "119000004320"
+
+      result.chargeReference.value mustEqual pillar2Id
+      result.formBundleNumber mustEqual formBundleNumber
     }
   }
 
   "has an invalid request body" should {
     "return a 400 BAD_REQUEST response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-      val request = baseRequest.withBody(invalidRequestJson)
+
+      val request = baseRequest.withBody(invalidBody)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 400
+
+      result.status mustEqual BAD_REQUEST
     }
   }
 
   "has an empty request body" should {
     "return a 400 BAD_REQUEST response " in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+
       val request = baseRequest.withBody(JsObject.empty)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 400
+
+      result.status mustEqual BAD_REQUEST
     }
   }
   "has no request body" should {
     "return a 400 BAD_REQUEST response " in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+
       val request = baseRequest
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 400
+
+      result.status mustEqual BAD_REQUEST
     }
   }
 
   "has a valid request body containing duplicates fields and additional fields" should {
     "return a 201 CREATED response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
-      )
-      val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
+      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+
+      val request = baseRequest.withBody(liabilityReturnDuplicateFields)
       val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
-      result.chargeReference.value mustEqual "XTC01234123412"
-      result.formBundleNumber mustEqual "119000004320"
+      result.chargeReference.value mustEqual pillar2Id
+      result.formBundleNumber mustEqual formBundleNumber
     }
   }
 
   "Subscription data does not exist" should {
-    "return a InternalServerError resulting in a RuntimeException being thrown" in {
-      val request = baseRequest.withBody(validRequestJson)
-
-      val result = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+    "return a INTERNAL_SERVER_ERROR resulting in a RuntimeException being thrown" in {
+      result.status mustEqual INTERNAL_SERVER_ERROR
       errorResponse.code mustEqual "004"
       errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
     }
   }
 
   "User unable to be identified" should {
-    "return a InternalServerError resulting in a RuntimeException being thrown" in {
+    "return a INTERNAL_SERVER_ERROR resulting in a RuntimeException being thrown" in {
       when(
         mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
       )
         .thenReturn(
           Future.failed(AuthenticationError("Invalid credentials"))
         )
-      val request = baseRequest.withBody(validRequestJson)
 
-      val result = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 401
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      result.status mustEqual UNAUTHORIZED
       errorResponse.code mustEqual "003"
       errorResponse.message mustEqual "Invalid credentials"
     }
@@ -150,13 +146,11 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         UNPROCESSABLE_ENTITY,
-        Json.toJson(UKTRSubmitErrorResponse("093", "Invalid Return"))
+        Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return"))
       )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 422
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "093"
+
+      result.status mustEqual UNPROCESSABLE_ENTITY
+      errorResponse.code mustEqual INVALID_RETURN_093
       errorResponse.message mustEqual "Invalid Return"
     }
   }
@@ -169,116 +163,25 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
         UNAUTHORIZED,
         Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
       )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+
+      result.status mustEqual INTERNAL_SERVER_ERROR
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
   }
 
-  "'internal server error' response from ETMP returned" should {
+  "'Internal Server Error' response from ETMP returned" should {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         INTERNAL_SERVER_ERROR,
-        Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
+        Json.toJson(UKTRSubmitErrorResponse("999", "INTERNAL_SERVER_ERROR"))
       )
-      val request = baseRequest.withBody(validRequestJson)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-      result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+
+      result.status mustEqual INTERNAL_SERVER_ERROR
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
   }
-}
-
-object UKTRSubmissionISpec {
-
-  val validRequestJson: JsValue =
-    Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-12-14",
-        |  "obligationMTT": true,
-        |  "electionUKGAAP": true,
-        |  "liabilities": {
-        |    "electionDTTSingleMember": false,
-        |    "electionUTPRSingleMember": false,
-        |    "numberSubGroupDTT": 1,
-        |    "numberSubGroupUTPR": 1,
-        |    "totalLiability": 10000.99,
-        |    "totalLiabilityDTT": 5000.99,
-        |    "totalLiabilityIIR": 4000,
-        |    "totalLiabilityUTPR": 10000.99,
-        |    "liableEntities": [
-        |      {
-        |        "ukChargeableEntityName": "Newco PLC",
-        |        "idType": "CRN",
-        |        "idValue": "12345678",
-        |        "amountOwedDTT": 5000,
-        |        "amountOwedIIR": 3400,
-        |        "amountOwedUTPR": 6000.5
-        |      }
-        |    ]
-        |  }
-        |}""".stripMargin)
-
-  val validRequestNilReturnJson: JsValue =
-    Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-09-14",
-        |  "obligationMTT": true,
-        |  "electionUKGAAP": true,
-        |  "liabilities": {
-        |    "returnType": "NIL_RETURN"
-        |  }
-        |}
-        |""".stripMargin)
-
-  val invalidRequestJson: JsValue =
-    Json.parse("""{
-        |  "badRequest": ""
-        |}""".stripMargin)
-
-  val validRequestJson_duplicateFieldsAndAdditionalFields: JsValue =
-    Json.parse("""{
-        |  "accountingPeriodFrom": "2024-08-14",
-        |  "accountingPeriodTo": "2024-12-14",
-        |  "obligationMTT": true,
-        |  "obligationMTT": true,
-        |  "electionUKGAAP": true,
-        |  "extraField": "this should not be here",
-        |  "liabilities": {
-        |    "electionDTTSingleMember": false,
-        |    "electionUTPRSingleMember": false,
-        |    "numberSubGroupDTT": 1,
-        |    "numberSubGroupUTPR": 1,
-        |    "totalLiability": 10000.99,
-        |    "totalLiabilityDTT": 5000.99,
-        |    "totalLiabilityIIR": 4000,
-        |    "totalLiabilityUTPR": 10000.99,
-        |    "totalLiabilityUTPR": 10000.99,
-        |    "liableEntities": [
-        |      {
-        |        "ukChargeableEntityName": "Newco PLC",
-        |        "idType": "CRN",
-        |        "idValue": "12345678",
-        |        "amountOwedDTT": 5000,
-        |        "amountOwedIIR": 3400,
-        |        "amountOwedUTPR": 6000.5
-        |      },
-        |      {
-        |        "ukChargeableEntityName": "Newco PLC",
-        |        "idType": "CRN",
-        |        "idValue": "12345678",
-        |        "amountOwedDTT": 5000,
-        |        "amountOwedIIR": 3400,
-        |        "amountOwedUTPR": 6000.5
-        |      }
-        |    ]
-        |  }
-        |}""".stripMargin)
 }
