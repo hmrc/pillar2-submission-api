@@ -49,9 +49,9 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:    Configuration        = mock[Configuration]
-  protected val mockServicesConfig:   ServicesConfig       = mock[ServicesConfig]
-  protected val mockHttpClient:       HttpClient           = mock[HttpClient]
-  protected val mockPillar2Connector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
+  protected val mockConfiguration:        Configuration        = mock[Configuration]
+  protected val mockServicesConfig:       ServicesConfig       = mock[ServicesConfig]
+  protected val mockHttpClient:           HttpClient           = mock[HttpClient]
+  protected val mockUKTaxReturnConnector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
 
 }

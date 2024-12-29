@@ -18,8 +18,8 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiabilityNilReturn, LiableEntity}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.{LiabilityData, LiabilityNilReturn, LiableEntity}
 
 trait UKTaxReturnDataFixture {
 
@@ -29,10 +29,10 @@ trait UKTaxReturnDataFixture {
   val uktrSubmissionSuccessResponse: UKTRSubmitSuccessResponse =
     UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
 
-  val liableEntity: LiableEntity = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
+  val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
+  val liableEntity:       LiableEntity       = LiableEntity("entityName", "idType", "idValue", 1.1, 2.2, 3.3)
   val liabilityData: LiabilityData =
     LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.3, 4.4, 5.5, 6.6, Seq(liableEntity))
-  val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
 
   val validLiabilityReturn: JsValue =
     Json.parse("""{
