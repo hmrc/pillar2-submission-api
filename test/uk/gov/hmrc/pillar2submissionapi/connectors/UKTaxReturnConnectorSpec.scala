@@ -16,27 +16,37 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
 
 class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
   lazy val ukTaxReturnConnector: UKTaxReturnConnector = app.injector.instanceOf[UKTaxReturnConnector]
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(
-      Configuration(
-        "microservice.services.pillar2.port" -> server.port()
-      )
-    )
+    .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
   "UKTaxReturnConnector" when {
     "submitUktr() called with a valid request" must {
+      "forward the X-Pillar2-Id header" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        stubResponseWithExtraHeader("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
+
+        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission))
+
+        result.status should be(CREATED)
+        server.verify(
+          postRequestedFor(urlEqualTo("/report-pillar2-top-up-taxes/submit-uk-tax-return")).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
+      }
+
       "return 201 CREATED response" in {
         stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
 
