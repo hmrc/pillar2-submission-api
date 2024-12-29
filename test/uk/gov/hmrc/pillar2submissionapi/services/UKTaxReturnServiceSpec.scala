@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.services
 
 import junit.framework.TestCase.assertEquals
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status._
@@ -36,6 +37,21 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
   val mockUkTaxReturnService: UKTaxReturnService = new UKTaxReturnService(mockUKTaxReturnConnector)
 
   "UKTaxReturnService" when {
+    "submitUKTR() is called with a UKTRSubmission" should {
+      "forward the X-Pillar2-Id header" in {
+        val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmission])(captor.capture()))
+          .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
+
+        val result =
+          await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)(hc = hc.withExtraHeaders("X-Pillar2-Id" -> pillar2Id)))
+
+        assertEquals(uktrSubmissionSuccessResponse, result)
+        captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
+        captor.getValue.extraHeaders.map(_._2).head mustEqual pillar2Id
+      }
+    }
+
     "submitUktr() called with a valid tax return" should {
       "return 201 CREATED response" in {
         when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
