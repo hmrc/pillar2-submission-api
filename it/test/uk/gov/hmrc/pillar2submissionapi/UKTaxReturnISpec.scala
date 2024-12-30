@@ -16,11 +16,13 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.http.Status._
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -41,19 +43,30 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val str = s"http://localhost:$port${routes.UKTaxReturnController.submitUktr.url}"
-  lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL)
-
-  val request:       RequestBuilder       = baseRequest.withBody(validLiabilityReturn)
-  def result:        HttpResponse         = Await.result(request.execute[HttpResponse], 5.seconds)
-  def errorResponse: Pillar2ErrorResponse = result.json.as[Pillar2ErrorResponse]
+  lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUktr.url}"
+  def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
+  def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
   "Create a new UKTR submission (POST)" should {
+    "forward the X-Pillar2-Id header" in {
+      getSubscriptionStub
+      implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
+      stubResponseWithExtraHeader("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+
+      val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+      result.chargeReference.value mustEqual pillar2Id
+      result.formBundleNumber mustEqual formBundleNumber
+      server.verify(
+        postRequestedFor(urlEqualTo("/report-pillar2-top-up-taxes/submit-uk-tax-return")).withHeader("X-Pillar2-Id", equalTo(plrReference))
+      )
+    }
+
     "create submission when given valid submission data" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
 
-      val result = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
+      val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
 
       result.chargeReference.value mustEqual pillar2Id
       result.formBundleNumber mustEqual formBundleNumber
@@ -62,11 +75,10 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "has valid nil-return submission data" should {
     "return a 201 CREATED response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
 
-      val request = baseRequest.withBody(validNilReturn)
-      val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
+      val result = Await.result(requestWithBody(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
       result.chargeReference.value mustEqual pillar2Id
       result.formBundleNumber mustEqual formBundleNumber
@@ -75,10 +87,9 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "has an invalid request body" should {
     "return a 400 BAD_REQUEST response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
 
-      val request = baseRequest.withBody(invalidBody)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+      val result = Await.result(requestWithBody(invalidBody).execute[HttpResponse], 5.seconds)
 
       result.status mustEqual BAD_REQUEST
     }
@@ -86,20 +97,9 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "has an empty request body" should {
     "return a 400 BAD_REQUEST response " in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
 
-      val request = baseRequest.withBody(JsObject.empty)
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
-
-      result.status mustEqual BAD_REQUEST
-    }
-  }
-  "has no request body" should {
-    "return a 400 BAD_REQUEST response " in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
-
-      val request = baseRequest
-      val result  = Await.result(request.execute[HttpResponse], 5.seconds)
+      val result = Await.result(requestWithBody(JsObject.empty).execute[HttpResponse], 5.seconds)
 
       result.status mustEqual BAD_REQUEST
     }
@@ -107,34 +107,38 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "has a valid request body containing duplicates fields and additional fields" should {
     "return a 201 CREATED response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
 
-      val request = baseRequest.withBody(liabilityReturnDuplicateFields)
-      val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
+      val result = Await.result(requestWithBody(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
+
       result.chargeReference.value mustEqual pillar2Id
       result.formBundleNumber mustEqual formBundleNumber
     }
   }
 
   "Subscription data does not exist" should {
-    "return a INTERNAL_SERVER_ERROR resulting in a RuntimeException being thrown" in {
+    "return a InternalServerError resulting in a RuntimeException being thrown" in {
+      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
       result.status mustEqual INTERNAL_SERVER_ERROR
+
+      val errorResponse = result.json.as[Pillar2ErrorResponse]
       errorResponse.code mustEqual "004"
       errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
     }
   }
 
   "User unable to be identified" should {
-    "return a INTERNAL_SERVER_ERROR resulting in a RuntimeException being thrown" in {
+    "return a InternalServerError resulting in a RuntimeException being thrown" in {
       when(
         mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
       )
-        .thenReturn(
-          Future.failed(AuthenticationError("Invalid credentials"))
-        )
+        .thenReturn(Future.failed(AuthenticationError("Invalid credentials")))
+
+      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
 
       result.status mustEqual UNAUTHORIZED
+      val errorResponse = result.json.as[Pillar2ErrorResponse]
       errorResponse.code mustEqual "003"
       errorResponse.message mustEqual "Invalid credentials"
     }
@@ -142,14 +146,17 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "'Invalid Return' response from ETMP returned" should {
     "return a 422 UNPROCESSABLE_ENTITY response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         UNPROCESSABLE_ENTITY,
         Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return"))
       )
 
+      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
       result.status mustEqual UNPROCESSABLE_ENTITY
+      val errorResponse = result.json.as[Pillar2ErrorResponse]
       errorResponse.code mustEqual INVALID_RETURN_093
       errorResponse.message mustEqual "Invalid Return"
     }
@@ -157,29 +164,35 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   "'Unauthorized' response from ETMP returned" should {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         UNAUTHORIZED,
         Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
       )
 
+      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
       result.status mustEqual INTERNAL_SERVER_ERROR
+      val errorResponse = result.json.as[Pillar2ErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
   }
 
-  "'Internal Server Error' response from ETMP returned" should {
+  "'internal server error' response from ETMP returned" should {
     "return a 500 INTERNAL_SERVER_ERROR response" in {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+      getSubscriptionStub
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         INTERNAL_SERVER_ERROR,
-        Json.toJson(UKTRSubmitErrorResponse("999", "INTERNAL_SERVER_ERROR"))
+        Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
       )
 
+      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
       result.status mustEqual INTERNAL_SERVER_ERROR
+      val errorResponse = result.json.as[Pillar2ErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
