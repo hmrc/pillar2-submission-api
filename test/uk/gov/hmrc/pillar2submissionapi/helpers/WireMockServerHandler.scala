@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.base
+package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import com.github.tomakehurst.wiremock.matching.StringValuePattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.JsValue
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: Suite =>
 
-  protected val server: WireMockServer = new WireMockServer(wireMockConfig.dynamicPort())
+  val wiremockPort: Int = 11111
+
+  protected val server: WireMockServer = new WireMockServer(
+    wireMockConfig.port(wiremockPort)
+  )
 
   override def beforeAll(): Unit = {
     server.start()
@@ -45,9 +48,6 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
     server.stop()
   }
 
-  def equalToJson[T](t: T)(implicit writes: Writes[T]): StringValuePattern =
-    WireMock.equalToJson(Json.stringify(Json.toJson(t)))
-
   protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
     server.stubFor(
       get(urlEqualTo(s"$expectedEndpoint"))
@@ -55,6 +55,35 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
           aResponse()
             .withStatus(expectedStatus)
             .withBody(expectedBody)
+        )
+    )
+
+  protected def stubResponse(
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  ): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(body.toString())
+        )
+    )
+
+  protected def stubResponseWithExtraHeader(
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  )(implicit hc:    HeaderCarrier): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .withHeader(hc.extraHeaders.map(_._1).head, equalTo(hc.extraHeaders.map(_._2).head))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(body.toString())
         )
     )
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi
+package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import uk.gov.hmrc.auth.core.retrieve.~
 
