@@ -16,10 +16,13 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.http.Writeable
+import play.api.libs.json.{JsValue, Json, OFormat}
 
 case class UKTRSubmitErrorResponse(code: String, message: String)
 
-case object UKTRSubmitErrorResponse {
-  implicit val errorFormat: OFormat[UKTRSubmitErrorResponse] = Json.format[UKTRSubmitErrorResponse]
+object UKTRSubmitErrorResponse {
+  implicit val format: OFormat[UKTRSubmitErrorResponse] = Json.format[UKTRSubmitErrorResponse]
+
+  implicit val writable: Writeable[UKTRSubmitErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
 }

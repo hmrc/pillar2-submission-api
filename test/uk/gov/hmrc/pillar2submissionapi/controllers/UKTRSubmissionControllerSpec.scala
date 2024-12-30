@@ -30,6 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, Inv
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
+import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.Future
 
 class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
@@ -44,7 +45,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+              UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412"))
             )
           )
 
@@ -60,7 +61,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(
             Future.successful(
-              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+              UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412"))
             )
           )
 
@@ -87,7 +88,7 @@ class UKTRSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitUktrService.submitUktr(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(
             Future.successful(
-              UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+              UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412"))
             )
           )
 
