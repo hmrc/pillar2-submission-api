@@ -29,8 +29,8 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRServiceSpec._
 
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import scala.concurrent.Future
 
 class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
@@ -118,5 +118,5 @@ object SubmitUKTRServiceSpec {
         new UKTRSubmissionNilReturn(LocalDate.now(), LocalDate.now().plus(10, ChronoUnit.DAYS), true, true, nilReturn)
     }
 
-  val okResponse: UKTRSubmitSuccessResponse = UKTRSubmitSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))
+  val okResponse: UKTRSubmitSuccessResponse = UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412"))
 }

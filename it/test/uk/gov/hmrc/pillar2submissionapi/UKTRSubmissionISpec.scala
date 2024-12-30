@@ -27,12 +27,13 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.UKTRSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
+import java.time.{ZoneId, ZonedDateTime}
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
@@ -49,7 +50,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+        Json.toJson(UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412")))
       )
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
@@ -64,7 +65,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+        Json.toJson(UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412")))
       )
       val request = baseRequest.withBody(validRequestNilReturnJson)
       val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
@@ -105,7 +106,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       stubResponse(
         "/report-pillar2-top-up-taxes/submit-uk-tax-return",
         CREATED,
-        Json.toJson(UKTRSubmitSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+        Json.toJson(UKTRSubmitSuccessResponse(ZonedDateTime.now(ZoneId.of("UTC")), "119000004320", Some("XTC01234123412")))
       )
       val request = baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields)
       val result  = Await.result(request.execute[UKTRSubmitSuccessResponse], 5.seconds)
@@ -120,7 +121,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       val result = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "004"
       errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
     }
@@ -138,7 +139,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       val result = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 401
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "003"
       errorResponse.message mustEqual "Invalid credentials"
     }
@@ -155,7 +156,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 422
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "093"
       errorResponse.message mustEqual "Invalid Return"
     }
@@ -172,7 +173,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
@@ -189,7 +190,7 @@ class UKTRSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
