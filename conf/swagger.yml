@@ -7,6 +7,10 @@ paths:
     post:
       security:
         - userRestricted: [write:pillar2]
+  /below-threshold-notification:
+    post:
+      security:
+        - userRestricted: [write:pillar2]
 components:
   securitySchemes:
     userRestricted:

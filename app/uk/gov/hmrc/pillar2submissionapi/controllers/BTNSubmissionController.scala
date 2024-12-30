@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.BTNSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter

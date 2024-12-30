@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class SubmitBTNSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
+case class SubmitBTNErrorResponse(code: String, message: String)
 
-case object SubmitBTNSuccessResponse {
-  implicit val successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]
+case object SubmitBTNErrorResponse {
+  implicit val errorFormat: OFormat[SubmitBTNErrorResponse] = Json.format[SubmitBTNErrorResponse]
+  val internalServerError:  SubmitBTNErrorResponse          = SubmitBTNErrorResponse("500", "Internal server error")
 }

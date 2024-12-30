@@ -9,7 +9,29 @@
 #               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn'
 # responses:
 #   201:
-#     description: created
+#      description: UKTR Submission Created
+#      content:
+#        application/json:
+#          schema:
+#            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse'
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse'
+#   400:
+#     description: Invalid Submission
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse'
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse'
 ###
 POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controllers.UKTaxReturnController.submitUKTR
 
@@ -19,9 +41,31 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #   content:
 #     application/json:
 #         schema:
-#           - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.btnsubmission.BTNSubmission'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.BTNSubmission'
 # responses:
 #   201:
-#     description: created
+#      description: UKTR Submission Created
+#      content:
+#        application/json:
+#          schema:
+#            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitBTNSuccessResponse'
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitBTNErrorResponse'
+#   400:
+#     description: Invalid Submission
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitBTNErrorResponse'
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.SubmitBTNErrorResponse'
 ###
 POST       /below-threshold-notification              uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionController.submitBTN

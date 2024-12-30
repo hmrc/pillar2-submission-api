@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
@@ -122,7 +122,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
       result.status mustEqual INTERNAL_SERVER_ERROR
 
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "004"
       errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
     }
@@ -138,7 +138,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
 
       result.status mustEqual UNAUTHORIZED
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "003"
       errorResponse.message mustEqual "Invalid credentials"
     }
@@ -156,7 +156,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
 
       result.status mustEqual UNPROCESSABLE_ENTITY
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual INVALID_RETURN_093
       errorResponse.message mustEqual "Invalid Return"
     }
@@ -174,7 +174,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
 
       result.status mustEqual INTERNAL_SERVER_ERROR
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
@@ -192,7 +192,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
 
       result.status mustEqual INTERNAL_SERVER_ERROR
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }

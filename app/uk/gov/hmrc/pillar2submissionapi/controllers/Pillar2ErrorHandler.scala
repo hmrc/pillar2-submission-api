@@ -21,32 +21,33 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse
 
 import scala.concurrent.Future
 
 class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
-    Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(statusCode.toString, message))))
+    Future.successful(Results.BadRequest(Json.toJson(UKTRSubmitErrorResponse(statusCode.toString, message))))
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
       case e if e.isInstanceOf[Pillar2Error] =>
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         val ret = pillar2Error match {
-          case e @ InvalidJson                  => Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload"))
-          case e @ EmptyRequestBody             => Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request"))
-          case e @ AuthenticationError(message) => Results.Unauthorized(Pillar2ErrorResponse(e.code, message))
-          case e @ NoSubscriptionData(_)        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UktrValidationError(_, _)    => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ BTNValidationError(_, _)     => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnparsableResponse(_)        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnexpectedResponse           => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
+          case e @ InvalidJson                  => Results.BadRequest(UKTRSubmitErrorResponse(e.code, "Invalid JSON Payload"))
+          case e @ EmptyRequestBody             => Results.BadRequest(UKTRSubmitErrorResponse(e.code, "Empty body in request"))
+          case e @ AuthenticationError(message) => Results.Unauthorized(UKTRSubmitErrorResponse(e.code, message))
+          case e @ NoSubscriptionData(_)        => Results.InternalServerError(UKTRSubmitErrorResponse(e.code, e.message))
+          case e @ UktrValidationError(_, _)    => Results.UnprocessableEntity(UKTRSubmitErrorResponse(e.code, e.message))
+          case e @ BTNValidationError(_, _)     => Results.UnprocessableEntity(UKTRSubmitErrorResponse(e.code, e.message))
+          case e @ UnparsableResponse(_)        => Results.InternalServerError(UKTRSubmitErrorResponse(e.code, e.message))
+          case e @ UnexpectedResponse           => Results.InternalServerError(UKTRSubmitErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)
         Future.successful(ret)
       case _ =>
         logger.warn("Unhandled exception. Returning 500 statuscode", exception)
-        Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
+        Future.successful(Results.InternalServerError(UKTRSubmitErrorResponse("500", "Internal Server Error")))
     }
 }

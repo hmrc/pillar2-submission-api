@@ -19,21 +19,20 @@ package uk.gov.hmrc.pillar2submissionapi
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse, UKTRSubmitErrorResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-
+import BTNSubmissionISpec._
 import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -135,7 +134,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       val result = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 401
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "003"
       errorResponse.message mustEqual "Invalid credentials"
     }
@@ -156,7 +155,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 422
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "093"
       errorResponse.message mustEqual "Invalid Return"
     }
@@ -177,7 +176,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
@@ -198,7 +197,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       val request = baseRequest.withBody(validRequestJson)
       val result  = Await.result(request.execute[HttpResponse], 5.seconds)
       result.status mustEqual 500
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
+      val errorResponse = result.json.as[UKTRSubmitErrorResponse]
       errorResponse.code mustEqual "500"
       errorResponse.message mustEqual "Internal Server Error"
     }
