@@ -24,6 +24,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.pillar2submissionapi.connectors.EnrolmentStoreProxyConnector
 //import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -37,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
+  val enrolmentAuth:             EnrolmentStoreProxyConnector,
   val parser:                    BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
@@ -92,6 +94,8 @@ class AuthenticatedIdentifierAction @Inject() (
               val enrolmentJson = Json.toJson(enrolment)
               println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
             })
+            println(groupId)
+            println(enrolmentAuth.getDelegatedEnrolment(groupId))
 
             Either.cond(
               enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)) || enrolments
