@@ -26,4 +26,8 @@ class AppConfig @Inject() (config: Configuration, servicesConfig: ServicesConfig
 
   val appName:        String = config.get[String]("appName")
   val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+
+  lazy val enrolmentStoreProxyUrl: String =
+    s"${config.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${config
+      .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
 }
