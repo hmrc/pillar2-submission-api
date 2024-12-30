@@ -40,11 +40,11 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
     "submitUKTR() is called with a UKTRSubmission" should {
       "forward the X-Pillar2-Id header" in {
         val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmission])(captor.capture()))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmission])(captor.capture()))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
         val result =
-          await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)(hc = hc.withExtraHeaders("X-Pillar2-Id" -> pillar2Id)))
+          await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)(hc = hc.withExtraHeaders("X-Pillar2-Id" -> pillar2Id)))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
         captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
@@ -52,65 +52,65 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
       }
     }
 
-    "submitUktr() called with a valid tax return" should {
+    "submitUKTR() called with a valid tax return" should {
       "return 201 CREATED response" in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
-        val result = await(mockUkTaxReturnService.submitUktr(validNilSubmission))
+        val result = await(mockUkTaxReturnService.submitUKTR(validNilSubmission))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
       }
     }
 
-    "submitUktr() called with a valid nil return" should {
+    "submitUKTR() called with a valid nil return" should {
       "return 201 CREATED response" in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionNilReturn])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionNilReturn])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
-        val result = await(mockUkTaxReturnService.submitUktr(validNilSubmission))
+        val result = await(mockUkTaxReturnService.submitUKTR(validNilSubmission))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
       }
     }
 
-    "submitUktr() unparsable 201 response back" should {
+    "submitUKTR() unparsable 201 response back" should {
       "Runtime exception thrown" in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson("unparsable success response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validNilSubmission)))
+        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
       }
     }
 
-    "submitUktr() valid 422 response back" should {
+    "submitUKTR() valid 422 response back" should {
       "Runtime exception thrown (To be updated to the appropriate exception)" in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
               HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return")), Map.empty)
             )
           )
 
-        intercept[UktrValidationError](await(mockUkTaxReturnService.submitUktr(validNilSubmission)))
+        intercept[UktrValidationError](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
       }
     }
 
-    "submitUktr() unparsable 422 response back" should {
+    "submitUKTR() unparsable 422 response back" should {
       "Runtime exception thrown (To be updated to 500 Internal server error exception)" in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson("unparsable error response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)))
+        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
       }
     }
 
-    "submitUktr() 500 response back" should {
+    "submitUKTR() 500 response back" should {
       "Runtime exception thrown " in {
-        when(mockUKTaxReturnConnector.submitUktr(any[UKTRSubmissionData])(any[HeaderCarrier]))
+        when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(INTERNAL_SERVER_ERROR, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUktr(validLiabilitySubmission)))
+        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
       }
     }
   }

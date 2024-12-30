@@ -43,7 +43,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUktr.url}"
+  lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
   def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 

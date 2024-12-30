@@ -31,8 +31,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) extends Logging {
 
-  def submitUktr(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
-    ukTaxReturnConnector.submitUktr(request).map(convertToResult)
+  def submitUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
+    ukTaxReturnConnector.submitUKTR(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
     response.status match {

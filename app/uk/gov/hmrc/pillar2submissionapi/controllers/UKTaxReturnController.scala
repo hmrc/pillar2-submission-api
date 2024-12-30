@@ -40,7 +40,7 @@ class UKTaxReturnController @Inject() (
 )(implicit ec:              ExecutionContext)
     extends BackendController(cc) {
 
-  def submitUktr: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+  def submitUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)
@@ -50,7 +50,7 @@ class UKTaxReturnController @Inject() (
         request.validate[UKTRSubmission] match {
           case JsSuccess(value, _) =>
             ukTaxReturnService
-              .submitUktr(value)
+              .submitUKTR(value)
               .map(response => Created(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
         }

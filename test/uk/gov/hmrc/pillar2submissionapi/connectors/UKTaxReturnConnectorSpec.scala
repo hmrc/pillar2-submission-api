@@ -34,12 +34,12 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
     .build()
 
   "UKTaxReturnConnector" when {
-    "submitUktr() called with a valid request" must {
+    "submitUKTR() called with a valid request" must {
       "forward the X-Pillar2-Id header" in {
         implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubResponseWithExtraHeader("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission))
 
         result.status should be(CREATED)
         server.verify(
@@ -50,27 +50,27 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED response" in {
         stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(CREATED)
       }
     }
 
-    "submitUktr() called with an invalid request" must {
+    "submitUKTR() called with an invalid request" must {
       "return 400 BAD_REQUEST response" in {
         stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(BAD_REQUEST)
       }
     }
 
-    "submitUktr() called with an invalid url configured" must {
+    "submitUKTR() called with an invalid url configured" must {
       "return 404 NOT_FOUND response" in {
         stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUktr(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(NOT_FOUND)
       }
