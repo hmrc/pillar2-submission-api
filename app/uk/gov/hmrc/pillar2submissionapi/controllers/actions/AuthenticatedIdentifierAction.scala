@@ -19,13 +19,14 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.libs.json._
+import play.api.mvc.Results.BadRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.pillar2submissionapi.connectors.EnrolmentStoreProxyConnector
-//import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -96,11 +97,14 @@ class AuthenticatedIdentifierAction @Inject() (
             })
             println(groupId)
             println(enrolmentAuth.getDelegatedEnrolment(groupId))
+            println(
+              request.headers
+                .get("pillar2-id")
+                .toRight(AuthenticationError("Missing Pillar 2 ID"))
+            )
 
             Either.cond(
-              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)) || enrolments
-                .getEnrolment(HMRC_AS_AGENT_KEY)
-                .exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
+              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
               (),
               AuthenticationError("Missing delegated authority")
             )

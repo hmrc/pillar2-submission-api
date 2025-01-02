@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-
 import play.api.Logging
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.Json
@@ -30,28 +29,27 @@ import uk.gov.hmrc.pillar2submissionapi.models.enrolments.GroupDelegatedEnrolmen
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
-class EnrolmentStoreProxyConnector @Inject()(implicit ec: ExecutionContext, val config: AppConfig, val http: HttpClient) extends Logging {
+class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: AppConfig, val http: HttpClient) extends Logging {
 
   def getDelegatedEnrolment(
-                             groupId: String
-                           )(implicit hc: HeaderCarrier): Future[Either[Result, GroupDelegatedEnrolment]] = {
+    groupId:     String
+  )(implicit hc: HeaderCarrier): Future[Either[Result, GroupDelegatedEnrolment]] = {
     val url = s"${config.enrolmentStoreProxyUrl}/enrolment-store/groups/$groupId/delegated"
     println(url)
     logger.info(s"Getting enrolments for groupId: $groupId")
     http.GET[HttpResponse](url).map {
-        case response if response.status == OK =>
-          logger.info(s"Delegated enrolment retrieval successful")
-          Right(Json.parse(response.body).as[GroupDelegatedEnrolment])
-        case response if response.status == NO_CONTENT =>
-          logger.info(s"No delegated enrolment found")
-          Right(Json.parse(response.body).as[GroupDelegatedEnrolment])
-        case e @ _ =>
-          logger.error(s"Delegate enrolment error for $groupId - status=${e.status} - error=${e.body}")
-          Left(BadRequest)
+      case response if response.status == OK =>
+        logger.info(s"Delegated enrolment retrieval successful")
+        Right(Json.parse(response.body).as[GroupDelegatedEnrolment])
+      case response if response.status == NO_CONTENT =>
+        logger.info(s"No delegated enrolment found")
+        Right(Json.parse(response.body).as[GroupDelegatedEnrolment])
+      case e @ _ =>
+        logger.error(s"Delegate enrolment error for $groupId - status=${e.status} - error=${e.body}")
+        Left(BadRequest)
 
-      }
+    }
 
   }
 
