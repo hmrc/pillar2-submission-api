@@ -19,9 +19,8 @@ package uk.gov.hmrc.pillar2submissionapi.models.enrolments
 import play.api.libs.json.{Json, Reads}
 import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 
-/**
- * Represents client assigned to users in the ES21 API response.
- */
+/** Represents client assigned to users in the ES21 API response.
+  */
 
 object EnrolmentIdentifierReads {
   implicit val enrolmentIdentifierReads: Reads[EnrolmentIdentifier] = Json.reads[EnrolmentIdentifier]
