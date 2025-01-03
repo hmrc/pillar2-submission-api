@@ -47,7 +47,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   "IdentifierAction - different types of user" when {
     "a user is a registered organisation" must {
-      "user is successfully authorized" in {
+      "user is successfully authorised" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),

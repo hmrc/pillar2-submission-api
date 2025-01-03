@@ -1,0 +1,73 @@
+meta {
+  name: Link Agent to Organisation
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8585/government-gateway/session/login
+  body: json
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Content-Type: application/json
+}
+
+body:json {
+    {
+    "internalId": "Int-a7688cda-d983-472d-9971-ddca5f124641",
+    "externalId": "Ext-c4ebc935-ac7a-4cc2-950a-19e6fac91f2a",
+    "credentials": {
+        "providerId": "8124873381064832",
+        "providerType": "GovernmentGateway"
+    },
+    "confidenceLevel": 200,
+    "nino": "NJ070957A",
+    "usersName": "test",
+    "credentialRole": "Admin",
+    "agentInformation": {},
+    "affinityGroup": "Agent",
+    "credentialStrength": "strong",
+    "loginTimes": {
+        "currentLogin": "2016-11-27T09:00:00.000Z",
+        "previousLogin": "2016-11-01T12:00:00.000Z"
+    },
+    "credId": "123456789",
+    "enrolments": [
+        {
+        "key": "HMRC-AS-AGENT",
+        "identifiers": [
+            {
+            "key": "AgentReferenceNumber",
+            "value": "GARN0458621"
+            }
+        ],
+        "state": "Activated"
+        }
+    ],
+    "delegatedEnrolments": [
+        {
+        "key": "HMRC-PILLAR2-ORG",
+        "identifiers": [
+            {
+            "key": "PLRID",
+            "value": "XEPLR5555551123"
+            }
+        ],
+        "delegatedAuthRule": "pillar2-auth"
+        }
+    ]
+    }
+}
+
+script:post-response {
+  let authHeader = res.headers.authorization
+  let arr = authHeader.split(",")
+  let bearer = ""
+  if(arr[0].includes("Bearer"))
+    bearer = arr[0]
+  else
+    bearer = arr[1]
+  bru.setEnvVar("linkedBearerToken",bearer)
+}
