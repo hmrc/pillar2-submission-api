@@ -20,6 +20,8 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.http.Status.{CREATED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.{JsError, JsSuccess}
+import play.api.http.Status.{CREATED, UNPROCESSABLE_ENTITY}
+import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UktrValidationError, UnexpectedResponse, UnparsableResponse}
@@ -34,26 +36,33 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
   def submitUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     ukTaxReturnConnector.submitUKTR(request).map(convertToResult)
 
-  private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
+  private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse = {
+    def logAndThrow(errors: Seq[(JsPath, Seq[JsonValidationError])]): UKTRSubmitSuccessResponse = {
+      val errorPath    = errors.map(_._1.path.headOption.fold("error.path.missing")(_.asInstanceOf[KeyPathNode].key))
+      val errorMessage = errors.map(_._2.map(_.message).headOption.fold("error.message.missing")(identity))
+      val zippedErrors =
+        errorPath
+          .zip(errorMessage)
+          .map { case (path, message) => s"$path: $message" }
+          .mkString("; ")
+      logger.error(s"Error while parsing the backend response ${response.json} - ($zippedErrors)")
+      throw UnexpectedResponse
+    }
+
     response.status match {
       case CREATED =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(errors) =>
-            logger.error(s"Got an error while parsing ${response.json}")
-            // change response here. We should not return this error to third parties
-            throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
+          case JsError(errors)       => logAndThrow(errors.asInstanceOf[Seq[(JsPath, Seq[JsonValidationError])]])
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
-          case JsSuccess(response, _) =>
-            throw UktrValidationError(response.code, response.message)
-          case JsError(errors) =>
-            // change response here. We should not return this error to third parties
-            throw UnparsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
+          case JsSuccess(response, _) => throw UktrValidationError(response.code, response.message)
+          case JsError(errors)        => logAndThrow(errors.asInstanceOf[Seq[(JsPath, Seq[JsonValidationError])]])
         }
       case status =>
         logger.error(s"Error while calling pillar2 backend. Got status: $status and response: ${response.json}")
         throw UnexpectedResponse
     }
+  }
 }
