@@ -30,6 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
+import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRService
 
 import scala.concurrent.duration.DurationInt
@@ -44,6 +45,8 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
   val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
 
+  val mockSubmitBTNService: SubmitBTNService = mock[SubmitBTNService]
+
   val mockSubmitUktrService: SubmitUKTRService = mock[SubmitUKTRService]
 
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
@@ -52,6 +55,13 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   ) {
     override def transform[A](request: Request[A]): Future[IdentifierRequest[A]] =
       Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = ""))
+  }
+
+  val subscriptionDataRetrievalAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
+    override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] =
+      Future.successful(SubscriptionDataRequest(request, "internalId", "plrid", subscriptionData))
+
+    override protected def executionContext: ExecutionContext = ec
   }
 
   implicit class AwaitFuture(fut: Future[Result]) {
