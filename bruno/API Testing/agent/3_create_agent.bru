@@ -1,0 +1,24 @@
+meta {
+  name: Create Agent
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:9000/agents
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  {
+    "serviceNames": [
+      "agent-services"
+    ]
+  }
+}

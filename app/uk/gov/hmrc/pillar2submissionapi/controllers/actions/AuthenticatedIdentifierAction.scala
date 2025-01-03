@@ -19,11 +19,12 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.mvc._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
@@ -42,6 +43,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
   private val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   private val ENROLMENT_IDENTIFIER = "PLRID"
+  private val DELEGATED_AUTH_RULE  = "pillar2-auth"
 
   private def getPillar2Id(enrolments: Enrolments): Option[String] =
     for {
@@ -52,34 +54,56 @@ class AuthenticatedIdentifierAction @Inject() (
   override protected def transform[A](request: Request[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
+    val retrievals = Retrievals.internalId and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(retrievals) {
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          getPillar2Id(enrolments) match {
-            case Some(pillar2Id) =>
-              Future.successful(
-                IdentifierRequest(
-                  request = request,
-                  userId = internalId,
-                  groupId = Some(groupId),
-                  clientPillar2Id = pillar2Id,
-                  userIdForEnrolment = credentials.providerId
-                )
+    def orgAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] = {
+      val validated = for {
+        pillar2Id <- getPillar2Id(enrolments).toRight(AuthenticationError(s"Pillar2 ID not found in enrolments"))
+      } yield IdentifierRequest(
+        request = request,
+        userId = internalId,
+        clientPillar2Id = pillar2Id,
+        userIdForEnrolment = credentials.providerId
+      )
+      validated.fold(Future.failed, Future.successful)
+    }
+
+    def agentAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] =
+      request.headers.get("x-pillar2-id") match {
+        case None =>
+          Future.failed(AuthenticationError("Agent must provide a x-pillar2-id header"))
+
+        case Some(pillar2IdValue) =>
+          authorised(
+            AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
+              .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
+              .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+          ) {
+            logger.info(
+              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+            )
+            Future.successful(
+              IdentifierRequest(
+                request,
+                internalId,
+                clientPillar2Id = pillar2IdValue,
+                userIdForEnrolment = credentials.providerId
               )
-            case None =>
-              logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-              Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
+            )
           }
+      }
+
+    authorised(AuthProviders(GovernmentGateway))
+      .retrieve(retrievals) {
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
+          orgAuth(internalId, enrolments, credentials)
+        case Some(internalId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
+          agentAuth(internalId, enrolments, credentials)
         case _ =>
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
-      } recoverWith { case e: AuthorisationException =>
-      logger.warn(s"Authorization failed: ${e.getMessage}")
-      Future.failed(AuthenticationError("Not authorized"))
-    }
+      }
   }
 }
