@@ -1,11 +1,11 @@
 meta {
   name: Create Bearer Token
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
-  url: http://localhost:8585/government-gateway/session/login
+  url: {{authUrl}}
   body: json
   auth: none
 }
@@ -24,7 +24,7 @@ body:json {
         "identifiers": [
           {
             "key": "PLRID",
-            "value": "XMPLR0012345674"
+            "value": {{testPlrId}}
           }
         ],
         "state": "Activated"

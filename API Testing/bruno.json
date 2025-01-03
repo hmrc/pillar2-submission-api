@@ -1,0 +1,19 @@
+{
+  "version": "1",
+  "name": "API Testing",
+  "type": "collection",
+  "collections": [
+    {
+      "name": "Authentication",
+      "path": "auth"
+    },
+    {
+      "name": "UKTR Submissions",
+      "path": "uktr"
+    }
+  ],
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
