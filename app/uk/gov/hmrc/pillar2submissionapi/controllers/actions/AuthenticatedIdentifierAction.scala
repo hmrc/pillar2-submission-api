@@ -44,7 +44,6 @@ class AuthenticatedIdentifierAction @Inject() (
   private val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   private val ENROLMENT_IDENTIFIER = "PLRID"
   private val DELEGATED_AUTH_RULE  = "pillar2-auth"
-  private val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
 
   private def getPillar2Id(enrolments: Enrolments): Option[String] =
     for {
@@ -71,42 +70,30 @@ class AuthenticatedIdentifierAction @Inject() (
       validated.fold(Future.failed, Future.successful)
     }
 
-    def agentAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] = {
-      val pillar2IdValueEither = request.headers
-        .get("pillar2-id")
-        .toRight(AuthenticationError("Missing Pillar 2 ID"))
+    def agentAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] =
+      request.headers.get("x-pillar2-id") match {
+        case None =>
+          Future.failed(AuthenticationError("Agent must provide a x-pillar2-id header"))
 
-      pillar2IdValueEither match {
-        case Right(pillar2IdValue) =>
-          println(s"________$enrolments")
+        case Some(pillar2IdValue) =>
           authorised(
-            AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY)
+            AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
               .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
               .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
-          )
-            .retrieve(retrievals) {
-              case _ ~ _ ~ Some(Agent) ~ _ ~ _ =>
-                logger.info(
-                  s"EnrolmentAuthIdentifierAction - authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
-                )
-                Future.successful(
-                  IdentifierRequest(
-                    request,
-                    internalId,
-                    clientPillar2Id = pillar2IdValue,
-                    userIdForEnrolment = credentials.providerId
-                  )
-                )
-              case _ ~ _ ~ _ ~ _ ~ _ =>
-                logger.error("Error")
-                Future.failed(AuthenticationError("Error")) //TODO improve later
-            }
-
-        case Left(error) =>
-          Future.failed(error)
-
+          ) {
+            logger.info(
+              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+            )
+            Future.successful(
+              IdentifierRequest(
+                request,
+                internalId,
+                clientPillar2Id = pillar2IdValue,
+                userIdForEnrolment = credentials.providerId
+              )
+            )
+          }
       }
-    }
 
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(retrievals) {
