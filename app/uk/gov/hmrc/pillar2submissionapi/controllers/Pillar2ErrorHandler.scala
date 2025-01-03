@@ -33,16 +33,13 @@ class Pillar2ErrorHandler extends HttpErrorHandler {
       case e if e.isInstanceOf[Pillar2Error] =>
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         pillar2Error match {
-          case e @ InvalidJson =>
-            Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload")))
+          case e @ InvalidJson                  => Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload")))
           case e @ EmptyRequestBody             => Future.successful(Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request")))
           case e @ AuthenticationError(message) => Future.successful(Results.Unauthorized(Pillar2ErrorResponse(e.code, message)))
-          case e @ NoSubscriptionData(_)        => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
           case e @ UktrValidationError(_, _)    => Future.successful(Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message)))
-          case e @ UnparsableResponse(_)        => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
-          case e @ UnexpectedResponse           => Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
+          case e @ (NoSubscriptionData(_) | UnparsableResponse(_) | UnexpectedResponse) =>
+            Future.successful(Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message)))
         }
-      case _ =>
-        Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
+      case _ => Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
     }
 }
