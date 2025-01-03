@@ -18,17 +18,13 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
-import play.api.libs.json._
-import play.api.mvc.Results.BadRequest
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.pillar2submissionapi.connectors.EnrolmentStoreProxyConnector
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
@@ -39,7 +35,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
-  val enrolmentAuth:             EnrolmentStoreProxyConnector,
   val parser:                    BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
@@ -60,78 +55,68 @@ class AuthenticatedIdentifierAction @Inject() (
   override protected def transform[A](request: Request[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
+    val retrievals = Retrievals.internalId and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
+    def orgAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] = {
+      val validated = for {
+        pillar2Id <- getPillar2Id(enrolments).toRight(AuthenticationError(s"Pillar2 ID not found in enrolments"))
+      } yield IdentifierRequest(
+        request = request,
+        userId = internalId,
+        clientPillar2Id = pillar2Id,
+        userIdForEnrolment = credentials.providerId
+      )
+      validated.fold(Future.failed, Future.successful)
+    }
+
+    def agentAuth(internalId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] = {
+      val pillar2IdValueEither = request.headers
+        .get("pillar2-id")
+        .toRight(AuthenticationError("Missing Pillar 2 ID"))
+
+      pillar2IdValueEither match {
+        case Right(pillar2IdValue) =>
+          println(s"________$enrolments")
+          authorised(
+            AuthProviders(GovernmentGateway) and Enrolment(HMRC_AS_AGENT_KEY)
+              .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
+              .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+          )
+            .retrieve(retrievals) {
+              case _ ~ _ ~ Some(Agent) ~ _ ~ _ =>
+                logger.info(
+                  s"EnrolmentAuthIdentifierAction - authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+                )
+                Future.successful(
+                  IdentifierRequest(
+                    request,
+                    internalId,
+                    clientPillar2Id = pillar2IdValue,
+                    userIdForEnrolment = credentials.providerId
+                  )
+                )
+              case _ ~ _ ~ _ ~ _ ~ _ =>
+                logger.error("Error")
+                Future.failed(AuthenticationError("Error")) //TODO improve later
+            }
+
+        case Left(error) =>
+          Future.failed(error)
+
+      }
+    }
+
+    authorised(AuthProviders(GovernmentGateway))
       .retrieve(retrievals) {
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          val validated = for {
-            pillar2Id <- getPillar2Id(enrolments).toRight(AuthenticationError(s"Pillar2 ID not found in enrolments"))
-          } yield IdentifierRequest(
-            request = request,
-            userId = internalId,
-            groupId = Some(groupId),
-            clientPillar2Id = pillar2Id,
-            userIdForEnrolment = credentials.providerId
-          )
-          validated.fold(Future.failed, Future.successful)
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
-          println(enrolments)
-          def validateAgentEnrolment =
-            Either.cond(
-              enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined,
-              (),
-              AuthenticationError("Agent enrolment not found")
-            )
-
-          def validateDelegatedAuthority = {
-            println(enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).foreach { enrolment =>
-              val enrolmentJson = Json.toJson(enrolment)
-              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
-            })
-            println(enrolments.getEnrolment(HMRC_AS_AGENT_KEY).foreach { enrolment =>
-              val enrolmentJson = Json.toJson(enrolment)
-              println(s"Enrolment model as JSON: ${Json.prettyPrint(enrolmentJson)}")
-            })
-            println(groupId)
-            println(enrolmentAuth.getDelegatedEnrolment(groupId))
-            println(
-              request.headers
-                .get("pillar2-id")
-                .toRight(AuthenticationError("Missing Pillar 2 ID"))
-            )
-
-            Either.cond(
-              enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).exists(_.delegatedAuthRule.contains(DELEGATED_AUTH_RULE)),
-              (),
-              AuthenticationError("Missing delegated authority")
-            )
-          }
-
-          def validatePillar2Id =
-            getPillar2Id(enrolments).toRight(AuthenticationError("Delegated Pillar2 ID not found in agent enrolments"))
-
-          val validationResult = for {
-            _         <- validateAgentEnrolment
-            _         <- validateDelegatedAuthority
-            pillar2Id <- validatePillar2Id
-          } yield IdentifierRequest(
-            request = request,
-            userId = internalId,
-            groupId = Some(groupId),
-            clientPillar2Id = pillar2Id,
-            userIdForEnrolment = credentials.providerId
-          )
-
-          validationResult.fold(Future.failed, Future.successful)
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
+          orgAuth(internalId, enrolments, credentials)
+        case Some(internalId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
+          agentAuth(internalId, enrolments, credentials)
         case _ =>
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
-      } recoverWith { case e: AuthorisationException =>
-      logger.warn(s"Authorization failed: ${e.getMessage}")
-      Future.failed(AuthenticationError("Not authorized"))
-    }
+      }
   }
 }
