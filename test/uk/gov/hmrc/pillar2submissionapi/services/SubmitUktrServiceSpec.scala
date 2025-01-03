@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.services
 import junit.framework.TestCase.assertEquals
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -40,9 +41,8 @@ class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
   "SubmitUktrService" when {
     "submitUktr() called with a valid tax return" should {
       "return 201 CREATED response" in {
-
         when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(okResponse), Map.empty)))
 
         val result = await(submitUktrService.submitUktr(validUktrSubmission(liabilityData)))
 
@@ -53,9 +53,8 @@ class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
 
   "submitUktr() called with a valid nil return" should {
     "return 201 CREATED response" in {
-
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(okResponse), Map.empty)))
 
       val result = await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn)))
 
@@ -65,39 +64,41 @@ class SubmitUKTRServiceSpec extends UnitTestBaseSpec {
 
   "submitUktr() unparsable 201 response back" should {
     "Runtime exception thrown" in {
-
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unparsable success response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson("unparsable success response"), Map.empty)))
 
-      intercept[UnparsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      val result = intercept[UnexpectedResponse.type](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      result.code.toInt mustEqual INTERNAL_SERVER_ERROR
+      result.message mustEqual "Internal Server Error"
     }
   }
 
   "submitUktr() valid 422 response back" should {
     "Runtime exception thrown (To be updated to the appropriate exception)" in {
-
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(UKTRSubmitErrorResponse("093", "Invalid Return")), Map.empty)))
+        .thenReturn(
+          Future.successful(HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson(UKTRSubmitErrorResponse("093", "Invalid Return")), Map.empty))
+        )
 
       intercept[UktrValidationError](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
     }
   }
 
   "submitUktr() unparsable 422 response back" should {
-    "Runtime exception thrown (To be updated to 500 Internal server error exception)" in {
-
+    "Runtime exception thrown" in {
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unparsable error response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson("unparsable error response"), Map.empty)))
 
-      intercept[UnparsableResponse](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      val result = intercept[UnexpectedResponse.type](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
+      result.code.toInt mustEqual INTERNAL_SERVER_ERROR
+      result.message mustEqual "Internal Server Error"
     }
   }
 
   "submitUktr() 500 response back" should {
     "Runtime exception thrown " in {
-
       when(mockPillar2Connector.submitUKTaxReturn(any[UKTRSubmissionData])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(INTERNAL_SERVER_ERROR, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitUktrService.submitUktr(validUktrSubmission(liabilityNilReturn))))
     }
