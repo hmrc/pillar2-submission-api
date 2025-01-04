@@ -1,11 +1,11 @@
 meta {
-  name: Submit UKTR - local
+  name: Submit UKTR
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
-  url: http://localhost:10054/uk-tax-return
+  url: {{submissionsApiBaseUrl}}/uk-tax-return
   body: json
   auth: none
 }
@@ -44,4 +44,16 @@ body:json {
       ]
     }
   }
+}
+
+tests {
+  test("should return 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("should contain all required fields", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
+    expect(res.body.formBundleNumber).to.not.be.undefined;
+    expect(res.body.chargeReference).to.not.be.undefined;
+  });
 }
