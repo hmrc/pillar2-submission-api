@@ -30,9 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
-import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnService
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitUKTRService
+import uk.gov.hmrc.pillar2submissionapi.services.{SubmitBTNService, UKTaxReturnService}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -46,10 +44,8 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
   val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
 
-  val mockSubmitBTNService: SubmitBTNService = mock[SubmitBTNService]
-
-  val mockSubmitUktrService: SubmitUKTRService = mock[SubmitUKTRService]
   val mockUkTaxReturnService: UKTaxReturnService = mock[UKTaxReturnService]
+  val mockSubmitBTNService:   SubmitBTNService   = mock[SubmitBTNService]
 
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,

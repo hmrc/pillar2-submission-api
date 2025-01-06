@@ -27,8 +27,7 @@ import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
-import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
+import uk.gov.hmrc.pillar2submissionapi.connectors.{SubmitBTNConnector, UKTaxReturnConnector}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -50,11 +49,10 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:      Configuration        = mock[Configuration]
-  protected val mockServicesConfig:     ServicesConfig       = mock[ServicesConfig]
-  protected val mockHttpClient:         HttpClient           = mock[HttpClient]
-  protected val mockPillar2Connector:   UKTaxReturnConnector = mock[UKTaxReturnConnector]
-  protected val mockSubmitBTNConnector: SubmitBTNConnector   = mock[SubmitBTNConnector]
+  protected val mockConfiguration:        Configuration        = mock[Configuration]
+  protected val mockServicesConfig:       ServicesConfig       = mock[ServicesConfig]
+  protected val mockHttpClient:           HttpClient           = mock[HttpClient]
   protected val mockUKTaxReturnConnector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
+  protected val mockSubmitBTNConnector:   SubmitBTNConnector   = mock[SubmitBTNConnector]
 
 }

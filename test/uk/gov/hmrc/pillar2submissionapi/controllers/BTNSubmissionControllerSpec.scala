@@ -24,8 +24,8 @@ import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.SubmitBTNSuccessResponse
