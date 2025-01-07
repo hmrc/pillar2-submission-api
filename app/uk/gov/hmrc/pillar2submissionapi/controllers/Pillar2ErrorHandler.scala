@@ -20,16 +20,17 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UnexpectedResponse, _}
-
 import scala.concurrent.Future
+import play.api.Logging
+import scala.concurrent.ExecutionContext
 
-class Pillar2ErrorHandler extends HttpErrorHandler {
+class Pillar2ErrorHandler(implicit ec: ExecutionContext) extends HttpErrorHandler with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
     Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(statusCode.toString, message))))
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
-    exception match {
+    (exception match {
       case e if e.isInstanceOf[Pillar2Error] =>
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         pillar2Error match {
@@ -45,5 +46,8 @@ class Pillar2ErrorHandler extends HttpErrorHandler {
         }
       case _ =>
         Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
+    }).flatMap { r =>
+      logger.error(s"Received a server error. Returning: ${r.header.status}", exception)
+      Future.successful(r)
     }
 }
