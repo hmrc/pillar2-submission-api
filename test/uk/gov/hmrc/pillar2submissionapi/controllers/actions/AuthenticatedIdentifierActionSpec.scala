@@ -72,6 +72,22 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     }
 
     "a user is a registered Agent" should {
+      "missing X-Pillar2-Id header" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+
+        result.message mustEqual "Agent must provide a X-Pillar2-Id header"
+      }
+
       "user is unauthorized" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
@@ -82,6 +98,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
+
+        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
         val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
 
         result.message mustEqual "Invalid credentials"
@@ -265,7 +283,7 @@ object AuthenticatedIdentifierActionSpec {
   val identifierName  = "PLRID"
   val identifierValue = "XCCVRUGFJG788"
 
-  val requiredPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
+  val requiredPredicate: Predicate = AuthProviders(GovernmentGateway)
   val requiredRetrievals
     : Retrieval[Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
     Retrievals.internalId and Retrievals.groupIdentifier and
