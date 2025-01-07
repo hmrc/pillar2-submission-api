@@ -5,9 +5,14 @@ meta {
 }
 
 post {
-  url: {{authUrl}}
+  url: http://localhost:8585/government-gateway/session/login
   body: json
   auth: none
+}
+
+headers {
+  Content-Type: application/json
+  content-type: application/json
 }
 
 body:json {
@@ -24,7 +29,7 @@ body:json {
         "identifiers": [
           {
             "key": "PLRID",
-            "value": {{testPlrId}}
+            "value": "XMPLR0012345674"
           }
         ],
         "state": "Activated"
