@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 
-class Pillar2ErrorHandlerTest extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
+class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
 
   val classUnderTest = new Pillar2ErrorHandler
   val dummyRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()

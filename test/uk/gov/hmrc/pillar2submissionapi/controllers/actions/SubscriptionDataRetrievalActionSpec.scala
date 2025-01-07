@@ -21,8 +21,8 @@ import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.NoSubscriptionData
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
