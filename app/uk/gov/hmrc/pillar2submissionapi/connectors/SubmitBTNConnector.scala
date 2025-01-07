@@ -36,6 +36,9 @@ class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV
 
   def submitBTN(BTNSubmission: BTNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling $BTNSubmissionUrl to submit a BTN")
-    http.post(URI.create(BTNSubmissionUrl).toURL).withBody(Json.toJson(BTNSubmission)).execute[HttpResponse]
+    http
+      .post(URI.create(BTNSubmissionUrl).toURL)
+      .withBody(Json.toJson(BTNSubmission))
+      .execute[HttpResponse]
   }
 }
