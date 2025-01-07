@@ -22,7 +22,6 @@ sealed trait Pillar2Error extends Exception {
 }
 
 case object InvalidJson extends Pillar2Error {
-
   val code    = "001"
   val message = "Invalid JSON payload"
 }
@@ -52,3 +51,5 @@ case class UnparsableResponse(errors: String) extends Pillar2Error {
   val code:    String = "500"
   val message: String = errors
 }
+
+case class BTNValidationError(code: String, message: String) extends Pillar2Error

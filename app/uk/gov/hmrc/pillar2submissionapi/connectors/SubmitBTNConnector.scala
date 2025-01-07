@@ -23,20 +23,22 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
 
 import java.net.URI
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
-  private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/submit-uk-tax-return"
+  private val BTNSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
-  def submitUKTR(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    logger.info(s"Calling pillar2 backend: $uktrSubmissionUrl")
-    val request = http.post(URI.create(uktrSubmissionUrl).toURL()).withBody(Json.toJson(uktrSubmission))
-    request.execute[HttpResponse]
+  def submitBTN(BTNSubmission: BTNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    logger.info(s"Calling $BTNSubmissionUrl to submit a BTN")
+    http
+      .post(URI.create(BTNSubmissionUrl).toURL)
+      .withBody(Json.toJson(BTNSubmission))
+      .execute[HttpResponse]
   }
 }

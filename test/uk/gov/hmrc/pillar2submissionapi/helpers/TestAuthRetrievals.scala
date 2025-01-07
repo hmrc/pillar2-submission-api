@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.controllers.error
+package uk.gov.hmrc.pillar2submissionapi.helpers
 
-import play.api.http.Writeable
-import play.api.libs.json.{JsValue, Json, OFormat}
+import uk.gov.hmrc.auth.core.retrieve.~
 
-case class Pillar2ErrorResponse(code: String, message: String)
-
-object Pillar2ErrorResponse {
-  implicit val format:   OFormat[Pillar2ErrorResponse]   = Json.format[Pillar2ErrorResponse]
-  implicit val writable: Writeable[Pillar2ErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
+object TestAuthRetrievals {
+  implicit class Ops[A](a: A) {
+    def ~[B](b: B): A ~ B = new ~(a, b)
+  }
 }

@@ -20,30 +20,33 @@ import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.BadRequest
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.{SubscriptionData, SubscriptionSuccess}
 
+import java.net.URI
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClient) extends Logging {
+class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClientV2) extends Logging {
 
   def readSubscription(
     plrReference: String
   )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
-    http
-      .GET[HttpResponse](subscriptionUrl)
-      .map {
-        case response if response.status == 200 =>
-          Right(Json.parse(response.body).as[SubscriptionSuccess].success)
-        case e =>
-          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          Left(BadRequest)
-      }
+    val request = http
+      .get(URI.create(subscriptionUrl).toURL())
+
+    request.execute[HttpResponse].map {
+      case response if response.status == 200 =>
+        Right(Json.parse(response.body).as[SubscriptionSuccess].success)
+      case e =>
+        logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
+        Left(BadRequest)
+    }
   }
 }
