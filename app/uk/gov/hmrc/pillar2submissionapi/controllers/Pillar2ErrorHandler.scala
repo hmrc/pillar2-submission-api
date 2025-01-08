@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result, Results}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{UnexpectedResponse, _}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 
 import scala.concurrent.Future
 
@@ -34,8 +34,7 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
       case e if e.isInstanceOf[Pillar2Error] =>
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         val ret = pillar2Error match {
-          case e @ InvalidJson =>
-            Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload"))
+          case e @ InvalidJson                  => Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload"))
           case e @ EmptyRequestBody             => Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request"))
           case e @ AuthenticationError(message) => Results.Unauthorized(Pillar2ErrorResponse(e.code, message))
           case e @ NoSubscriptionData(_)        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
