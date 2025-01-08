@@ -23,7 +23,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject() (
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-    def agentAuth(internalId: String, groupId: String, enrolments: Enrolments, credentials: Credentials): Future[IdentifierRequest[A]] =
+    def agentAuth: Future[IdentifierRequest[A]] =
       request.headers.get("X-Pillar2-Id") match {
         case Some(pillar2IdValue) =>
           authorised(
@@ -65,19 +65,24 @@ class AuthenticatedIdentifierAction @Inject() (
               Enrolment(HMRC_PILLAR2_ORG_KEY)
                 .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
                 .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
-          )
-          logger.info(
-            s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
-          )
-          Future.successful(
-            IdentifierRequest(
-              request,
-              internalId,
-              Some(groupId),
-              clientPillar2Id = pillar2IdValue,
-              userIdForEnrolment = credentials.providerId
-            )
-          )
+          ).retrieve(retrievals) {
+            case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
+              logger.info(
+                s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+              )
+              Future.successful(
+                IdentifierRequest(
+                  request,
+                  internalId,
+                  Some(groupId),
+                  clientPillar2Id = pillar2IdValue,
+                  userIdForEnrolment = credentials.providerId
+                )
+              )
+            case _ =>
+              Future.failed(AuthenticationError("Agent is unauthorised"))
+          }
+
         case None => Future.failed(AuthenticationError("Agent must provide a X-Pillar2-Id header"))
       }
 
@@ -99,8 +104,8 @@ class AuthenticatedIdentifierAction @Inject() (
               logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
               Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
           }
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ Some(User) ~ Some(credentials) =>
-          agentAuth(internalId, groupId, enrolments, credentials)
+        case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
+          agentAuth
         case _ =>
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
