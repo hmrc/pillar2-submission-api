@@ -38,6 +38,8 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
+import AuthenticatedIdentifierAction._
+
 class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
@@ -89,6 +91,10 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       }
 
       "user is unauthorized" in {
+        val agentPredicate = AuthProviders(GovernmentGateway) and
+          Enrolment(HMRC_PILLAR2_ORG_KEY)
+            .withIdentifier(ENROLMENT_IDENTIFIER, identifierValue)
+            .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
@@ -100,7 +106,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](any[Predicate](), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(agentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -110,7 +116,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
         val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Not authorized"
       }
     }
   }
