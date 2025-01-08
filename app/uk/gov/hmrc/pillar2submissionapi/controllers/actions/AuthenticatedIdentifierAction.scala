@@ -79,7 +79,8 @@ class AuthenticatedIdentifierAction @Inject() (
                   userIdForEnrolment = credentials.providerId
                 )
               )
-            case _ =>
+            case g =>
+              println(s"--------$g")
               Future.failed(AuthenticationError("Agent is unauthorised"))
           }
 
@@ -110,6 +111,7 @@ class AuthenticatedIdentifierAction @Inject() (
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
       } recoverWith { case e: AuthorisationException =>
+      println("asduaou------")
       logger.warn(s"Authorization failed: ${e.getMessage}")
       Future.failed(AuthenticationError("Not authorized"))
     }

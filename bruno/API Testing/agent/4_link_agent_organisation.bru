@@ -1,12 +1,13 @@
 meta {
   name: Link Agent to Organisation
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
   url: http://localhost:8585/government-gateway/session/login
   body: json
+  auth: none
 }
 
 headers {

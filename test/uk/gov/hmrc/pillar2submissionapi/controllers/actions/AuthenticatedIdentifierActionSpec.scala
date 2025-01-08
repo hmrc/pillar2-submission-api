@@ -99,6 +99,14 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
+        when(
+          mockAuthConnector.authorise[RetrievalsType](any[Predicate](), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
+
         val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
         val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
 

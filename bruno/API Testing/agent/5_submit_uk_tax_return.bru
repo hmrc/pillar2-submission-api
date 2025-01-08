@@ -1,18 +1,19 @@
 meta {
   name: Submit UK Tax Return
   type: http
-  seq: 5
+  seq: 4
 }
 
 post {
   url: http://localhost:10054/uk-tax-return
   body: json
+  auth: none
 }
 
 headers {
   Content-Type: application/json
   Authorization: {{linkedBearerToken}}
-  pillar2-id: XEPLR5555551123
+  x-pillar2-id: XEPLR5555551123
 }
 
 body:json {
@@ -39,7 +40,11 @@ body:json {
     "totalLiabilityIIR": 0,
     "totalLiability": 0
   },
-  "accountingPeriodTo": "2019-08-24",
+  "accountingPeriodTo": "2020-08-24",
   "obligationMTT": true
     }
+}
+
+assert {
+  res.status: eq 201
 }

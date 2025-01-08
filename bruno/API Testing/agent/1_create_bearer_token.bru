@@ -15,22 +15,24 @@ headers {
 }
 
 body:json {
-  "credId": "123456789",
-  "affinityGroup": "Organisation",
-  "confidenceLevel": 200,
-  "credentialStrength": "strong",
-  "enrolments": [
-    {
-      "key": "HMRC-PILLAR2-ORG",
-      "identifiers": [
-        {
-          "key": "PLRID",
-          "value": "XEPLR5555551123"
-        }
-      ],
-      "state": "Activated"
-    }
-  ]
+  {
+    "credId": "123456789",
+    "affinityGroup": "Organisation",
+    "confidenceLevel": 200,
+    "credentialStrength": "strong",
+    "enrolments": [
+      {
+        "key": "HMRC-PILLAR2-ORG",
+        "identifiers": [
+          {
+            "key": "PLRID",
+            "value": "XEPLR5555551123"
+          }
+        ],
+        "state": "Activated"
+      }
+    ]
+  }
 }
 
 script:post-response {
@@ -43,17 +45,3 @@ script:post-response {
     bearer = arr[1]
   bru.setEnvVar("bearerToken",bearer)
 }
-
-// tests {
-//   test("Status code is 201") {
-//     expect(response.status).to.equal(201)
-//   }
-  
-//   test("Bearer token exists") {
-//     expect(response.headers.Authorization).to.exist
-//   }
-// }
-
-// vars {
-//   bearerToken: response.headers.Authorization
-// } 
