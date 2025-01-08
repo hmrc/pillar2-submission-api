@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi
+package uk.gov.hmrc.pillar2submissionapi.base
 
 import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
+import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -41,6 +42,7 @@ trait UnitTestBaseSpec
     with GuiceOneAppPerSuite
     with MockitoSugar
     with WireMockServerHandler
+    with UKTaxReturnDataFixture
     with HttpClientSupport {
 
   implicit val cc:                ControllerComponents = stubControllerComponents()
@@ -49,10 +51,11 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:      Configuration        = mock[Configuration]
-  protected val mockServicesConfig:     ServicesConfig       = mock[ServicesConfig]
-  protected val mockHttpClient:         HttpClientV2         = mock[HttpClientV2]
-  protected val mockPillar2Connector:   UKTaxReturnConnector = mock[UKTaxReturnConnector]
-  protected val mockSubmitBTNConnector: SubmitBTNConnector   = mock[SubmitBTNConnector]
+  protected val mockConfiguration:        Configuration        = mock[Configuration]
+  protected val mockServicesConfig:       ServicesConfig       = mock[ServicesConfig]
+  protected val mockHttpClient:           HttpClientV2         = mock[HttpClientV2]
+  protected val mockPillar2Connector:     UKTaxReturnConnector = mock[UKTaxReturnConnector]
+  protected val mockUKTaxReturnConnector: UKTaxReturnConnector = mock[UKTaxReturnConnector]
+  protected val mockSubmitBTNConnector:   SubmitBTNConnector   = mock[SubmitBTNConnector]
 
 }

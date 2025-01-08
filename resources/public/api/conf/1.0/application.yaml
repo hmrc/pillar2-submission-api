@@ -12,7 +12,7 @@ paths:
             - write:pillar2
       tags:
         - app
-      operationId: submitUktr
+      operationId: submitUKTR
       requestBody:
         content:
           application/json:

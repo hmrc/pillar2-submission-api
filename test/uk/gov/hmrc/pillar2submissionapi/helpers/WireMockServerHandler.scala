@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi
+package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 import play.api.libs.json.JsValue
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: Suite =>
@@ -64,6 +65,21 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   ): StubMapping =
     server.stubFor(
       post(urlEqualTo(expectedUrl))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(body.toString())
+        )
+    )
+
+  protected def stubResponseWithExtraHeader(
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  )(implicit hc:    HeaderCarrier): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(expectedUrl))
+        .withHeader(hc.extraHeaders.map(_._1).head, equalTo(hc.extraHeaders.map(_._2).head))
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)

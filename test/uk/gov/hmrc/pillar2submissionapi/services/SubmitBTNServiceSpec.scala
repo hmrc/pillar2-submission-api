@@ -22,7 +22,7 @@ import org.mockito.Mockito.when
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.UnitTestBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.responses.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
