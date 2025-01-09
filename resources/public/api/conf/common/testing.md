@@ -1,7 +1,10 @@
-You can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing). You can use the <link:Create Test User API> or its frontend service to create test users.
+API testing is hosted in the [HMRC developer hub](https://developer.qa.tax.service.gov.uk/api-documentation). Once you’ve registered for an account you can conduct your own testing.
 
-It may not be possible to test all scenarios in the sandbox. You can test some scenarios by passing the Gov-Test-Scenario header. Documentation for each endpoint includes a ‘Test data’ section, which explains the scenarios that you can simulate using the Gov-Test-Scenario header.
+The [getting started](https://developer.qa.tax.service.gov.uk/api-documentation/docs/using-the-hub) section of the developer hub contains instructions and tutorials to help you work with our APIs.
+
+- [Creating an application](https://developer.qa.tax.service.gov.uk/developer/applications/) in our test environment (sandbox).
+- Locate the landing page for the [Pillar 2 Submission API](https://developer.qa.tax.service.gov.uk/api-documentation/docs/api/service/pillar2-submission-api/1.0).
+- Start working with the APIs, using the [getting started](https://developer.qa.tax.service.gov.uk/api-documentation/docs/using-the-hub) section as a point of reference.
 
 If you have a specific testing need that is not supported in the sandbox, contact our [support team](https://developer.service.hmrc.gov.uk/developer/support).
 
-Some APIs may be marked [test only]. This means that they are not available for use in production and may change.
