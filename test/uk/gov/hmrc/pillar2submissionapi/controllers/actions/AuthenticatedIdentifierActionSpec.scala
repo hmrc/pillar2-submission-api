@@ -38,8 +38,6 @@ import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-import AuthenticatedIdentifierAction._
-
 class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
@@ -51,7 +49,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "a user is a registered organisation" must {
       "user is successfully authorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -74,10 +72,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     }
 
     "a user is a registered Agent" should {
-      "pass if agent is a delegated entity of an org" in {
-
+      "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -85,93 +82,34 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = await(identifierAction.refine(fakeRequest))
-
-        result.map { identifierRequest =>
-          identifierRequest.userId             must be(id)
-          identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(identifierValue)
-          identifierRequest.userIdForEnrolment must be(providerId)
-        }
-      }
-
-      "fail due to missing X-Pillar2-Id header" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
         val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
-
-        result.message mustEqual "Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration."
-      }
-
-      "fail due to user being unauthorised" in {
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
-
-        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
-
-        result.message mustEqual "Not authorized"
-      }
-    }
-
-    "a user is a registered Individual" should {
-      "fail as user is unauthorized" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(
-              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-            )
-          )
-
-        val result = intercept[AuthenticationError](
-          await(
-            identifierAction.refine(fakeRequest)
-          )
-        )
 
         result.message mustEqual "Invalid credentials"
       }
+    }
+  }
+
+  "a user is a registered Individual" should {
+    "user is unauthorized" in {
+      when(
+        mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          any[HeaderCarrier](),
+          any[ExecutionContext]()
+        )
+      )
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      val result = intercept[AuthenticationError](
+        await(
+          identifierAction.refine(fakeRequest)
+        )
+      )
+
+      result.message mustEqual "Invalid credentials"
     }
   }
 
@@ -179,7 +117,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "internalId missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -203,7 +141,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "groupId missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -225,7 +163,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "affinityGroup missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -247,7 +185,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "user missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -271,7 +209,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "pillar2Id is missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -327,11 +265,7 @@ object AuthenticatedIdentifierActionSpec {
   val identifierName  = "PLRID"
   val identifierValue = "XCCVRUGFJG788"
 
-  val requiredOrgPredicate: Predicate = AuthProviders(GovernmentGateway)
-  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and
-    Enrolment(HMRC_PILLAR2_ORG_KEY)
-      .withIdentifier(ENROLMENT_IDENTIFIER, identifierValue)
-      .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+  val requiredPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
   val requiredRetrievals
     : Retrieval[Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
     Retrievals.internalId and Retrievals.groupIdentifier and
