@@ -24,7 +24,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnectorSpec.validBTNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit

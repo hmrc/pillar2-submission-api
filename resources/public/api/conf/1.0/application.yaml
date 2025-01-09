@@ -33,19 +33,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
   /below-threshold-notification:
     post:
       security:
@@ -66,27 +66,50 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.SubmitBTNSuccessResponse"
+                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
         "422":
           description: Business Validation Failure
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.SubmitBTNErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.SubmitBTNErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/responses.SubmitBTNErrorResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
 components:
   schemas:
+    BTNSubmission:
+      properties:
+        accountingPeriodFrom:
+          type: string
+          format: date
+        accountingPeriodTo:
+          type: string
+          format: date
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+    SubmitBTNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+        chargeReference:
+          type: string
+          nullable: true
+      required:
+      - processingDate
+      - formBundleNumber
     UKTRSubmissionData:
       properties:
         electionUKGAAP:
@@ -131,15 +154,6 @@ components:
       - amountOwedDTT
       - amountOwedIIR
       - amountOwedUTPR
-    responses.SubmitBTNErrorResponse:
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
     responses.UKTRSubmitSuccessResponse:
       properties:
         processingDate:
@@ -161,27 +175,6 @@ components:
           - NIL_RETURN
       required:
       - returnType
-    responses.SubmitBTNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        formBundleNumber:
-          type: string
-        chargeReference:
-          type: string
-          nullable: true
-      required:
-      - processingDate
-      - formBundleNumber
-    responses.UKTRSubmitErrorResponse:
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-      - code
-      - message
     UKTRSubmissionNilReturn:
       properties:
         electionUKGAAP:
@@ -240,17 +233,15 @@ components:
       - totalLiabilityIIR
       - totalLiabilityUTPR
       - liableEntities
-    BTNSubmission:
+    uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
       properties:
-        accountingPeriodFrom:
+        code:
           type: string
-          format: date
-        accountingPeriodTo:
+        message:
           type: string
-          format: date
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
+      - code
+      - message
   securitySchemes:
     userRestricted:
       type: oauth2

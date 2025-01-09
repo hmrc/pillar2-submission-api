@@ -22,8 +22,7 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{BTNValidationError, UnexpectedResponse, UnparsableResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.BTNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 

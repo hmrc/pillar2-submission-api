@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
+package uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification
 
-import play.api.http.Writeable
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Json, OFormat}
 
-case class UKTRSubmitErrorResponse(code: String, message: String)
+case class SubmitBTNSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
 
-object UKTRSubmitErrorResponse {
-  implicit val format: OFormat[UKTRSubmitErrorResponse] = Json.format[UKTRSubmitErrorResponse]
-
-  implicit val writable: Writeable[UKTRSubmitErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
+case object SubmitBTNSuccessResponse {
+  implicit val successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]
 }

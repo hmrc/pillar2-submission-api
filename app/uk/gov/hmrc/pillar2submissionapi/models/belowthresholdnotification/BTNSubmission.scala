@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification
 
 import play.api.libs.json.{Json, OFormat}
 

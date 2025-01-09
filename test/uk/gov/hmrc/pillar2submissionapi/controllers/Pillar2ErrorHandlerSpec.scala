@@ -24,7 +24,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
 
@@ -37,7 +37,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     forAll(validStatus, messageGen) { (statusCode, message) =>
       val result = classUnderTest.onClientError(dummyRequest, statusCode, message)
       status(result) mustEqual 400
-      val response = contentAsJson(result).as[UKTRSubmitErrorResponse]
+      val response = contentAsJson(result).as[Pillar2ErrorResponse]
       response.message mustEqual message
       response.code mustEqual statusCode.toString
     }
@@ -46,7 +46,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("Catch-all error response") {
     val response = classUnderTest.onServerError(dummyRequest, new RuntimeException("Generic Error"))
     status(response) mustEqual 500
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "500"
     result.message mustEqual "Internal Server Error"
   }
@@ -54,7 +54,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("EmptyRequestBody error response") {
     val response = classUnderTest.onServerError(dummyRequest, EmptyRequestBody)
     status(response) mustEqual 400
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "002"
     result.message mustEqual "Empty body in request"
   }
@@ -62,7 +62,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("InvalidJson error response") {
     val response = classUnderTest.onServerError(dummyRequest, InvalidJson)
     status(response) mustEqual 400
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "001"
     result.message mustEqual "Invalid JSON Payload"
   }
@@ -70,7 +70,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("AuthenticationError error response") {
     val response = classUnderTest.onServerError(dummyRequest, AuthenticationError("Authentication Error"))
     status(response) mustEqual 401
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "003"
     result.message mustEqual "Authentication Error"
   }
@@ -78,7 +78,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("NoSubscriptionData error response") {
     val response = classUnderTest.onServerError(dummyRequest, NoSubscriptionData("XTC01234123412"))
     status(response) mustEqual 500
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "004"
     result.message mustEqual "No Pillar2 subscription found for XTC01234123412"
   }
@@ -86,7 +86,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("UktrValidationError error response") {
     val response = classUnderTest.onServerError(dummyRequest, UktrValidationError("093", "Invalid Return"))
     status(response) mustEqual 422
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "093"
     result.message mustEqual "Invalid Return"
   }
@@ -94,7 +94,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("BTNValidationError error response") {
     val response = classUnderTest.onServerError(dummyRequest, BTNValidationError("093", "Invalid Return"))
     status(response) mustEqual 422
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "093"
     result.message mustEqual "Invalid Return"
   }
@@ -103,7 +103,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val response =
       classUnderTest.onServerError(dummyRequest, UnparsableResponse("Failed to parse success response: One of many errors!, Another error!"))
     status(response) mustEqual 500
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "500"
     result.message mustEqual "Failed to parse success response: One of many errors!, Another error!"
   }
@@ -111,7 +111,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
   test("UnexpectedResponse error response") {
     val response = classUnderTest.onServerError(dummyRequest, UnexpectedResponse)
     status(response) mustEqual 500
-    val result = contentAsJson(response).as[UKTRSubmitErrorResponse]
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "500"
     result.message mustEqual "Internal Server Error"
   }
