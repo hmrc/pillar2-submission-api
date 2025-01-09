@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
@@ -40,7 +40,9 @@ class AuthenticatedIdentifierAction @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  import AuthenticatedIdentifierAction._
+  private val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
+  private val ENROLMENT_IDENTIFIER = "PLRID"
+
   private def getPillar2Id(enrolments: Enrolments): Option[String] =
     for {
       pillar2Enrolment <- enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY)
@@ -54,7 +56,7 @@ class AuthenticatedIdentifierAction @Inject() (
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-    authorised(AuthProviders(GovernmentGateway))
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(retrievals) {
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
           getPillar2Id(enrolments) match {
@@ -72,8 +74,6 @@ class AuthenticatedIdentifierAction @Inject() (
               logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
               Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
           }
-        case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
-          agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
         case _ =>
           logger.warn("User failed authorization checks")
           Future.failed(AuthenticationError("Invalid credentials"))
@@ -82,48 +82,4 @@ class AuthenticatedIdentifierAction @Inject() (
       Future.failed(AuthenticationError("Not authorized"))
     }
   }
-
-  def agentAuth[A](request: Request[A], pillar2Id: Option[String])(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
-    val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
-      Retrievals.allEnrolments and Retrievals.affinityGroup and
-      Retrievals.credentialRole and Retrievals.credentials
-    pillar2Id match {
-      case Some(pillar2IdValue) =>
-        authorised(
-          AuthProviders(GovernmentGateway) and
-            Enrolment(HMRC_PILLAR2_ORG_KEY)
-              .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
-              .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
-        ).retrieve(retrievals) {
-          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
-            logger.info(
-              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
-            )
-            Future.successful(
-              IdentifierRequest(
-                request,
-                internalId,
-                Some(groupId),
-                clientPillar2Id = pillar2IdValue,
-                userIdForEnrolment = credentials.providerId
-              )
-            )
-          case _ =>
-            Future.failed(AuthenticationError("Agent is unauthorised"))
-        }
-
-      case None =>
-        Future.failed(
-          AuthenticationError(
-            "Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration."
-          )
-        )
-    }
-  }
-}
-
-object AuthenticatedIdentifierAction {
-  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
-  val ENROLMENT_IDENTIFIER = "PLRID"
-  val DELEGATED_AUTH_RULE  = "pillar2-auth"
 }
