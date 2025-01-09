@@ -112,7 +112,7 @@ class AuthenticatedIdentifierAction @Inject() (
             Future.failed(AuthenticationError("Agent is unauthorised"))
         }
 
-      case None => Future.failed(AuthenticationError("Agent must provide a X-Pillar2-Id header"))
+      case None => Future.failed(AuthenticationError("Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration."))
     }
   }
 }
