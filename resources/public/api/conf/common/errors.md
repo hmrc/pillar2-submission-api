@@ -1,6 +1,6 @@
 If an API request generates an error, the error is listed in the Response section of each endpoint. If you need more information on API errors, please read the [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide contains more information about errors.
 
-All of the errors listed in the table return a 422 HTTP code. 
+All of the errors listed here return a 422 HTTP code. 
 
 | Error Code/Message | Next Steps |
 | -------------------| -----------|
