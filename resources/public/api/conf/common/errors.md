@@ -1,10 +1,10 @@
-If an API request generates an error, the error is listed in the Response section of each endpoint. If you need more information on API errors, please read the [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide) contains more information about errors. 
+If an API request generates an error, the error is listed in the Response section of each endpoint. If you need more information on API errors, please read the error [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide). 
 
 If you need more information on understanding any terms relating to Pillar 2, please check the glossary in the [Service Guide](https://developer.development.tax.service.gov.uk/guides/pillar2-service-guide/). 
 
 **Submit UK Tax Return** / **Amend UK Tax Return**
 
-The errors listed here return a 422 HTTP code when a request for the SubmitUKTR and AmendUKTR APIs is not processed successfully. 
+The errors listed here return a 422 HTTP code when a request for the SubmitUKTR/AmendUKTR API is not processed successfully. 
 
 | Error Code/Message | Next Steps |
 | -------------------| -----------|
