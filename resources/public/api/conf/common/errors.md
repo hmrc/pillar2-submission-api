@@ -6,7 +6,7 @@ If you need more information on understanding any terms relating to Pillar 2, pl
 
 The errors listed here return a 422 HTTP code when a request for the SubmitUKTR/AmendUKTR API is not processed successfully. 
 
-| Error Code/Message | Next Steps |
+| Error Message | Next Steps |
 | -------------------| -----------|
 | 002 - Pillar 2 ID required | Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration. |
 | 003 - Request could not be processed | The message could not be processed due to locking. Please send the request again. |
