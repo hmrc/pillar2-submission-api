@@ -1,4 +1,4 @@
-If an API request generates an error, the error is listed in the Response section of each endpoint. If you need more information on API errors, please read the error [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide). 
+If an API request generates an error, the error is listed in the response section of the endpoint. If you need more information on API errors, please read the error [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide). 
 
 If you need more information on understanding any terms relating to Pillar 2, please check the glossary in the [Service Guide](https://developer.development.tax.service.gov.uk/guides/pillar2-service-guide/). 
 
@@ -17,7 +17,7 @@ The errors listed here return a 422 HTTP code when a request for the SubmitUKTR/
 | 094 - Invalid DTT Election | The DTT values in the request are invalid. Please check the values for **electionDTTSingleMember** and **numberSubGroupDTT**, and check the **amountOwedDTT** matches the **totalLiabilityDTT** amount. Then submit the request again. |
 | 095 - Invalid UTPR Election | The UTPR values in the request are invalid. Please check the values for **electionUTPRSingleMember** and **numberSubGroupUTPR** are correct and check the **amountOwedUTPR** matches the **totalLiabilityUTPR** amount. Then submit the request again. |
 | 096 - Invalid Total Liability | The **totalLiability** value in the request does not match the combined values of **totalLiabilityDTT**, **totalLiabilityIIR** and **totalLiabilityUTPR**. Please check the sum of these 3 fields matches the **totalLiability** value and submit the request again. |
-| 097 - Invalid Total Liability IIR | The **totalLiabilityIIR** value does not match the **amountIIR** value from the liableEntities array. Please check the value of these fields matches and submit the request again. | 
-| 098 - Invalid Total Liability DTT | The **totalLiabilityDTT** value does not match the **amountDTT** value from the liableEntities array. Please check the value of these fields matches and submit the request again. |
-| 099 - Invalid Total Liability UTPR | The **totalLiabilityUTPR** value does not match the **amountUTPR** value from the liableEntities array. Please check the value of these fields matches and submit the request again. |
+| 097 - Invalid Total Liability IIR | The **totalLiabilityIIR** value does not match the **amountIIR** value from the **liableEntities** array. Please check the value of these fields matches and submit the request again. | 
+| 098 - Invalid Total Liability DTT | The **totalLiabilityDTT** value does not match the **amountDTT** value from the **liableEntities** array. Please check the value of these fields matches and submit the request again. |
+| 099 - Invalid Total Liability UTPR | The **totalLiabilityUTPR** value does not match the **amountUTPR** value from the **liableEntities** array. Please check the value of these fields matches and submit the request again. |
 
