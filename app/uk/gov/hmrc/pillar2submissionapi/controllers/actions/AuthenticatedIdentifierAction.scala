@@ -54,7 +54,7 @@ class AuthenticatedIdentifierAction @Inject() (
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
 
-    authorised(AuthProviders(GovernmentGateway))
+    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(retrievals) {
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
           getPillar2Id(enrolments) match {
@@ -91,11 +91,12 @@ class AuthenticatedIdentifierAction @Inject() (
       case Some(pillar2IdValue) =>
         authorised(
           AuthProviders(GovernmentGateway) and
+            AffinityGroup.Agent and
             Enrolment(HMRC_PILLAR2_ORG_KEY)
               .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
               .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
         ).retrieve(retrievals) {
-          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
+          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(_) ~ _ ~ Some(credentials) =>
             logger.info(
               s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
             )

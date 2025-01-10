@@ -327,8 +327,8 @@ object AuthenticatedIdentifierActionSpec {
   val identifierName  = "PLRID"
   val identifierValue = "XCCVRUGFJG788"
 
-  val requiredOrgPredicate: Predicate = AuthProviders(GovernmentGateway)
-  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and
+  val requiredOrgPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
+  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
     Enrolment(HMRC_PILLAR2_ORG_KEY)
       .withIdentifier(ENROLMENT_IDENTIFIER, identifierValue)
       .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
