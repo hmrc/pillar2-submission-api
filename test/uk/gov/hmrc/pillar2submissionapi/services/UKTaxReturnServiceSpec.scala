@@ -79,7 +79,10 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson("unparsable success response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
+        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
+        val result = intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
+        result.code.toInt mustEqual INTERNAL_SERVER_ERROR
+        result.message mustEqual "Internal Server Error"
       }
     }
 
@@ -97,11 +100,14 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
     }
 
     "submitUKTR() unparsable 422 response back" should {
-      "Runtime exception thrown (To be updated to 500 Internal server error exception)" in {
+      "Runtime exception thrown" in {
         when(mockUKTaxReturnConnector.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(UNPROCESSABLE_ENTITY, Json.toJson("unparsable error response"), Map.empty)))
 
-        intercept[UnparsableResponse](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
+        intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
+        val result = intercept[UnexpectedResponse.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
+        result.code.toInt mustEqual INTERNAL_SERVER_ERROR
+        result.message mustEqual "Internal Server Error"
       }
     }
 
