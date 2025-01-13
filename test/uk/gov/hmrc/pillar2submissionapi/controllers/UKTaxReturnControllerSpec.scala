@@ -23,7 +23,7 @@ import play.api.http.Status.CREATED
 import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
@@ -36,7 +36,8 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
   val uktrSubmissionController: UKTaxReturnController =
     new UKTaxReturnController(cc, identifierAction, subscriptionAction, mockUkTaxReturnService)(ec)
 
-  def callWithBody(request: JsValue): Future[Result] = uktrSubmissionController.submitUKTR()(FakeRequest().withJsonBody(request))
+  def callWithBody(request: JsValue):      Future[Result] = uktrSubmissionController.submitUKTR()(FakeRequest().withJsonBody(request))
+  def callAmendWithBody(request: JsValue): Future[Result] = uktrSubmissionController.amendUKTR()(FakeRequest().withJsonBody(request))
 
   "UktrSubmissionController" when {
     "submitUKTR() called with a valid request" should {
@@ -150,6 +151,118 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     "submitUKTR() called with valid request body that contains both a full and a nil submission" should {
       "return 201 CREATED response" in {
         status(of = callWithBody(liabilityAndNilReturn)) mustEqual CREATED
+      }
+    }
+
+    "amendUKTR() called with a valid request" should {
+      "return 200 OK response" in {
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callAmendWithBody(validLiabilityReturn)) mustEqual OK
+      }
+
+      "forward the X-Pillar2-Id header" in {
+        val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(captor.capture()))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callAmendWithBody(validLiabilityReturn)) mustEqual OK
+        captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
+      }
+    }
+
+    "amendUKTR() called with a valid nil return request" should {
+      "return 200 OK response" in {
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callAmendWithBody(validNilReturn)) mustEqual OK
+      }
+
+      "forward the X-Pillar2-Id header" in {
+        val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(captor.capture()))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callAmendWithBody(validNilReturn)) mustEqual OK
+        captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
+      }
+    }
+
+    "amendUKTR() called with an invalid request" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(liabilityReturnInvalidLiabilities) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with an invalid nil return request" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(nilReturnInvalidReturnType) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with an invalid json request" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidBody) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with request that only contains a valid return type" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_nilReturn_onlyContainsLiabilities) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with request that only contains an invalid return type" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with request that is missing liabilities" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_noLiabilities) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with an empty json object" should {
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(emptyBody) shouldFailWith InvalidJson
+      }
+    }
+
+    "amendUKTR() called with an non-json request" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.amendUKTR()(FakeRequest().withTextBody(stringBody))
+
+        result shouldFailWith EmptyRequestBody
+      }
+    }
+
+    "amendUKTR() called with no request body" should {
+      "return 400 BAD_REQUEST response" in {
+        val result = uktrSubmissionController.amendUKTR()(FakeRequest())
+
+        result shouldFailWith EmptyRequestBody
+      }
+    }
+
+    "amendUKTR() called with valid request body that contains duplicate entries" should {
+      "return 200 OK response" in {
+        status(of = callAmendWithBody(liabilityReturnDuplicateFields)) mustEqual OK
+      }
+    }
+
+    "amendUKTR() called with valid request body that contains additional fields" should {
+      "return 200 OK response" in {
+        status(of = callAmendWithBody(liabilityReturnWithadditionalFields)) mustEqual OK
+      }
+    }
+
+    "amendUKTR() called with valid request body that contains both a full and a nil submission" should {
+      "return 200 OK response" in {
+        status(of = callAmendWithBody(liabilityAndNilReturn)) mustEqual OK
       }
     }
   }
