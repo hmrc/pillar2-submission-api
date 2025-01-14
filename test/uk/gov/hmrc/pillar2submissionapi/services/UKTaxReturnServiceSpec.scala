@@ -28,7 +28,6 @@ import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitErrorResponse
 
 import scala.concurrent.Future
 

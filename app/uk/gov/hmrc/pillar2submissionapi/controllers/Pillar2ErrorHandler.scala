@@ -21,6 +21,7 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 import scala.concurrent.Future
 
