@@ -1,20 +1,18 @@
 meta {
-  name: Submit UKTR
+  name: Amend UKTR Unauthorized
   type: http
-  seq: 1
+  seq: 4
 }
 
-post {
+put {
   url: {{submissionsApiBaseUrl}}/uk-tax-return
   body: json
-  auth: none
 }
 
 headers {
   Accept: application/vnd.hmrc.1.0+json
-  Authorization: {{bearerToken}}
+  Authorization: "Bearer invalid-token"
   Content-Type: application/json
-  content-type: application/json
 }
 
 body:json {
@@ -47,13 +45,11 @@ body:json {
 }
 
 tests {
-  test("should return 201 Created", function() {
-    expect(res.getStatus()).to.equal(201);
+  test("should return 401 Unauthorized", function() {
+    expect(res.getStatus()).to.equal(401);
   });
   
-  test("should contain all required fields", function() {
-    expect(res.body.processingDate).to.not.be.undefined;
-    expect(res.body.formBundleNumber).to.not.be.undefined;
-    expect(res.body.chargeReference).to.not.be.undefined;
+  test("should contain correct error message", function() {
+    expect(res.body.message).to.equal("Not authorized");
   });
-}
+} 

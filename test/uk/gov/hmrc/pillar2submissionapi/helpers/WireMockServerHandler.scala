@@ -21,6 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+import play.api.http.HttpVerbs._
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -58,32 +59,42 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
         )
     )
 
-  protected def stubResponse(
+  protected def stubRequest(
+    method:         String,
     expectedUrl:    String,
     expectedStatus: Int,
-    body:           JsValue
-  ): StubMapping =
-    server.stubFor(
-      post(urlEqualTo(expectedUrl))
-        .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(body.toString())
-        )
-    )
+    body:           JsValue,
+    headers:        Map[String, String] = Map.empty
+  ): StubMapping = {
+    val methodMapping = method.toUpperCase match {
+      case GET    => get(urlEqualTo(expectedUrl))
+      case POST   => post(urlEqualTo(expectedUrl))
+      case PUT    => put(urlEqualTo(expectedUrl))
+      case DELETE => delete(urlEqualTo(expectedUrl))
+      case _      => throw new IllegalArgumentException(s"Unsupported HTTP method: $method")
+    }
 
-  protected def stubResponseWithExtraHeader(
-    expectedUrl:    String,
-    expectedStatus: Int,
-    body:           JsValue
-  )(implicit hc:    HeaderCarrier): StubMapping =
+    val mappingWithHeaders = headers.foldLeft(methodMapping) { case (mapping, (key, value)) =>
+      mapping.withHeader(key, equalTo(value))
+    }
+
     server.stubFor(
-      post(urlEqualTo(expectedUrl))
-        .withHeader(hc.extraHeaders.map(_._1).head, equalTo(hc.extraHeaders.map(_._2).head))
+      mappingWithHeaders
         .willReturn(
           aResponse()
             .withStatus(expectedStatus)
             .withBody(body.toString())
         )
     )
+  }
+
+  protected def stubRequestWithPillar2Id(
+    method:         String,
+    expectedUrl:    String,
+    expectedStatus: Int,
+    body:           JsValue
+  )(implicit hc:    HeaderCarrier): StubMapping = {
+    val pillar2IdHeader = hc.extraHeaders.find(_._1 == "X-Pillar2-Id").getOrElse(throw new IllegalArgumentException("X-Pillar2-Id header not found"))
+    stubRequest(method, expectedUrl, expectedStatus, body, Map(pillar2IdHeader))
+  }
 }

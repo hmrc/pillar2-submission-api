@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.http.Status.{BAD_REQUEST, CREATED, NOT_FOUND}
+import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -33,44 +33,81 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
+  private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
+  private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"
+
   "UKTaxReturnConnector" when {
-    "submitUKTR() called with a valid request" must {
+    "submitUKTR" must {
       "forward the X-Pillar2-Id header" in {
         implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubResponseWithExtraHeader("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
+        stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission))
 
         result.status should be(CREATED)
         server.verify(
-          postRequestedFor(urlEqualTo("/report-pillar2-top-up-taxes/submit-uk-tax-return")).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
         )
       }
 
-      "return 201 CREATED response" in {
-        stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, JsObject.empty)
+      "return 201 CREATED for valid request" in {
+        stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(CREATED)
       }
-    }
 
-    "submitUKTR() called with an invalid request" must {
-      "return 400 BAD_REQUEST response" in {
-        stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", BAD_REQUEST, JsObject.empty)
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(BAD_REQUEST)
       }
-    }
 
-    "submitUKTR() called with an invalid url configured" must {
-      "return 404 NOT_FOUND response" in {
-        stubResponse("/INCORRECT_URL", CREATED, JsObject.empty)
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
+
+        result.status should be(NOT_FOUND)
+      }
+    }
+
+    "amendUKTR" must {
+      "forward the X-Pillar2-Id header" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        stubRequestWithPillar2Id("PUT", amendUrl, OK, JsObject.empty)
+
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission))
+
+        result.status should be(OK)
+        server.verify(
+          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
+      }
+
+      "return 200 OK for valid request" in {
+        stubRequest("PUT", amendUrl, OK, JsObject.empty)
+
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
+
+        result.status should be(OK)
+      }
+
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("PUT", amendUrl, BAD_REQUEST, JsObject.empty)
+
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
+
+        result.status should be(BAD_REQUEST)
+      }
+
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
+
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
 
         result.status should be(NOT_FOUND)
       }

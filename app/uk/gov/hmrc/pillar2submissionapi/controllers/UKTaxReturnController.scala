@@ -57,4 +57,22 @@ class UKTaxReturnController @Inject() (
       case None => Future.failed(EmptyRequestBody)
     }
   }
+
+  def amendUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter
+        .fromRequest(request)
+        .withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    request.body.asJson match {
+      case Some(request) =>
+        request.validate[UKTRSubmission] match {
+          case JsSuccess(value, _) =>
+            ukTaxReturnService
+              .amendUKTR(value)
+              .map(response => Ok(Json.toJson(response)))
+          case JsError(_) => Future.failed(InvalidJson)
+        }
+      case None => Future.failed(EmptyRequestBody)
+    }
+  }
 }

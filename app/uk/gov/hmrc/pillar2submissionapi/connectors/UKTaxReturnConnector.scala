@@ -33,10 +33,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
   private val uktrSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/submit-uk-tax-return"
+  private val uktrAmendmentUrl:  String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/amend-uk-tax-return"
 
   def submitUKTR(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling pillar2 backend: $uktrSubmissionUrl")
     val request = http.post(URI.create(uktrSubmissionUrl).toURL()).withBody(Json.toJson(uktrSubmission))
+    request.execute[HttpResponse]
+  }
+
+  def amendUKTR(uktrSubmission: UKTRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    logger.info(s"Calling pillar2 backend: $uktrAmendmentUrl")
+    val request = http.put(URI.create(uktrAmendmentUrl).toURL()).withBody(Json.toJson(uktrSubmission))
     request.execute[HttpResponse]
   }
 }
