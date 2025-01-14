@@ -21,13 +21,13 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RE
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
 trait UKTaxReturnDataFixture {
 
   val pillar2Id        = "XTC01234123412"
   val formBundleNumber = "119000004320"
-  val processingDate   = "2024-01-01T00:00:00Z"
+  val processingDate: ZonedDateTime = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
   val uktrSubmissionSuccessResponse: UKTRSubmitSuccessResponse =
     UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
 

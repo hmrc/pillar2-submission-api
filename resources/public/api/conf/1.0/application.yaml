@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.34.0
+  version: 0.46.0
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
 tags: []
@@ -8,24 +8,128 @@ paths:
   /uk-tax-return:
     post:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       tags:
-        - app
+      - app
       operationId: submitUKTR
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/UktrSubmissionData"
-                - $ref: "#/components/schemas/UktrSubmissionNilReturn"
+              - $ref: "#/components/schemas/UKTRSubmissionData"
+              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       summary: Submit a Pillar2 UKTR
       responses:
         "201":
-          description: created
+          description: UKTR Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "400":
+          description: Invalid Submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+  /below-threshold-notification:
+    post:
+      security:
+      - userRestricted:
+        - write:pillar2
+      tags:
+      - app
+      operationId: submitBTN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BTNSubmission"
+      summary: Submit a Pillar2 BTN
+      responses:
+        "201":
+          description: UKTR Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "400":
+          description: Invalid Submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
 components:
   schemas:
+    BTNSubmission:
+      properties:
+        accountingPeriodFrom:
+          type: string
+          format: date
+        accountingPeriodTo:
+          type: string
+          format: date
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+    SubmitBTNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+        chargeReference:
+          type: string
+          nullable: true
+      required:
+      - processingDate
+      - formBundleNumber
+    UKTRSubmissionData:
+      properties:
+        electionUKGAAP:
+          type: boolean
+        accountingPeriodFrom:
+          type: string
+          format: date
+        liabilities:
+          $ref: "#/components/schemas/LiabilityData"
+        accountingPeriodTo:
+          type: string
+          format: date
+        obligationMTT:
+          type: boolean
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - obligationMTT
+      - electionUKGAAP
+      - liabilities
     LiableEntity:
       properties:
         idType:
@@ -44,33 +148,34 @@ components:
           type: number
           format: double
       required:
-        - ukChargeableEntityName
-        - idType
-        - idValue
-        - amountOwedDTT
-        - amountOwedIIR
-        - amountOwedUTPR
-    UktrSubmissionData:
+      - ukChargeableEntityName
+      - idType
+      - idValue
+      - amountOwedDTT
+      - amountOwedIIR
+      - amountOwedUTPR
+    responses.UKTRSubmitSuccessResponse:
       properties:
-        electionUKGAAP:
-          type: boolean
-        accountingPeriodFrom:
+        processingDate:
           type: string
-          format: date
-        liabilities:
-          $ref: "#/components/schemas/LiabilityData"
-        accountingPeriodTo:
+          format: date-time
+        formBundleNumber:
           type: string
-          format: date
-        obligationMTT:
-          type: boolean
+        chargeReference:
+          type: string
+          nullable: true
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
-        - obligationMTT
-        - electionUKGAAP
-        - liabilities
-    UktrSubmissionNilReturn:
+      - processingDate
+      - formBundleNumber
+    LiabilityNilReturn:
+      properties:
+        returnType:
+          type: string
+          enum:
+          - NIL_RETURN
+      required:
+      - returnType
+    UKTRSubmissionNilReturn:
       properties:
         electionUKGAAP:
           type: boolean
@@ -85,19 +190,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
-        - obligationMTT
-        - electionUKGAAP
-        - liabilities
-    LiabilityNilReturn:
-      properties:
-        returnType:
-          type: string
-          enum:
-            - NIL_RETURN
-      required:
-        - returnType
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - obligationMTT
+      - electionUKGAAP
+      - liabilities
     LiabilityData:
       properties:
         electionUTPRSingleMember:
@@ -127,15 +224,24 @@ components:
           type: number
           format: double
       required:
-        - electionDTTSingleMember
-        - electionUTPRSingleMember
-        - numberSubGroupDTT
-        - numberSubGroupUTPR
-        - totalLiability
-        - totalLiabilityDTT
-        - totalLiabilityIIR
-        - totalLiabilityUTPR
-        - liableEntities
+      - electionDTTSingleMember
+      - electionUTPRSingleMember
+      - numberSubGroupDTT
+      - numberSubGroupUTPR
+      - totalLiability
+      - totalLiabilityDTT
+      - totalLiabilityIIR
+      - totalLiabilityUTPR
+      - liableEntities
+    uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+      - code
+      - message
   securitySchemes:
     userRestricted:
       type: oauth2

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, putRequestedFor, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,10 +29,12 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, Pillar2ErrorResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.{UKTRSubmitErrorResponse, UKTRSubmitSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
@@ -47,154 +49,324 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
   def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
-  "Create a new UKTR submission (POST)" should {
-    "forward the X-Pillar2-Id header" in {
-      getSubscriptionStub
-      implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
-      stubResponseWithExtraHeader("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+  private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
+  private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"
 
-      val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
+  "UKTaxReturnController" when {
+    "submitUKTR" must {
+      "forward the X-Pillar2-Id header" in {
+        getSubscriptionStub
+        //implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(uktrSubmissionSuccessResponse),
+          Map("X-Pillar2-Id" -> plrReference)
+        )
 
-      result.chargeReference.value mustEqual pillar2Id
-      result.formBundleNumber mustEqual formBundleNumber
-      server.verify(
-        postRequestedFor(urlEqualTo("/report-pillar2-top-up-taxes/submit-uk-tax-return")).withHeader("X-Pillar2-Id", equalTo(plrReference))
-      )
+        val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+        server.verify(
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
+        )
+      }
+
+      "return 201 CREATED for valid submission data" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
+
+        val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
+
+      "return 201 CREATED for valid nil-return submission" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
+
+        val result = Await.result(requestWithBody(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
+
+      "return 400 BAD_REQUEST for invalid request body" in {
+        getSubscriptionStub
+
+        val result = Await.result(requestWithBody(invalidBody).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+      }
+
+      "return 400 BAD_REQUEST for empty request body" in {
+        getSubscriptionStub
+
+        val result = Await.result(requestWithBody(JsObject.empty).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+      }
+
+      "return 201 CREATED for request with duplicate fields" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
+
+        val result = Await.result(requestWithBody(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR when subscription data does not exist" in {
+        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
+        errorResponse.code mustEqual "004"
+        errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
+      }
+
+      "return 401 UNAUTHORIZED when user cannot be identified" in {
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        ).thenReturn(Future.failed(AuthenticationError("Invalid credentials")))
+
+        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual UNAUTHORIZED
+        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
+        errorResponse.code mustEqual "003"
+        errorResponse.message mustEqual "Invalid credentials"
+      }
+
+      "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          UNPROCESSABLE_ENTITY,
+          Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return"))
+        )
+
+        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual UNPROCESSABLE_ENTITY
+        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
+        errorResponse.code mustEqual INVALID_RETURN_093
+        errorResponse.message mustEqual "Invalid Return"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          UNAUTHORIZED,
+          Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
+        )
+
+        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          INTERNAL_SERVER_ERROR,
+          Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
+        )
+
+        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
     }
 
-    "create submission when given valid submission data" in {
-      getSubscriptionStub
-      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+    "amendUKTR" must {
+      val amendRequest = (body: JsValue) => client.put(URI.create(str).toURL).withBody(body)
 
-      val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
+      "forward the X-Pillar2-Id header" in {
+        getSubscriptionStub
+        //implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
+        stubRequest(
+          "PUT",
+          amendUrl,
+          OK,
+          Json.toJson(uktrSubmissionSuccessResponse),
+          Map("X-Pillar2-Id" -> plrReference)
+        )
 
-      result.chargeReference.value mustEqual pillar2Id
-      result.formBundleNumber mustEqual formBundleNumber
-    }
-  }
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-  "has valid nil-return submission data" should {
-    "return a 201 CREATED response" in {
-      getSubscriptionStub
-      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+        server.verify(
+          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
+        )
+      }
 
-      val result = Await.result(requestWithBody(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
+      "return 200 OK for valid submission data" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          OK,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
 
-      result.chargeReference.value mustEqual pillar2Id
-      result.formBundleNumber mustEqual formBundleNumber
-    }
-  }
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-  "has an invalid request body" should {
-    "return a 400 BAD_REQUEST response" in {
-      getSubscriptionStub
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
 
-      val result = Await.result(requestWithBody(invalidBody).execute[HttpResponse], 5.seconds)
+      "return 200 OK for valid nil-return submission" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          OK,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
 
-      result.status mustEqual BAD_REQUEST
-    }
-  }
+        val result = Await.result(amendRequest(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-  "has an empty request body" should {
-    "return a 400 BAD_REQUEST response " in {
-      getSubscriptionStub
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
 
-      val result = Await.result(requestWithBody(JsObject.empty).execute[HttpResponse], 5.seconds)
+      "return 400 BAD_REQUEST for invalid request body" in {
+        getSubscriptionStub
 
-      result.status mustEqual BAD_REQUEST
-    }
-  }
+        val result = Await.result(amendRequest(invalidBody).execute[HttpResponse], 5.seconds)
 
-  "has a valid request body containing duplicates fields and additional fields" should {
-    "return a 201 CREATED response" in {
-      getSubscriptionStub
-      stubResponse("/report-pillar2-top-up-taxes/submit-uk-tax-return", CREATED, Json.toJson(uktrSubmissionSuccessResponse))
+        result.status mustEqual BAD_REQUEST
+      }
 
-      val result = Await.result(requestWithBody(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
+      "return 400 BAD_REQUEST for empty request body" in {
+        getSubscriptionStub
 
-      result.chargeReference.value mustEqual pillar2Id
-      result.formBundleNumber mustEqual formBundleNumber
-    }
-  }
+        val result = Await.result(amendRequest(JsObject.empty).execute[HttpResponse], 5.seconds)
 
-  "Subscription data does not exist" should {
-    "return a InternalServerError resulting in a RuntimeException being thrown" in {
-      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
-      result.status mustEqual INTERNAL_SERVER_ERROR
+        result.status mustEqual BAD_REQUEST
+      }
 
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "004"
-      errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
-    }
-  }
+      "return 200 OK for request with duplicate fields" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          OK,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
 
-  "User unable to be identified" should {
-    "return a InternalServerError resulting in a RuntimeException being thrown" in {
-      when(
-        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-      )
-        .thenReturn(Future.failed(AuthenticationError("Invalid credentials")))
+        val result = Await.result(amendRequest(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
+      }
 
-      result.status mustEqual UNAUTHORIZED
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "003"
-      errorResponse.message mustEqual "Invalid credentials"
-    }
-  }
+      "return 500 INTERNAL_SERVER_ERROR when subscription data does not exist" in {
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
 
-  "'Invalid Return' response from ETMP returned" should {
-    "return a 422 UNPROCESSABLE_ENTITY response" in {
-      getSubscriptionStub
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        UNPROCESSABLE_ENTITY,
-        Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return"))
-      )
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "004"
+        errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
+      }
 
-      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+      "return 401 UNAUTHORIZED when user cannot be identified" in {
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        ).thenReturn(Future.failed(AuthenticationError("Invalid credentials")))
 
-      result.status mustEqual UNPROCESSABLE_ENTITY
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual INVALID_RETURN_093
-      errorResponse.message mustEqual "Invalid Return"
-    }
-  }
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
 
-  "'Unauthorized' response from ETMP returned" should {
-    "return a 500 INTERNAL_SERVER_ERROR response" in {
-      getSubscriptionStub
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        UNAUTHORIZED,
-        Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
-      )
+        result.status mustEqual UNAUTHORIZED
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "003"
+        errorResponse.message mustEqual "Invalid credentials"
+      }
 
-      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+      "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          UNPROCESSABLE_ENTITY,
+          Json.toJson(UKTRSubmitErrorResponse(INVALID_RETURN_093, "Invalid Return"))
+        )
 
-      result.status mustEqual INTERNAL_SERVER_ERROR
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "500"
-      errorResponse.message mustEqual "Internal Server Error"
-    }
-  }
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
 
-  "'internal server error' response from ETMP returned" should {
-    "return a 500 INTERNAL_SERVER_ERROR response" in {
-      getSubscriptionStub
-      stubResponse(
-        "/report-pillar2-top-up-taxes/submit-uk-tax-return",
-        INTERNAL_SERVER_ERROR,
-        Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
-      )
+        result.status mustEqual UNPROCESSABLE_ENTITY
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual INVALID_RETURN_093
+        errorResponse.message mustEqual "Invalid Return"
+      }
 
-      val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
+      "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          UNAUTHORIZED,
+          Json.toJson(UKTRSubmitErrorResponse("001", "Unauthorized"))
+        )
 
-      result.status mustEqual INTERNAL_SERVER_ERROR
-      val errorResponse = result.json.as[Pillar2ErrorResponse]
-      errorResponse.code mustEqual "500"
-      errorResponse.message mustEqual "Internal Server Error"
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          INTERNAL_SERVER_ERROR,
+          Json.toJson(UKTRSubmitErrorResponse("999", "internal_server_error"))
+        )
+
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
     }
   }
 }
