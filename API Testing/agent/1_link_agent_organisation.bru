@@ -1,0 +1,60 @@
+meta {
+  name: Link Agent to Organisation
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8585/government-gateway/session/login
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Content-Type: application/json
+}
+
+body:json {
+    {
+    "credentialRole": "Admin",
+    "affinityGroup": "Agent",
+    "credentialStrength": "strong",
+    "credId": "123456789",
+    "enrolments": [
+        {
+        "key": "HMRC-AS-AGENT",
+        "identifiers": [
+            {
+            "key": "AgentReferenceNumber",
+            "value": "GARN0458621"
+            }
+        ],
+        "state": "Activated"
+        }
+    ],
+    "delegatedEnrolments": [
+        {
+        "key": "HMRC-PILLAR2-ORG",
+        "identifiers": [
+            {
+            "key": "PLRID",
+            "value": "XEPLR5555551126"
+            }
+        ],
+        "delegatedAuthRule": "pillar2-auth"
+        }
+    ]
+    }
+}
+
+script:post-response {
+  let authHeader = res.headers.authorization
+  let arr = authHeader.split(",")
+  let bearer = ""
+  if(arr[0].includes("Bearer"))
+    bearer = arr[0]
+  else
+    bearer = arr[1]
+  bru.setEnvVar("linkedBearerToken",bearer)
+}

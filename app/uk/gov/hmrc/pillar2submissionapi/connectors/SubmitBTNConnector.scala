@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.models.btnsubmissions.BTNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
 
 import java.net.URI
 import javax.inject.{Inject, Singleton}

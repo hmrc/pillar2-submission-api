@@ -18,7 +18,9 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UKTRSubmitSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
+import java.time.ZonedDateTime
+
+case class UKTRSubmitSuccessResponse(processingDate: ZonedDateTime, formBundleNumber: String, chargeReference: Option[String])
 
 case object UKTRSubmitSuccessResponse {
   implicit val successFormat: OFormat[UKTRSubmitSuccessResponse] = Json.format[UKTRSubmitSuccessResponse]

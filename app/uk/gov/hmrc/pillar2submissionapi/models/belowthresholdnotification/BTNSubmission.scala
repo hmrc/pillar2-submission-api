@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses
+package uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification
 
 import play.api.libs.json.{Json, OFormat}
 
-case class UKTRSubmitErrorResponse(code: String, message: String)
+import java.time.LocalDate
 
-case object UKTRSubmitErrorResponse {
-  implicit val errorFormat: OFormat[UKTRSubmitErrorResponse] = Json.format[UKTRSubmitErrorResponse]
+case class BTNSubmission(
+  accountingPeriodFrom: LocalDate,
+  accountingPeriodTo:   LocalDate
+)
+
+object BTNSubmission {
+  implicit val BTNSubmission: OFormat[BTNSubmission] = Json.format[BTNSubmission]
 }
