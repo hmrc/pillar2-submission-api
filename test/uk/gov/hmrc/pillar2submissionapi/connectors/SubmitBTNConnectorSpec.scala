@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock._
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnectorSpec.validBTNSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
@@ -33,40 +35,47 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
 
   lazy val submitBTNConnector: SubmitBTNConnector = app.injector.instanceOf[SubmitBTNConnector]
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .configure(
-      Configuration(
-        "microservice.services.pillar2.port" -> server.port()
-      )
-    )
+    .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
+  private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
+
   "SubmitBTNConnector" when {
-    "submitBTN() called with a valid request" must {
-      "return 201 CREATED response" in {
-        stubResponse("/report-pillar2-top-up-taxes/below-threshold-notification/submit", CREATED, JsObject.empty)
+    "submitBTN" must {
+      "forward the X-Pillar2-Id header" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
+        val result = await(submitBTNConnector.submitBTN(validBTNSubmission))
 
-        result.status should be(201)
+        result.status should be(CREATED)
+        server.verify(
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
       }
-    }
 
-    "submitBTN() called with an invalid request" must {
-      "return 400 BAD_REQUEST response" in {
-        stubResponse("/report-pillar2-top-up-taxes/below-threshold-notification/submit", BAD_REQUEST, JsObject.empty)
+      "return 201 CREATED for valid request" in {
+        stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
 
-        result.status should be(400)
+        result.status should be(CREATED)
       }
-    }
 
-    "submitBTN() called with an invalid url configured" must {
-      "return 404 NOT_FOUND response" in {
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
 
-        result.status should be(404)
+        result.status should be(BAD_REQUEST)
+      }
+
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
+
+        val result = await(submitBTNConnector.submitBTN(validBTNSubmission)(hc))
+
+        result.status should be(NOT_FOUND)
       }
     }
   }
@@ -74,5 +83,4 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
 
 object SubmitBTNConnectorSpec {
   val validBTNSubmission: BTNSubmission = new BTNSubmission(LocalDate.now(), LocalDate.now().plus(365, ChronoUnit.DAYS))
-
 }

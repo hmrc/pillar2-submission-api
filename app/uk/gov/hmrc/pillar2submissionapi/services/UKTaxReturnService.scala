@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.services
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
-import play.api.http.Status.{CREATED, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.{CREATED, OK, UNPROCESSABLE_ENTITY}
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
@@ -34,6 +34,9 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
   def submitUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     ukTaxReturnConnector.submitUKTR(request).map(convertToResult)
 
+  def amendUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
+    ukTaxReturnConnector.amendUKTR(request).map(convertToResult)
+
   private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse = {
     def logAndThrow(errors: Seq[(JsPath, Seq[JsonValidationError])]): UKTRSubmitSuccessResponse = {
       val errorPath    = errors.map(_._1.path.headOption.fold("error.path.missing")(_.asInstanceOf[KeyPathNode].key))
@@ -48,7 +51,7 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
     }
 
     response.status match {
-      case CREATED =>
+      case CREATED | OK =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors)       => logAndThrow(errors.asInstanceOf[Seq[(JsPath, Seq[JsonValidationError])]])
