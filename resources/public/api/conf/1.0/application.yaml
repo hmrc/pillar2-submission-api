@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.54.0
+  version: 0.55.0
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
 tags: []
@@ -47,6 +47,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
     put:
+      security:
+      - userRestricted:
+        - write:pillar2
       tags:
       - app
       operationId: amendUKTR
