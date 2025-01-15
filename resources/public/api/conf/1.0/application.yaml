@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.46.0
+  version: 0.54.0
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
 tags: []
@@ -24,6 +24,43 @@ paths:
       responses:
         "201":
           description: UKTR Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "400":
+          description: Invalid Submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+    put:
+      tags:
+      - app
+      operationId: amendUKTR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/UKTRSubmissionData"
+              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+      summary: Amend a Pillar2 UKTR
+      responses:
+        "200":
+          description: UKTR Submission Amended
           content:
             application/json:
               schema:
