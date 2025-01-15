@@ -46,7 +46,29 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn'
 # responses:
 #   200:
-#     description: success
+#      description: UKTR Submission Amended
+#      content:
+#        application/json:
+#          schema:
+#            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse'
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   400:
+#     description: Invalid Submission
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 ###
 PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controllers.UKTaxReturnController.amendUKTR
 
