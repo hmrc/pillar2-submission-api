@@ -1,5 +1,5 @@
 
-This section contains information on the fields used in Pillar 2 API requests. Please use the glossary in the service guide if any terms in the reference are unfamiliar. 
+This section contains information on the fields used in Pillar 2 API requests. Please use the glossary in the [service guide](https://developer.development.tax.service.gov.uk/guides/pillar2-service-guide/) if any terms in the reference are unfamiliar. 
 
 
 
