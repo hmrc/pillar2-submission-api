@@ -18,19 +18,23 @@ package uk.gov.hmrc.pillar2submissionapi
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, putRequestedFor, urlEqualTo}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
@@ -46,14 +50,15 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
-  def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
+  def requestWithBody(body: JsValue = validLiabilityReturn):        RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
+  def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
   private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"
 
   "UKTaxReturnController" when {
-    "submitUKTR" must {
+    "submitUKTR by organisation" must {
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub
         //implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
@@ -210,8 +215,51 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       }
     }
 
-    "amendUKTR" must {
-      val amendRequest = (body: JsValue) => client.put(URI.create(str).toURL).withBody(body)
+    "submitUKTR by agent" must {
+
+      "return 201 CREATED for valid submission data" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        getSubscriptionStub
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
+
+        val result = Await.result(
+          requestWithBody().setHeader("X-Pillar2-Id" -> plrReference).execute[HttpResponse],
+          5.seconds
+        )
+        val resultAsResponseModel = result.json.as[UKTRSubmitSuccessResponse]
+
+        result.status mustBe CREATED
+        resultAsResponseModel.chargeReference.value mustEqual pillar2Id
+        resultAsResponseModel.formBundleNumber mustEqual formBundleNumber
+      }
+    }
+
+    "amendUKTR by organisation" must {
+      val amendRequest: JsValue => RequestBuilder = (body: JsValue) => client.put(URI.create(str).toURL).withBody(body)
 
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub
@@ -366,6 +414,46 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         val errorResponse = result.json.as[Pillar2ErrorResponse]
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "Internal Server Error"
+      }
+    }
+
+    "amendUKTR by agent" must {
+
+      "return 200 OK for valid submission data" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        getSubscriptionStub
+        stubRequest(
+          "PUT",
+          amendUrl,
+          OK,
+          Json.toJson(uktrSubmissionSuccessResponse)
+        )
+
+        val amendRequest: JsValue => RequestBuilder =
+          (body: JsValue) => client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference)
+        val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual pillar2Id
+        result.formBundleNumber mustEqual formBundleNumber
       }
     }
   }
