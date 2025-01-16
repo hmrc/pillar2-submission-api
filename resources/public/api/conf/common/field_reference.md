@@ -1,5 +1,5 @@
 
-This section contains information on the fields used in a request for the SubmitUKTR API. 
+This section contains information on the fields used in Pillar 2 API requests. 
 
 
 
