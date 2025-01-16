@@ -16,13 +16,16 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -30,6 +33,7 @@ import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.routes
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
@@ -49,7 +53,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
   "BTNSubmissionController" when {
-    "submitBTN" must {
+    "submitBTN as a organisation" must {
       "return 201 CREATED when given valid submission data" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
@@ -200,6 +204,47 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val errorResponse = result.json.as[UKTRSubmitErrorResponse]
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "Internal Server Error"
+      }
+    }
+
+    "submitBTN as an agent" must {
+      "return 201 CREATED when given valid submission data" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+        stubRequest(
+          "POST",
+          submitUrl,
+          CREATED,
+          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+        )
+
+        val result =
+          Await.result(baseRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[SubmitBTNSuccessResponse], 5.seconds)
+
+        result.chargeReference.value mustEqual "XTC01234123412"
+        result.formBundleNumber mustEqual "119000004320"
       }
     }
   }
