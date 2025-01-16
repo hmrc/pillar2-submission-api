@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.69.0
+  version: 0.72.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -70,6 +70,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
         "201":
           description: UK Tax Return Submission Created
           content:
@@ -82,15 +91,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '006'
-                message: Forbidden
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "422":
           description: Business Validation Failure
           content:
@@ -103,9 +112,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '003'
-                message: Not authorized
+              examples:
+                AuthenticationError:
+                  value:
+                    code: '003'
+                    message: Unauthorised
     put:
       security:
       - userRestricted:
@@ -132,12 +143,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "403":
           description: Forbidden
           content:
@@ -161,7 +190,7 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
                 code: '003'
-                message: Not authorized
+                message: Unauthorised
         "200":
           description: UK Tax Return Submission Amended
           content:
@@ -223,6 +252,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
         "201":
           description: Below-Threshold Notification Submission Created
           content:
@@ -235,6 +273,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "403":
           description: Forbidden
           content:
@@ -258,7 +305,7 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
                 code: '003'
-                message: Not authorized
+                message: Unauthorised
 components:
   schemas:
     BTNSubmission:
