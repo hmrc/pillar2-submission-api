@@ -22,11 +22,20 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
+import scala.io.Source
+
 class DefinitionSpec extends UnitTestBaseSpec {
+
+  private val schemaUrl = "https://raw.githubusercontent.com/hmrc/api-publisher/main/app/resources/api-definition-schema.json"
 
   "API Definition" should {
     "conform to the API Definition schema" in {
-      val schema     = JsonLoader.fromResource("/api-definition-schema.json")
+      val source = Source.fromURL(schemaUrl)
+      val schemaJson =
+        try source.mkString
+        finally source.close()
+
+      val schema     = JsonLoader.fromString(schemaJson)
       val definition = JsonLoader.fromResource("/public/api/definition.json")
       val validator  = JsonSchemaFactory.byDefault().getJsonSchema(schema)
 
