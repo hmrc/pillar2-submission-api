@@ -1,5 +1,5 @@
 
-This section contains information on the fields used in Pillar 2 API requests. 
+This section contains information on the fields used in Pillar 2 API requests. Please use the glossary in the service guide if any terms in the reference are unfamiliar. 
 
 
 
@@ -29,11 +29,11 @@ This section contains information on the fields used in Pillar 2 API requests.
 </tr>
 <tr>
 <td>electionDTTSingleMember</td>
-<td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for Domestic Topup Tax (DTT) payments).</td>
+<td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for DTT payments).</td>
 </tr>
 <tr>
 <td>electionUTPRSingleMember</td>
-<td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for Under Taxed Profit Rule? (UTPR) payments).</td>
+<td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for UTPR payments).</td>
 </tr>
 <tr>
 <td>numberSubGroupDTT</td>
