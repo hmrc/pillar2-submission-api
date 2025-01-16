@@ -30,13 +30,14 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec.{enrolmentKey, identifierName, identifierValue}
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture, WireMockServerHandler}
 
@@ -64,9 +65,28 @@ trait IntegrationSpecBase
 
   val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
 
+  val plrReference         = "XCCVRUGFJG788"
+  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
+
+  val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
+  val ENROLMENT_IDENTIFIER = "PLRID"
+  val DELEGATED_AUTH_RULE  = "pillar2-auth"
+
   val pillar2Enrolments: Enrolments = Enrolments(
-    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "", None))
+    Set(Enrolment(HMRC_PILLAR2_ORG_KEY, Seq(EnrolmentIdentifier(ENROLMENT_IDENTIFIER, plrReference)), "", None))
   )
+
+  val requiredGatewayPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
+  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
+    Enrolment(HMRC_PILLAR2_ORG_KEY)
+      .withIdentifier(ENROLMENT_IDENTIFIER, plrReference)
+      .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+  val requiredRetrievals
+    : Retrieval[Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
+    Retrievals.internalId and Retrievals.groupIdentifier and
+      Retrievals.allEnrolments and Retrievals.affinityGroup and
+      Retrievals.credentialRole and Retrievals.credentials
+
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
@@ -92,8 +112,5 @@ trait IntegrationSpecBase
       inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default()))
     )
     .build()
-
-  val plrReference         = "XCCVRUGFJG788"
-  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
 
 }
