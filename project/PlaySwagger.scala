@@ -8,7 +8,7 @@ object PlaySwagger {
       "uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification",
       "uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
     ),
-    swaggerRoutesFile := "app.routes",
+    swaggerRoutesFile := "submission.routes",
     swaggerV3 := true,
     swaggerPrettyJson := true
   )
