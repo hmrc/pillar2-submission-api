@@ -10,7 +10,7 @@ import scala.util.Try
 
 object JsonToYaml {
 
-  val apiContext = "/organisations/pillar-two"
+  val apiContext      = "/organisations/pillar-two"
   val routesToYamlOas = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
   def settings: Seq[Setting[_]] = Seq(
     routesToYamlOas := {
@@ -30,10 +30,11 @@ object JsonToYaml {
         val jsonMap    = jsonMapper.readValue(jsonString, classOf[Map[String, Any]])
 
         val specification = mutable.LinkedHashMap(
-          "openapi"    -> jsonMap("openapi"),
-          "info"       -> (jsonMap("info").asInstanceOf[Map[String, Any]] + ("version" -> version.value.stripSuffix("-SNAPSHOT"))),
-          "tags"       -> jsonMap("tags"),
-          "paths"      -> jsonMap("paths").asInstanceOf[Map[String, Any]]
+          "openapi" -> jsonMap("openapi"),
+          "info"    -> (jsonMap("info").asInstanceOf[Map[String, Any]] + ("version" -> version.value.stripSuffix("-SNAPSHOT"))),
+          "tags"    -> jsonMap("tags"),
+          "paths" -> jsonMap("paths")
+            .asInstanceOf[Map[String, Any]]
             .map((t: (String, Any)) => s"$apiContext${t._1}" -> t._2),
           "components" -> jsonMap("components")
         )
