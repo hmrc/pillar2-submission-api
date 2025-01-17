@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.55.0
+  version: 0.56.0
   title: Pillar 2 Submission
   description: An API for managing and retrieving Pillar 2 submissions
 tags: []
@@ -22,30 +22,59 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       summary: Submit a Pillar2 UKTR
       responses:
-        "201":
-          description: UKTR Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+        "201":
+          description: UKTR Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                AuthenticationError:
+                  value:
+                    code: '003'
+                    message: Unauthorised
     put:
       security:
       - userRestricted:
@@ -62,30 +91,57 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       summary: Amend a Pillar2 UKTR
       responses:
-        "200":
-          description: UKTR Submission Amended
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Unauthorised
+        "200":
+          description: UKTR Submission Amended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
   /below-threshold-notification:
     post:
       security:
@@ -101,30 +157,57 @@ paths:
               $ref: "#/components/schemas/BTNSubmission"
       summary: Submit a Pillar2 BTN
       responses:
-        "201":
-          description: UKTR Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                InvalidJson:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                EmptyRequestBody:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+        "201":
+          description: UKTR Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                GenericServerError:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                NoSubscriptionData:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Unauthorised
 components:
   schemas:
     BTNSubmission:
