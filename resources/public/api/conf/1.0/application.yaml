@@ -1,17 +1,17 @@
 openapi: 3.0.3
 info:
-  version: 0.55.0
-  title: Pillar 2 Submission
-  description: An API for managing and retrieving Pillar 2 submissions
+  version: 0.60.0
+  title: Pillar 2
+  description: An API for managing and retrieving Pillar 2 data
 tags: []
 paths:
-  /uk-tax-return:
+  /organisations/pillar-two/uk-tax-return:
     post:
       security:
       - userRestricted:
         - write:pillar2
       tags:
-      - app
+      - submission
       operationId: submitUKTR
       requestBody:
         content:
@@ -51,7 +51,7 @@ paths:
       - userRestricted:
         - write:pillar2
       tags:
-      - app
+      - submission
       operationId: amendUKTR
       requestBody:
         content:
@@ -86,13 +86,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-  /below-threshold-notification:
+  /organisations/pillar-two//below-threshold-notification:
     post:
       security:
       - userRestricted:
         - write:pillar2
       tags:
-      - app
+      - submission
       operationId: submitBTN
       requestBody:
         content:
