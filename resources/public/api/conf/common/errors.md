@@ -32,7 +32,7 @@ The errors listed here return a 422 HTTP code when a request for the SubmitUKTR/
 </tr>
 <tr>
 <td>044 - Tax Obligation Already Fulfilled</td>
-<td>A UKTR for the specified period has already been  submitted. If you are trying to amend a UKTR, please check you are sending the <strong>amendUKTR</strong> API request.</td>
+<td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <strong>amendUKTR</strong> API request.</td>
 </tr>
 <tr>
 <td>093 - Invalid Return</td>

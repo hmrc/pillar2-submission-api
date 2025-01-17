@@ -37,11 +37,11 @@ This section contains information on the fields used in Pillar 2 API requests. P
 </tr>
 <tr>
 <td>numberSubGroupDTT</td>
-<td>Under clarification</td>
+<td>Under clarification.</td>
 </tr>
 <tr>
 <td>numberSubGroupUTPR</td>
-<td>Under clarification</td>
+<td>Under clarification.</td>
 </tr>
 <tr>
 <td>totalLiabilityDTT</td>
@@ -81,7 +81,7 @@ This section contains information on the fields used in Pillar 2 API requests. P
 </tr>
 <tr>
 <td>returnType</td>
-<td>Only supplied with Nil Return</td>
+<td>Only supplied with Nil Return.</td>
 </tr>
 </tbody>
 </table>
