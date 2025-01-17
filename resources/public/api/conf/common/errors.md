@@ -48,7 +48,7 @@ The errors listed here return a 422 HTTP code when a request for the SubmitUKTR/
 </tr>
 <tr>
 <td>096 - Invalid Total Liability</td>
-<td>The totalLiability value in the request does not match the combined values of <strong>totalLiabilityDTT</strong>, <strong>totalLiabilityIIR</strong> and <strong>totalLiabilityUTPR</strong>. Please check the sum of these 3 fields matches the <strong>totalLiability</strong> value and submit the request again.</td>
+<td>The <strong>totalLiability</strong> value in the request does not match the combined values of <strong>totalLiabilityDTT</strong>, <strong>totalLiabilityIIR</strong> and <strong>totalLiabilityUTPR</strong>. Please check the sum of these 3 fields matches the <strong>totalLiability</strong> value and submit the request again.</td>
 </tr>
 <tr>
 <td>097 - Invalid Total Liability IIR</td>
