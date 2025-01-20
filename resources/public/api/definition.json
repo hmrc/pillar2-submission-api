@@ -11,7 +11,7 @@
         "endpointsEnabled": false,
         "access": {
           "type": "PRIVATE",
-          "isTrial": true
+          "isTrial": false
         }
       }
     ]
