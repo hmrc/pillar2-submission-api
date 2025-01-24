@@ -1,6 +1,6 @@
 If an API request generates an error, the error is listed in the response section of the endpoint. If you need more information on API errors, please read the error [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide). 
 
-If you need more information on understanding any terms relating to Pillar 2, please check the glossary in the [service guide](https://developer.development.tax.service.gov.uk/guides/pillar2-service-guide/). 
+If you need more information on understanding any terms relating to Pillar 2, please check the glossary in the service guide. 
 
 **Submit UK Tax Return** / **Amend UK Tax Return**
 
