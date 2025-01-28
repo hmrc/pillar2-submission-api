@@ -1,8 +1,9 @@
 openapi: 3.0.3
 info:
-  version: 0.60.0
-  title: Pillar 2
-  description: An API for managing and retrieving Pillar 2 data
+  version: 0.66.0
+  title: Pillar 2 API
+  description: An API for managing and retrieving data in accordance with Pillar 2
+    tax rules.
 tags: []
 paths:
   /organisations/pillar-two/uk-tax-return:
@@ -10,6 +11,47 @@ paths:
       security:
       - userRestricted:
         - write:pillar2
+      description: "Submits a UK Tax Return for a specified accounting period.\n###\
+        \ Error Codes\n<p>This table contains a list of 422 error codes returned when\
+        \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
+        \ codes still in development are marked as \"awaiting clarification\".</p>\n\
+        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
+        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID required</td>\n<td>Please provide\
+        \ the request header for your client, to check it contains the Pillar 2 ID\
+        \ they were assigned at registration.</td>\n</tr>\n<tr>\n<td>003 - Request\
+        \ could not be processed</td>\n<td>The message could not be processed due\
+        \ to locking. Please send the request again.</td>\n</tr>\n<tr>\n<td>004 -\
+        \ Duplicate submission acknowledgment reference</td>\n<td>A request with the\
+        \ same acknowledgement reference has already been sent. This is held in the\
+        \ <strong>correlationid</strong> field in the request header, and generated\
+        \ by the originating system.</td>\n</tr>\n<tr>\n<td>007 - Business Partner\
+        \ does not have an Active Subscription</td>\n<td>The request Pillar 2 ID is\
+        \ not listed as active by HMRC. Please contact the central support team.</td>\n\
+        </tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n<td>A UKTR for\
+        \ the specified period has already been submitted. If you are trying to amend\
+        \ a UKTR, please check you are sending the <strong>amendUKTR</strong> API\
+        \ request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is\
+        \ an error with the tax return you’ve submitted in the request. Awaiting clarification.</td>\n\
+        </tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n<td>The DTT values in the\
+        \ request are invalid. Awaiting clarification.</td>\n</tr>\n<tr>\n<td>095\
+        \ - Invalid UTPR Election</td>\n<td>The UTPR values in the request are invalid.\
+        \ Awaiting clarification.</td>\n</tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n\
+        <td>The <strong>totalLiability</strong> value in the request does not match\
+        \ the combined values of <strong>totalLiabilityDTT</strong>, <strong>totalLiabilityIIR</strong>\
+        \ and <strong>totalLiabilityUTPR</strong>. Please check the sum of these fields\
+        \ matches the <strong>totalLiability</strong> value and submit the request\
+        \ again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability IIR</td>\n<td>The\
+        \ <strong>totalLiabilityIIR</strong> value does not match the <strong>amountIIR\
+        \ value</strong> from the <strong>liableEntities</strong> array. Please check\
+        \ the value of these fields matches and submit the request again.</td>\n</tr>\n\
+        <tr>\n<td>098 - Invalid Total Liability DTT</td>\n<td>The <strong>totalLiabilityDTT</strong>\
+        \ value does not match the <strong>amountDTT</strong> value from the <strong>liableEntities</strong>\
+        \ array. Please check the value of these fields matches and submit the request\
+        \ again.</td>\n</tr>\n<tr>\n<td>099 - Invalid Total Liability UTPR</td>\n\
+        <td>The <strong>totalLiabilityUTPR</strong> value does not match the <strong>amountUTPR</strong>\
+        \ value from the <strong>liableEntities</strong> array. Please check the value\
+        \ of these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
+        </table>       \n"
       tags:
       - submission
       operationId: submitUKTR
@@ -20,7 +62,7 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
-      summary: Submit a Pillar2 UKTR
+      summary: SubmitUKTR
       responses:
         "201":
           description: UKTR Submission Created
@@ -50,6 +92,10 @@ paths:
       security:
       - userRestricted:
         - write:pillar2
+      description: "Amends a UK tax return submitted for a specified accounting period.\
+        \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
+        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\
+        \        \n"
       tags:
       - submission
       operationId: amendUKTR
@@ -60,7 +106,7 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
-      summary: Amend a Pillar2 UKTR
+      summary: AmendUKTR
       responses:
         "200":
           description: UKTR Submission Amended
@@ -91,6 +137,40 @@ paths:
       security:
       - userRestricted:
         - write:pillar2
+      description: |
+        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>002 - Pillar2 ID is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        </tr>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please send the request again.</td>
+        </tr>
+        <tr>
+        <td>004 - Duplicate acknowledgment reference</td>
+        <td>A request with the same acknowledgement reference has already been sent. This is held in the correlationid field in the request header, and generated by the originating system.</td>
+        </tr>
+        <tr>
+        <td>007 - Business Partner does not have an Active Pillar 2 registration</td>
+        <td>The request Pillar 2 ID is not listed as active by HMRC. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>044 - Tax Obligation already fulfilled</td>
+        <td>A BTN for the specified period has already been  submitted.</td>
+        </tr>
+        </tbody>
+        </table>
       tags:
       - submission
       operationId: submitBTN
@@ -99,7 +179,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
-      summary: Submit a Pillar2 BTN
+      summary: SubmitBTN
       responses:
         "201":
           description: UKTR Submission Created
