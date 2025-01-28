@@ -7,7 +7,7 @@ paths:
     post:
     summary: SubmitUKTR
       description: |
-        Submits a UK Tax Return for a specified accounting period in compliance with Pillar 2 rules.
+        Submits a UK Tax Return for a specified accounting period.
         
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
@@ -37,7 +37,7 @@ paths:
         </tr>
         <tr>
         <td>044 - Tax Obligation Already Fulfilled</td>
-        <td>A UKTR for the specified period has already been  submitted. If you are trying to amend a UKTR, please check you are sending the <strong>amendUKTR</strong> API request.</td>
+        <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <strong>amendUKTR</strong> API request.</td>
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
@@ -53,7 +53,7 @@ paths:
         </tr>
         <tr>
         <td>096 - Invalid Total Liability</td>
-        <td>The <strong>totalLiability</strong> value in the request does not match the combined values of <strong>totalLiabilityDTT</strong>, <strong>totalLiabilityIIR</strong> and <strong>totalLiabilityUTPR</strong>. Please check the sum of these 3 fields matches the <strong>totalLiability</strong> value and submit the request again.</td>
+        <td>The <strong>totalLiability</strong> value in the request does not match the combined values of <strong>totalLiabilityDTT</strong>, <strong>totalLiabilityIIR</strong> and <strong>totalLiabilityUTPR</strong>. Please check the sum of these fields matches the <strong>totalLiability</strong> value and submit the request again.</td>
         </tr>
         <tr>
         <td>097 - Invalid Total Liability IIR</td>
@@ -65,28 +65,28 @@ paths:
         </tr>
         <tr>
         <td>099 - Invalid Total Liability UTPR</td>
-        <td>The <strong>totalLiabilityUTPR</strong> value does not match the <strong>amountUTPR</strong> value from the <strong>liableEntities</strong> array. Please check the value of these fields matches and submit the request again.                                                                 </td>
+        <td>The <strong>totalLiabilityUTPR</strong> value does not match the <strong>amountUTPR</strong> value from the <strong>liableEntities</strong> array. Please check the value of these fields matches and submit the request again.</td>
         </tr>
         </tbody>
-        </table>
-
-        
+        </table>       
       security:
         - userRestricted: [write:pillar2]
+        
     put:
     summary: AmendUKTR
       description: |
-        Amends UK tax return submitted for a specified accounting period in compliance with Pillar 2 rules.   
+        Amends a UK tax return submitted for a specified accounting period.   
         
         ### Error Codes
-        <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section.</p>
+        <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>        
       security:
         - userRestricted: [write:pillar2]
+        
   /below-threshold-notification:
     post:
     summary: SubmitBTN
       description: |
-        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for PIllar 2 top-up tax.
+        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
@@ -123,6 +123,7 @@ paths:
 
       security:
         - userRestricted: [write:pillar2]
+        
 components:
   securitySchemes:
     userRestricted:
