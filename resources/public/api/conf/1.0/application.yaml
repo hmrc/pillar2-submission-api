@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.67.0
+  version: 0.69.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -64,30 +64,48 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       summary: SubmitUKTR
       responses:
-        "201":
-          description: UK Tax Return Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "201":
+          description: UK Tax Return Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
     put:
       security:
       - userRestricted:
@@ -108,18 +126,6 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       summary: AmendUKTR
       responses:
-        "200":
-          description: UK Tax Return Submission Amended
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
@@ -132,6 +138,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
+        "200":
+          description: UK Tax Return Submission Amended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
   /organisations/pillar-two/below-threshold-notification:
     post:
       security:
@@ -181,30 +217,48 @@ paths:
               $ref: "#/components/schemas/BTNSubmission"
       summary: SubmitBTN
       responses:
-        "201":
-          description: Below-Threshold Notification Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
         "400":
           description: Invalid Submission
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "201":
+          description: Below-Threshold Notification Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
 components:
   schemas:
     BTNSubmission:
@@ -222,14 +276,8 @@ components:
       properties:
         processingDate:
           type: string
-        formBundleNumber:
-          type: string
-        chargeReference:
-          type: string
-          nullable: true
       required:
       - processingDate
-      - formBundleNumber
     UKTRSubmissionData:
       properties:
         electionUKGAAP:

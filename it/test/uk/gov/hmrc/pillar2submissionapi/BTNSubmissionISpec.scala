@@ -131,14 +131,14 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         when(
           mockAuthConnector
             .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-        ).thenReturn(Future.failed(AuthenticationError("Invalid credentials")))
+        ).thenReturn(Future.failed(AuthenticationError))
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual UNAUTHORIZED
         val errorResponse = result.json.as[UKTRSubmitErrorResponse]
         errorResponse.code mustEqual "003"
-        errorResponse.message mustEqual "Invalid credentials"
+        errorResponse.message mustEqual "Not authorized"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {

@@ -35,14 +35,16 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
       case e if e.isInstanceOf[Pillar2Error] =>
         val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
         val ret = pillar2Error match {
-          case e @ InvalidJson                  => Results.BadRequest(Pillar2ErrorResponse(e.code, "Invalid JSON Payload"))
-          case e @ EmptyRequestBody             => Results.BadRequest(Pillar2ErrorResponse(e.code, "Empty body in request"))
-          case e @ AuthenticationError(message) => Results.Unauthorized(Pillar2ErrorResponse(e.code, message))
-          case e @ NoSubscriptionData(_)        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UktrValidationError(_, _)    => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ BTNValidationError(_, _)     => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnparsableResponse(_)        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnexpectedResponse           => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
+          case e @ InvalidJson               => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
+          case e @ EmptyRequestBody          => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
+          case e @ MissingHeader(_)          => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
+          case e @ AuthenticationError       => Results.Unauthorized(Pillar2ErrorResponse(e.code, e.message))
+          case e @ ForbiddenError            => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
+          case e @ NoSubscriptionData(_)     => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
+          case e @ UktrValidationError(_, _) => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case e @ BTNValidationError(_, _)  => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case e @ UnparsableResponse(_)     => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
+          case e @ UnexpectedResponse        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)
         Future.successful(ret)

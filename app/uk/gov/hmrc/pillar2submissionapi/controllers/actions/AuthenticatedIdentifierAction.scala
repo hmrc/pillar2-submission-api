@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -70,16 +70,16 @@ class AuthenticatedIdentifierAction @Inject() (
               )
             case None =>
               logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-              Future.failed(AuthenticationError("Pillar2 ID not found in enrolments"))
+              Future.failed(ForbiddenError)
           }
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
           agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
         case _ =>
-          logger.warn("User failed authorization checks")
-          Future.failed(AuthenticationError("Invalid credentials"))
+          logger.warn("User is not valid for this API")
+          Future.failed(ForbiddenError)
       } recoverWith { case e: AuthorisationException =>
       logger.warn(s"Authorization failed: ${e.getMessage}")
-      Future.failed(AuthenticationError("Not authorized"))
+      Future.failed(AuthenticationError)
     }
   }
 
@@ -110,13 +110,13 @@ class AuthenticatedIdentifierAction @Inject() (
               )
             )
           case _ =>
-            Future.failed(AuthenticationError("Agent is unauthorised"))
+            Future.failed(ForbiddenError)
         }
 
       case None =>
         Future.failed(
-          AuthenticationError(
-            "Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration."
+          MissingHeader(
+            "Please provide the X-Pillar2-Id header containing the Pillar 2 ID your client was assigned at registration."
           )
         )
     }

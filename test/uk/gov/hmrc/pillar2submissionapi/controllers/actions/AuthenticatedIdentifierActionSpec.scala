@@ -33,6 +33,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.ForbiddenError
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.MissingHeader
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
 
 import java.util.UUID
@@ -118,9 +120,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+        val result = intercept[MissingHeader](await(identifierAction.refine(fakeRequest)))
 
-        result.message mustEqual "Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration."
+        result.message mustEqual "Please provide the X-Pillar2-Id header containing the Pillar 2 ID your client was assigned at registration."
       }
 
       "fail due to user being unauthorised" in {
@@ -144,7 +146,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
 
         val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = intercept[AuthenticationError](await(identifierAction.refine(fakeRequest)))
+        val result = intercept[AuthenticationError.type](await(identifierAction.refine(fakeRequest)))
 
         result.message mustEqual "Not authorized"
       }
@@ -164,13 +166,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Forbidden"
       }
     }
   }
@@ -190,13 +192,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Forbidden"
       }
     }
 
@@ -212,13 +214,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ None ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Forbidden"
       }
     }
 
@@ -234,13 +236,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Forbidden"
       }
     }
 
@@ -256,13 +258,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Invalid credentials"
+        result.message mustEqual "Forbidden"
       }
     }
   }
@@ -282,13 +284,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[ForbiddenError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
         )
 
-        result.message mustEqual "Pillar2 ID not found in enrolments"
+        result.message mustEqual "Forbidden"
       }
     }
   }
@@ -301,7 +303,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           new BodyParsers.Default
         )(ec)
 
-        val result = intercept[AuthenticationError](
+        val result = intercept[AuthenticationError.type](
           await(
             identifierAction.refine(fakeRequest)
           )
