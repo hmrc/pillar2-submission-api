@@ -5,10 +5,9 @@ info:
 paths:
   /uk-tax-return:
     post:
-    summary: SubmitUKTR
+      summary: SubmitUKTR
       description: |
         Submits a UK Tax Return for a specified accounting period.
-        
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
         <table>
@@ -41,15 +40,15 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>*Awaiting clarification*. There is an error with the tax return you’ve submitted in the request.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Awaiting clarification.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
-        <td>*Awaiting clarification*. The DTT values in the request are invalid.</td>
+        <td>The DTT values in the request are invalid. Awaiting clarification.</td>
         </tr>
         <tr>
         <td>095 - Invalid UTPR Election</td>
-        <td>*Awaiting clarification*. The UTPR values in the request are invalid. </td>
+        <td>The UTPR values in the request are invalid. Awaiting clarification.</td>
         </tr>
         <tr>
         <td>096 - Invalid Total Liability</td>
@@ -71,9 +70,8 @@ paths:
         </table>       
       security:
         - userRestricted: [write:pillar2]
-        
     put:
-    summary: AmendUKTR
+      summary: AmendUKTR
       description: |
         Amends a UK tax return submitted for a specified accounting period.   
         
@@ -81,13 +79,11 @@ paths:
         <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>        
       security:
         - userRestricted: [write:pillar2]
-        
   /below-threshold-notification:
     post:
-    summary: SubmitBTN
+      summary: SubmitBTN
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
-        
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
         <table>
@@ -120,10 +116,8 @@ paths:
         </tr>
         </tbody>
         </table>
-
       security:
         - userRestricted: [write:pillar2]
-        
 components:
   securitySchemes:
     userRestricted:
