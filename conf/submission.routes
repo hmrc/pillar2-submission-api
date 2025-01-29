@@ -26,6 +26,24 @@
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "003"
+#           message: "Not authorized"
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "006"
+#           message: "Forbidden"
 #   500:
 #     description: Internal Server Error
 #     content:
@@ -63,6 +81,24 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "003"
+#           message: "Not authorized"
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "006"
+#           message: "Forbidden"
 #   500:
 #     description: Internal Server Error
 #     content:
@@ -98,6 +134,24 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "003"
+#           message: "Not authorized"
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "006"
+#           message: "Forbidden"
 #   500:
 #     description: Internal Server Error
 #     content:

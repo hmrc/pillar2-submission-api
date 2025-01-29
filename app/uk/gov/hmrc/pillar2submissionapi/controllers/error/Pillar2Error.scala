@@ -23,12 +23,12 @@ sealed trait Pillar2Error extends Exception {
 
 case object InvalidJson extends Pillar2Error {
   val code    = "001"
-  val message = "Invalid JSON payload"
+  val message = "Invalid JSON Payload"
 }
 
 case object EmptyRequestBody extends Pillar2Error {
   val code    = "002"
-  val message = "No body provided in request"
+  val message = "Empty body in request"
 }
 
 case object UnexpectedResponse extends Pillar2Error {
@@ -36,13 +36,23 @@ case object UnexpectedResponse extends Pillar2Error {
   val message: String = "Internal Server Error"
 }
 
-case class AuthenticationError(message: String) extends Pillar2Error {
+case object AuthenticationError extends Pillar2Error {
   val code = "003"
+  val message: String = s"Not authorized"
 }
 
 case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
   val code = "004"
   val message: String = s"No Pillar2 subscription found for $pillar2Id"
+}
+
+case class MissingHeader(message: String) extends Pillar2Error {
+  val code = "005"
+}
+
+case object ForbiddenError extends Pillar2Error {
+  val code    = "006"
+  val message = "Forbidden"
 }
 
 case class UktrValidationError(code: String, message: String) extends Pillar2Error
