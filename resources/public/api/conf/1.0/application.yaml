@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.66.0
+  version: 0.67.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -65,7 +65,7 @@ paths:
       summary: SubmitUKTR
       responses:
         "201":
-          description: UKTR Submission Created
+          description: UK Tax Return Submission Created
           content:
             application/json:
               schema:
@@ -109,7 +109,7 @@ paths:
       summary: AmendUKTR
       responses:
         "200":
-          description: UKTR Submission Amended
+          description: UK Tax Return Submission Amended
           content:
             application/json:
               schema:
@@ -182,7 +182,7 @@ paths:
       summary: SubmitBTN
       responses:
         "201":
-          description: UKTR Submission Created
+          description: Below-Threshold Notification Submission Created
           content:
             application/json:
               schema:

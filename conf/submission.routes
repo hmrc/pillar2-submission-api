@@ -1,5 +1,5 @@
 ###
-# summary: Submit a Pillar2 UKTR
+# summary: Submit a Pillar2 UK Tax Return
 # requestBody:
 #   content:
 #     application/json:
@@ -9,7 +9,7 @@
 #               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn'
 # responses:
 #   201:
-#      description: UKTR Submission Created
+#      description: UK Tax Return Submission Created
 #      content:
 #        application/json:
 #          schema:
@@ -36,7 +36,7 @@
 POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controllers.UKTaxReturnController.submitUKTR
 
 ###
-# summary: Amend a Pillar2 UKTR
+# summary: Amend a Pillar2 UK Tax Return
 # requestBody:
 #   content:
 #     application/json:
@@ -46,7 +46,7 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #               - $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn'
 # responses:
 #   200:
-#      description: UKTR Submission Amended
+#      description: UK Tax Return Submission Amended
 #      content:
 #        application/json:
 #          schema:
@@ -73,7 +73,7 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controllers.UKTaxReturnController.amendUKTR
 
 ###
-# summary: Submit a Pillar2 BTN
+# summary: Submit a Pillar2 Below-Threshold Notification
 # requestBody:
 #   content:
 #     application/json:
@@ -81,7 +81,7 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission'
 # responses:
 #   201:
-#      description: UKTR Submission Created
+#      description: Below-Threshold Notification Submission Created
 #      content:
 #        application/json:
 #          schema:
