@@ -64,13 +64,12 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[SubmitBTNSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual "XTC01234123412"
-        result.formBundleNumber mustEqual "119000004320"
+        result.processingDate mustEqual "2022-01-31T09:26:17Z"
       }
 
       "return 400 BAD_REQUEST for invalid request body" in {
@@ -119,14 +118,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
         )
 
         val result =
           Await.result(baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[SubmitBTNSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual "XTC01234123412"
-        result.formBundleNumber mustEqual "119000004320"
+        result.processingDate mustEqual "2022-01-31T09:26:17Z"
       }
 
       "return 401 UNAUTHORIZED when user cannot be identified" in {
@@ -237,14 +235,13 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412")))
+          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
         )
 
         val result =
           Await.result(baseRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[SubmitBTNSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual "XTC01234123412"
-        result.formBundleNumber mustEqual "119000004320"
+        result.processingDate mustEqual "2022-01-31T09:26:17Z"
       }
     }
   }

@@ -48,7 +48,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitBTNService.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              SubmitBTNSuccessResponse("2022-01-31T09:26:17Z", "119000004320", Some("XTC01234123412"))
+              SubmitBTNSuccessResponse("2022-01-31T09:26:17Z")
             )
           )
 

@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification
 
 import play.api.libs.json.{Json, OFormat}
 
-case class SubmitBTNSuccessResponse(processingDate: String, formBundleNumber: String, chargeReference: Option[String])
+case class SubmitBTNSuccessResponse(processingDate: String)
 
 case object SubmitBTNSuccessResponse {
   implicit val successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]

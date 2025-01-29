@@ -93,5 +93,5 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
 object SubmitBTNServiceSpec {
   val validBTNSubmission = new BTNSubmission(LocalDate.now(), LocalDate.now().plus(365, ChronoUnit.DAYS))
 
-  val okResponse: SubmitBTNSuccessResponse = SubmitBTNSuccessResponse("2022-01-31", "119000004320", Some("XTC01234123412"))
+  val okResponse: SubmitBTNSuccessResponse = SubmitBTNSuccessResponse("2022-01-31")
 }
