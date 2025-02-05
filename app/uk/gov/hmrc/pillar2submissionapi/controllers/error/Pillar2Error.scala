@@ -57,5 +57,4 @@ case object ForbiddenError extends Pillar2Error {
 
 case class UktrValidationError(code: String, message: String) extends Pillar2Error
 
-
 case class BTNValidationError(code: String, message: String) extends Pillar2Error
