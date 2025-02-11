@@ -28,7 +28,7 @@ paths:
         </tr>
         <tr>
         <td>004 - Duplicate submission acknowledgment reference</td>
-        <td>The submitted request is a duplicate of a previously submitted request.</td>
+        <td>The submitted request has been identified as a duplicate of a previous request.</td>
         </tr>
         <tr>
         <td>007 - Business Partner does not have an Active Subscription</td>
