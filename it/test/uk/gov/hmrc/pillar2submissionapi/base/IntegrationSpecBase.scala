@@ -38,7 +38,6 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, IdentifierAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture, WireMockServerHandler}
 
 import java.util.UUID
@@ -109,7 +108,7 @@ trait IntegrationSpecBase
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure("microservice.services.pillar2.port" -> wiremockPort)
     .overrides(
-      inject.bind[IdentifierAction].toInstance(new AuthenticatedIdentifierAction(mockAuthConnector, new BodyParsers.Default()))
+      inject.bind[AuthConnector].toInstance(mockAuthConnector)
     )
     .build()
 
