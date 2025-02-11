@@ -74,7 +74,9 @@ class AuthenticatedIdentifierAction @Inject() (
           }
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
           agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
-        case _ =>
+        case c =>
+          logger.warn(s"pattern: affinityGroup: ${c.a.a.b} - credentialRole: ${c.a.b} ")
+          logger.warn(s"internalId: ${c.a.a.a.a.a} - groupId: ${c.a.a.a.a.b}")
           logger.warn("User is not valid for this API")
           Future.failed(ForbiddenError)
       } recoverWith { case e: AuthorisationException =>
