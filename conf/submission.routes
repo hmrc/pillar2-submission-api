@@ -1,5 +1,11 @@
 ###
 # summary: Submit a Pillar2 UK Tax Return
+# parameters:
+#  - in: header
+#    name: X-Pillar2-Id
+#    schema:
+#      type: string
+#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
 # requestBody:
 #   content:
 #     application/json:
@@ -55,6 +61,12 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 
 ###
 # summary: Amend a Pillar2 UK Tax Return
+# parameters:
+#  - in: header
+#    name: X-Pillar2-Id
+#    schema:
+#      type: string
+#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
 # requestBody:
 #   content:
 #     application/json:
@@ -110,6 +122,12 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 
 ###
 # summary: Submit a Pillar2 Below-Threshold Notification
+# parameters:
+#  - in: header
+#    name: X-Pillar2-Id
+#    schema:
+#      type: string
+#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
 # requestBody:
 #   content:
 #     application/json:
