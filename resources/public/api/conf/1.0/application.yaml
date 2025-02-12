@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.74.0
+  version: 0.76.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -71,11 +71,24 @@ paths:
       summary: SubmitUKTR
       responses:
         "400":
-          description: Invalid Submission
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
         "201":
           description: UK Tax Return Submission Created
           content:
@@ -88,6 +101,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "403":
           description: Forbidden
           content:
@@ -103,6 +125,55 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid UTPR Election:
+                  value:
+                    code: '095'
+                    message: Invalid UTPR Election
+                Invalid Pillar2ID:
+                  value:
+                    code: '002'
+                    message: Pillar 2 ID missing or invalid
+                Invalid Total Liability IIR:
+                  value:
+                    code: '097'
+                    message: Invalid Total Liability IIR
+                Invalid DTT Election:
+                  value:
+                    code: '094'
+                    message: Invalid DTT Election
+                Invalid Return:
+                  value:
+                    code: '093'
+                    message: Invalid Return
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Duplicate Submission:
+                  value:
+                    code: '004'
+                    message: Duplicate submission acknowledgment reference
+                Invalid Total Liability UTPR:
+                  value:
+                    code: '099'
+                    message: Invalid Total Liability UTPR
+                Invalid Total Liability:
+                  value:
+                    code: '096'
+                    message: Invalid Total Liability
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                No Active Submission:
+                  value:
+                    code: '007'
+                    message: Business Partner does not have an active subscription
+                Invalid Total Liability DTT:
+                  value:
+                    code: '098'
+                    message: Invalid Total Liability DTT
         "401":
           description: Unauthorized
           content:
@@ -139,17 +210,39 @@ paths:
       summary: AmendUKTR
       responses:
         "400":
-          description: Invalid Submission
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "403":
           description: Forbidden
           content:
@@ -165,6 +258,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid UTPR Election:
+                  value:
+                    code: '095'
+                    message: Invalid UTPR Election
+                Invalid Pillar2ID:
+                  value:
+                    code: '002'
+                    message: Pillar 2 ID missing or invalid
+                Invalid Total Liability IIR:
+                  value:
+                    code: '097'
+                    message: Invalid Total Liability IIR
+                Invalid DTT Election:
+                  value:
+                    code: '094'
+                    message: Invalid DTT Election
+                Invalid Return:
+                  value:
+                    code: '093'
+                    message: Invalid Return
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Duplicate Submission:
+                  value:
+                    code: '004'
+                    message: Duplicate submission acknowledgment reference
+                Invalid Total Liability UTPR:
+                  value:
+                    code: '099'
+                    message: Invalid Total Liability UTPR
+                Invalid Total Liability:
+                  value:
+                    code: '096'
+                    message: Invalid Total Liability
+                No Active Submission:
+                  value:
+                    code: '007'
+                    message: Business Partner does not have an active subscription
+                Invalid Total Liability DTT:
+                  value:
+                    code: '098'
+                    message: Invalid Total Liability DTT
         "401":
           description: Unauthorized
           content:
@@ -236,11 +374,24 @@ paths:
       summary: SubmitBTN
       responses:
         "400":
-          description: Invalid Submission
+          description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
         "201":
           description: Below-Threshold Notification Submission Created
           content:
@@ -253,6 +404,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
         "403":
           description: Forbidden
           content:
@@ -268,6 +428,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Pillar2ID:
+                  value:
+                    code: '002'
+                    message: Pillar 2 ID missing or invalid
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  value:
+                    code: '007'
+                    message: Business Partner does not have an Active Pillar 2 registration
         "401":
           description: Unauthorized
           content:
