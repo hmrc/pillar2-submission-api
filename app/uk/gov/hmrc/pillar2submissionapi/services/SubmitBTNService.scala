@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{BTNValidationError, UnexpectedResponse, UnparsableResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{BTNValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,14 +38,15 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implic
         response.json.validate[SubmitBTNSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
-            throw UnparsableResponse("Failed to parse success response: " + errors.map(e => e._2.toString()))
+            logger.error("Failed to parse success response: " + errors.map(e => e._2.toString()))
+            throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[SubmitBTNErrorResponse] match {
-          case JsSuccess(response, _) =>
-            throw BTNValidationError(response.code, response.message)
+          case JsSuccess(response, _) => throw BTNValidationError(response.code, response.message)
           case JsError(errors) =>
-            throw UnparsableResponse("Failed to parse error response: " + errors.map(e => e._2.toString()))
+            logger.error("Failed to parse success response: " + errors.map(e => e._2.toString()))
+            throw UnexpectedResponse
         }
       case status =>
         logger.error(s"Error calling pillar2 backend. Got response: $status and payload :${response.json}")

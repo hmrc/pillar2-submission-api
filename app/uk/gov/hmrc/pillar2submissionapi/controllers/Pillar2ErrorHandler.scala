@@ -43,7 +43,6 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
           case e @ NoSubscriptionData(_)     => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
           case e @ UktrValidationError(_, _) => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
           case e @ BTNValidationError(_, _)  => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnparsableResponse(_)     => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
           case e @ UnexpectedResponse        => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)

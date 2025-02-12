@@ -49,18 +49,18 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     }
   }
 
-  "submitBTN() unparsable 201 response back" should {
+  "submitBTN() unexpected 201 response back" should {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unparsable success response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
-      intercept[UnparsableResponse](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 
   "submitBTN() valid 422 response back" should {
-    "Runtime exception thrown (To be updated to the appropriate exception)" in {
+    "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return")), Map.empty)))
@@ -69,13 +69,13 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     }
   }
 
-  "submitBTN() unparsable 422 response back" should {
-    "Runtime exception thrown (To be updated to 500 Internal server error exception)" in {
+  "submitBTN() unexpected 422 response back" should {
+    "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unparsable error response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-      intercept[UnparsableResponse](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 

@@ -99,15 +99,6 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "Invalid Return"
   }
 
-  test("UnparsableResponse error response") {
-    val response =
-      classUnderTest.onServerError(dummyRequest, UnparsableResponse("Failed to parse success response: One of many errors!, Another error!"))
-    status(response) mustEqual 500
-    val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "500"
-    result.message mustEqual "Failed to parse success response: One of many errors!, Another error!"
-  }
-
   test("UnexpectedResponse error response") {
     val response = classUnderTest.onServerError(dummyRequest, UnexpectedResponse)
     status(response) mustEqual 500
