@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.72.0
+  version: 0.74.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -62,6 +62,12 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+      parameters:
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: SubmitUKTR
       responses:
         "400":
@@ -124,6 +130,12 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+      parameters:
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: AmendUKTR
       responses:
         "400":
@@ -215,6 +227,12 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
+      parameters:
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: SubmitBTN
       responses:
         "400":
