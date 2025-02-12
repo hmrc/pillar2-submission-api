@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Configuration
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -31,22 +32,24 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.ForbiddenError
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.MissingHeader
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-import AuthenticatedIdentifierAction._
-
 class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
+
+  val emptyAppConfig: AppConfig = AppConfig(new ServicesConfig(Configuration.empty))
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    new BodyParsers.Default
+    new BodyParsers.Default,
+    emptyAppConfig
   )(ec)
 
   "IdentifierAction - different types of user" when {
@@ -76,6 +79,72 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     }
 
     "a user is a registered Agent" should {
+      "fail if agent is a test user and test users are disabled" in {
+        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          allowTestUsers
+        )(ec)
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val result = intercept[ForbiddenError.type](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
+        )
+
+        result.message mustEqual "Forbidden"
+      }
+
+      "pass if agent is a test user and test users are enabled" in {
+        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> true))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          allowTestUsers
+        )(ec)
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
+        val result = await(identifierAction.refine(fakeRequest))
+
+        result.map { identifierRequest =>
+          identifierRequest.userId             must be(id)
+          identifierRequest.groupId            must be(Some(groupId))
+          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.userIdForEnrolment must be(providerId)
+        }
+      }
+
       "pass if agent is a delegated entity of an org" in {
 
         when(
@@ -247,7 +316,42 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     }
 
     "user missing" should {
-      "user is unauthorized" in {
+      "test user is authorised if featureflag is enabled" in {
+        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> true))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          allowTestUsers
+        )(ec)
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val result = await(identifierAction.refine(fakeRequest))
+
+        result.map { identifierRequest =>
+          identifierRequest.userId             must be(id)
+          identifierRequest.groupId            must be(Some(groupId))
+          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.userIdForEnrolment must be(providerId)
+        }
+      }
+
+      "test user is unauthorized if featureflag is disabled" in {
+        val disallowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          disallowTestUsers
+        )(ec)
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
@@ -300,7 +404,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "user is unauthorized" in {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           new FakeFailingAuthConnector,
-          new BodyParsers.Default
+          new BodyParsers.Default,
+          emptyAppConfig
         )(ec)
 
         val result = intercept[AuthenticationError.type](

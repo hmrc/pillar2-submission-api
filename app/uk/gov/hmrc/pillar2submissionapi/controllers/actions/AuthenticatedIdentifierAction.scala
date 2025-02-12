@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -34,7 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
-  val parser:                    BodyParsers.Default
+  val parser:                    BodyParsers.Default,
+  val config:                    AppConfig
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
@@ -47,6 +49,30 @@ class AuthenticatedIdentifierAction @Inject() (
       identifier       <- pillar2Enrolment.getIdentifier(ENROLMENT_IDENTIFIER)
     } yield identifier.value
 
+  private def processPillar2Enrolment[A](
+    request:    Request[A],
+    enrolments: Enrolments,
+    internalId: String,
+    groupId:    String,
+    providerId: String
+  ): Future[IdentifierRequest[A]] = getPillar2Id(
+    enrolments
+  ) match {
+    case Some(pillar2Id) =>
+      Future.successful(
+        IdentifierRequest(
+          request = request,
+          userId = internalId,
+          groupId = Some(groupId),
+          clientPillar2Id = pillar2Id,
+          userIdForEnrolment = providerId
+        )
+      )
+    case None =>
+      logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
+      Future.failed(ForbiddenError)
+  }
+
   override protected def transform[A](request: Request[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
@@ -56,27 +82,15 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
       .retrieve(retrievals) {
+        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ None ~ Some(credentials) if config.allowTestUsers =>
+          processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          getPillar2Id(enrolments) match {
-            case Some(pillar2Id) =>
-              Future.successful(
-                IdentifierRequest(
-                  request = request,
-                  userId = internalId,
-                  groupId = Some(groupId),
-                  clientPillar2Id = pillar2Id,
-                  userIdForEnrolment = credentials.providerId
-                )
-              )
-            case None =>
-              logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-              Future.failed(ForbiddenError)
-          }
+          processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
           agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
-        case c =>
-          logger.warn(s"pattern: affinityGroup: ${c.a.a.b} - credentialRole: ${c.a.b} ")
-          logger.warn(s"internalId: ${c.a.a.a.a.a} - groupId: ${c.a.a.a.a.b}")
+        case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
+          agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
+        case _ =>
           logger.warn("User is not valid for this API")
           Future.failed(ForbiddenError)
       } recoverWith { case e: AuthorisationException =>

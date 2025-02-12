@@ -23,14 +23,17 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.Configuration
 import play.api.mvc._
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
+import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.pillar2submissionapi.services.{SubmitBTNService, UKTaxReturnService}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -46,10 +49,11 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
 
   val mockUkTaxReturnService: UKTaxReturnService = mock[UKTaxReturnService]
   val mockSubmitBTNService:   SubmitBTNService   = mock[SubmitBTNService]
-
+  val appConfig:              AppConfig          = AppConfig(new ServicesConfig(Configuration.empty))
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    new BodyParsers.Default
+    new BodyParsers.Default,
+    appConfig
   ) {
     override def transform[A](request: Request[A]): Future[IdentifierRequest[A]] =
       Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = ""))
