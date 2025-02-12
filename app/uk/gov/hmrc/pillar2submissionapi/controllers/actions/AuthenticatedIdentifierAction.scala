@@ -49,7 +49,7 @@ class AuthenticatedIdentifierAction @Inject() (
       identifier       <- pillar2Enrolment.getIdentifier(ENROLMENT_IDENTIFIER)
     } yield identifier.value
 
-  def processPillar2Enrolment[A](
+  private def processPillar2Enrolment[A](
     request:    Request[A],
     enrolments: Enrolments,
     internalId: String,
@@ -90,9 +90,7 @@ class AuthenticatedIdentifierAction @Inject() (
           agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
           agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
-        case c =>
-          logger.warn(s"pattern: affinityGroup: ${c.a.a.b} - credentialRole: ${c.a.b} ")
-          logger.warn(s"internalId: ${c.a.a.a.a.a} - groupId: ${c.a.a.a.a.b}")
+        case _ =>
           logger.warn("User is not valid for this API")
           Future.failed(ForbiddenError)
       } recoverWith { case e: AuthorisationException =>

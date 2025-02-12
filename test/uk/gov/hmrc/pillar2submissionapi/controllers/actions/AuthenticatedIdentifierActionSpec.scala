@@ -79,6 +79,72 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     }
 
     "a user is a registered Agent" should {
+      "fail if agent is a test user and test users are disabled" in {
+        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          allowTestUsers
+        )(ec)
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val result = intercept[ForbiddenError.type](
+          await(
+            identifierAction.refine(fakeRequest)
+          )
+        )
+
+        result.message mustEqual "Forbidden"
+      }
+
+      "pass if agent is a test user and test users are enabled" in {
+        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> true))))
+
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          mockAuthConnector,
+          new BodyParsers.Default,
+          allowTestUsers
+        )(ec)
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
+        val result = await(identifierAction.refine(fakeRequest))
+
+        result.map { identifierRequest =>
+          identifierRequest.userId             must be(id)
+          identifierRequest.groupId            must be(Some(groupId))
+          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.userIdForEnrolment must be(providerId)
+        }
+      }
+
       "pass if agent is a delegated entity of an org" in {
 
         when(
