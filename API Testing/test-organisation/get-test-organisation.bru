@@ -1,0 +1,26 @@
+meta {
+  name: Get Test Organisation
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{submissionsApiBaseUrl}}/test-only/organisation
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearerToken}}
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should contain all required fields", function() {
+    expect(res.body.organisation).to.not.be.undefined;
+    expect(res.body.organisation.lastUpdated).to.not.be.undefined;
+  });
+} 

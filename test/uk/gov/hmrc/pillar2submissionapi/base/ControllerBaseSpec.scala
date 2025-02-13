@@ -32,6 +32,7 @@ import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
+import uk.gov.hmrc.pillar2submissionapi.services.TestOrganisationService
 import uk.gov.hmrc.pillar2submissionapi.services.{SubmitBTNService, UKTaxReturnService}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -47,9 +48,10 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
   val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
 
-  val mockUkTaxReturnService: UKTaxReturnService = mock[UKTaxReturnService]
-  val mockSubmitBTNService:   SubmitBTNService   = mock[SubmitBTNService]
-  val appConfig:              AppConfig          = AppConfig(new ServicesConfig(Configuration.empty))
+  val mockUkTaxReturnService:      UKTaxReturnService      = mock[UKTaxReturnService]
+  val mockSubmitBTNService:        SubmitBTNService        = mock[SubmitBTNService]
+  val mockTestOrganisationService: TestOrganisationService = mock[TestOrganisationService]
+  val appConfig:                   AppConfig               = AppConfig(new ServicesConfig(Configuration.empty))
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
     new BodyParsers.Default,

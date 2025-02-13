@@ -23,7 +23,10 @@ import javax.inject.{Inject, Singleton}
 case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   lazy val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+  lazy val stubBaseUrl:    String = servicesConfig.baseUrl("stub")
 
   lazy val allowTestUsers: Boolean =
     servicesConfig.getBoolean("features.allow-test-users")
+
+  lazy val testOrganisationEnabled: Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
 }

@@ -1,0 +1,21 @@
+meta {
+  name: Delete Test Organisation
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{submissionsApiBaseUrl}}/test-only/organisation
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearerToken}}
+}
+
+tests {
+  test("should return 204 No Content", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+} 

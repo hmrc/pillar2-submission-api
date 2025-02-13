@@ -58,3 +58,23 @@ case object ForbiddenError extends Pillar2Error {
 case class UktrValidationError(code: String, message: String) extends Pillar2Error
 
 case class BTNValidationError(code: String, message: String) extends Pillar2Error
+
+case class OrganisationAlreadyExists(pillar2Id: String) extends Pillar2Error {
+  override val code:    String = "409"
+  override val message: String = s"Organisation with pillar2Id: $pillar2Id already exists"
+}
+
+case class OrganisationNotFound(pillar2Id: String) extends Pillar2Error {
+  override val code:    String = "404"
+  override val message: String = s"Organisation not found for pillar2Id: $pillar2Id"
+}
+
+case class DatabaseError(operation: String) extends Pillar2Error {
+  override val code:    String = "500"
+  override val message: String = s"Failed to $operation organisation due to database error"
+}
+
+case class TestEndpointDisabled() extends Pillar2Error {
+  override val code:    String = "403"
+  override val message: String = "Test endpoints are not available in this environment"
+}

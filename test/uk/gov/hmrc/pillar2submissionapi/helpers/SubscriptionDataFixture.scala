@@ -81,7 +81,7 @@ trait SubscriptionDataFixture {
       |      "accountingPeriod": {
       |          "startDate": "2024-01-06",
       |          "endDate": "2025-04-06",
-      |          "duetDate": "2024-04-06"
+      |          "dueDate": "2024-04-06"
       |      },
       |      "accountStatus": {
       |          "inactive": true
