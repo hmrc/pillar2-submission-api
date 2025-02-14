@@ -118,6 +118,32 @@ paths:
         </table>
       security:
         - userRestricted: [write:pillar2]
+  /test-only/organisation:
+    post:
+      summary: Create Test Organisation
+      description: |
+        Creates a test organisation associated with your authed organisation.
+      security:
+        - userRestricted: [write:pillar2]
+    get:
+      summary: Get Test Organisation
+      description: |
+        Gets a test organisation associated with your authed organisation.
+      security:
+        - userRestricted: [read:pillar2]
+    put:
+      summary: Update Test Organisation
+      description: |
+        Updates a test organisation associated with your authed organisation.
+      security:
+        - userRestricted: [write:pillar2]
+    delete:
+      summary: Delete Test Organisation
+      description: |
+        Deletes a test organisation associated with your authed organisation.
+      security:
+        - userRestricted: [write:pillar2]
+   
 components:
   securitySchemes:
     userRestricted:

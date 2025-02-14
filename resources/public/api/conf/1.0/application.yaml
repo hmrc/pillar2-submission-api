@@ -6,6 +6,348 @@ info:
     tax rules.
 tags: []
 paths:
+  /organisations/pillar-two/test-only/organisation:
+    post:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Creates a test organisation associated with your authed organisation.
+      tags:
+      - test_only
+      operationId: createTestOrganisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestOrganisation"
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
+        schema:
+          type: string
+        required: false
+      summary: Create Test Organisation
+      responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                invalid_json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON Payload
+                empty_body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+        "201":
+          description: Test Organisation Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestOrganisationWithId"
+              example:
+                pillar2Id: XAPLR1234567890
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: Test Organisation Ltd
+                    registrationDate: 2024-01-01
+                  accountingPeriod:
+                    startDate: 2024-01-01
+                    endDate: 2024-12-31
+                  lastUpdated: 2024-01-01T12:00:00Z
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 500
+                message: Failed to create organisation due to database error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 403
+                message: Test endpoints are not available in this environment
+        "409":
+          description: Organisation Already Exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 409
+                message: "Organisation with pillar2Id: XAPLR1234567890 already exists"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
+    get:
+      security:
+      - userRestricted:
+        - read:pillar2
+      description: |
+        Gets a test organisation associated with your authed organisation.
+      tags:
+      - test_only
+      operationId: getTestOrganisation
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
+        schema:
+          type: string
+        required: false
+      summary: Get Test Organisation
+      responses:
+        "404":
+          description: Organisation Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 404
+                message: "Organisation not found for pillar2Id: XAPLR1234567890"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 500
+                message: Internal Server Error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 403
+                message: Test endpoints are not available in this environment
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
+        "200":
+          description: Test Organisation Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestOrganisationWithId"
+              example:
+                pillar2Id: XAPLR1234567890
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: Test Organisation Ltd
+                    registrationDate: 2024-01-01
+                  accountingPeriod:
+                    startDate: 2024-01-01
+                    endDate: 2024-12-31
+                  lastUpdated: 2024-01-01T12:00:00Z
+    put:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Updates a test organisation associated with your authed organisation.
+      tags:
+      - test_only
+      operationId: updateTestOrganisation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestOrganisation"
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
+        schema:
+          type: string
+        required: false
+      summary: Update Test Organisation
+      responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                invalid_json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON Payload
+                empty_body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+        "404":
+          description: Organisation Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 404
+                message: "Organisation not found for pillar2Id: XAPLR1234567890"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 500
+                message: Failed to update organisation due to database error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 403
+                message: Test endpoints are not available in this environment
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
+        "200":
+          description: Test Organisation Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestOrganisationWithId"
+              example:
+                pillar2Id: XAPLR1234567890
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: Test Organisation Ltd
+                    registrationDate: 2024-01-01
+                  accountingPeriod:
+                    startDate: 2024-01-01
+                    endDate: 2024-12-31
+                  lastUpdated: 2024-01-01T12:00:00Z
+    delete:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Deletes a test organisation associated with your authed organisation.
+      tags:
+      - test_only
+      operationId: deleteTestOrganisation
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
+        schema:
+          type: string
+        required: false
+      summary: Delete Test Organisation
+      responses:
+        "404":
+          description: Organisation Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 404
+                message: "Organisation not found for pillar2Id: XAPLR1234567890"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 500
+                message: Failed to delete organisation due to database error
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: 403
+                message: Test endpoints are not available in this environment
+        "204":
+          description: Test Organisation Deleted Successfully
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
   /organisations/pillar-two/uk-tax-return:
     post:
       security:
@@ -460,6 +802,19 @@ paths:
                 message: Not authorized
 components:
   schemas:
+    TestOrganisation:
+      properties:
+        orgDetails:
+          $ref: "#/components/schemas/OrgDetails"
+        accountingPeriod:
+          $ref: "#/components/schemas/AccountingPeriod"
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+      - orgDetails
+      - accountingPeriod
+      - lastUpdated
     BTNSubmission:
       properties:
         accountingPeriodFrom:
@@ -521,6 +876,39 @@ components:
       - amountOwedDTT
       - amountOwedIIR
       - amountOwedUTPR
+    AccountingPeriod:
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+      required:
+      - startDate
+      - endDate
+    TestOrganisationWithId:
+      properties:
+        pillar2Id:
+          type: string
+        organisation:
+          $ref: "#/components/schemas/TestOrganisation"
+      required:
+      - pillar2Id
+      - organisation
+    OrgDetails:
+      properties:
+        domesticOnly:
+          type: boolean
+        organisationName:
+          type: string
+        registrationDate:
+          type: string
+          format: date
+      required:
+      - domesticOnly
+      - organisationName
+      - registrationDate
     responses.UKTRSubmitSuccessResponse:
       properties:
         processingDate:

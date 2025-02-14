@@ -107,6 +107,8 @@ trait IntegrationSpecBase
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure("microservice.services.pillar2.port" -> wiremockPort)
+    .configure("microservice.services.stub.port" -> wiremockPort)
+    .configure("features.testOrganisationEnabled" -> true)
     .overrides(
       inject.bind[AuthConnector].toInstance(mockAuthConnector)
     )

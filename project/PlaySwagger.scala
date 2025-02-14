@@ -6,9 +6,11 @@ object PlaySwagger {
     swaggerDomainNameSpaces := Seq(
       "uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions",
       "uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification",
-      "uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+      "uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse",
+      "uk.gov.hmrc.pillar2submissionapi.models.response.StubErrorResponse",
+      "uk.gov.hmrc.pillar2submissionapi.models.organisation"
     ),
-    swaggerRoutesFile := "submission.routes",
+    swaggerRoutesFile := "public.routes",
     swaggerV3 := true,
     swaggerPrettyJson := true
   )

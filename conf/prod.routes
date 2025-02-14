@@ -1,4 +1,4 @@
 # Add all the application routes to the submission.routes file
-->         /                          submission.Routes
 ->         /                          health.Routes
 ->         /                          definition.Routes
+->         /                          public.Routes
