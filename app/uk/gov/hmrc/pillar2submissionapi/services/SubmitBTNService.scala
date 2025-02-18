@@ -37,19 +37,19 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implic
       case 201 =>
         response.json.validate[SubmitBTNSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(errors) =>
-            logger.error("Failed to parse success response: " + errors.map(e => e._2.toString()))
+          case JsError(_) =>
+            logger.error("Failed to parse success response")
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[SubmitBTNErrorResponse] match {
           case JsSuccess(response, _) => throw BTNValidationError(response.code, response.message)
-          case JsError(errors) =>
-            logger.error("Failed to parse success response: " + errors.map(e => e._2.toString()))
+          case JsError(_) =>
+            logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
         }
       case status =>
-        logger.error(s"Error calling pillar2 backend. Got response: $status and payload :${response.json}")
+        logger.error(s"Error calling pillar2 backend. Got response: $status")
         throw UnexpectedResponse
     }
 }

@@ -94,7 +94,7 @@ class AuthenticatedIdentifierAction @Inject() (
           logger.warn("User is not valid for this API")
           Future.failed(ForbiddenError)
       } recoverWith { case e: AuthorisationException =>
-      logger.warn(s"Authorization failed: ${e.getMessage}")
+      logger.warn(s"Authorization failed", e)
       Future.failed(AuthenticationError)
     }
   }
@@ -112,9 +112,9 @@ class AuthenticatedIdentifierAction @Inject() (
               .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
               .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
         ).retrieve(retrievals) {
-          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(_) ~ _ ~ Some(credentials) =>
+          case Some(internalId) ~ Some(groupId) ~ _ ~ Some(_) ~ _ ~ Some(credentials) =>
             logger.info(
-              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment"
             )
             Future.successful(
               IdentifierRequest(
