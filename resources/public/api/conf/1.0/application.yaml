@@ -1,12 +1,12 @@
 openapi: 3.0.3
 info:
-  version: 0.76.0
+  version: 0.78.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
 tags: []
 paths:
-  /organisations/pillar-two/test-only/organisation:
+  /organisations/pillar-two/setup/organisation:
     post:
       security:
       - userRestricted:
@@ -14,7 +14,7 @@ paths:
       description: |
         Creates a test organisation associated with your authed organisation.
       tags:
-      - test_only
+      - setup
       operationId: createTestOrganisation
       requestBody:
         content:
@@ -113,7 +113,7 @@ paths:
       description: |
         Gets a test organisation associated with your authed organisation.
       tags:
-      - test_only
+      - setup
       operationId: getTestOrganisation
       parameters:
       - name: Authorization
@@ -192,7 +192,7 @@ paths:
       description: |
         Updates a test organisation associated with your authed organisation.
       tags:
-      - test_only
+      - setup
       operationId: updateTestOrganisation
       requestBody:
         content:
@@ -291,7 +291,7 @@ paths:
       description: |
         Deletes a test organisation associated with your authed organisation.
       tags:
-      - test_only
+      - setup
       operationId: deleteTestOrganisation
       parameters:
       - name: Authorization

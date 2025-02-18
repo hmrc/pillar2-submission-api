@@ -40,7 +40,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val baseUrl = s"http://localhost:$port/test-only/organisation"
+  lazy val baseUrl = s"http://localhost:$port/setup/organisation"
 
   private val stubUrl = "/pillar2/test/organisation"
 
