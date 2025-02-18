@@ -37,24 +37,24 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
   def amendUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     ukTaxReturnConnector.amendUKTR(request).map(convertToResult)
 
-  private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse = {
-
+  private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
     response.status match {
       case CREATED | OK =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_)       => logger.error(s"Error while parsing the backend response")
+          case JsError(_) =>
+            logger.error(s"Error while parsing the backend response")
             throw UnexpectedResponse
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) => throw UktrValidationError(response.code, response.message)
-          case JsError(_)        => logger.error(s"Error while unprocessable entity response")
+          case JsError(_) =>
+            logger.error(s"Error while unprocessable entity response")
             throw UnexpectedResponse
         }
       case status =>
         logger.error(s"Error while calling pillar2 backend. Got status: $status")
         throw UnexpectedResponse
     }
-  }
 }
