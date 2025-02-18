@@ -38,31 +38,22 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
     ukTaxReturnConnector.amendUKTR(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse = {
-    def logAndThrow(errors: Seq[(JsPath, Seq[JsonValidationError])]): UKTRSubmitSuccessResponse = {
-      val errorPath    = errors.map(_._1.path.headOption.fold("error.path.missing")(_.asInstanceOf[KeyPathNode].key))
-      val errorMessage = errors.map(_._2.map(_.message).headOption.fold("error.message.missing")(identity))
-      val zippedErrors =
-        errorPath
-          .zip(errorMessage)
-          .map { case (path, message) => s"$path: $message" }
-          .mkString("; ")
-      logger.error(s"Error while parsing the backend response ${response.json} - ($zippedErrors)")
-      throw UnexpectedResponse
-    }
 
     response.status match {
       case CREATED | OK =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(errors)       => logAndThrow(errors.asInstanceOf[Seq[(JsPath, Seq[JsonValidationError])]])
+          case JsError(_)       => logger.error(s"Error while parsing the backend response")
+            throw UnexpectedResponse
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) => throw UktrValidationError(response.code, response.message)
-          case JsError(errors)        => logAndThrow(errors.asInstanceOf[Seq[(JsPath, Seq[JsonValidationError])]])
+          case JsError(_)        => logger.error(s"Error while unprocessable entity response")
+            throw UnexpectedResponse
         }
       case status =>
-        logger.error(s"Error while calling pillar2 backend. Got status: $status and response: ${response.json}")
+        logger.error(s"Error while calling pillar2 backend. Got status: $status")
         throw UnexpectedResponse
     }
   }
