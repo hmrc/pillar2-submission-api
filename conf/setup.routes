@@ -88,7 +88,7 @@
 #           code: "500"
 #           message: "Failed to create organisation due to database error"
 ###
-POST /test-only/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.createTestOrganisation()
+POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.createTestOrganisation()
 
 ###
 # summary: Get a test organisation associated with your authed organisation
@@ -160,7 +160,7 @@ POST /test-only/organisation              uk.gov.hmrc.pillar2submissionapi.contr
 #           code: "500"
 #           message: "Internal Server Error"
 ###
-GET /test-only/organisation                 uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.getTestOrganisation
+GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.getTestOrganisation
 
 ###
 # summary: Update the test organisation associated with your authed organisation
@@ -252,7 +252,7 @@ GET /test-only/organisation                 uk.gov.hmrc.pillar2submissionapi.con
 #           code: "500"
 #           message: "Failed to update organisation due to database error"
 ###
-PUT /test-only/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.updateTestOrganisation
+PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.updateTestOrganisation
 
 ###
 # summary: Delete the test organisation associated with your authed organisation
@@ -309,4 +309,4 @@ PUT /test-only/organisation              uk.gov.hmrc.pillar2submissionapi.contro
 #           code: "500"
 #           message: "Failed to delete organisation due to database error"
 ###
-DELETE /test-only/organisation           uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.deleteTestOrganisation
+DELETE /setup/organisation           uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.deleteTestOrganisation

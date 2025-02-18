@@ -118,7 +118,7 @@ paths:
         </table>
       security:
         - userRestricted: [write:pillar2]
-  /test-only/organisation:
+  /setup/organisation:
     post:
       summary: Create Test Organisation
       description: |
