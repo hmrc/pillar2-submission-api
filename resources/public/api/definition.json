@@ -7,8 +7,8 @@
     "versions": [
       {
         "version": "1.0",
-        "status": "BETA",
-        "endpointsEnabled": true,
+        "status": "ALPHA",
+        "endpointsEnabled": false,
         "access": {
           "type": "PRIVATE",
           "isTrial": true

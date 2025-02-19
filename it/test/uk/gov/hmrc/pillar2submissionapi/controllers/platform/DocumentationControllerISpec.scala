@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
-import uk.gov.hmrc.http.HttpResponse
+import play.api.libs.json.JsObject
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -36,10 +37,18 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
     "return definition" in {
       val url                = s"$baseUrl${routes.DocumentationController.definition().url}"
       val definition         = Await.result(client.get(URI.create(url).toURL).execute[HttpResponse], 5.seconds)
-      val definitionStr      = definition.body
-      val expectedDefinition = Source.fromResource("public/api/definition.json").mkString
-      definition.status mustEqual 200
-      definitionStr mustEqual expectedDefinition
+      val json      = definition.json
+      (json \ "api" \ "name").as[String] mustEqual "Pillar 2"
+      (json \ "api" \ "description").as[String] mustEqual "An API for managing and retrieving Pillar 2 data"
+      (json \ "api" \ "context").as[String] mustEqual "organisations/pillar-two"
+      (json \ "api" \ "categories").as[List[String]] must have size 1
+      (json \ "api" \ "categories").as[List[String]].head mustEqual "CORPORATION_TAX"
+      (json \ "api" \ "versions").as[List[JsObject]] must have size 1
+      (json \ "api" \ "versions" \ 0 \ "version").as[String] mustEqual "1.0"
+      (json \ "api" \ "versions" \ 0 \ "status").as[String] mustEqual "BETA"
+      (json \ "api" \ "versions" \ 0 \ "endpointsEnabled").as[Boolean] mustEqual true
+      (json \ "api" \ "versions" \ 0 \ "access" \ "type").as[String] mustEqual "PRIVATE"
+      (json \ "api" \ "versions" \ 0 \ "access" \ "isTrial").as[Boolean] mustEqual true
     }
 
     "return API documentation" in {

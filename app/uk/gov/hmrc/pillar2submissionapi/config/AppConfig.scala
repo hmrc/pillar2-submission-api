@@ -24,6 +24,8 @@ case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   lazy val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
   lazy val stubBaseUrl:    String = servicesConfig.baseUrl("stub")
+  lazy val apiPlatformStatus:String = servicesConfig.getString("features.api-platform.status")
+  lazy val apiPlatformEndpointsEnabled:Boolean = servicesConfig.getBoolean("features.api-platform.endpoints-enabled")
 
   lazy val allowTestUsers: Boolean =
     servicesConfig.getBoolean("features.allow-test-users")
