@@ -109,6 +109,8 @@ trait IntegrationSpecBase
     .configure("microservice.services.pillar2.port" -> wiremockPort)
     .configure("microservice.services.stub.port" -> wiremockPort)
     .configure("features.testOrganisationEnabled" -> true)
+    .configure("features.api-platform.status" -> "BETA")
+    .configure("features.api-platform.endpoints-enabled" -> true)
     .overrides(
       inject.bind[AuthConnector].toInstance(mockAuthConnector)
     )
