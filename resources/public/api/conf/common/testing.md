@@ -1,15 +1,15 @@
 API testing is performed in the [HMRC developer hub](https://developer.tax.service.gov.uk/api-documentation) “sandbox” environment. Once you’ve [registered for an account](https://developer.service.hmrc.gov.uk/developer/registration) you can conduct your own testing. The Pillar 2 API belongs to the "Corporation Tax" category. 
 
-To start, use the instructions in [Getting started](https://developer.service.hmrc.gov.uk/api-documentation/docs/using-the-hub) to create an application, then locate and subscribe to the Pillar 2 API.
+Work through the instructions on the [getting started](https://developer.service.hmrc.gov.uk/api-documentation/docs/using-the-hub) page to create an application, then locate and subscribe to the Pillar 2 API.
 
-The next steps are outlined in the "setup" section on the API's OAS page.
+The next steps are outlined on the API's OAS page under "setup". You can find the link in the "Endpoints" section.
 
 - [Create a test user](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/test-users-test-data-stateful-behaviour) with a Pillar 2 Subscription. 
 - [Create a bearer token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) for the test user.
 - Set up a test organisation.
 - Run a SubmitUKTR request.
 
-We’ve included some information to help you test your application here. 
+We’ve included some information to help you test your application here. There is a link to the OAS page in the "Endpoints" section.
 
 **Header Parameters**
 Header parameters are listed on the OAS page for each endpoint. Agents will need to include the organisation *Pillar 2 ID* in the header. 
