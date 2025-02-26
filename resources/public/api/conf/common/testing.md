@@ -12,15 +12,19 @@ The next steps are outlined on the API's OAS page under "setup". You can find th
 We’ve included some information to help you test your application here. There is a link to the OAS page in the "Endpoints" section.
 
 **Header Parameters**
+
 Header parameters are listed on the OAS page for each endpoint. Agents will need to include the organisation *Pillar 2 ID* in the header. 
 
 **SubmitUKTR**
+
 Use the SubmitUKTR section in the OAS page to check you have included the correct header and body parameters.
 
 **AmendUKTR**
+
 Use the AmendUKTR section in the OAS page to check you have the correct header and body parameters for the request. 
 
 **SubmitBTN**
+
 Use the SubmitBTN section in the OAS page to check you have the correct header and body parameters for the request. 
 
 If you have a specific testing need that is not supported in the sandbox, please contact our [support team](https://developer.service.hmrc.gov.uk/developer/support).
