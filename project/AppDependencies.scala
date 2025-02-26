@@ -2,13 +2,13 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapVersion = "9.6.0"
+  private val bootstrapVersion = "9.9.0"
 
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30" % bootstrapVersion,
     "com.github.java-json-tools"    % "json-schema-validator"     % "2.2.14",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.18.2",
-    "org.typelevel"                %% "cats-core"                 % "2.12.0",
+    "org.typelevel"                %% "cats-core"                 % "2.13.0",
     "com.beachape"                 %% "enumeratum-play-json"      % "1.8.2"
   )
 
