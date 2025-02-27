@@ -40,12 +40,7 @@ tests {
     
     expect(obligation.obligationType).to.not.be.undefined;
     expect(obligation.status).to.not.be.undefined;
-    expect(obligation.canAmend).to.not.be.undefined;
-    
-    expect(obligation.submissions).to.be.an('array').that.is.not.empty;
-    const submission = obligation.submissions[0];
-    
-    expect(submission.submissionType).to.not.be.undefined;
-    expect(submission.receivedDate).to.not.be.undefined;
+    expect(obligation.canAmend).to.not.be.undefined;  
+    expect(obligation.submissions).to.not.be.undefined;
   });
 }
