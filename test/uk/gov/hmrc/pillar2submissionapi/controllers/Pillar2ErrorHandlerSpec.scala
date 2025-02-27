@@ -59,6 +59,21 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "Empty body in request"
   }
 
+  test("InvalidRequest error response") {
+    val response = classUnderTest.onServerError(dummyRequest, InvalidRequest)
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "000"
+    result.message mustEqual "Invalid Request"
+  }
+
+  test("MissingHeader error response") {
+    val response = classUnderTest.onServerError(dummyRequest, MissingHeader("Missing Header"))
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "005"
+  }
+
   test("InvalidJson error response") {
     val response = classUnderTest.onServerError(dummyRequest, InvalidJson)
     status(response) mustEqual 400
@@ -73,6 +88,14 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "003"
     result.message mustEqual "Not authorized"
+  }
+
+  test("ForbiddenError error response") {
+    val response = classUnderTest.onServerError(dummyRequest, ForbiddenError)
+    status(response) mustEqual 403
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "006"
+    result.message mustEqual "Forbidden"
   }
 
   test("NoSubscriptionData error response") {
@@ -97,6 +120,30 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "093"
     result.message mustEqual "Invalid Return"
+  }
+
+  test("ObligationsAndSubmissionsValidationError response") {
+    val response = classUnderTest.onServerError(dummyRequest, ObligationsAndSubmissionsValidationError("code", "message"))
+    status(response) mustEqual 422
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "code"
+    result.message mustEqual "message"
+  }
+
+  test("TestEndpointDisabled response") {
+    val response = classUnderTest.onServerError(dummyRequest, TestEndpointDisabled())
+    status(response) mustEqual 403
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "403"
+    result.message mustEqual "Test endpoints are not available in this environment"
+  }
+
+  test("DatabaseError response") {
+    val response = classUnderTest.onServerError(dummyRequest, DatabaseError("write"))
+    status(response) mustEqual 500
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "500"
+    result.message mustEqual "Failed to write organisation due to database error"
   }
 
   test("UnexpectedResponse error response") {
