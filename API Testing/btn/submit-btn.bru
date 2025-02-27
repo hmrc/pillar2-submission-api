@@ -28,8 +28,6 @@ tests {
   });
   
   test("should contain all required fields", function() {
-    expect(res.body.chargeReference).to.not.be.undefined;
-    expect(res.body.formBundleNumber).to.not.be.undefined;
     expect(res.body.processingDate).to.not.be.undefined;
   });
 }

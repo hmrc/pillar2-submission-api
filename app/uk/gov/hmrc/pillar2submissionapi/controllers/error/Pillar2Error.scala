@@ -21,6 +21,11 @@ sealed trait Pillar2Error extends Exception {
   val message: String
 }
 
+case object InvalidRequest extends Pillar2Error {
+  val code    = "000"
+  val message = "Invalid Request"
+}
+
 case object InvalidJson extends Pillar2Error {
   val code    = "001"
   val message = "Invalid JSON Payload"
@@ -58,6 +63,8 @@ case object ForbiddenError extends Pillar2Error {
 case class UktrValidationError(code: String, message: String) extends Pillar2Error
 
 case class BTNValidationError(code: String, message: String) extends Pillar2Error
+
+case class ObligationsAndSubmissionsValidationError(code: String, message: String) extends Pillar2Error
 
 case class OrganisationAlreadyExists(pillar2Id: String) extends Pillar2Error {
   override val code:    String = "409"
