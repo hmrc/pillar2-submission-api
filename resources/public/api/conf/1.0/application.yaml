@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.78.0
+  version: 0.81.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -362,33 +362,33 @@ paths:
         \ the request header for your client, to check it contains the Pillar 2 ID\
         \ they were assigned at registration.</td>\n</tr>\n<tr>\n<td>003 - Request\
         \ could not be processed</td>\n<td>The message could not be processed due\
-        \ to locking. Please send the request again.</td>\n</tr>\n<td>007 - Business Partner\
-        \ does not have an Active Subscription</td>\n<td>The request Pillar 2 ID is\
-        \ not listed as active by HMRC. Please contact the central support team.</td>\n\
-        </tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n<td>A UKTR for\
-        \ the specified period has already been submitted. If you are trying to amend\
-        \ a UKTR, please check you are sending the <em>amendUKTR</em> API\
-        \ request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is\
-        \ an error with the tax return you’ve submitted in the request. Awaiting clarification.</td>\n\
-        </tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n<td>The DTT values in the\
-        \ request are invalid. Awaiting clarification.</td>\n</tr>\n<tr>\n<td>095\
-        \ - Invalid UTPR Election</td>\n<td>The UTPR values in the request are invalid.\
-        \ Awaiting clarification.</td>\n</tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n\
-        <td>The <em>totalLiability</em> value in the request does not match\
-        \ the combined values of <em>totalLiabilityDTT</em>, <em>totalLiabilityIIR</em>\
-        \ and <em>totalLiabilityUTPR</em>. Please check the sum of these fields\
-        \ matches the <em>totalLiability</em> value and submit the request\
-        \ again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability IIR</td>\n<td>The\
-        \ <em>totalLiabilityIIR</em> value does not match the <em>amountIIR\
-        \ value</em> from the <em>liableEntities</em> array. Please check\
-        \ the value of these fields matches and submit the request again.</td>\n</tr>\n\
-        <tr>\n<td>098 - Invalid Total Liability DTT</td>\n<td>The <em>totalLiabilityDTT</em>\
+        \ to locking. Please send the request again.</td>\n</tr>\n<tr>\n<td>007 -\
+        \ Business Partner does not have an Active Subscription</td>\n<td>The request\
+        \ Pillar 2 ID is not listed as active by HMRC. Please contact the central\
+        \ support team.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n\
+        <td>A UKTR for the specified period has already been submitted. If you are\
+        \ trying to amend a UKTR, please check you are sending the <em>amendUKTR</em>\
+        \ API request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There\
+        \ is an error with the tax return you’ve submitted in the request. Awaiting\
+        \ clarification.</td>\n</tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n\
+        <td>The DTT values in the request are invalid. Awaiting clarification.</td>\n\
+        </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
+        \ the request are invalid. Awaiting clarification.</td>\n</tr>\n<tr>\n<td>096\
+        \ - Invalid Total Liability</td>\n<td>The <em>totalLiability</em> value in\
+        \ the request does not match the combined values of <em>totalLiabilityDTT</em>,\
+        \ <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check\
+        \ the sum of these fields matches the <em>totalLiability</em> value and submit\
+        \ the request again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability\
+        \ IIR</td>\n<td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR\
+        \ value</em> from the <em>liableEntities</em> array. Please check the value\
+        \ of these fields matches and submit the request again.</td>\n</tr>\n<tr>\n\
+        <td>098 - Invalid Total Liability DTT</td>\n<td>The <em>totalLiabilityDTT</em>\
         \ value does not match the <em>amountDTT</em> value from the <em>liableEntities</em>\
         \ array. Please check the value of these fields matches and submit the request\
         \ again.</td>\n</tr>\n<tr>\n<td>099 - Invalid Total Liability UTPR</td>\n\
         <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em>\
-        \ value from the <em>liableEntities</em> array. Please check the value\
-        \ of these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
+        \ value from the <em>liableEntities</em> array. Please check the value of\
+        \ these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
         </table>       \n"
       tags:
       - submission
