@@ -414,18 +414,10 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Json:
+#           Invalid Request:
 #             value:
-#               code: "001"
-#               message: "Invalid JSON payload"
-#           Empty Request Body:
-#             value:
-#               code: "002"
-#               message: "Empty body in request"
-#           Missing Header:
-#             value:
-#               code: "005"
-#               message: "Missing Header in request"
+#               code: "000"
+#               message: "Invalid Request"
 #   403:
 #     description: Forbidden
 #     content:
@@ -446,9 +438,5 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #             value:
 #               code: "500"
 #               message: "Internal Server Error"
-#           No Subscription Data:
-#             value:
-#               code: "004"
-#               message: "No Pillar2 subscription found for [pillar2Id]"
 ###
 GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions.ObligationsAndSubmissionsController.retrieveData(fromDate: String, toDate: String)
