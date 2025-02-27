@@ -2,7 +2,7 @@ API testing is performed in the [HMRC developer hub](https://developer.tax.servi
 
 Work through the instructions on the [getting started](https://developer.service.hmrc.gov.uk/api-documentation/docs/using-the-hub) page to create an application, then locate and subscribe to the Pillar 2 API.
 
-The next steps are outlined on the API's OAS page under "setup". You can find the link in the "Endpoints" section.
+The next steps are outlined on the Open API Specification (**OAS**) page under "setup". You can find the link in the "Endpoints" section.
 
 - [Create a test user](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/test-users-test-data-stateful-behaviour) with a Pillar 2 Subscription. 
 - [Create a bearer token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) for the test user.
