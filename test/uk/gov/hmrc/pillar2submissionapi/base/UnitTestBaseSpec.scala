@@ -28,9 +28,7 @@ import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.HttpClientSupport
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
-import uk.gov.hmrc.pillar2submissionapi.connectors.TestOrganisationConnector
-import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
+import uk.gov.hmrc.pillar2submissionapi.connectors._
 import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -52,11 +50,12 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:             Configuration             = mock[Configuration]
-  protected val mockServicesConfig:            ServicesConfig            = mock[ServicesConfig]
-  protected val mockHttpClient:                HttpClientV2              = mock[HttpClientV2]
-  protected val mockPillar2Connector:          UKTaxReturnConnector      = mock[UKTaxReturnConnector]
-  protected val mockUKTaxReturnConnector:      UKTaxReturnConnector      = mock[UKTaxReturnConnector]
-  protected val mockSubmitBTNConnector:        SubmitBTNConnector        = mock[SubmitBTNConnector]
-  protected val mockTestOrganisationConnector: TestOrganisationConnector = mock[TestOrganisationConnector]
+  protected val mockConfiguration:                     Configuration                     = mock[Configuration]
+  protected val mockServicesConfig:                    ServicesConfig                    = mock[ServicesConfig]
+  protected val mockHttpClient:                        HttpClientV2                      = mock[HttpClientV2]
+  protected val mockPillar2Connector:                  UKTaxReturnConnector              = mock[UKTaxReturnConnector]
+  protected val mockUKTaxReturnConnector:              UKTaxReturnConnector              = mock[UKTaxReturnConnector]
+  protected val mockSubmitBTNConnector:                SubmitBTNConnector                = mock[SubmitBTNConnector]
+  protected val mockObligationAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
+  protected val mockTestOrganisationConnector:         TestOrganisationConnector         = mock[TestOrganisationConnector]
 }
