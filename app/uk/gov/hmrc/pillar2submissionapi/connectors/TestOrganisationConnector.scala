@@ -105,7 +105,7 @@ class TestOrganisationConnector @Inject() (
         response.status match {
           case 204 => ()
           case 404 => throw OrganisationNotFound(pillar2Id)
-          case 500 => throw DatabaseError("delete")
+          case 500 => throw DatabaseError("Failed to delete organisation and submission data")
           case _ =>
             logger.warn(s"Unexpected response from delete organisation with status: ${response.status}")
             throw UnexpectedResponse
