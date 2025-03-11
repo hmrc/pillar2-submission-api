@@ -186,7 +186,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
         intercept[DatabaseError] {
           await(connector.deleteTestOrganisation(pillar2Id)(hc))
-        }.operation shouldBe "delete"
+        }.operation shouldBe "Failed to delete organisation and submission data"
       }
 
       "return UnexpectedResponse for any other status code" in {

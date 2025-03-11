@@ -255,7 +255,7 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.updateTestOrganisation
 
 ###
-# summary: Delete the test organisation associated with your authed organisation
+# summary: Delete the test organisation and submission data associated with your authed organisation
 # parameters:
 #   - in: header
 #     name: Authorization
@@ -271,7 +271,7 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
 # responses:
 #   204:
-#      description: Test Organisation Deleted Successfully
+#      description: Test Organisation and Submission Data Deleted Successfully
 #   401:
 #     description: Unauthorized
 #     content:
@@ -307,6 +307,6 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         example:
 #           code: "500"
-#           message: "Failed to delete organisation due to database error"
+#           message: "Failed to delete organisation and submission data"
 ###
 DELETE /setup/organisation           uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.deleteTestOrganisation
