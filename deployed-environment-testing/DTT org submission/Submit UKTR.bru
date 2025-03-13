@@ -1,0 +1,29 @@
+meta {
+  name: Submit UKTR
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://api.{{environment}}.tax.service.gov.uk/organisations/pillar-two/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  accept: application/vnd.hmrc.1.0+json
+  authorization: Bearer {{bearer_token}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "returnType": "NIL_RETURN"
+    }
+  }
+}
