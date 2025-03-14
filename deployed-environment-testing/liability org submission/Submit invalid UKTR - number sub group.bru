@@ -1,0 +1,50 @@
+meta {
+  name: Submit invalid UKTR - number sub group
+  type: http
+  seq: 4
+}
+
+post {
+  url: https://api.{{environment}}.tax.service.gov.uk/organisations/pillar-two/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  accept: application/vnd.hmrc.1.0+json
+  authorization: Bearer {{bearer_token}}
+  content-type: application/json
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 2,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 14400.5,
+      "totalLiabilityDTT": 2000,
+      "totalLiabilityIIR": 3400,
+      "totalLiabilityUTPR": 6000.5,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Newco PLC",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 5000,
+          "amountOwedIIR": 3400,
+          "amountOwedUTPR": 6000.5
+        }
+      ]
+    }
+  }
+}
+
+assert {
+  res.status: eq 422
+}
