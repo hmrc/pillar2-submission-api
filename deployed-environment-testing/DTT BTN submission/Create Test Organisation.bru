@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: https://api.{{environment}}.tax.service.gov.uk/organisations/pillar-two/setup/organisation
+  url: {{url}}/organisations/pillar-two/setup/organisation
   body: json
   auth: none
 }
@@ -21,7 +21,7 @@ body:json {
     "orgDetails": {
       "domesticOnly": true,
       "organisationName": "Test Organisation Ltd",
-      "registrationDate": "2024-01-01"
+      "registrationDate": "2025-03-01"
     },
     "accountingPeriod": {
       "startDate": "2024-01-01",

@@ -1,9 +1,11 @@
 vars {
   environment: qa
   client_id: eLNk3y1S9BZbJfOha873QfWy6APu
-  client_secret: 2707a2ad-38d1-49ef-9d07-ef9c52063ea9
+  url: https://api.{{environment}}.tax.service.gov.uk
+  auth_code_url: https://www.{{environment}}.tax.service.gov.uk
 }
 vars:secret [
+  client_secret,
   bearer_token,
   access_token,
   refresh_token
