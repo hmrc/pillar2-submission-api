@@ -369,7 +369,7 @@ paths:
         <td>A UKTR for the specified period has already been submitted. If you are\
         \ trying to amend a UKTR, please check you are sending the <em>amendUKTR</em>\
         \ API request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There\
-        \ is an error with the tax return you’ve submitted in the request. Awaiting\
+        \ is an error with the tax return you've submitted in the request. Awaiting\
         \ clarification.</td>\n</tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n\
         <td>The DTT values in the request are invalid. Awaiting clarification.</td>\n\
         </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
@@ -989,6 +989,13 @@ components:
       required:
       - code
       - message
+    MonetaryValue:
+      type: number
+      format: double
+      minimum: -9999999999999.99
+      maximum: 9999999999999.99
+      multipleOf: 0.01
+      description: "Defines a monetary value (to 2 decimal places), between -9,999,999,999,999.99 and 9,999,999,999,999.99"
   securitySchemes:
     userRestricted:
       type: oauth2

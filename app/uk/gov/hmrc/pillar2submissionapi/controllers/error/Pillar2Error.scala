@@ -85,3 +85,15 @@ case class TestEndpointDisabled() extends Pillar2Error {
   override val code:    String = "403"
   override val message: String = "Test endpoints are not available in this environment"
 }
+
+sealed trait MonetaryValidationError extends Pillar2Error {
+  val code = "400"
+}
+
+case object MonetaryValueExceedsLimit extends MonetaryValidationError {
+  val message = "Number field exceeds maximum allowed value"
+}
+
+case object MonetaryDecimalPrecisionError extends MonetaryValidationError {
+  val message = "Number must have at most 2 decimal places"
+}
