@@ -5,7 +5,6 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
-ThisBuild / javacOptions ++= Seq("--release", "21")
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true, // enable SemanticDB

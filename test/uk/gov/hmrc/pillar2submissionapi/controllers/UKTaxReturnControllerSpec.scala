@@ -473,7 +473,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with a monetary value having too many decimal places" should {
       "return 400 BAD_REQUEST response with MonetaryDecimalPrecisionError" in {
-        // Create test data with too many decimal places
+
         val invalidDecimalsRequest = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
             |  "accountingPeriodTo": "2024-12-14",
