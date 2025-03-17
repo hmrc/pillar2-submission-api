@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MonetaryValidationError}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.UKTaxReturnController
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
 
@@ -156,7 +156,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "submitUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with MonetaryValueExceedsLimit" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
 
         val invalidMonetaryValueRequest = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
@@ -185,12 +185,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValueExceedsLimit
+        callWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with MonetaryDecimalPrecisionError" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
 
         val invalidDecimalsRequest = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
@@ -219,12 +219,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callWithBody(invalidDecimalsRequest) shouldFailWith MonetaryDecimalPrecisionError
+        callWithBody(invalidDecimalsRequest) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with MonetaryValueExceedsLimit" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
         val requestWithInvalidEntityAmount = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
             |  "accountingPeriodTo": "2024-12-14",
@@ -252,12 +252,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValueExceedsLimit
+        callWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with MonetaryDecimalPrecisionError" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
         val requestWithInvalidEntityDecimals = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
             |  "accountingPeriodTo": "2024-12-14",
@@ -285,7 +285,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryDecimalPrecisionError
+        callWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryValidationError
       }
     }
 
@@ -438,7 +438,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "amendUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with MonetaryValueExceedsLimit" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
 
         val invalidMonetaryValueRequest = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
@@ -467,12 +467,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callAmendWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValueExceedsLimit
+        callAmendWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with MonetaryDecimalPrecisionError" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
 
         val invalidDecimalsRequest = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
@@ -501,12 +501,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callAmendWithBody(invalidDecimalsRequest) shouldFailWith MonetaryDecimalPrecisionError
+        callAmendWithBody(invalidDecimalsRequest) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with MonetaryValueExceedsLimit" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
         val requestWithInvalidEntityAmount = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
             |  "accountingPeriodTo": "2024-12-14",
@@ -534,12 +534,12 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callAmendWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValueExceedsLimit
+        callAmendWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with MonetaryDecimalPrecisionError" in {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
         val requestWithInvalidEntityDecimals = Json.parse("""{
             |  "accountingPeriodFrom": "2024-08-14",
             |  "accountingPeriodTo": "2024-12-14",
@@ -567,7 +567,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
             |  }
             |}""".stripMargin)
 
-        callAmendWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryDecimalPrecisionError
+        callAmendWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryValidationError
       }
     }
 
