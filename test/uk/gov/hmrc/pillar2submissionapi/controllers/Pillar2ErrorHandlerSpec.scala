@@ -153,4 +153,20 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.code mustEqual "500"
     result.message mustEqual "Internal Server Error"
   }
+
+  test("MonetaryValueExceedsLimit error response") {
+    val response = classUnderTest.onServerError(dummyRequest, MonetaryValueExceedsLimit)
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "400"
+    result.message mustEqual "Number field exceeds maximum allowed value"
+  }
+
+  test("MonetaryDecimalPrecisionError error response") {
+    val response = classUnderTest.onServerError(dummyRequest, MonetaryDecimalPrecisionError)
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "400"
+    result.message mustEqual "Number must have at most 2 decimal places"
+  }
 }
