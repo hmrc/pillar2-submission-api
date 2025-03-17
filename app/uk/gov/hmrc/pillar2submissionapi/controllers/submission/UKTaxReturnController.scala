@@ -90,10 +90,8 @@ class UKTaxReturnController @Inject() (
     val decimalPrecision = 2
 
     def validateMonetaryValue(value: BigDecimal): Option[Throwable] =
-      if (value < minValue || value > maxValue) {
-        Some(MonetaryValueExceedsLimit)
-      } else if (value.scale > decimalPrecision) {
-        Some(MonetaryDecimalPrecisionError)
+      if (value < minValue || value > maxValue || value.scale > decimalPrecision) {
+        Some(MonetaryValidationError)
       } else {
         None
       }

@@ -427,6 +427,10 @@ paths:
                   value:
                     code: '005'
                     message: Missing Header in request
+                Monetary Validation Error:
+                  value:
+                    code: '400'
+                    message: Number field invalid length
         "201":
           description: UK Tax Return Submission Created
           content:
@@ -566,6 +570,10 @@ paths:
                   value:
                     code: '005'
                     message: Missing Header in request
+                Monetary Validation Error:
+                  value:
+                    code: '400'
+                    message: Number field invalid length
         "500":
           description: Internal Server Error
           content:
@@ -996,6 +1004,10 @@ components:
       maximum: 9999999999999.99
       multipleOf: 0.01
       description: "Defines a monetary value (to 2 decimal places), between -9,999,999,999,999.99 and 9,999,999,999,999.99"
+    Monetary Validation Error:
+      value:
+        code: '400'
+        message: Number field invalid length
   securitySchemes:
     userRestricted:
       type: oauth2
