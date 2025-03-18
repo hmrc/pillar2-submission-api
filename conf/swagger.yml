@@ -19,32 +19,32 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar 2 ID required</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
         </tr>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please send the request again.</td>
-        </tr>
-        <tr>
-        <td>007 - Business Partner does not have an Active Subscription</td>
-        <td>The request Pillar 2 ID is not listed as active by HMRC. Please contact the central support team.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
         <td>044 - Tax Obligation Already Fulfilled</td>
         <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
         </tr>
         <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Awaiting clarification.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
-        <td>The DTT values in the request are invalid. Awaiting clarification.</td>
+        <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
         </tr>
         <tr>
         <td>095 - Invalid UTPR Election</td>
-        <td>The UTPR values in the request are invalid. Awaiting clarification.</td>
+        <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
         </tr>
         <tr>
         <td>096 - Invalid Total Liability</td>
@@ -91,20 +91,20 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
         </tr>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please send the request again.</td>
-        </tr>
-        <tr>
-        <td>007 - Business Partner does not have an Active Pillar 2 registration</td>
-        <td>The request Pillar 2 ID is not listed as active by HMRC. Please contact the central support team.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been  submitted.</td>
+        <td>A BTN for the specified period has already been submitted.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
         </table>
@@ -126,20 +126,16 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
         </tr>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please send the request again.</td>
-        </tr>
-        <tr>
-        <td>004 - Duplicate acknowledgment reference</td>
-        <td>A request with the same acknowledgement reference has already been sent. This is held in the correlationid field in the request header, and generated by the originating system.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
         <td>025 - No associated data found</td>
-        <td>No associated data found for this Pillar 2 ID</td>
+        <td>No associated data found for this Pillar 2 ID.</td>
         </tr>
         <tr>
         </tbody>
