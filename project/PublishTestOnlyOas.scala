@@ -7,7 +7,7 @@ object PublishTestOnlyOas {
   def settings: Seq[Setting[_]] = Seq(
     publishOas := {
       val sourceFile = baseDirectory.value / "target/swagger/application.yaml"
-      val targetDir  = baseDirectory.value / "resources/public/api/conf/testOnly"
+      val targetDir  = baseDirectory.value / "resources/public/api/conf/1.0/testOnly"
       val targetFile = targetDir / "application.yaml"
 
       if (!sourceFile.exists) {
