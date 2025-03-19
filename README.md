@@ -62,7 +62,7 @@ sm2 --stop PILLAR2_ALL
 Follow the guide to [Test the Beta API in Development](https://docs.tax.service.gov.uk/mdtp-handbook/documentation/create-and-manage-a-developer-hub-api/test-the-beta-api-in-dev.html). This API is a user-restricted resource. You will also need the following:
 
     <context>  : organisations/pillar-two
-    <resource> : RESTAdapter/PLR/<endpoint>
+    <resource> : RESTAdapter/plr/<endpoint>
     <endpoint> : the endpoint being tested
 
 ## Generation, Validation and Publishing
