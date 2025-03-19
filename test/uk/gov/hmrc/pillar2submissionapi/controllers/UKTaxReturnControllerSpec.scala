@@ -20,7 +20,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
@@ -157,135 +157,25 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "submitUKTR() called with a monetary value exceeding the maximum allowed" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-
-        val invalidMonetaryValueRequest = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000000000000.00,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValidationError
+        callWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with a monetary value having too many decimal places" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-
-        val invalidDecimalsRequest = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.999,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callWithBody(invalidDecimalsRequest) shouldFailWith MonetaryValidationError
+        callWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        val requestWithInvalidEntityAmount = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 10000000000000.00,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValidationError
+        callWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
       }
     }
 
     "submitUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        val requestWithInvalidEntityDecimals = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000.00,
-            |        "amountOwedIIR": 3400.999,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryValidationError
+        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
       }
     }
 
@@ -294,34 +184,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
         when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
-        val requestWithMinimumMonetaryValue = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": -9999999999999.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000.00,
-            |        "amountOwedIIR": 3400.00,
-            |        "amountOwedUTPR": -9999999999999.99
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        status(of = callWithBody(requestWithMinimumMonetaryValue)) mustEqual CREATED
+        status(of = callWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual CREATED
       }
     }
 
@@ -439,135 +302,25 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with a monetary value exceeding the maximum allowed" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-
-        val invalidMonetaryValueRequest = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000000000000.00,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callAmendWithBody(invalidMonetaryValueRequest) shouldFailWith MonetaryValidationError
+        callAmendWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with a monetary value having too many decimal places" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-
-        val invalidDecimalsRequest = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.999,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callAmendWithBody(invalidDecimalsRequest) shouldFailWith MonetaryValidationError
+        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        val requestWithInvalidEntityAmount = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 10000000000000.00,
-            |        "amountOwedIIR": 3400,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callAmendWithBody(requestWithInvalidEntityAmount) shouldFailWith MonetaryValidationError
+        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
       }
     }
 
     "amendUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
       "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        val requestWithInvalidEntityDecimals = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": 10000.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000.00,
-            |        "amountOwedIIR": 3400.999,
-            |        "amountOwedUTPR": 6000.5
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        callAmendWithBody(requestWithInvalidEntityDecimals) shouldFailWith MonetaryValidationError
+        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
       }
     }
 
@@ -576,34 +329,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
         when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
-        val requestWithMinimumMonetaryValue = Json.parse("""{
-            |  "accountingPeriodFrom": "2024-08-14",
-            |  "accountingPeriodTo": "2024-12-14",
-            |  "obligationMTT": true,
-            |  "electionUKGAAP": true,
-            |  "liabilities": {
-            |    "electionDTTSingleMember": false,
-            |    "electionUTPRSingleMember": false,
-            |    "numberSubGroupDTT": 1,
-            |    "numberSubGroupUTPR": 1,
-            |    "totalLiability": -9999999999999.99,
-            |    "totalLiabilityDTT": 5000.99,
-            |    "totalLiabilityIIR": 4000,
-            |    "totalLiabilityUTPR": 10000.99,
-            |    "liableEntities": [
-            |      {
-            |        "ukChargeableEntityName": "Newco PLC",
-            |        "idType": "CRN",
-            |        "idValue": "12345678",
-            |        "amountOwedDTT": 5000.00,
-            |        "amountOwedIIR": 3400.00,
-            |        "amountOwedUTPR": -9999999999999.99
-            |      }
-            |    ]
-            |  }
-            |}""".stripMargin)
-
-        status(of = callAmendWithBody(requestWithMinimumMonetaryValue)) mustEqual OK
+        status(of = callAmendWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual OK
       }
     }
   }

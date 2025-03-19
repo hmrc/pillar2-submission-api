@@ -245,6 +245,202 @@ trait UKTaxReturnDataFixture {
                  |    "returnType": "NIL_RETURN"
                  |  }
                  |}""".stripMargin)
+
+  val baseMonetaryValidationRequest: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": 10000.99,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000,
+    |        "amountOwedIIR": 3400,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
+
+  val monetaryValueExceedsLimitRequest: JsValue = (baseMonetaryValidationRequest \ "liabilities")
+    .as[JsObject]
+    .deepMerge(
+      Json.obj("totalLiability" -> 10000000000000.00)
+    )
+    .as[JsValue]
+
+  val monetaryDecimalPrecisionRequest: JsValue = (baseMonetaryValidationRequest \ "liabilities")
+    .as[JsObject]
+    .deepMerge(
+      Json.obj("totalLiability" -> 10000.999)
+    )
+    .as[JsValue]
+
+  val monetaryEntityAmountExceedsRequest: JsValue = baseMonetaryValidationRequest
+    .as[JsObject]
+    .deepMerge(
+      Json.obj(
+        "liabilities" -> Json.obj(
+          "liableEntities" -> Json.arr(
+            Json.obj(
+              "ukChargeableEntityName" -> "Newco PLC",
+              "idType"                 -> "CRN",
+              "idValue"                -> "12345678",
+              "amountOwedDTT"          -> 10000000000000.00,
+              "amountOwedIIR"          -> 3400,
+              "amountOwedUTPR"         -> 6000.5
+            )
+          )
+        )
+      )
+    )
+    .as[JsValue]
+
+  val liabilityReturnMonetaryExceedsLimit: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": 10000000000000.00,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000,
+    |        "amountOwedIIR": 3400,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
+
+  val liabilityReturnMonetaryDecimalPrecision: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": 10000.999,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000,
+    |        "amountOwedIIR": 3400,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
+
+  val liabilityReturnEntityMonetaryExceedsLimit: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": 10000.99,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 10000000000000.00,
+    |        "amountOwedIIR": 3400,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
+
+  val liabilityReturnEntityMonetaryDecimalPrecision: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": 10000.99,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000.00,
+    |        "amountOwedIIR": 3400.999,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
+
+  val liabilityReturnMonetaryMinimumLimit: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": -9999999999999.99,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000.00,
+    |        "amountOwedIIR": 3400.00,
+    |        "amountOwedUTPR": -9999999999999.99
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
 }
 
 object UKTRErrorCodes {
