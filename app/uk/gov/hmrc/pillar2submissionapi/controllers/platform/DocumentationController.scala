@@ -43,6 +43,8 @@ class DocumentationController @Inject() (assets: Assets, cc: ControllerComponent
     json.transform(optimus).map(Ok(_)).getOrElse(throw new RuntimeException("Failed to create definition.json"))
   }
 
-  def specification(version: String, file: String): Action[AnyContent] =
-    assets.at(s"/public/api/conf/$version", file)
+  def specification(version: String, file: String): Action[AnyContent] = {
+    val effectiveVersion = if (appConfig.testOnlyOasEnabled) "testOnly" else version
+    assets.at(s"/public/api/conf/$effectiveVersion", file)
+  }
 }
