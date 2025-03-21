@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.81.0
+  version: 0.90.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -9,12 +9,12 @@ paths:
   /organisations/pillar-two/setup/organisation:
     post:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: |
         Creates a test organisation associated with your authed organisation.
       tags:
-      - setup
+        - setup
       operationId: createTestOrganisation
       requestBody:
         content:
@@ -22,20 +22,20 @@ paths:
             schema:
               $ref: "#/components/schemas/TestOrganisation"
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+        - name: Authorization
+          in: header
+          description: Bearer token for authentication
+          schema:
+            type: string
+          required: true
+        - name: X-Pillar2-Id
+          in: header
+          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
+          schema:
+            type: string
+          required: false
       summary: Create Test Organisation
       responses:
         "400":
@@ -108,28 +108,28 @@ paths:
                 message: Not authorized
     get:
       security:
-      - userRestricted:
-        - read:pillar2
+        - userRestricted:
+            - read:pillar2
       description: |
         Gets a test organisation associated with your authed organisation.
       tags:
-      - setup
+        - setup
       operationId: getTestOrganisation
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+        - name: Authorization
+          in: header
+          description: Bearer token for authentication
+          schema:
+            type: string
+          required: true
+        - name: X-Pillar2-Id
+          in: header
+          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
+          schema:
+            type: string
+          required: false
       summary: Get Test Organisation
       responses:
         "404":
@@ -187,12 +187,12 @@ paths:
                   lastUpdated: 2024-01-01T12:00:00Z
     put:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: |
         Updates a test organisation associated with your authed organisation.
       tags:
-      - setup
+        - setup
       operationId: updateTestOrganisation
       requestBody:
         content:
@@ -200,20 +200,20 @@ paths:
             schema:
               $ref: "#/components/schemas/TestOrganisation"
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+        - name: Authorization
+          in: header
+          description: Bearer token for authentication
+          schema:
+            type: string
+          required: true
+        - name: X-Pillar2-Id
+          in: header
+          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
+          schema:
+            type: string
+          required: false
       summary: Update Test Organisation
       responses:
         "400":
@@ -286,28 +286,28 @@ paths:
                   lastUpdated: 2024-01-01T12:00:00Z
     delete:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: |
         Deletes a test organisation associated with your authed organisation.
       tags:
-      - setup
+        - setup
       operationId: deleteTestOrganisation
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+        - name: Authorization
+          in: header
+          description: Bearer token for authentication
+          schema:
+            type: string
+          required: true
+        - name: X-Pillar2-Id
+          in: header
+          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
+          schema:
+            type: string
+          required: false
       summary: Delete Test Organisation
       responses:
         "404":
@@ -327,7 +327,7 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
                 code: 500
-                message: Failed to delete organisation due to database error
+                message: Failed to delete organisation and submission data
         "403":
           description: Forbidden
           content:
@@ -338,7 +338,7 @@ paths:
                 code: 403
                 message: Test endpoints are not available in this environment
         "204":
-          description: Test Organisation Deleted Successfully
+          description: Test Organisation and Submission Data Deleted Successfully
         "401":
           description: Unauthorized
           content:
@@ -351,31 +351,82 @@ paths:
   /organisations/pillar-two/uk-tax-return:
     post:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: "Submits a UK Tax Return for a specified accounting period.\n###\
-        \ Error Codes\n<p>This table contains a list of 422 error codes returned when\
-        \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
-        \ codes still in development are marked as \"awaiting clarification\".</p>\n\
-        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
-        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID required</td>\n<td>Please provide\
-        \ the request header for your client, to check it contains the Pillar 2 ID\
+        \ Field Reference\n<p>This table contains a list of the fields which make\
+        \ up the SubmitUKTR and AmendUKTR API requests.</p>\n<table>\n<thead>\n<tr>\n\
+        <th>Name</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>accountingPeriodFrom</td>\n\
+        <td>Start date of accounting period supplied by the group at registration.</td>\n\
+        </tr>\n<tr>\n<td>accountingPeriodTo</td>\n<td>End date of accounting period\
+        \ supplied by the group at registration.</td>\n</tr>\n<tr>\n<td>obligationMTT</td>\n\
+        <td>Flag indicating if the group will pay Multinational Top-up Tax (<strong>MTT</strong>).</td>\n\
+        </tr>\n<tr>\n<td>electionUKGAAP</td>\n<td>Only a domestic group can have a\
+        \ UK GAAP election. It allows a domestic group to use UK GAAP when calculating\
+        \ the amount of Domestic Top-up Tax (<strong>DTT</strong>) due.</td>\n</tr>\n\
+        <tr>\n<td>electionDTTSingleMember</td>\n<td>Single member of the group who\
+        \ will submit returns and make payments on behalf of the entire group (only\
+        \ for DTT payments).</td>\n</tr>\n<tr>\n<td>electionUTPRSingleMember</td>\n\
+        <td>Single member of the group who will submit returns and make payments on\
+        \ behalf of the entire group (only for Under Taxed Profit Rule (<strong>UTPR</strong>)\
+        \ payments).</td>\n</tr>\n<tr>\n<td>numberSubGroupDTT</td>\n<td>Number of\
+        \ liable entities in the liable entities table where the DTT amount owed is\
+        \ greater than 0.</td>\n</tr>\n<tr>\n<td>numberSubGroupUTPR</td>\n<td>Number\
+        \ of liable entities in the liable entities table where the UTPR amount owed\
+        \ is greater than 0.</td>\n</tr>\n<tr>\n<td>totalLiability</td>\n<td>The overall\
+        \ total of tax due (incorporates DTT, Income Inclusion Rule (<strong>IIR</strong>)\
+        \ and UTPR).</td>\n</tr>\n<tr>\n<td>totalLiabilityDTT</td>\n<td>The overall\
+        \ total of tax due for entities with DTT liabilities.</td>\n</tr>\n<tr>\n\
+        <td>totalLiabilityIIR</td>\n<td>The overall total of tax due for entities\
+        \ with IIR liabilities.</td>\n</tr>\n<tr>\n<td>totalLiabilityUTPR</td>\n<td>The\
+        \ overall total of tax due for entities with UTPR liabilities.</td>\n</tr>\n\
+        <tr>\n<td>ukChargeableEntityName</td>\n<td>Name of the Entity liable for tax\
+        \ payments.</td>\n</tr>\n<tr>\n<td>idType</td>\n<td>Unique identifier type\
+        \ for the entity, which is either the Company Registration Number (<strong>CRN</strong>)\
+        \ or Unique Taxpayer Reference (<strong>UTR</strong>) for corporation tax.</td>\n\
+        </tr>\n<tr>\n<td>idValue</td>\n<td>Unique identifier for the entity, either\
+        \ a CRN or UTR depending on the <em>idType</em> entered.</td>\n</tr>\n<tr>\n\
+        <td>amountOwedDTT</td>\n<td>Amount of DTT owed by the entity.</td>\n</tr>\n\
+        <tr>\n<td>amountOwedIIR</td>\n<td>Amount of IIR owed by the entity.</td>\n\
+        </tr>\n<tr>\n<td>amountOwedUTPR</td>\n<td>Amount of UTPR owed by the entity.</td>\n\
+        </tr>\n<tr>\n<td>returnType</td>\n<td>Only supplied with Nil Return.</td>\n\
+        </tr>\n</tbody>\n</table>\n\n### Error Codes\n<p>This table contains a list\
+        \ of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is\
+        \ not processed successfully.</p>\n<table>\n<thead>\n<tr>\n<th>Error Message</th>\n\
+        <th>Next Steps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID\
+        \ (SAP Number) is missing or invalid</td>\n<td>Please provide the request\
+        \ header for your client, to check it contains the Pillar 2 ID (SAP Number)\
         \ they were assigned at registration.</td>\n</tr>\n<tr>\n<td>003 - Request\
         \ could not be processed</td>\n<td>The message could not be processed due\
-        \ to locking. Please send the request again.</td>\n</tr>\n<tr>\n<td>007 -\
-        \ Business Partner does not have an Active Subscription</td>\n<td>The request\
-        \ Pillar 2 ID is not listed as active by HMRC. Please contact the central\
-        \ support team.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n\
+        \ to locking. Please check if there is currently an open enquiry on your tax\
+        \ account.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n\
         <td>A UKTR for the specified period has already been submitted. If you are\
         \ trying to amend a UKTR, please check you are sending the <em>amendUKTR</em>\
-        \ API request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There\
-        \ is an error with the tax return you’ve submitted in the request. Awaiting\
-        \ clarification.</td>\n</tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n\
-        <td>The DTT values in the request are invalid. Awaiting clarification.</td>\n\
-        </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
-        \ the request are invalid. Awaiting clarification.</td>\n</tr>\n<tr>\n<td>096\
-        \ - Invalid Total Liability</td>\n<td>The <em>totalLiability</em> value in\
-        \ the request does not match the combined values of <em>totalLiabilityDTT</em>,\
+        \ API request.</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have\
+        \ an Active Pillar 2 Subscription</td>\n<td>The Pillar 2 ID (SAP Number) in\
+        \ the request header is not listed as active by HMRC for this regime. Please\
+        \ contact the central support team.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n\
+        <td>There is an error with the tax return you’ve submitted in the request.\
+        \ Please complete the following checks. \n<li>Review the <em>accountingPeriodFrom</em>\
+        \ and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If\
+        \ you need to check or amend the accounting period pattern, you can do this\
+        \ on the Pillar 2 site under “Personal Details”.</li>\n<li>If the <em>obligationMTT\
+        \ field</em> is set to <em>false</em>, check the value entered for both <em>amountOwedIIR</em>\
+        \ and <em>amountOwedUTPR</em> is 0.</li></td>\n</tr>\n<tr>\n<td>094 - Invalid\
+        \ DTT Election</td>\n<td>The DTT values in the request are invalid. Please\
+        \ complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em>\
+        \ is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number\
+        \ represents the number of liable entities that owe a DTT amount greater than\
+        \ 0. The total number of liable entities who owe DTT in the payload should\
+        \ be the same as the number in <em>numberSubGroupDTT</em>.</td>\n</tr>\n<tr>\n\
+        <td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in the request are\
+        \ invalid. Please complete the following checks, then submit the request again.\
+        \ If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em>\
+        \ should be greater than 0. This number represents the number of liable entities\
+        \ that owe a UTPR amount greater than 0. The total number of liable entities\
+        \ who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>\n\
+        </tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n<td>The <em>totalLiability</em>\
+        \ value in the request does not match the combined values of <em>totalLiabilityDTT</em>,\
         \ <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check\
         \ the sum of these fields matches the <em>totalLiability</em> value and submit\
         \ the request again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability\
@@ -391,21 +442,21 @@ paths:
         \ these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
         </table>       \n"
       tags:
-      - submission
+        - submission
       operationId: submitUKTR
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-              - $ref: "#/components/schemas/UKTRSubmissionData"
-              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+                - $ref: "#/components/schemas/UKTRSubmissionData"
+                - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        - in: header
+          name: X-Pillar2-Id
+          schema:
+            type: string
+          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: SubmitUKTR
       responses:
         "400":
@@ -523,28 +574,30 @@ paths:
                 message: Not authorized
     put:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: "Amends a UK tax return submitted for a specified accounting period.\
-        \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
-        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\
-        \        \n"
+        \   \n### Field Reference\n<p>AmendUKTR uses the same range of fields as SubmitUKTR,\
+        \ please use the Field Reference table in the SubmitUKTR section above.</p>\n\
+        ### Error Codes\n<p>AmendUKTR generates the same error codes as SubmitUKTR,\
+        \ please use the Error Codes table in the SubmitUKTR section above.</p>  \
+        \      \n"
       tags:
-      - submission
+        - submission
       operationId: amendUKTR
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-              - $ref: "#/components/schemas/UKTRSubmissionData"
-              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+                - $ref: "#/components/schemas/UKTRSubmissionData"
+                - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        - in: header
+          name: X-Pillar2-Id
+          schema:
+            type: string
+          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: AmendUKTR
       responses:
         "400":
@@ -659,10 +712,34 @@ paths:
   /organisations/pillar-two/below-threshold-notification:
     post:
       security:
-      - userRestricted:
-        - write:pillar2
+        - userRestricted:
+            - write:pillar2
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
+        ### Field Reference
+        <p>This table contains a list of the fields which make up the SubmitBTN request.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Name</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>accountingPeriodFrom</td>
+        <td>Start date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>accountingPeriodTo</td>
+        <td>End date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>processingDate</td>
+        <td>Confirmation timestamp for successful response.</td>
+        </tr>
+        </tbody>
+        </table>
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
         <table>
@@ -674,25 +751,25 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
         </tr>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please send the request again.</td>
-        </tr>
-        <tr>
-        <td>007 - Business Partner does not have an Active Pillar 2 registration</td>
-        <td>The request Pillar 2 ID is not listed as active by HMRC. Please contact the central support team.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been  submitted.</td>
+        <td>A BTN for the specified period has already been submitted.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
         </table>
       tags:
-      - submission
+        - submission
       operationId: submitBTN
       requestBody:
         content:
@@ -700,11 +777,11 @@ paths:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
       parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        - in: header
+          name: X-Pillar2-Id
+          schema:
+            type: string
+          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       summary: SubmitBTN
       responses:
         "400":
@@ -794,6 +871,24 @@ paths:
                 message: Not authorized
 components:
   schemas:
+    Submission:
+      properties:
+        submissionType:
+          type: string
+          enum:
+            - UKTR
+            - ORN
+            - BTN
+            - GIR
+        receivedDate:
+          type: string
+          format: date-time
+        country:
+          type: string
+          nullable: true
+      required:
+        - submissionType
+        - receivedDate
     TestOrganisation:
       properties:
         orgDetails:
@@ -804,9 +899,9 @@ components:
           type: string
           format: date-time
       required:
-      - orgDetails
-      - accountingPeriod
-      - lastUpdated
+        - orgDetails
+        - accountingPeriod
+        - lastUpdated
     BTNSubmission:
       properties:
         accountingPeriodFrom:
@@ -816,14 +911,14 @@ components:
           type: string
           format: date
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
+        - accountingPeriodFrom
+        - accountingPeriodTo
     SubmitBTNSuccessResponse:
       properties:
         processingDate:
           type: string
       required:
-      - processingDate
+        - processingDate
     UKTRSubmissionData:
       properties:
         electionUKGAAP:
@@ -839,11 +934,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
     LiableEntity:
       properties:
         idType:
@@ -862,12 +957,12 @@ components:
           type: number
           format: double
       required:
-      - ukChargeableEntityName
-      - idType
-      - idValue
-      - amountOwedDTT
-      - amountOwedIIR
-      - amountOwedUTPR
+        - ukChargeableEntityName
+        - idType
+        - idValue
+        - amountOwedDTT
+        - amountOwedIIR
+        - amountOwedUTPR
     AccountingPeriod:
       properties:
         startDate:
@@ -877,8 +972,8 @@ components:
           type: string
           format: date
       required:
-      - startDate
-      - endDate
+        - startDate
+        - endDate
     TestOrganisationWithId:
       properties:
         pillar2Id:
@@ -886,8 +981,8 @@ components:
         organisation:
           $ref: "#/components/schemas/TestOrganisation"
       required:
-      - pillar2Id
-      - organisation
+        - pillar2Id
+        - organisation
     OrgDetails:
       properties:
         domesticOnly:
@@ -898,9 +993,9 @@ components:
           type: string
           format: date
       required:
-      - domesticOnly
-      - organisationName
-      - registrationDate
+        - domesticOnly
+        - organisationName
+        - registrationDate
     responses.UKTRSubmitSuccessResponse:
       properties:
         processingDate:
@@ -912,16 +1007,16 @@ components:
           type: string
           nullable: true
       required:
-      - processingDate
-      - formBundleNumber
+        - processingDate
+        - formBundleNumber
     LiabilityNilReturn:
       properties:
         returnType:
           type: string
           enum:
-          - NIL_RETURN
+            - NIL_RETURN
       required:
-      - returnType
+        - returnType
     UKTRSubmissionNilReturn:
       properties:
         electionUKGAAP:
@@ -937,11 +1032,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - obligationMTT
+        - electionUKGAAP
+        - liabilities
     LiabilityData:
       properties:
         electionUTPRSingleMember:
@@ -971,15 +1066,15 @@ components:
           type: number
           format: double
       required:
-      - electionDTTSingleMember
-      - electionUTPRSingleMember
-      - numberSubGroupDTT
-      - numberSubGroupUTPR
-      - totalLiability
-      - totalLiabilityDTT
-      - totalLiabilityIIR
-      - totalLiabilityUTPR
-      - liableEntities
+        - electionDTTSingleMember
+        - electionUTPRSingleMember
+        - numberSubGroupDTT
+        - numberSubGroupUTPR
+        - totalLiability
+        - totalLiabilityDTT
+        - totalLiabilityIIR
+        - totalLiabilityUTPR
+        - liableEntities
     uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
       properties:
         code:
@@ -987,8 +1082,8 @@ components:
         message:
           type: string
       required:
-      - code
-      - message
+        - code
+        - message
   securitySchemes:
     userRestricted:
       type: oauth2
