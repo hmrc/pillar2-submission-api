@@ -8,8 +8,97 @@ paths:
       summary: SubmitUKTR
       description: |
         Submits a UK Tax Return for a specified accounting period.
+        ### Field Reference
+        <p>This table contains a list of the fields which make up the SubmitUKTR and AmendUKTR API requests.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Name</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>accountingPeriodFrom</td>
+        <td>Start date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>accountingPeriodTo</td>
+        <td>End date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>obligationMTT</td>
+        <td>Flag indicating if the group will pay Multinational Top-up Tax (<strong>MTT</strong>).</td>
+        </tr>
+        <tr>
+        <td>electionUKGAAP</td>
+        <td>Only a domestic group can have a UK GAAP election. It allows a domestic group to use UK GAAP when calculating the amount of Domestic Top-up Tax (<strong>DTT</strong>) due.</td>
+        </tr>
+        <tr>
+        <td>electionDTTSingleMember</td>
+        <td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for DTT payments).</td>
+        </tr>
+        <tr>
+        <td>electionUTPRSingleMember</td>
+        <td>Single member of the group who will submit returns and make payments on behalf of the entire group (only for Under Taxed Profit Rule (<strong>UTPR</strong>) payments).</td>
+        </tr>
+        <tr>
+        <td>numberSubGroupDTT</td>
+        <td>Number of liable entities in the liable entities table where the DTT amount owed is greater than 0.</td>
+        </tr>
+        <tr>
+        <td>numberSubGroupUTPR</td>
+        <td>Number of liable entities in the liable entities table where the UTPR amount owed is greater than 0.</td>
+        </tr>
+        <tr>
+        <td>totalLiability</td>
+        <td>The overall total of tax due (incorporates DTT, Income Inclusion Rule (<strong>IIR</strong>) and UTPR).</td>
+        </tr>
+        <tr>
+        <td>totalLiabilityDTT</td>
+        <td>The overall total of tax due for entities with DTT liabilities.</td>
+        </tr>
+        <tr>
+        <td>totalLiabilityIIR</td>
+        <td>The overall total of tax due for entities with IIR liabilities.</td>
+        </tr>
+        <tr>
+        <td>totalLiabilityUTPR</td>
+        <td>The overall total of tax due for entities with UTPR liabilities.</td>
+        </tr>
+        <tr>
+        <td>ukChargeableEntityName</td>
+        <td>Name of the Entity liable for tax payments.</td>
+        </tr>
+        <tr>
+        <td>idType</td>
+        <td>Unique identifier type for the entity, which is either the Company Registration Number (<strong>CRN</strong>) or Unique Taxpayer Reference (<strong>UTR</strong>) for corporation tax.</td>
+        </tr>
+        <tr>
+        <td>idValue</td>
+        <td>Unique identifier for the entity, either a CRN or UTR depending on the <em>idType</em> entered.</td>
+        </tr>
+        <tr>
+        <td>amountOwedDTT</td>
+        <td>Amount of DTT owed by the entity.</td>
+        </tr>
+        <tr>
+        <td>amountOwedIIR</td>
+        <td>Amount of IIR owed by the entity.</td>
+        </tr>
+        <tr>
+        <td>amountOwedUTPR</td>
+        <td>Amount of UTPR owed by the entity.</td>
+        </tr>
+        <tr>
+        <td>returnType</td>
+        <td>Only supplied with Nil Return.</td>
+        </tr>
+        </tbody>
+        </table>
+        
         ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
+        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully.</p>
         <table>
         <thead>
         <tr>
@@ -36,7 +125,9 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Please complete the following checks. 
+        <li>Review the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</li>
+        <li>If the <em>obligationMTT field</em> is set to <em>false</em>, check the value entered for both <em>amountOwedIIR</em> and <em>amountOwedUTPR</em> is 0.</li></td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
@@ -70,9 +161,10 @@ paths:
       summary: AmendUKTR
       description: |
         Amends a UK tax return submitted for a specified accounting period.   
-        
+        ### Field Reference
+        <p>AmendUKTR uses the same range of fields as SubmitUKTR, please use the Field Reference table in the SubmitUKTR section above.</p>
         ### Error Codes
-        <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>        
+        <p>AmendUKTR generates the same error codes as SubmitUKTR, please use the Error Codes table in the SubmitUKTR section above.</p>        
       security:
         - userRestricted: [write:pillar2]
   /below-threshold-notification:
@@ -80,6 +172,30 @@ paths:
       summary: SubmitBTN
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
+        ### Field Reference
+        <p>This table contains a list of the fields which make up the SubmitBTN request.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Name</th>
+        <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>accountingPeriodFrom</td>
+        <td>Start date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>accountingPeriodTo</td>
+        <td>End date of accounting period supplied by the group at registration.</td>
+        </tr>
+        <tr>
+        <td>processingDate</td>
+        <td>Confirmation timestamp for successful response.</td>
+        </tr>
+        </tbody>
+        </table>
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
         <table>
