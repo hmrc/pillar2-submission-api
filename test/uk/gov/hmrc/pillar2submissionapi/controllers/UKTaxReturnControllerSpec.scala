@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MonetaryValidationError}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.UKTaxReturnController
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
 
@@ -155,6 +155,39 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
       }
     }
 
+    "submitUKTR() called with a monetary value exceeding the maximum allowed" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "submitUKTR() called with a monetary value having too many decimal places" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "submitUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "submitUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "submitUKTR() called with a negative monetary value at the minimum limit" should {
+      "return 201 CREATED response" in {
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual CREATED
+      }
+    }
+
     "amendUKTR() called with a valid request" should {
       "return 200 OK response" in {
         when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
@@ -264,6 +297,39 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     "amendUKTR() called with valid request body that contains both a full and a nil submission" should {
       "return 200 OK response" in {
         status(of = callAmendWithBody(liabilityAndNilReturn)) mustEqual OK
+      }
+    }
+
+    "amendUKTR() called with a monetary value exceeding the maximum allowed" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callAmendWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "amendUKTR() called with a monetary value having too many decimal places" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "amendUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "amendUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
+      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      }
+    }
+
+    "amendUKTR() called with a negative monetary value at the minimum limit" should {
+      "return 200 OK response" in {
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
+
+        status(of = callAmendWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual OK
       }
     }
   }
