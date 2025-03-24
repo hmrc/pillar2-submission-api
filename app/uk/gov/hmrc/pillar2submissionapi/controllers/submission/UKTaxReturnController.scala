@@ -85,7 +85,7 @@ class UKTaxReturnController @Inject() (
   }
 
   private def validateMonetaryFields(submission: UKTRSubmission): Option[Throwable] = {
-    val minValue         = BigDecimal("-9999999999999.99")
+    val minValue         = BigDecimal("0")
     val maxValue         = BigDecimal("9999999999999.99")
     val decimalPrecision = 2
 

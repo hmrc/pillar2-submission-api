@@ -425,7 +425,7 @@ trait UKTaxReturnDataFixture {
     |    "electionUTPRSingleMember": false,
     |    "numberSubGroupDTT": 1,
     |    "numberSubGroupUTPR": 1,
-    |    "totalLiability": -9999999999999.99,
+    |    "totalLiability": 0,
     |    "totalLiabilityDTT": 5000.99,
     |    "totalLiabilityIIR": 4000,
     |    "totalLiabilityUTPR": 10000.99,
@@ -436,7 +436,7 @@ trait UKTaxReturnDataFixture {
     |        "idValue": "12345678",
     |        "amountOwedDTT": 5000.00,
     |        "amountOwedIIR": 3400.00,
-    |        "amountOwedUTPR": -9999999999999.99
+    |        "amountOwedUTPR": 0
     |      }
     |    ]
     |  }
