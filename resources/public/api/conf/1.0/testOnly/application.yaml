@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.87.0
+  version: 0.89.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -353,56 +353,64 @@ paths:
       security:
       - userRestricted:
         - write:pillar2
-      description: "Submits a UK Tax Return for a specified accounting period.\n###\
-        \ Error Codes\n<p>This table contains a list of 422 error codes returned when\
-        \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
-        \ codes still in development are marked as \"awaiting clarification\".</p>\n\
-        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
-        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID (SAP Number) is missing or\
-        \ invalid</td>\n<td>Please provide the request header for your client, to\
-        \ check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>\n\
-        </tr>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message\
-        \ could not be processed due to locking. Please check if there is currently\
-        \ an open enquiry on your tax account.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation\
-        \ Already Fulfilled</td>\n<td>A UKTR for the specified period has already\
-        \ been submitted. If you are trying to amend a UKTR, please check you are\
-        \ sending the <em>amendUKTR</em> API request.</td>\n</tr>\n<tr>\n<td>063 -\
-        \ Business Partner does not have an Active Pillar 2 Subscription</td>\n<td>The\
-        \ Pillar 2 ID (SAP Number) in the request header is not listed as active by\
-        \ HMRC for this regime. Please contact the central support team.</td>\n</tr>\n\
-        <tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the tax return\
-        \ you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em>\
-        \ and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If\
-        \ you need to check or amend the accounting period pattern, you can do this\
-        \ on the Pillar 2 site under “Personal Details”.</td>\n</tr>\n<tr>\n<td>094\
-        \ - Invalid DTT Election</td>\n<td>The DTT values in the request are invalid.\
-        \ Please complete the following checks, then submit the request again. If\
-        \ <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em>\
-        \ should be greater than 0. This number represents the number of liable entities\
-        \ that owe a DTT amount greater than 0. The total number of liable entities\
-        \ who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>\n\
-        </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
-        \ the request are invalid. Please complete the following checks, then submit\
-        \ the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em>\
-        \ should be greater than 0. This number represents the number of liable entities\
-        \ that owe a UTPR amount greater than 0. The total number of liable entities\
-        \ who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>\n\
-        </tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n<td>The <em>totalLiability</em>\
-        \ value in the request does not match the combined values of <em>totalLiabilityDTT</em>,\
-        \ <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check\
-        \ the sum of these fields matches the <em>totalLiability</em> value and submit\
-        \ the request again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability\
-        \ IIR</td>\n<td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR\
-        \ value</em> from the <em>liableEntities</em> array. Please check the value\
-        \ of these fields matches and submit the request again.</td>\n</tr>\n<tr>\n\
-        <td>098 - Invalid Total Liability DTT</td>\n<td>The <em>totalLiabilityDTT</em>\
-        \ value does not match the <em>amountDTT</em> value from the <em>liableEntities</em>\
-        \ array. Please check the value of these fields matches and submit the request\
-        \ again.</td>\n</tr>\n<tr>\n<td>099 - Invalid Total Liability UTPR</td>\n\
-        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em>\
-        \ value from the <em>liableEntities</em> array. Please check the value of\
-        \ these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
-        </table>       \n"
+      description: |
+        Submits a UK Tax Return for a specified accounting period.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
+        </tr>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+        </tr>
+        <tr>
+        <td>044 - Tax Obligation Already Fulfilled</td>
+        <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>093 - Invalid Return</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        </tr>
+        <tr>
+        <td>094 - Invalid DTT Election</td>
+        <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
+        </tr>
+        <tr>
+        <td>095 - Invalid UTPR Election</td>
+        <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
+        </tr>
+        <tr>
+        <td>096 - Invalid Total Liability</td>
+        <td>The <em>totalLiability</em> value in the request does not match the combined values of <em>totalLiabilityDTT</em>, <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check the sum of these fields matches the <em>totalLiability</em> value and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>097 - Invalid Total Liability IIR</td>
+        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>098 - Invalid Total Liability DTT</td>
+        <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>099 - Invalid Total Liability UTPR</td>
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        </tr>
+        </tbody>
+        </table>
       tags:
       - submission
       operationId: submitUKTR
@@ -413,6 +421,21 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+            examples:
+              NilReturnsDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithUkGaap"
+              LiabilityReturnsMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities"
+              NilReturnsDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap"
+              LiabilityReturnsDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities"
+              LiabilityReturnsMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithOneEntity"
+              NilReturnsMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnsMneAndUk"
+              LiabilityReturnsDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap"
       parameters:
       - in: header
         name: X-Pillar2-Id
@@ -446,6 +469,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
+              examples:
+                responses.UKTRSuccessResponseExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
         "500":
           description: Internal Server Error
           content:
@@ -540,8 +566,7 @@ paths:
         - write:pillar2
       description: "Amends a UK tax return submitted for a specified accounting period.\
         \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
-        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\
-        \        \n"
+        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\n"
       tags:
       - submission
       operationId: amendUKTR
@@ -552,6 +577,21 @@ paths:
               oneOf:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+            examples:
+              NilReturnsDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithUkGaap"
+              LiabilityReturnsMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities"
+              NilReturnsDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap"
+              LiabilityReturnsDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities"
+              LiabilityReturnsMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithOneEntity"
+              NilReturnsMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnsMneAndUk"
+              LiabilityReturnsDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap"
       parameters:
       - in: header
         name: X-Pillar2-Id
@@ -664,11 +704,14 @@ paths:
                 code: '003'
                 message: Not authorized
         "200":
-          description: UK Tax Return Submission Amended
+          description: UK Tax Return Submission Updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
+              examples:
+                responses.UKTRSuccessResponseExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
   /organisations/pillar-two/below-threshold-notification:
     post:
       security:
@@ -712,6 +755,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
+            examples:
+              requests.BTNRequestExample:
+                $ref: "#/components/examples/requests.BTNRequestExample"
       parameters:
       - in: header
         name: X-Pillar2-Id
@@ -745,6 +791,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SubmitBTNSuccessResponse"
+              examples:
+                responses.BTNSuccessResponseExample:
+                  $ref: "#/components/examples/responses.BTNSuccessResponseExample"
         "500":
           description: Internal Server Error
           content:
@@ -1200,6 +1249,151 @@ components:
       - status
       - canAmend
       - submissions
+  examples:
+    requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap:
+      summary: Liability Returns - Domestic Only with 1 Entity and UK GAAP
+      value:
+        electionUKGAAP: true
+        accountingPeriodFrom: 2025-01-01
+        liabilities:
+          electionUTPRSingleMember: false
+          electionDTTSingleMember: false
+          numberSubGroupDTT: 4
+          totalLiabilityDTT: 26567.89
+          numberSubGroupUTPR: 5
+          liableEntities:
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: 9765678990
+            amountOwedDTT: 26567.89
+          totalLiability: 26567.89
+        accountingPeriodTo: 2026-12-31
+        obligationMTT: false
+    requests.UKTRLiabilityReturnsMneAndUkWithOneEntity:
+      summary: Liability Returns - MNE and UK with 1 Entity
+      value:
+        electionUKGAAP: false
+        accountingPeriodFrom: 2025-04-06
+        liabilities:
+          electionUTPRSingleMember: false
+          electionDTTSingleMember: false
+          numberSubGroupDTT: 4
+          totalLiabilityDTT: 5000.99
+          totalLiabilityUTPR: 6000.5
+          numberSubGroupUTPR: 5
+          liableEntities:
+          - idType: CRN
+            idValue: 12345678
+            ukChargeableEntityName: Newco PLC
+            amountOwedUTPR: 6000.5
+            amountOwedIIR: 3400
+            amountOwedDTT: 5000.99
+          totalLiabilityIIR: 3400
+          totalLiability: 14401.49
+        accountingPeriodTo: 2026-04-05
+        obligationMTT: true
+    requests.UKTRNilReturnsMneAndUk:
+      summary: Nil Returns - MNE and UK
+      value:
+        electionUKGAAP: false
+        accountingPeriodFrom: 2024-01-01
+        liabilities:
+          returnType: NIL_RETURN
+        accountingPeriodTo: 2024-12-31
+        obligationMTT: true
+    requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities:
+      summary: Liability Returns - MNE and UK with 2 Entities
+      value:
+        electionUKGAAP: false
+        accountingPeriodFrom: 2025-04-06
+        liabilities:
+          electionUTPRSingleMember: false
+          electionDTTSingleMember: false
+          numberSubGroupDTT: 4
+          totalLiabilityDTT: 35000
+          totalLiabilityUTPR: 9001.49
+          numberSubGroupUTPR: 5
+          liableEntities:
+          - idType: CRN
+            idValue: 12345678
+            ukChargeableEntityName: Newco PLC
+            amountOwedUTPR: 6000.5
+            amountOwedIIR: 3400
+            amountOwedDTT: 5000
+          - idType: CT-UTR
+            idValue: 1234567890
+            ukChargeableEntityName: Conew PLC
+            amountOwedUTPR: 3000.99
+            amountOwedIIR: 2000
+            amountOwedDTT: 30000
+          totalLiabilityIIR: 5400
+          totalLiability: 49401.49
+        accountingPeriodTo: 2026-04-05
+        obligationMTT: true
+    responses.BTNSuccessResponseExample:
+      summary: Success response
+      value:
+        processingDate: 2026-06-26T09:26:17Z
+    requests.UKTRNilReturnsDomesticOnlyWithUkGaap:
+      summary: Nil Returns - Domestic Only with UK GAAP
+      value:
+        electionUKGAAP: true
+        accountingPeriodFrom: 2024-01-01
+        liabilities:
+          returnType: NIL_RETURN
+        accountingPeriodTo: 2024-12-31
+        obligationMTT: false
+    requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities:
+      summary: Liability Returns - Domestic Only with 2 Entities
+      value:
+        electionUKGAAP: false
+        accountingPeriodFrom: 2025-04-06
+        liabilities:
+          electionUTPRSingleMember: false
+          electionDTTSingleMember: false
+          numberSubGroupDTT: 4
+          totalLiabilityDTT: 26567.89
+          numberSubGroupUTPR: 5
+          liableEntities:
+          - ukChargeableEntityName: Newco PLC
+            idType: CRN
+            idValue: 12345679
+            amountOwedDTT: 4567
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: 9765678990
+            amountOwedDTT: 22000.89
+          totalLiability: 26567.89
+        accountingPeriodTo: 2026-04-05
+        obligationMTT: false
+    requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap:
+      summary: Nil Returns - UK Only without UK GAAP
+      value:
+        electionUKGAAP: false
+        accountingPeriodFrom: 2024-01-01
+        liabilities:
+          returnType: NIL_RETURN
+        accountingPeriodTo: 2024-12-31
+        obligationMTT: false
+    requests.BTNRequestExample:
+      summary: Request example
+      value:
+        accountingPeriodFrom: 2024-01-01
+        accountingPeriodTo: 2024-12-31
+    responses.UKTRNilReturnResponseExample:
+      summary: Request example for Domestic only with UK GAAP Nil Return
+      value:
+        electionUKGAAP: true
+        accountingPeriodFrom: 2024-01-01
+        liabilities:
+          returnType: NIL_RETURN
+        accountingPeriodTo: 2024-12-31
+        obligationMTT: false
+    responses.UKTRSuccessResponseExample:
+      summary: Success response
+      value:
+        processingDate: 2026-06-26T09:26:17Z
+        formBundleNumber: 119000004320
   securitySchemes:
     userRestricted:
       type: oauth2
