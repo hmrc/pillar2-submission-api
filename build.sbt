@@ -47,12 +47,14 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
+  .settings(PublishTestOnlyOas.settings *)
   .settings(PlaySwagger.settings *)
   .disablePlugins(JUnitXmlReportPlugin)
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
+addCommandAlias("publishTestOnlyOas", ";createOpenAPISpec; publishOas")
 
 lazy val it = project
   .enablePlugins(PlayScala)

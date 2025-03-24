@@ -16,7 +16,10 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status, writeableOf_AnyContentAsEmpty}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
@@ -51,14 +54,31 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
       (json \ "api" \ "versions" \ 0 \ "access" \ "isTrial").as[Boolean] mustEqual true
     }
 
-    "return API documentation" in {
-      val url            = s"$baseUrl${routes.DocumentationController.specification("1.0", "application.yaml").url}"
-      val apiDoc         = Await.result(client.get(URI.create(url).toURL).execute[HttpResponse], 5.seconds)
-      val apiDocStr      = apiDoc.body
-      val expectedAPIDoc = Source.fromResource("public/api/conf/1.0/application.yaml").mkString
-      apiDoc.status mustEqual 200
-      apiDocStr mustEqual expectedAPIDoc
+    "return API documentation" when {
+      "testOnlyOasEnabled is false" in {
+        val url            = s"$baseUrl${routes.DocumentationController.specification("1.0", "application.yaml").url}"
+        val apiDoc         = Await.result(client.get(URI.create(url).toURL).execute[HttpResponse], 5.seconds)
+        val apiDocStr      = apiDoc.body
+        val expectedAPIDoc = Source.fromResource("public/api/conf/1.0/application.yaml").mkString
+
+        apiDoc.status mustEqual 200
+        apiDocStr mustEqual expectedAPIDoc
+      }
+
+      "testOnlyOasEnabled is true" in {
+        val app = new GuiceApplicationBuilder()
+          .configure("features.testOnlyOasEnabled" -> true)
+          .build()
+
+        val request = FakeRequest(GET, routes.DocumentationController.specification("1.0", "application.yaml").url)
+        val result  = route(app, request).get
+
+        val apiDocStr      = contentAsString(result)
+        val expectedAPIDoc = Source.fromResource("public/api/conf/1.0/testOnly/application.yaml").mkString
+
+        status(result) mustEqual 200
+        apiDocStr mustEqual expectedAPIDoc
+      }
     }
   }
-
 }
