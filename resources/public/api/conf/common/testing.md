@@ -4,8 +4,8 @@ Work through the instructions on the [getting started](https://developer.service
 
 The next steps are outlined on the Open API Specification (**OAS**) page under "setup". Access to the OAS page is currently restricted, so please use the link in the "Endpoints" section to contact support and join the private trial.
 
-- Create a test user with a Pillar 2 Subscription. 
-- Create a bearer token for the test user.
+- [Create a test user](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/test-users-test-data-stateful-behaviour) with a Pillar 2 Subscription. 
+- [Create a bearer token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) for the test user.
 - Set up a test organisation.
 - Run a SubmitUKTR request.
 
