@@ -16,18 +16,13 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Json, OFormat, Reads}
+import play.api.libs.json.{JsonValidationError, Reads}
 
-case class LiableEntity(
-  ukChargeableEntityName: String,
-  idType:                 String,
-  idValue:                String,
-  amountOwedDTT:          BigDecimal,
-  amountOwedIIR:          BigDecimal,
-  amountOwedUTPR:         BigDecimal
-)
+object MonetaryReads {
+  private val lBound = BigDecimal("0")
+  private val uBound = BigDecimal("9999999999999.99")
 
-object LiableEntity {
-  implicit val monetaryReads: Reads[BigDecimal]     = MonetaryReads.monetaryValueReads
-  implicit val format:        OFormat[LiableEntity] = Json.format[LiableEntity]
-}
+  val monetaryValueReads: Reads[BigDecimal] = implicitly[Reads[BigDecimal]].filter(
+    JsonValidationError("Number field invalid length")
+  )(bd => bd >= lBound && bd <= uBound && bd.scale <= 2)
+} 

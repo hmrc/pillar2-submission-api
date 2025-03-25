@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MonetaryValidationError}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.UKTaxReturnController
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
 
@@ -156,30 +156,36 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "submitUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith InvalidJson
       }
     }
 
     "submitUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith InvalidJson
       }
     }
 
     "submitUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith InvalidJson
       }
     }
 
     "submitUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith InvalidJson
       }
     }
 
-    "submitUKTR() called with a negative monetary value at the minimum limit" should {
+    "submitUKTR() called with a negative monetary value" should {
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnNegativeValue) shouldFailWith InvalidJson
+      }
+    }
+
+    "submitUKTR() called with a monetary value at the minimum limit (0)" should {
       "return 201 CREATED response" in {
         when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
@@ -301,26 +307,26 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "amendUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callAmendWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith InvalidJson
       }
     }
 
     "amendUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith InvalidJson
       }
     }
 
     "amendUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith InvalidJson
       }
     }
 
     "amendUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with MonetaryValidationError" in {
-        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith MonetaryValidationError
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith InvalidJson
       }
     }
 

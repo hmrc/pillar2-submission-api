@@ -49,13 +49,9 @@ class UKTaxReturnController @Inject() (
       case Some(request) =>
         request.validate[UKTRSubmission] match {
           case JsSuccess(value, _) =>
-            validateMonetaryFields(value) match {
-              case Some(error) => Future.failed(error)
-              case None =>
-                ukTaxReturnService
-                  .submitUKTR(value)
-                  .map(response => Created(Json.toJson(response)))
-            }
+            ukTaxReturnService
+              .submitUKTR(value)
+              .map(response => Created(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
         }
       case None => Future.failed(EmptyRequestBody)
@@ -71,50 +67,12 @@ class UKTaxReturnController @Inject() (
       case Some(request) =>
         request.validate[UKTRSubmission] match {
           case JsSuccess(value, _) =>
-            validateMonetaryFields(value) match {
-              case Some(error) => Future.failed(error)
-              case None =>
-                ukTaxReturnService
-                  .amendUKTR(value)
-                  .map(response => Ok(Json.toJson(response)))
-            }
+            ukTaxReturnService
+              .amendUKTR(value)
+              .map(response => Ok(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
         }
       case None => Future.failed(EmptyRequestBody)
-    }
-  }
-
-  private def validateMonetaryFields(submission: UKTRSubmission): Option[Throwable] = {
-    val minValue         = BigDecimal("0")
-    val maxValue         = BigDecimal("9999999999999.99")
-    val decimalPrecision = 2
-
-    def validateMonetaryValue(value: BigDecimal): Option[Throwable] =
-      if (value < minValue || value > maxValue || value.scale > decimalPrecision) {
-        Some(MonetaryValidationError)
-      } else {
-        None
-      }
-
-    submission match {
-      case data: UKTRSubmissionData =>
-        val liabilities = data.liabilities.asInstanceOf[LiabilityData]
-        validateMonetaryValue(liabilities.totalLiability)
-          .orElse(validateMonetaryValue(liabilities.totalLiabilityDTT))
-          .orElse(validateMonetaryValue(liabilities.totalLiabilityIIR))
-          .orElse(validateMonetaryValue(liabilities.totalLiabilityUTPR))
-          .orElse {
-
-            liabilities.liableEntities.foldLeft[Option[Throwable]](None) { (acc, entity) =>
-              acc
-                .orElse(validateMonetaryValue(entity.amountOwedDTT))
-                .orElse(validateMonetaryValue(entity.amountOwedIIR))
-                .orElse(validateMonetaryValue(entity.amountOwedUTPR))
-            }
-          }
-
-      case _: UKTRSubmissionNilReturn =>
-        None
     }
   }
 }

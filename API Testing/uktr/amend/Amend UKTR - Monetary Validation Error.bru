@@ -27,18 +27,18 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000000000000.00,
-      "totalLiabilityDTT": 5000000000000.00,
-      "totalLiabilityIIR": 4000000000000.00,
-      "totalLiabilityUTPR": 10000000000000.00,
+      "totalLiability": -1000.00,
+      "totalLiabilityDTT": 5000.999,
+      "totalLiabilityIIR": 4000.00,
+      "totalLiabilityUTPR": 10000.00,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
-          "amountOwedDTT": 5000000000000.00,
-          "amountOwedIIR": 3400000000000.00,
-          "amountOwedUTPR": 6000000000000.00
+          "amountOwedDTT": -5000.00,
+          "amountOwedIIR": 3400.999,
+          "amountOwedUTPR": 6000.00
         }
       ]
     }
@@ -50,8 +50,8 @@ tests {
     expect(res.getStatus()).to.equal(400);
   });
   
-  test("should contain error message about monetary validation", function() {
-    expect(res.body.message).to.not.be.undefined;
-    expect(res.body.code).to.not.be.undefined;
+  test("should return InvalidJson error for monetary validation failures", function() {
+    expect(res.body.code).to.equal("001");
+    expect(res.body.message).to.equal("Invalid JSON Payload");
   });
 }
