@@ -441,6 +441,33 @@ trait UKTaxReturnDataFixture {
     |    ]
     |  }
     |}""".stripMargin)
+
+  val liabilityReturnNegativeValue: JsValue = Json.parse("""{
+    |  "accountingPeriodFrom": "2024-08-14",
+    |  "accountingPeriodTo": "2024-12-14",
+    |  "obligationMTT": true,
+    |  "electionUKGAAP": true,
+    |  "liabilities": {
+    |    "electionDTTSingleMember": false,
+    |    "electionUTPRSingleMember": false,
+    |    "numberSubGroupDTT": 1,
+    |    "numberSubGroupUTPR": 1,
+    |    "totalLiability": -1000.00,
+    |    "totalLiabilityDTT": 5000.99,
+    |    "totalLiabilityIIR": 4000,
+    |    "totalLiabilityUTPR": 10000.99,
+    |    "liableEntities": [
+    |      {
+    |        "ukChargeableEntityName": "Newco PLC",
+    |        "idType": "CRN",
+    |        "idValue": "12345678",
+    |        "amountOwedDTT": 5000.00,
+    |        "amountOwedIIR": 3400.00,
+    |        "amountOwedUTPR": 6000.5
+    |      }
+    |    ]
+    |  }
+    |}""".stripMargin)
 }
 
 object UKTRErrorCodes {
