@@ -1,0 +1,57 @@
+meta {
+  name: Submit UKTR - Monetary Validation Error
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{submissionsApiBaseUrl}}/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearerToken}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 10000000000000.00,
+      "totalLiabilityDTT": 5000000000000.00,
+      "totalLiabilityIIR": 4000000000000.00,
+      "totalLiabilityUTPR": 10000000000000.00,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Newco PLC",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 5000000000000.00,
+          "amountOwedIIR": 3400000000000.00,
+          "amountOwedUTPR": 6000000000000.00
+        }
+      ]
+    }
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain error message about monetary validation", function() {
+    expect(res.body.message).to.not.be.undefined;
+    expect(res.body.code).to.not.be.undefined;
+  });
+}
