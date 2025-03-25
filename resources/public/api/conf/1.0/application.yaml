@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.82.0
+  version: 0.89.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -1062,13 +1062,17 @@ components:
           electionDTTSingleMember: false
           numberSubGroupDTT: 4
           totalLiabilityDTT: 26567.89
+          totalLiabilityUTPR: 5000.99
           numberSubGroupUTPR: 5
           liableEntities:
-          - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
-            idValue: 9765678990
+          - idType: CT-UTR
+            idValue: xyz
+            ukChargeableEntityName: Conew PLC
+            amountOwedUTPR: 5000.99
+            amountOwedIIR: 3400
             amountOwedDTT: 26567.89
-          totalLiability: 26567.89
+          totalLiabilityIIR: 3400
+          totalLiability: 34968.98
         accountingPeriodTo: 2026-12-31
         obligationMTT: false
     requests.UKTRLiabilityReturnsMneAndUkWithOneEntity:
@@ -1085,7 +1089,7 @@ components:
           numberSubGroupUTPR: 5
           liableEntities:
           - idType: CRN
-            idValue: 12345678
+            idValue: xyz
             ukChargeableEntityName: Newco PLC
             amountOwedUTPR: 6000.5
             amountOwedIIR: 3400
@@ -1112,24 +1116,24 @@ components:
           electionUTPRSingleMember: false
           electionDTTSingleMember: false
           numberSubGroupDTT: 4
-          totalLiabilityDTT: 35000
-          totalLiabilityUTPR: 9001.49
+          totalLiabilityDTT: 26567.89
+          totalLiabilityUTPR: 9400.99
           numberSubGroupUTPR: 5
           liableEntities:
           - idType: CRN
-            idValue: 12345678
+            idValue: xyz
             ukChargeableEntityName: Newco PLC
-            amountOwedUTPR: 6000.5
-            amountOwedIIR: 3400
-            amountOwedDTT: 5000
+            amountOwedUTPR: 4000.99
+            amountOwedIIR: 3000
+            amountOwedDTT: 4567
           - idType: CT-UTR
-            idValue: 1234567890
+            idValue: xyz
             ukChargeableEntityName: Conew PLC
-            amountOwedUTPR: 3000.99
+            amountOwedUTPR: 5400
             amountOwedIIR: 2000
-            amountOwedDTT: 30000
-          totalLiabilityIIR: 5400
-          totalLiability: 49401.49
+            amountOwedDTT: 22000.89
+          totalLiabilityIIR: 5000
+          totalLiability: 40968.88
         accountingPeriodTo: 2026-04-05
         obligationMTT: true
     responses.BTNSuccessResponseExample:
@@ -1155,21 +1159,27 @@ components:
           electionDTTSingleMember: false
           numberSubGroupDTT: 4
           totalLiabilityDTT: 26567.89
+          totalLiabilityUTPR: 9400.99
           numberSubGroupUTPR: 5
           liableEntities:
-          - ukChargeableEntityName: Newco PLC
-            idType: CRN
-            idValue: 12345679
+          - idType: CRN
+            idValue: xyz
+            ukChargeableEntityName: Newco PLC
+            amountOwedUTPR: 4000.99
+            amountOwedIIR: 3000
             amountOwedDTT: 4567
-          - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
-            idValue: 9765678990
+          - idType: CT-UTR
+            idValue: xyz
+            ukChargeableEntityName: Conew PLC
+            amountOwedUTPR: 5400
+            amountOwedIIR: 2000
             amountOwedDTT: 22000.89
-          totalLiability: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiability: 40968.88
         accountingPeriodTo: 2026-04-05
         obligationMTT: false
     requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap:
-      summary: Nil Returns - UK Only without UK GAAP
+      summary: Nil Returns - Domestic Only without UK GAAP
       value:
         electionUKGAAP: false
         accountingPeriodFrom: 2024-01-01
