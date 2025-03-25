@@ -252,138 +252,148 @@ components:
     requests.UKTRNilReturnsMneAndUk:
       summary: "Nil Returns - MNE and UK"
       value:
+        electionUKGAAP: false
         accountingPeriodFrom: "2024-01-01"
         accountingPeriodTo: "2024-12-31"
         obligationMTT: true
-        electionUKGAAP: false
         liabilities:
-          returnType: "NIL_RETURN"
+          returnType: NIL_RETURN
 
 
     #nil returns - domestic only w/ uk gaap
     requests.UKTRNilReturnsDomesticOnlyWithUkGaap:
       summary: "Nil Returns - Domestic Only with UK GAAP"
       value:
+        electionUKGAAP: true
         accountingPeriodFrom: "2024-01-01"
         accountingPeriodTo: "2024-12-31"
         obligationMTT: false
-        electionUKGAAP: true
         liabilities:
-          returnType: "NIL_RETURN"
+          returnType: NIL_RETURN
 
     #nil returns - domestic only w/o uk gaap
     requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap:
-      summary: "Nil Returns - UK Only without UK GAAP"
+      summary: "Nil Returns - Domestic Only without UK GAAP"
       value:
+        electionUKGAAP: false
         accountingPeriodFrom: "2024-01-01"
         accountingPeriodTo: "2024-12-31"
         obligationMTT: false
-        electionUKGAAP: false
         liabilities:
-          returnType: "NIL_RETURN"
+          returnType: NIL_RETURN
 
     #liability returns - mne and uk w/ 1 entity
     requests.UKTRLiabilityReturnsMneAndUkWithOneEntity:
       summary: "Liability Returns - MNE and UK with 1 Entity"
       value:
+        electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
         accountingPeriodTo: "2026-04-05"
         obligationMTT: true
-        electionUKGAAP: false
         liabilities:
-          electionDTTSingleMember: false
           electionUTPRSingleMember: false
+          electionDTTSingleMember: false
           numberSubGroupDTT: 4
-          numberSubGroupUTPR: 5
-          totalLiability: 14401.49
           totalLiabilityDTT: 5000.99
-          totalLiabilityIIR: 3400
           totalLiabilityUTPR: 6000.5
+          numberSubGroupUTPR: 5
+          totalLiabilityIIR: 3400
+          totalLiability: 14401.49
           liableEntities:
-            - ukChargeableEntityName: "Newco PLC"
-              idType: "CRN"
-              idValue: "12345678"
-              amountOwedDTT: 5000.99
-              amountOwedIIR: 3400
-              amountOwedUTPR: 6000.5
+          - idType: CRN
+            idValue: xyz
+            ukChargeableEntityName: Newco PLC
+            amountOwedUTPR: 6000.5
+            amountOwedIIR: 3400
+            amountOwedDTT: 5000.99
 
 
     #liability returns - mne and uk w/ 2 entities
     requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities:
       summary: "Liability Returns - MNE and UK with 2 Entities"
       value:
+        electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
         accountingPeriodTo: "2026-04-05"
         obligationMTT: true
-        electionUKGAAP: false
         liabilities:
-          electionDTTSingleMember: false
           electionUTPRSingleMember: false
+          electionDTTSingleMember: false
           numberSubGroupDTT: 4
+          totalLiabilityDTT: 26567.89
+          totalLiabilityUTPR: 9400.99
           numberSubGroupUTPR: 5
-          totalLiability: 49401.49
-          totalLiabilityDTT: 35000
-          totalLiabilityIIR: 5400
-          totalLiabilityUTPR: 9001.49
+          totalLiabilityIIR: 5000
+          totalLiability: 40968.88
           liableEntities:
-            - ukChargeableEntityName: "Newco PLC"
-              idType: "CRN"
-              idValue: "12345678"
-              amountOwedDTT: 5000
-              amountOwedIIR: 3400
-              amountOwedUTPR: 6000.5
-            - ukChargeableEntityName: "Conew PLC"
-              idType: "CT-UTR"
-              idValue: "1234567890"
-              amountOwedDTT: 30000
-              amountOwedIIR: 2000
-              amountOwedUTPR: 3000.99
+          - idType: CRN
+            idValue: xyz
+            ukChargeableEntityName: Newco PLC
+            amountOwedUTPR: 4000.99
+            amountOwedIIR: 3000
+            amountOwedDTT: 4567
+          - idType: CT-UTR
+            idValue: xyz
+            ukChargeableEntityName: Conew PLC
+            amountOwedUTPR: 5400
+            amountOwedIIR: 2000
+            amountOwedDTT: 22000.89
 
     #liability returns - uk only - domestic flag, 1 entity and uk gaap
     requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap:
       summary: "Liability Returns - Domestic Only with 1 Entity and UK GAAP"
       value:
+        electionUKGAAP: true
         accountingPeriodFrom: "2025-01-01"
         accountingPeriodTo: "2026-12-31"
         obligationMTT: false
-        electionUKGAAP: true
         liabilities:
-          electionDTTSingleMember: false
           electionUTPRSingleMember: false
+          electionDTTSingleMember: false
           numberSubGroupDTT: 4
-          numberSubGroupUTPR: 5
-          totalLiability: 26567.89
           totalLiabilityDTT: 26567.89
+          totalLiabilityUTPR: 5000.99
+          numberSubGroupUTPR: 5
+          totalLiabilityIIR: 3400
+          totalLiability: 34968.98
           liableEntities:
-            - ukChargeableEntityName: "Conew PLC"
-              idType: "CT-UTR"
-              idValue: "9765678990"
-              amountOwedDTT: 26567.89
+          - idType: CT-UTR
+            idValue: xyz
+            ukChargeableEntityName: Conew PLC
+            amountOwedUTPR: 5000.99
+            amountOwedIIR: 3400
+            amountOwedDTT: 26567.89
 
     #liability returns - uk only - domestic flag, 2 entities
     requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities:
       summary: "Liability Returns - Domestic Only with 2 Entities"
       value:
+        electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
         accountingPeriodTo: "2026-04-05"
         obligationMTT: false
-        electionUKGAAP: false
         liabilities:
-          electionDTTSingleMember: false
           electionUTPRSingleMember: false
+          electionDTTSingleMember: false
           numberSubGroupDTT: 4
-          numberSubGroupUTPR: 5
-          totalLiability: 26567.89
           totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiabilityUTPR: 9400.99
+          numberSubGroupUTPR: 5
+          totalLiability: 40968.88
           liableEntities:
-            - ukChargeableEntityName: "Newco PLC"
-              idType: "CRN"
-              idValue: "12345679"
-              amountOwedDTT: 4567
-            - ukChargeableEntityName: "Conew PLC"
-              idType: "CT-UTR"
-              idValue: "9765678990"
-              amountOwedDTT: 22000.89
+          - ukChargeableEntityName: Newco PLC
+            idType: CRN
+            idValue: xyz
+            amountOwedDTT: 4567
+            amountOwedUTPR: 4000.99
+            amountOwedIIR: 3000
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: xyz
+            amountOwedDTT: 22000.89
+            amountOwedUTPR: 5400
+            amountOwedIIR: 2000
 
     responses.UKTRSuccessResponseExample:
       summary: "Success response"
