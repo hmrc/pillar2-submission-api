@@ -25,4 +25,4 @@ object MonetaryReads {
   val monetaryValueReads: Reads[BigDecimal] = implicitly[Reads[BigDecimal]].filter(
     JsonValidationError("Number field invalid length")
   )(bd => bd >= lBound && bd <= uBound && bd.scale <= 2)
-} 
+}
