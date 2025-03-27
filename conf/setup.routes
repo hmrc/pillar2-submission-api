@@ -42,33 +42,18 @@
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         examples:
-#           invalid_json:
-#             value:
-#               code: "001"
-#               message: "Invalid JSON Payload"
-#           empty_body:
-#             value:
-#               code: "002"
-#               message: "Empty body in request"
 #   401:
 #     description: Unauthorized
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "003"
-#           message: "Not authorized"
 #   403:
 #     description: Forbidden
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "403"
-#           message: "Test endpoints are not available in this environment"
 #   409:
 #     description: Organisation Already Exists
 #     content:
@@ -129,27 +114,18 @@ POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controlle
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "003"
-#           message: "Not authorized"
 #   403:
 #     description: Forbidden
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "403"
-#           message: "Test endpoints are not available in this environment"
 #   404:
 #     description: Organisation Not Found
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "404"
-#           message: "Organisation not found for pillar2Id: XAPLR1234567890"
 #   500:
 #     description: Internal Server Error
 #     content:
@@ -206,42 +182,24 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         examples:
-#           invalid_json:
-#             value:
-#               code: "001"
-#               message: "Invalid JSON Payload"
-#           empty_body:
-#             value:
-#               code: "002"
-#               message: "Empty body in request"
 #   401:
 #     description: Unauthorized
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "003"
-#           message: "Not authorized"
 #   403:
 #     description: Forbidden
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "403"
-#           message: "Test endpoints are not available in this environment"
 #   404:
 #     description: Organisation Not Found
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "404"
-#           message: "Organisation not found for pillar2Id: XAPLR1234567890"
 #   500:
 #     description: Internal Server Error
 #     content:
@@ -278,27 +236,18 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "003"
-#           message: "Not authorized"
 #   403:
 #     description: Forbidden
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "403"
-#           message: "Test endpoints are not available in this environment"
 #   404:
 #     description: Organisation Not Found
 #     content:
 #       application/json:
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
-#         example:
-#           code: "404"
-#           message: "Organisation not found for pillar2Id: XAPLR1234567890"
 #   500:
 #     description: Internal Server Error
 #     content:
