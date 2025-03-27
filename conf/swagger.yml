@@ -90,6 +90,69 @@ paths:
               examples:
                 responses.UKTRSuccessResponseExample:
                   $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
       security:
         - userRestricted: [write:pillar2]
     put:
@@ -125,6 +188,68 @@ paths:
               examples:
                 responses.UKTRSuccessResponseExample:
                   $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+
       security:
         - userRestricted: [write:pillar2]
   /below-threshold-notification:
@@ -174,6 +299,57 @@ paths:
               examples:
                 responses.BTNSuccessResponseExample:
                   $ref: "#/components/examples/responses.BTNSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
       security:
         - userRestricted: [write:pillar2]
   /obligations-and-submissions:
@@ -206,6 +382,47 @@ paths:
         <tr>
         </tbody>
         </table>
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Acknowledgment:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                No associated data found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "200":
+          description: OK Obligations and Submissions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
       security:
         - userRestricted: [write:pillar2]
   /setup/organisation:
@@ -213,29 +430,213 @@ paths:
       summary: Create Test Organisation
       description: |
         Creates a test organisation associated with your authed organisation.
+      responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
       security:
         - userRestricted: [write:pillar2]
     get:
       summary: Get Test Organisation
       description: |
         Gets a test organisation associated with your authed organisation.
+      responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [read:pillar2]
     put:
       summary: Update Test Organisation
       description: |
         Updates a test organisation associated with your authed organisation.
+      responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
     delete:
       summary: Delete Test Organisation
       description: |
         Deletes a test organisation associated with your authed organisation.
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
 
 components:
-
+  schemas:
+    Submission:
+      properties:
+        submissionType:
+          type: string
+          enum:
+          - UKTR
+          - ORN
+          - BTN
+          - GIR
+        receivedDate:
+          type: string
+          format: date-time
+        country:
+          type: string
+          nullable: true
+      required:
+      - submissionType
+      - receivedDate
+    AccountingPeriodDetails:
+      properties:
+        endDate:
+          type: string
+          format: date
+        underEnquiry:
+          type: boolean
+        obligations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Obligation"
+        dueDate:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+      required:
+      - startDate
+      - endDate
+      - dueDate
+      - underEnquiry
+      - obligations
+    Obligation:
+      properties:
+        obligationType:
+          type: string
+          enum:
+          - Pillar2TaxReturn
+          - GlobeInformationReturn
+        status:
+          type: string
+          enum:
+          - Open
+          - Fulfilled
+        canAmend:
+          type: boolean
+        submissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Submission"
+      required:
+      - obligationType
+      - status
+      - canAmend
+      - submissions
+    ObligationsAndSubmissionsSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+          format: date-time
+        accountingPeriodDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountingPeriodDetails"
+      required:
+      - processingDate
+      - accountingPeriodDetails
   examples:
     requests.BTNRequestExample:
       summary: "Request example"
@@ -410,6 +811,116 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: "NIL_RETURN"
+    errors.TestOrg.NotFound:
+      summary: Test endpoints not available
+      value:
+        code: "404"
+        message: "Organisation not found for pillar2Id: XAPLR1234567890"
+    errors.TestOrg.Forbidden:
+      summary: Test endpoints not available
+      value:
+        code: 403
+        message: Test endpoints are not available in this environment
+    errors.TestOrg.Unauthorized:
+      summary: Not Authorized
+      value:
+        code: "003"
+        message: "Not authorized"
+    errors.InvalidJson:
+      summary: Invalid JSON payload error
+      value:
+        code: '001'
+        message: Invalid JSON payload
+    errors.EmptyBody:
+      summary: Empty request body error
+      value:
+        code: '002'
+        message: Empty body in request
+    errors.Submission.InvalidPillar2ID:
+      summary: Invalid Pillar2 ID error
+      value:
+        code: '002'
+        message: Pillar 2 ID missing or invalid
+    errors.Submission.Unauthorized:
+      summary: Unauthorized error
+      value:
+        code: '003'
+        message: Not authorized
+    errors.Submission.InvalidRequest:
+      summary: Invalid request error
+      value:
+        code: '003'
+        message: Request could not be processed
+    errors.Submission.NoSubscriptionData:
+      summary: No subscription data error
+      value:
+        code: '004'
+        message: No Pillar2 subscription found for -pillar2Id
+    errors.Submission.MissingHeader:
+      summary: Missing header error
+      value:
+        code: '005'
+        message: Missing Header in request
+    errors.Submission.GenericServerError:
+      summary: Generic server error
+      value:
+        code: 500
+        message: Internal Server Error
+    errors.Submission.Forbidden:
+      summary: Forbidden error
+      value:
+        code: '006'
+        message: Forbidden
+    errors.Submission.InvalidReturn:
+      summary: Invalid return
+      value:
+        code: '093'
+        message: Invalid Return
+    errors.Submission.TaxObligationFulfilled:
+      summary: Tax obligation fulfilled error
+      value:
+        code: '044'
+        message: Tax Obligation already fulfilled
+    errors.Submission.NoActiveSubmission:
+      summary: No active submission error
+      value:
+        code: '007'
+        message: Business Partner does not have an active subscription
+    errors.Submission.DuplicateSubmission:
+      summary: Duplicate submission error
+      value:
+        code: '004'
+        message: Duplicate submission acknowledgment reference
+    errors.Submission.InvalidUTPR:
+      summary: Invalid UTPR Election error
+      value:
+        code: '095'
+        message: Invalid UTPR Election
+    errors.Submission.InvalidTotalLiabilityIIR:
+      summary: Invalid Total Liability IIR error
+      value:
+        code: '097'
+        message: Invalid Total Liability IIR
+    errors.Submission.InvalidDTT:
+      summary: Invalid DTT Election error
+      value:
+        code: '094'
+        message: Invalid DTT Election
+    errors.Submission.InvalidTotalLiabilityUTPR:
+      summary: Invalid Total Liability UTPR error
+      value:
+        code: '099'
+        message: Invalid Total Liability UTPR
+    errors.Submission.InvalidTotalLiability:
+      summary: Invalid Total Liability error
+      value:
+        code: '096'
+        message: Invalid Total Liability
+    errors.Submission.InvalidTotalLiabilityDTT:
+      summary: Invalid Total Liability DTT error
+      value:
+        code: '098'
+        message: Invalid Total Liability DTT
 
   securitySchemes:
     userRestricted:
