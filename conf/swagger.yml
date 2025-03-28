@@ -68,28 +68,30 @@ paths:
         content:
           application/json:
             examples:
-              NilReturnsMneAndUk:
-                $ref: "#/components/examples/requests.UKTRNilReturnsMneAndUk"
-              NilReturnsDomesticOnlyWithUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithUkGaap"
-              NilReturnsDomesticOnlyWithoutUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap"
-              LiabilityReturnsMneAndUkOneEntity:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithOneEntity"
-              LiabilityReturnsMneAndUkTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities"
-              LiabilityReturnsDomesticOneEntityUkGaap:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap"
-              LiabilityReturnsDomesticTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities"       
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"       
       responses:
         "201":
           description: UK Tax Return Submission Created
           content:
             application/json:
               examples:
-                responses.UKTRSuccessResponseExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
         "400":
           description: Bad Request
           content:
@@ -166,28 +168,30 @@ paths:
         content:
           application/json:
             examples:
-              NilReturnsMneAndUk:
-                $ref: "#/components/examples/requests.UKTRNilReturnsMneAndUk"
-              NilReturnsDomesticOnlyWithUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithUkGaap"
-              NilReturnsDomesticOnlyWithoutUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap"
-              LiabilityReturnsMneAndUkOneEntity:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithOneEntity"
-              LiabilityReturnsMneAndUkTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities"
-              LiabilityReturnsDomesticOneEntityUkGaap:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap"
-              LiabilityReturnsDomesticTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities"
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
       responses:
         "200":
           description: UK Tax Return Submission Updated
           content:
             application/json:
               examples:
-                responses.UKTRSuccessResponseExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseExample"
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
         "400":
           description: Bad Request
           content:
@@ -650,8 +654,8 @@ components:
         processingDate: "2026-06-26T09:26:17Z"
 
     #mne and uk
-    requests.UKTRNilReturnsMneAndUk:
-      summary: "Nil Returns - MNE and UK"
+    requests.UKTRNilReturnMneAndUk:
+      summary: "Nil Return - MNE and UK"
       value:
         electionUKGAAP: false
         accountingPeriodFrom: "2024-01-01"
@@ -661,9 +665,9 @@ components:
           returnType: NIL_RETURN
 
 
-    #nil returns - domestic only w/ uk gaap
-    requests.UKTRNilReturnsDomesticOnlyWithUkGaap:
-      summary: "Nil Returns - Domestic Only with UK GAAP"
+    #nil return - domestic only w/ uk gaap
+    requests.UKTRNilReturnDomesticOnlyWithUkGaap:
+      summary: "Nil Return - Domestic Only with UK GAAP"
       value:
         electionUKGAAP: true
         accountingPeriodFrom: "2024-01-01"
@@ -672,9 +676,9 @@ components:
         liabilities:
           returnType: NIL_RETURN
 
-    #nil returns - domestic only w/o uk gaap
-    requests.UKTRNilReturnsDomesticOnlyWithoutUkGaap:
-      summary: "Nil Returns - Domestic Only without UK GAAP"
+    #nil return - domestic only w/o uk gaap
+    requests.UKTRNilReturnDomesticOnlyWithoutUkGaap:
+      summary: "Nil Return - Domestic Only without UK GAAP"
       value:
         electionUKGAAP: false
         accountingPeriodFrom: "2024-01-01"
@@ -683,9 +687,9 @@ components:
         liabilities:
           returnType: NIL_RETURN
 
-    #liability returns - mne and uk w/ 1 entity
-    requests.UKTRLiabilityReturnsMneAndUkWithOneEntity:
-      summary: "Liability Returns - MNE and UK with 1 Entity"
+    #liability return - mne and uk w/ 1 entity
+    requests.UKTRLiabilityReturnMneAndUkWithOneEntity:
+      summary: "Liability Return - MNE and UK with 1 Entity"
       value:
         electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
@@ -709,9 +713,9 @@ components:
             amountOwedDTT: 5000.99
 
 
-    #liability returns - mne and uk w/ 2 entities
-    requests.UKTRLiabilityReturnsMneAndUkWithTwoEntities:
-      summary: "Liability Returns - MNE and UK with 2 Entities"
+    #liability return - mne and uk w/ 2 entities
+    requests.UKTRLiabilityReturnMneAndUkWithTwoEntities:
+      summary: "Liability Return - MNE and UK with 2 Entities"
       value:
         electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
@@ -740,9 +744,9 @@ components:
             amountOwedIIR: 2000
             amountOwedDTT: 22000.89
 
-    #liability returns - uk only - domestic flag, 1 entity and uk gaap
-    requests.UKTRLiabilityReturnsDomesticOnlyOneEntityAndUkGaap:
-      summary: "Liability Returns - Domestic Only with 1 Entity and UK GAAP"
+    #liability return - uk only - domestic flag, 1 entity and uk gaap
+    requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap:
+      summary: "Liability Return - Domestic Only with 1 Entity and UK GAAP"
       value:
         electionUKGAAP: true
         accountingPeriodFrom: "2025-01-01"
@@ -765,9 +769,9 @@ components:
             amountOwedIIR: 3400
             amountOwedDTT: 26567.89
 
-    #liability returns - uk only - domestic flag, 2 entities
-    requests.UKTRLiabilityReturnsDomesticOnlyTwoEntities:
-      summary: "Liability Returns - Domestic Only with 2 Entities"
+    #liability return - uk only - domestic flag, 2 entities
+    requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
+      summary: "Liability Return - Domestic Only with 2 Entities"
       value:
         electionUKGAAP: false
         accountingPeriodFrom: "2025-04-06"
@@ -796,12 +800,17 @@ components:
             amountOwedUTPR: 5400
             amountOwedIIR: 2000
 
-    responses.UKTRSuccessResponseExample:
-      summary: "Success response"
+    responses.UKTRSuccessResponseWithCrnExample:
+      summary: Liability Success response
       value:
         processingDate: "2026-06-26T09:26:17Z"
-        formBundleNumber: "119000004320"
-
+        formBundleNumber: 119000004320
+        chargeReference: 2347913284601
+    responses.UKTRSuccessResponseWithoutCrnExample:
+      summary: Nil Return Success response
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+        formBundleNumber: 119000004320
     responses.UKTRNilReturnResponseExample:
       summary: "Request example for Domestic only with UK GAAP Nil Return"
       value:
@@ -827,37 +836,37 @@ components:
         code: "003"
         message: "Not authorized"
     errors.InvalidJson:
-      summary: Invalid JSON payload error
+      summary: Invalid JSON payload
       value:
         code: '001'
         message: Invalid JSON payload
     errors.EmptyBody:
-      summary: Empty request body error
+      summary: Empty request body
       value:
         code: '002'
         message: Empty body in request
     errors.Submission.InvalidPillar2ID:
-      summary: Invalid Pillar2 ID error
+      summary: Invalid Pillar2 ID
       value:
         code: '002'
         message: Pillar 2 ID missing or invalid
     errors.Submission.Unauthorized:
-      summary: Unauthorized error
+      summary: Unauthorized
       value:
         code: '003'
         message: Not authorized
     errors.Submission.InvalidRequest:
-      summary: Invalid request error
+      summary: Invalid request
       value:
         code: '003'
         message: Request could not be processed
     errors.Submission.NoSubscriptionData:
-      summary: No subscription data error
+      summary: No subscription data
       value:
         code: '004'
         message: No Pillar2 subscription found for -pillar2Id
     errors.Submission.MissingHeader:
-      summary: Missing header error
+      summary: Missing header
       value:
         code: '005'
         message: Missing Header in request
@@ -867,7 +876,7 @@ components:
         code: 500
         message: Internal Server Error
     errors.Submission.Forbidden:
-      summary: Forbidden error
+      summary: Forbidden
       value:
         code: '006'
         message: Forbidden
@@ -877,47 +886,47 @@ components:
         code: '093'
         message: Invalid Return
     errors.Submission.TaxObligationFulfilled:
-      summary: Tax obligation fulfilled error
+      summary: Tax obligation fulfilled
       value:
         code: '044'
         message: Tax Obligation already fulfilled
     errors.Submission.NoActiveSubmission:
-      summary: No active submission error
+      summary: No active submission
       value:
         code: '007'
         message: Business Partner does not have an active subscription
     errors.Submission.DuplicateSubmission:
-      summary: Duplicate submission error
+      summary: Duplicate submission
       value:
         code: '004'
         message: Duplicate submission acknowledgment reference
     errors.Submission.InvalidUTPR:
-      summary: Invalid UTPR Election error
+      summary: Invalid UTPR Election
       value:
         code: '095'
         message: Invalid UTPR Election
     errors.Submission.InvalidTotalLiabilityIIR:
-      summary: Invalid Total Liability IIR error
+      summary: Invalid Total Liability IIR
       value:
         code: '097'
         message: Invalid Total Liability IIR
     errors.Submission.InvalidDTT:
-      summary: Invalid DTT Election error
+      summary: Invalid DTT Election
       value:
         code: '094'
         message: Invalid DTT Election
     errors.Submission.InvalidTotalLiabilityUTPR:
-      summary: Invalid Total Liability UTPR error
+      summary: Invalid Total Liability UTPR
       value:
         code: '099'
         message: Invalid Total Liability UTPR
     errors.Submission.InvalidTotalLiability:
-      summary: Invalid Total Liability error
+      summary: Invalid Total Liability
       value:
         code: '096'
         message: Invalid Total Liability
     errors.Submission.InvalidTotalLiabilityDTT:
-      summary: Invalid Total Liability DTT error
+      summary: Invalid Total Liability DTT
       value:
         code: '098'
         message: Invalid Total Liability DTT
