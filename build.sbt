@@ -3,7 +3,7 @@ import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
@@ -29,7 +29,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.13.12")
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(
