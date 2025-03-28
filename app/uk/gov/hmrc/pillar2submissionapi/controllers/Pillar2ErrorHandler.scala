@@ -32,8 +32,8 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
-      case e if e.isInstanceOf[Pillar2Error] =>
-        val pillar2Error: Pillar2Error = e.asInstanceOf[Pillar2Error]
+      case err if err.isInstanceOf[Pillar2Error] =>
+        val pillar2Error: Pillar2Error = err.asInstanceOf[Pillar2Error]
         val ret = pillar2Error match {
           case e @ InvalidRequest                                 => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
           case e @ InvalidJson                                    => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
