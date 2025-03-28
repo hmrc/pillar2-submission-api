@@ -29,7 +29,6 @@ object JsonToYaml {
       }
   )
 
-
   def settings: Seq[Setting[_]] = Seq(
     routesToYamlOas := {
       swagger.value
@@ -44,7 +43,7 @@ object JsonToYaml {
       val yamlFile: File = baseDirectory.value / "target/swagger/application.yaml"
 
       val jsonString = IO.read(jsonFile)
-      val paths = (Json.parse(jsonString) \ "paths").as[JsObject].keys.toList.reverse
+      val paths      = (Json.parse(jsonString) \ "paths").as[JsObject].keys.toList.reverse
 
       val parsedJson = Json
         .parse(jsonString)
