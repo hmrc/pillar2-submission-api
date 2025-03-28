@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 sealed trait Liability
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OFormat, Reads}
 
 case class LiabilityData(
   electionDTTSingleMember:  Boolean,
@@ -33,6 +33,7 @@ case class LiabilityData(
 ) extends Liability
 
 object LiabilityData {
+  implicit val monetaryReads:       Reads[BigDecimal]      = MonetaryReads.monetaryValueReads
   implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
 }
 
