@@ -1,21 +1,14 @@
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.{YAMLFactory, YAMLGenerator}
+import com.fasterxml.jackson.dataformat.yaml.{YAMLFactory, YAMLGenerator, YAMLMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.iheart.sbtPlaySwagger.SwaggerPlugin.autoImport.{swagger, swaggerDomainNameSpaces}
-import sbt.Keys.*
-import sbt.*
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import play.api.libs.json.*
+import com.iheart.sbtPlaySwagger.SwaggerPlugin.autoImport.swagger
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.*
 import play.api.libs.json.Reads.*
-import play.api.libs.functional.syntax.*
+import sbt.*
+import sbt.Keys.*
 
-import scala.collection.mutable
 import scala.language.postfixOps
-import scala.util.Try
 
 object JsonToYaml {
 
