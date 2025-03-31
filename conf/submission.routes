@@ -2,10 +2,23 @@
 # summary: Submit a Pillar2 UK Tax Return
 # parameters:
 #  - in: header
+#    name: Authorization
+#    required: true
+#    schema:
+#      type: string
+#    description: Bearer token for authentication
+#  - in: header
 #    name: X-Pillar2-Id
 #    schema:
 #      type: string
 #    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#  - in: header
+#    name: Accept
+#    required: false
+#    schema:
+#      type: string
+#      example: application/vnd.hmrc.1.0+json
+#    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # requestBody:
 #   content:
 #     application/json:
@@ -134,10 +147,23 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 # summary: Amend a Pillar2 UK Tax Return
 # parameters:
 #  - in: header
+#    name: Authorization
+#    required: true
+#    schema:
+#      type: string
+#    description: Bearer token for authentication
+#  - in: header
 #    name: X-Pillar2-Id
 #    schema:
 #      type: string
 #    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#  - in: header
+#    name: Accept
+#    required: false
+#    schema:
+#      type: string
+#      example: application/vnd.hmrc.1.0+json
+#    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # requestBody:
 #   content:
 #     application/json:
@@ -262,10 +288,23 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 # summary: Submit a Pillar2 Below-Threshold Notification
 # parameters:
 #  - in: header
+#    name: Authorization
+#    required: true
+#    schema:
+#      type: string
+#    description: Bearer token for authentication
+#  - in: header
 #    name: X-Pillar2-Id
 #    schema:
 #      type: string
 #    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#  - in: header
+#    name: Accept
+#    required: false
+#    schema:
+#      type: string
+#      example: application/vnd.hmrc.1.0+json
+#    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # requestBody:
 #   content:
 #     application/json:
@@ -364,10 +403,23 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 # summary: Retreive Obligations and Submissions
 # parameters:
 #  - in: header
+#    name: Authorization
+#    required: true
+#    schema:
+#      type: string
+#    description: Bearer token for authentication
+#  - in: header
 #    name: X-Pillar2-Id
 #    schema:
 #      type: string
 #    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#  - in: header
+#    name: Accept
+#    required: false
+#    schema:
+#      type: string
+#      example: application/vnd.hmrc.1.0+json
+#    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # responses:
 #   200:
 #     description: OK Obligations and Submissions retrieved
