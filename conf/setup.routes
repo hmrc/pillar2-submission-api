@@ -13,6 +13,13 @@
 #     schema:
 #       type: string
 #     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # requestBody:
 #   content:
 #     application/json:
@@ -90,6 +97,13 @@ POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controlle
 #     schema:
 #       type: string
 #     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # responses:
 #   200:
 #      description: Test Organisation Found
@@ -153,6 +167,13 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #     schema:
 #       type: string
 #     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # requestBody:
 #   content:
 #     application/json:
@@ -227,6 +248,13 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #     schema:
 #       type: string
 #     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 # responses:
 #   204:
 #      description: Test Organisation and Submission Data Deleted Successfully
