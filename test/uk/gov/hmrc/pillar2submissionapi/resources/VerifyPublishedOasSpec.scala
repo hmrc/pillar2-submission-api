@@ -14,7 +14,7 @@ class VerifyPublishedOasSpec extends AnyWordSpec with Matchers with BeforeAndAft
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    "sbt createOpenAPISpec".!
+    "sbt routesToYamlOas validateOas".!
   }
   "Prod OAS file to be identical to code-generated (ignoring version)" in {
     val yamlMapper = new ObjectMapper(new YAMLFactory())
