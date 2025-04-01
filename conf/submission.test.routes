@@ -1,0 +1,122 @@
+###
+# summary: Retrieve Obligations and Submissions
+# security:
+#  - userRestricted: [write:pillar2]
+# description: |
+#   Retrieves the Obligations and Submissions for an accounting period.
+#   ### Error Codes
+#   <p>This table contains a list of 422 error codes returned when a Obligations and Submissions API request is not processed successfully.</p>
+#   <table>
+#   <thead>
+#   <tr>
+#   <th>Error Message</th>
+#   <th>Next Steps</th>
+#   </tr>
+#   </thead>
+#   <tbody>
+#   <tr>
+#   <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+#   <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
+#   </tr>
+#   <tr>
+#   <td>003 - Request could not be processed</td>
+#   <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+#   </tr>
+#   <tr>
+#   <td>025 - No associated data found</td>
+#   <td>No associated data found for this Pillar 2 ID.</td>
+#   </tr>
+#   <tr>
+#   </tbody>
+#   </table>
+# parameters:
+#  - in: header
+#    name: Authorization
+#    required: true
+#    schema:
+#      type: string
+#    description: Bearer token for authentication
+#  - in: header
+#    name: X-Pillar2-Id
+#    schema:
+#      type: string
+#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#  - in: header
+#    name: Accept
+#    required: false
+#    schema:
+#      type: string
+#      example: application/vnd.hmrc.1.0+json
+#    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+# responses:
+#   200:
+#     description: OK Obligations and Submissions retrieved
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissionsSuccessResponse'
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: '003'
+#           message: Not authorized
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Invalid Pillar2ID:
+#             value:
+#               code: '002'
+#               message: Pillar 2 ID missing or invalid
+#           Invalid Request:
+#             value:
+#               code: '003'
+#               message: Request could not be processed
+#           Duplicate Acknowledgment:
+#             value:
+#               code: '004'
+#               message: Duplicate acknowledgment reference
+#           No associated data found:
+#             value:
+#               code: '025'
+#               message: No associated data found
+#   400:
+#     description: Bad Request
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Invalid Request:
+#             value:
+#               code: "000"
+#               message: "Invalid Request"
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "006"
+#           message: "Forbidden"
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Generic Server Error:
+#             value:
+#               code: "500"
+#               message: "Internal Server Error"
+###
+GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions.ObligationsAndSubmissionsController.retrieveData(fromDate: String, toDate: String)
