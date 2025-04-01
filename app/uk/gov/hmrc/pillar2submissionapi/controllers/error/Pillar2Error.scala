@@ -85,3 +85,5 @@ case class TestEndpointDisabled() extends Pillar2Error {
   override val code:    String = "403"
   override val message: String = "Test endpoints are not available in this environment"
 }
+
+case class ORNValidationError(code: String, message: String) extends Pillar2Error
