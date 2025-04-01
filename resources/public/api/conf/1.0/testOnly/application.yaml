@@ -36,6 +36,14 @@ paths:
         schema:
           type: string
         required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Create Test Organisation
       responses:
         "400":
@@ -130,6 +138,14 @@ paths:
         schema:
           type: string
         required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Get Test Organisation
       responses:
         "404":
@@ -213,6 +229,14 @@ paths:
           \ the test organisation."
         schema:
           type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
         required: false
       summary: Update Test Organisation
       responses:
@@ -307,6 +331,14 @@ paths:
           \ the test organisation."
         schema:
           type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
         required: false
       summary: Delete Test Organisation
       responses:
@@ -414,11 +446,25 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitUKTR
       responses:
         "400":
@@ -553,11 +599,25 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: AmendUKTR
       responses:
         "400":
@@ -713,11 +773,25 @@ paths:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitBTN
       responses:
         "400":
@@ -851,11 +925,25 @@ paths:
         required: true
         schema:
           type: string
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Retrieve Obligations and Submissions
       responses:
         "400":

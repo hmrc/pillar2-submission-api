@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.81.0
+  version: 0.90.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -35,6 +35,14 @@ paths:
           \ the test organisation."
         schema:
           type: string
+        required: false
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
         required: false
       summary: Create Test Organisation
       responses:
@@ -130,6 +138,14 @@ paths:
         schema:
           type: string
         required: false
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Get Test Organisation
       responses:
         "404":
@@ -213,6 +229,14 @@ paths:
           \ the test organisation."
         schema:
           type: string
+        required: false
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
         required: false
       summary: Update Test Organisation
       responses:
@@ -308,6 +332,14 @@ paths:
         schema:
           type: string
         required: false
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Delete Test Organisation
       responses:
         "404":
@@ -358,24 +390,37 @@ paths:
         \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
         \ codes still in development are marked as \"awaiting clarification\".</p>\n\
         <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
-        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID required</td>\n<td>Please provide\
-        \ the request header for your client, to check it contains the Pillar 2 ID\
-        \ they were assigned at registration.</td>\n</tr>\n<tr>\n<td>003 - Request\
-        \ could not be processed</td>\n<td>The message could not be processed due\
-        \ to locking. Please send the request again.</td>\n</tr>\n<tr>\n<td>007 -\
-        \ Business Partner does not have an Active Subscription</td>\n<td>The request\
-        \ Pillar 2 ID is not listed as active by HMRC. Please contact the central\
-        \ support team.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation Already Fulfilled</td>\n\
-        <td>A UKTR for the specified period has already been submitted. If you are\
-        \ trying to amend a UKTR, please check you are sending the <em>amendUKTR</em>\
-        \ API request.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There\
-        \ is an error with the tax return you’ve submitted in the request. Awaiting\
-        \ clarification.</td>\n</tr>\n<tr>\n<td>094 - Invalid DTT Election</td>\n\
-        <td>The DTT values in the request are invalid. Awaiting clarification.</td>\n\
+        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID (SAP Number) is missing or\
+        \ invalid</td>\n<td>Please provide the request header for your client, to\
+        \ check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>\n\
+        </tr>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message\
+        \ could not be processed due to locking. Please check if there is currently\
+        \ an open enquiry on your tax account.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation\
+        \ Already Fulfilled</td>\n<td>A UKTR for the specified period has already\
+        \ been submitted. If you are trying to amend a UKTR, please check you are\
+        \ sending the <em>amendUKTR</em> API request.</td>\n</tr>\n<tr>\n<td>063 -\
+        \ Business Partner does not have an Active Pillar 2 Subscription</td>\n<td>The\
+        \ Pillar 2 ID (SAP Number) in the request header is not listed as active by\
+        \ HMRC for this regime. Please contact the central support team.</td>\n</tr>\n\
+        <tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the tax return\
+        \ you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em>\
+        \ and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If\
+        \ you need to check or amend the accounting period pattern, you can do this\
+        \ on the Pillar 2 site under “Personal Details”.</td>\n</tr>\n<tr>\n<td>094\
+        \ - Invalid DTT Election</td>\n<td>The DTT values in the request are invalid.\
+        \ Please complete the following checks, then submit the request again. If\
+        \ <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em>\
+        \ should be greater than 0. This number represents the number of liable entities\
+        \ that owe a DTT amount greater than 0. The total number of liable entities\
+        \ who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>\n\
         </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
-        \ the request are invalid. Awaiting clarification.</td>\n</tr>\n<tr>\n<td>096\
-        \ - Invalid Total Liability</td>\n<td>The <em>totalLiability</em> value in\
-        \ the request does not match the combined values of <em>totalLiabilityDTT</em>,\
+        \ the request are invalid. Please complete the following checks, then submit\
+        \ the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em>\
+        \ should be greater than 0. This number represents the number of liable entities\
+        \ that owe a UTPR amount greater than 0. The total number of liable entities\
+        \ who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>\n\
+        </tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n<td>The <em>totalLiability</em>\
+        \ value in the request does not match the combined values of <em>totalLiabilityDTT</em>,\
         \ <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check\
         \ the sum of these fields matches the <em>totalLiability</em> value and submit\
         \ the request again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability\
@@ -401,11 +446,25 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitUKTR
       responses:
         "400":
@@ -540,11 +599,25 @@ paths:
               - $ref: "#/components/schemas/UKTRSubmissionData"
               - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: AmendUKTR
       responses:
         "400":
@@ -674,20 +747,20 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID they were assigned at registration.</td>
+        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
         </tr>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please send the request again.</td>
-        </tr>
-        <tr>
-        <td>007 - Business Partner does not have an Active Pillar 2 registration</td>
-        <td>The request Pillar 2 ID is not listed as active by HMRC. Please contact the central support team.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been  submitted.</td>
+        <td>A BTN for the specified period has already been submitted.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
         </table>
@@ -700,11 +773,25 @@ paths:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
       parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
       - in: header
         name: X-Pillar2-Id
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: Specifies the expected response format as versioned JSON from
+          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitBTN
       responses:
         "400":
