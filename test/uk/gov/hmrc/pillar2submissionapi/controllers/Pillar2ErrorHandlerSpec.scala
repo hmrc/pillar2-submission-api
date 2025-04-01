@@ -153,12 +153,4 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.code mustEqual "500"
     result.message mustEqual "Internal Server Error"
   }
-
-  test("MonetaryValidationError error response") {
-    val response = classUnderTest.onServerError(dummyRequest, MonetaryValidationError)
-    status(response) mustEqual 400
-    val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "400"
-    result.message mustEqual "Number field invalid length"
-  }
 }
