@@ -1,45 +1,57 @@
-openapi: 3.0.3
+openapi: "3.0.3"
 info:
-  version: 0.89.0
-  title: Pillar 2 API
-  description: An API for managing and retrieving data in accordance with Pillar 2
-    tax rules.
+  version: "0.93.0"
+  title: "Pillar 2 API"
+  description: "An API for managing and retrieving data in accordance with Pillar\
+    \ 2 tax rules."
 tags: []
 paths:
   /organisations/pillar-two/setup/organisation:
     post:
-      security:
-      - userRestricted:
-        - write:pillar2
-      description: |
-        Creates a test organisation associated with your authed organisation.
+      operationId: "createTestOrganisation"
       tags:
-      - setup
-      operationId: createTestOrganisation
+      - "setup"
+      summary: "Create Test Organisation"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        required: true
+        schema:
+          type: "string"
+        description: "Bearer token for authentication"
+      - in: "header"
+        name: "X-Pillar2-Id"
+        required: false
+        schema:
+          type: "string"
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TestOrganisation"
-      parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
-        schema:
-          type: string
-        required: false
-      summary: Create Test Organisation
+              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation"
       responses:
+        "201":
+          description: "Test Organisation Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId"
+              example:
+                pillar2Id: "XAPLR1234567890"
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: "Test Organisation Ltd"
+                    registrationDate: "2024-01-01"
+                  accountingPeriod:
+                    startDate: "2024-01-01"
+                    endDate: "2024-12-31"
+                  lastUpdated: "2024-01-01T12:00:00Z"
         "400":
-          description: Invalid Request
+          description: "Invalid Request"
           content:
             application/json:
               schema:
@@ -49,34 +61,17 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
-        "201":
-          description: Test Organisation Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TestOrganisationWithId"
-              example:
-                pillar2Id: XAPLR1234567890
-                organisation:
-                  orgDetails:
-                    domesticOnly: true
-                    organisationName: Test Organisation Ltd
-                    registrationDate: 2024-01-01
-                  accountingPeriod:
-                    startDate: 2024-01-01
-                    endDate: 2024-12-31
-                  lastUpdated: 2024-01-01T12:00:00Z
-        "500":
-          description: Internal Server Error
+        "401":
+          description: "Unauthorized"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: 500
-                message: Failed to create organisation due to database error
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
         "403":
-          description: Forbidden
+          description: "Forbidden"
           content:
             application/json:
               schema:
@@ -85,60 +80,85 @@ paths:
                 Forbidden:
                   $ref: "#/components/examples/errors.TestOrg.Forbidden"
         "409":
-          description: Organisation Already Exists
+          description: "Organisation Already Exists"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 409
+                code: "409"
                 message: "Organisation with pillar2Id: XAPLR1234567890 already exists"
-        "401":
-          description: Unauthorized
+        "500":
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+              example:
+                code: "500"
+                message: "Failed to create organisation due to database error"
+      description: "Creates a test organisation associated with your authed organisation.\n"
+      security:
+      - userRestricted:
+        - "write:pillar2"
     get:
-      security:
-      - userRestricted:
-        - read:pillar2
-      description: |
-        Gets a test organisation associated with your authed organisation.
+      operationId: "getTestOrganisation"
       tags:
-      - setup
-      operationId: getTestOrganisation
+      - "setup"
+      summary: "Get Test Organisation"
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
+      - in: "header"
+        name: "Authorization"
         required: true
-      - name: X-Pillar2-Id
-        in: header
+        schema:
+          type: "string"
+        description: "Bearer token for authentication"
+      - in: "header"
+        name: "X-Pillar2-Id"
+        required: false
+        schema:
+          type: "string"
         description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
-      summary: Get Test Organisation
       responses:
-        "400":
-          description: Invalid Request
+        "200":
+          description: "Test Organisation Found"
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId"
+              example:
+                pillar2Id: "XAPLR1234567890"
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: "Test Organisation Ltd"
+                    registrationDate: "2024-01-01"
+                  accountingPeriod:
+                    startDate: "2024-01-01"
+                    endDate: "2024-12-31"
+                  lastUpdated: "2024-01-01T12:00:00Z"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
         "404":
-          description: Not Found
+          description: "Not Found"
           content:
             application/json:
               schema:
@@ -147,82 +167,72 @@ paths:
                 Not Found:
                   $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
-          description: Internal Server Error
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
-                message: Internal Server Error
-        "403":
-          description: Forbidden
+                code: "500"
+                message: "Internal Server Error"
+        "400":
+          description: "Invalid Request"
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
-        "200":
-          description: Test Organisation Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TestOrganisationWithId"
-              example:
-                pillar2Id: XAPLR1234567890
-                organisation:
-                  orgDetails:
-                    domesticOnly: true
-                    organisationName: Test Organisation Ltd
-                    registrationDate: 2024-01-01
-                  accountingPeriod:
-                    startDate: 2024-01-01
-                    endDate: 2024-12-31
-                  lastUpdated: 2024-01-01T12:00:00Z
-    put:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+      description: "Gets a test organisation associated with your authed organisation.\n"
       security:
       - userRestricted:
-        - write:pillar2
-      description: |
-        Updates a test organisation associated with your authed organisation.
+        - "read:pillar2"
+    put:
+      operationId: "updateTestOrganisation"
       tags:
-      - setup
-      operationId: updateTestOrganisation
+      - "setup"
+      summary: "Update Test Organisation"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        required: true
+        schema:
+          type: "string"
+        description: "Bearer token for authentication"
+      - in: "header"
+        name: "X-Pillar2-Id"
+        required: false
+        schema:
+          type: "string"
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
+          \ the test organisation."
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TestOrganisation"
-      parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - name: X-Pillar2-Id
-        in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
-        schema:
-          type: string
-        required: false
-      summary: Update Test Organisation
+              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation"
       responses:
+        "200":
+          description: "Test Organisation Updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId"
+              example:
+                pillar2Id: "XAPLR1234567890"
+                organisation:
+                  orgDetails:
+                    domesticOnly: true
+                    organisationName: "Test Organisation Ltd"
+                    registrationDate: "2024-01-01"
+                  accountingPeriod:
+                    startDate: "2024-01-01"
+                    endDate: "2024-12-31"
+                  lastUpdated: "2024-01-01T12:00:00Z"
         "400":
-          description: Invalid Request
+          description: "Invalid Request"
           content:
             application/json:
               schema:
@@ -232,8 +242,26 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
         "404":
-          description: Not Found
+          description: "Not Found"
           content:
             application/json:
               schema:
@@ -242,77 +270,61 @@ paths:
                 Not Found:
                   $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
-          description: Internal Server Error
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
-                message: Failed to update organisation due to database error
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
-        "200":
-          description: Test Organisation Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TestOrganisationWithId"
-              example:
-                pillar2Id: XAPLR1234567890
-                organisation:
-                  orgDetails:
-                    domesticOnly: true
-                    organisationName: Test Organisation Ltd
-                    registrationDate: 2024-01-01
-                  accountingPeriod:
-                    startDate: 2024-01-01
-                    endDate: 2024-12-31
-                  lastUpdated: 2024-01-01T12:00:00Z
+                code: "500"
+                message: "Failed to update organisation due to database error"
+      description: "Updates a test organisation associated with your authed organisation.\n"
+      security:
+      - userRestricted:
+        - "write:pillar2"
     delete:
-      security:
-      - userRestricted:
-        - write:pillar2
-      description: |
-        Deletes a test organisation associated with your authed organisation.
+      operationId: "deleteTestOrganisation"
       tags:
-      - setup
-      operationId: deleteTestOrganisation
+      - "setup"
+      summary: "Delete Test Organisation"
       parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
+      - in: "header"
+        name: "Authorization"
         required: true
-      - name: X-Pillar2-Id
-        in: header
+        schema:
+          type: "string"
+        description: "Bearer token for authentication"
+      - in: "header"
+        name: "X-Pillar2-Id"
+        required: false
+        schema:
+          type: "string"
         description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-        schema:
-          type: string
-        required: false
-      summary: Delete Test Organisation
       responses:
+        "204":
+          description: "Test Organisation and Submission Data Deleted Successfully"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
         "404":
-          description: Not Found
+          description: "Not Found"
           content:
             application/json:
               schema:
@@ -321,432 +333,59 @@ paths:
                 Not Found:
                   $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
-          description: Internal Server Error
+          description: "Internal Server Error"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
-                code: 500
-                message: Failed to delete organisation and submission data
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
-        "204":
-          description: Test Organisation and Submission Data Deleted Successfully
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
-  /organisations/pillar-two/uk-tax-return:
-    post:
+                code: "500"
+                message: "Failed to delete organisation and submission data"
+      description: "Deletes a test organisation associated with your authed organisation.\n"
       security:
       - userRestricted:
-        - write:pillar2
-      description: |
-        Submits a UK Tax Return for a specified accounting period.
-        ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
-        <table>
-        <thead>
-        <tr>
-        <th>Error Message</th>
-        <th>Next Steps</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
-        <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
-        </tr>
-        <tr>
-        <td>044 - Tax Obligation Already Fulfilled</td>
-        <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
-        </tr>
-        <tr>
-        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
-        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
-        </tr>
-        <tr>
-        <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
-        </tr>
-        <tr>
-        <td>094 - Invalid DTT Election</td>
-        <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
-        </tr>
-        <tr>
-        <td>095 - Invalid UTPR Election</td>
-        <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
-        </tr>
-        <tr>
-        <td>096 - Invalid Total Liability</td>
-        <td>The <em>totalLiability</em> value in the request does not match the combined values of <em>totalLiabilityDTT</em>, <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check the sum of these fields matches the <em>totalLiability</em> value and submit the request again.</td>
-        </tr>
-        <tr>
-        <td>097 - Invalid Total Liability IIR</td>
-        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
-        </tr>
-        <tr>
-        <td>098 - Invalid Total Liability DTT</td>
-        <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
-        </tr>
-        <tr>
-        <td>099 - Invalid Total Liability UTPR</td>
-        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
-        </tr>
-        </tbody>
-        </table>
-      tags:
-      - submission
-      operationId: submitUKTR
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: "#/components/schemas/UKTRSubmissionData"
-              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
-            examples:
-              LiabilityReturnDomesticTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
-              NilReturnMneAndUk:
-                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
-              LiabilityReturnDomesticOneEntityUkGaap:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
-              LiabilityReturnMneAndUkTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
-              LiabilityReturnMneAndUkOneEntity:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
-              NilReturnDomesticOnlyWithUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
-              NilReturnDomesticOnlyWithoutUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
-      parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-      summary: SubmitUKTR
-      responses:
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Request Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-                Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
-        "201":
-          description: UK Tax Return Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-              examples:
-                responses.UKTRSuccessResponseWithCRNExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
-                responses.UKTRSuccessResponseWithoutCrnExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-                No Subscription Data:
-                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid UTPR Election:
-                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
-                Invalid Total Liability IIR:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
-                Invalid DTT Election:
-                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
-                Invalid Return:
-                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
-                Invalid Total Liability UTPR:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
-                Invalid Total Liability:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
-                Tax Obligation Fulfilled:
-                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
-                Invalid Total Liability DTT:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
-    put:
-      security:
-      - userRestricted:
-        - write:pillar2
-      description: "Amends a UK tax return submitted for a specified accounting period.\
-        \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
-        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\n"
-      tags:
-      - submission
-      operationId: amendUKTR
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: "#/components/schemas/UKTRSubmissionData"
-              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
-            examples:
-              LiabilityReturnDomesticTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
-              NilReturnMneAndUk:
-                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
-              LiabilityReturnDomesticOneEntityUkGaap:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
-              LiabilityReturnMneAndUkTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
-              LiabilityReturnMneAndUkOneEntity:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
-              NilReturnDomesticOnlyWithUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
-              NilReturnDomesticOnlyWithoutUkGaap:
-                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
-      parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-      summary: AmendUKTR
-      responses:
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Request Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-                Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-                No Subscription Data:
-                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid UTPR Election:
-                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
-                Invalid Total Liability IIR:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
-                Invalid DTT Election:
-                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
-                Invalid Return:
-                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
-                Invalid Total Liability UTPR:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
-                Invalid Total Liability:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
-                Invalid Total Liability DTT:
-                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
-        "200":
-          description: UK Tax Return Submission Updated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-              examples:
-                responses.UKTRSuccessResponseWithCRNExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
-                responses.UKTRSuccessResponseWithoutCrnExample:
-                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
+        - "write:pillar2"
   /organisations/pillar-two/below-threshold-notification:
     post:
-      security:
-      - userRestricted:
-        - write:pillar2
-      description: |
-        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
-        ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
-        <table>
-        <thead>
-        <tr>
-        <th>Error Message</th>
-        <th>Next Steps</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
-        <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
-        </tr>
-        <tr>
-        <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been submitted.</td>
-        </tr>
-        <tr>
-        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
-        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
-        </tr>
-        </tbody>
-        </table>
+      operationId: "submitBTN"
       tags:
-      - submission
-      operationId: submitBTN
+      - "submission"
+      summary: "SubmitBTN"
+      parameters:
+      - in: "header"
+        name: "X-Pillar2-Id"
+        schema:
+          type: "string"
+        description: "Pillar2 ID for the submission. Mandatory if the user is an Agent"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BTNSubmission"
+              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission"
             examples:
               requests.BTNRequestExample:
                 $ref: "#/components/examples/requests.BTNRequestExample"
-      parameters:
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-      summary: SubmitBTN
       responses:
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              examples:
-                Invalid Json:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Request Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-                Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
         "201":
-          description: Below-Threshold Notification Submission Created
+          description: "Below-Threshold Notification Submission Created"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse"
               examples:
                 responses.BTNSuccessResponseExample:
                   $ref: "#/components/examples/responses.BTNSuccessResponseExample"
-        "500":
-          description: Internal Server Error
+        "401":
+          description: "Unauthorized"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-                No Subscription Data:
-                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
         "422":
-          description: Business Validation Failure
+          description: "Business Validation Failure"
           content:
             application/json:
               schema:
@@ -760,12 +399,108 @@ paths:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
                 Duplicate Acknowledgment:
                   value:
-                    code: '004'
-                    message: Duplicate acknowledgment reference
+                    code: "004"
+                    message: "Duplicate acknowledgment reference"
                 No Active Submission:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+      description: "Submits a Below-Threshold Notification for a specified accounting\
+        \ period when the group no longer meets the threshold for the Pillar 2 top-up\
+        \ tax.\n### Error Codes\n<p>This table contains a list of 422 error codes\
+        \ returned when a SubmitBTN API request is not processed successfully.</p>\n\
+        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
+        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>\n\
+        <td>Please provide the request header for your client, to check it contains\
+        \ the Pillar 2 ID (SAP Number) they were assigned at registration.</td>\n\
+        </tr>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message\
+        \ could not be processed due to locking. Please check if there is currently\
+        \ an open enquiry on your tax account.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation\
+        \ already fulfilled</td>\n<td>A BTN for the specified period has already been\
+        \ submitted.</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have an\
+        \ Active Pillar 2 Subscription</td>\n<td>The Pillar 2 ID (SAP Number) in the\
+        \ request header is not listed as active by HMRC for this regime. Please contact\
+        \ the central support team.</td>\n</tr>\n</tbody>\n</table>\n"
+      security:
+      - userRestricted:
+        - "write:pillar2"
+  /organisations/pillar-two/uk-tax-return:
+    post:
+      operationId: "submitUKTR"
+      tags:
+      - "submission"
+      summary: "SubmitUKTR"
+      parameters:
+      - in: "header"
+        name: "X-Pillar2-Id"
+        schema:
+          type: "string"
+        description: "Pillar2 ID for the submission. Mandatory if the user is an Agent"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData"
+              - $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn"
+            examples:
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
+      responses:
+        "201":
+          description: "UK Tax Return Submission Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse"
+              examples:
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
         "401":
-          description: Unauthorized
+          description: "Unauthorized"
           content:
             application/json:
               schema:
@@ -773,485 +508,797 @@ paths:
               examples:
                 Unauthorized:
                   $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "422":
+          description: "Business Validation Failure"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+      description: "Submits a UK Tax Return for a specified accounting period.\n###\
+        \ Error Codes\n<p>This table contains a list of 422 error codes returned when\
+        \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
+        \ codes still in development are marked as \"awaiting clarification\".</p>\n\
+        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
+        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar 2 ID (SAP Number) is missing or\
+        \ invalid</td>\n<td>Please provide the request header for your client, to\
+        \ check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>\n\
+        </tr>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message\
+        \ could not be processed due to locking. Please check if there is currently\
+        \ an open enquiry on your tax account.</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation\
+        \ Already Fulfilled</td>\n<td>A UKTR for the specified period has already\
+        \ been submitted. If you are trying to amend a UKTR, please check you are\
+        \ sending the <em>amendUKTR</em> API request.</td>\n</tr>\n<tr>\n<td>063 -\
+        \ Business Partner does not have an Active Pillar 2 Subscription</td>\n<td>The\
+        \ Pillar 2 ID (SAP Number) in the request header is not listed as active by\
+        \ HMRC for this regime. Please contact the central support team.</td>\n</tr>\n\
+        <tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the tax return\
+        \ you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em>\
+        \ and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If\
+        \ you need to check or amend the accounting period pattern, you can do this\
+        \ on the Pillar 2 site under “Personal Details”.</td>\n</tr>\n<tr>\n<td>094\
+        \ - Invalid DTT Election</td>\n<td>The DTT values in the request are invalid.\
+        \ Please complete the following checks, then submit the request again. If\
+        \ <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em>\
+        \ should be greater than 0. This number represents the number of liable entities\
+        \ that owe a DTT amount greater than 0. The total number of liable entities\
+        \ who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>\n\
+        </tr>\n<tr>\n<td>095 - Invalid UTPR Election</td>\n<td>The UTPR values in\
+        \ the request are invalid. Please complete the following checks, then submit\
+        \ the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em>\
+        \ should be greater than 0. This number represents the number of liable entities\
+        \ that owe a UTPR amount greater than 0. The total number of liable entities\
+        \ who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>\n\
+        </tr>\n<tr>\n<td>096 - Invalid Total Liability</td>\n<td>The <em>totalLiability</em>\
+        \ value in the request does not match the combined values of <em>totalLiabilityDTT</em>,\
+        \ <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check\
+        \ the sum of these fields matches the <em>totalLiability</em> value and submit\
+        \ the request again.</td>\n</tr>\n<tr>\n<td>097 - Invalid Total Liability\
+        \ IIR</td>\n<td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR\
+        \ value</em> from the <em>liableEntities</em> array. Please check the value\
+        \ of these fields matches and submit the request again.</td>\n</tr>\n<tr>\n\
+        <td>098 - Invalid Total Liability DTT</td>\n<td>The <em>totalLiabilityDTT</em>\
+        \ value does not match the <em>amountDTT</em> value from the <em>liableEntities</em>\
+        \ array. Please check the value of these fields matches and submit the request\
+        \ again.</td>\n</tr>\n<tr>\n<td>099 - Invalid Total Liability UTPR</td>\n\
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em>\
+        \ value from the <em>liableEntities</em> array. Please check the value of\
+        \ these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
+        </table>\n"
+      security:
+      - userRestricted:
+        - "write:pillar2"
+    put:
+      operationId: "amendUKTR"
+      tags:
+      - "submission"
+      summary: "AmendUKTR"
+      parameters:
+      - in: "header"
+        name: "X-Pillar2-Id"
+        schema:
+          type: "string"
+        description: "Pillar2 ID for the submission. Mandatory if the user is an Agent"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData"
+              - $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn"
+            examples:
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
+      responses:
+        "200":
+          description: "UK Tax Return Submission Updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse"
+              examples:
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "422":
+          description: "Business Validation Failure"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+      description: "Amends a UK tax return submitted for a specified accounting period.\
+        \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
+        \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\n"
+      security:
+      - userRestricted:
+        - "write:pillar2"
+    get:
+      operationId: "retrieveData"
+      tags:
+      - "submission"
+      parameters:
+      - in: "query"
+        name: "fromDate"
+        required: true
+        schema:
+          type: "string"
+      - in: "query"
+        name: "toDate"
+        required: true
+        schema:
+          type: "string"
+      summary: "Retrieve Obligations and Submissions"
+      description: "Retrieves the Obligations and Submissions for an accounting period.\n\
+        ### Error Codes\n<p>This table contains a list of 422 error codes returned\
+        \ when a Obligations and Submissions API request is not processed successfully.</p>\n\
+        <table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n\
+        </thead>\n<tbody>\n<tr>\n<td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>\n\
+        <td>Please provide the request header for your client, to check it contains\
+        \ the Pillar 2 ID (SAP Number) they were assigned at registration.</td>\n\
+        </tr>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message\
+        \ could not be processed due to locking. Please check if there is currently\
+        \ an open enquiry on your tax account.</td>\n</tr>\n<tr>\n<td>025 - No associated\
+        \ data found</td>\n<td>No associated data found for this Pillar 2 ID.</td>\n\
+        </tr>\n<tr>\n</tbody>\n</table>\n"
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "403":
+          description: "Forbidden"
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: "Business Validation Failure"
+          content:
+            application/json:
+              examples:
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Acknowledgment:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                No associated data found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "200":
+          description: "OK Obligations and Submissions retrieved"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
+      security:
+      - userRestricted:
+        - "write:pillar2"
 components:
   schemas:
-    TestOrganisation:
-      properties:
-        orgDetails:
-          $ref: "#/components/schemas/OrgDetails"
-        accountingPeriod:
-          $ref: "#/components/schemas/AccountingPeriod"
-        lastUpdated:
-          type: string
-          format: date-time
-      required:
-      - orgDetails
-      - accountingPeriod
-      - lastUpdated
-    BTNSubmission:
-      properties:
-        accountingPeriodFrom:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-      required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-    SubmitBTNSuccessResponse:
+    uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse:
       properties:
         processingDate:
-          type: string
+          type: "string"
       required:
-      - processingDate
-    UKTRSubmissionData:
+      - "processingDate"
+    uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission:
       properties:
-        electionUKGAAP:
-          type: boolean
         accountingPeriodFrom:
-          type: string
-          format: date
-        liabilities:
-          $ref: "#/components/schemas/LiabilityData"
+          type: "string"
+          format: "date"
         accountingPeriodTo:
-          type: string
-          format: date
-        obligationMTT:
-          type: boolean
+          type: "string"
+          format: "date"
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
-    LiableEntity:
-      properties:
-        idType:
-          type: string
-        idValue:
-          type: string
-        ukChargeableEntityName:
-          type: string
-        amountOwedUTPR:
-          type: number
-          format: double
-        amountOwedIIR:
-          type: number
-          format: double
-        amountOwedDTT:
-          type: number
-          format: double
-      required:
-      - ukChargeableEntityName
-      - idType
-      - idValue
-      - amountOwedDTT
-      - amountOwedIIR
-      - amountOwedUTPR
-    AccountingPeriod:
-      properties:
-        startDate:
-          type: string
-          format: date
-        endDate:
-          type: string
-          format: date
-      required:
-      - startDate
-      - endDate
-    TestOrganisationWithId:
-      properties:
-        pillar2Id:
-          type: string
-        organisation:
-          $ref: "#/components/schemas/TestOrganisation"
-      required:
-      - pillar2Id
-      - organisation
-    OrgDetails:
-      properties:
-        domesticOnly:
-          type: boolean
-        organisationName:
-          type: string
-        registrationDate:
-          type: string
-          format: date
-      required:
-      - domesticOnly
-      - organisationName
-      - registrationDate
-    responses.UKTRSubmitSuccessResponse:
+      - "accountingPeriodFrom"
+      - "accountingPeriodTo"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse:
       properties:
         processingDate:
-          type: string
-          format: date-time
+          type: "string"
+          format: "date-time"
         formBundleNumber:
-          type: string
+          type: "string"
         chargeReference:
-          type: string
+          type: "string"
           nullable: true
       required:
-      - processingDate
-      - formBundleNumber
-    LiabilityNilReturn:
+      - "processingDate"
+      - "formBundleNumber"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn:
       properties:
         returnType:
-          type: string
+          type: "string"
           enum:
-          - NIL_RETURN
+          - "NIL_RETURN"
       required:
-      - returnType
-    UKTRSubmissionNilReturn:
+      - "returnType"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn:
       properties:
-        electionUKGAAP:
-          type: boolean
         accountingPeriodFrom:
-          type: string
-          format: date
-        liabilities:
-          $ref: "#/components/schemas/LiabilityNilReturn"
+          type: "string"
+          format: "date"
         accountingPeriodTo:
-          type: string
-          format: date
+          type: "string"
+          format: "date"
         obligationMTT:
-          type: boolean
+          type: "boolean"
+        electionUKGAAP:
+          type: "boolean"
+        liabilities:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn"
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - obligationMTT
-      - electionUKGAAP
-      - liabilities
-    LiabilityData:
+      - "accountingPeriodFrom"
+      - "accountingPeriodTo"
+      - "obligationMTT"
+      - "electionUKGAAP"
+      - "liabilities"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
       properties:
-        electionUTPRSingleMember:
-          type: boolean
-        electionDTTSingleMember:
-          type: boolean
-        numberSubGroupDTT:
-          type: integer
-          format: int32
-        totalLiabilityDTT:
-          type: number
-          format: double
-        totalLiabilityUTPR:
-          type: number
-          format: double
-        numberSubGroupUTPR:
-          type: integer
-          format: int32
-        liableEntities:
-          type: array
-          items:
-            $ref: "#/components/schemas/LiableEntity"
-        totalLiabilityIIR:
-          type: number
-          format: double
-        totalLiability:
-          type: number
-          format: double
+        ukChargeableEntityName:
+          type: "string"
+        idType:
+          type: "string"
+        idValue:
+          type: "string"
+        amountOwedDTT:
+          type: "number"
+          format: "double"
+        amountOwedIIR:
+          type: "number"
+          format: "double"
+        amountOwedUTPR:
+          type: "number"
+          format: "double"
       required:
-      - electionDTTSingleMember
-      - electionUTPRSingleMember
-      - numberSubGroupDTT
-      - numberSubGroupUTPR
-      - totalLiability
-      - totalLiabilityDTT
-      - totalLiabilityIIR
-      - totalLiabilityUTPR
-      - liableEntities
+      - "ukChargeableEntityName"
+      - "idType"
+      - "idValue"
+      - "amountOwedDTT"
+      - "amountOwedIIR"
+      - "amountOwedUTPR"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
+      properties:
+        electionDTTSingleMember:
+          type: "boolean"
+        electionUTPRSingleMember:
+          type: "boolean"
+        numberSubGroupDTT:
+          type: "integer"
+          format: "int32"
+        numberSubGroupUTPR:
+          type: "integer"
+          format: "int32"
+        totalLiability:
+          type: "number"
+          format: "double"
+        totalLiabilityDTT:
+          type: "number"
+          format: "double"
+        totalLiabilityIIR:
+          type: "number"
+          format: "double"
+        totalLiabilityUTPR:
+          type: "number"
+          format: "double"
+        liableEntities:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity"
+      required:
+      - "electionDTTSingleMember"
+      - "electionUTPRSingleMember"
+      - "numberSubGroupDTT"
+      - "numberSubGroupUTPR"
+      - "totalLiability"
+      - "totalLiabilityDTT"
+      - "totalLiabilityIIR"
+      - "totalLiabilityUTPR"
+      - "liableEntities"
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData:
+      properties:
+        accountingPeriodFrom:
+          type: "string"
+          format: "date"
+        accountingPeriodTo:
+          type: "string"
+          format: "date"
+        obligationMTT:
+          type: "boolean"
+        electionUKGAAP:
+          type: "boolean"
+        liabilities:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData"
+      required:
+      - "accountingPeriodFrom"
+      - "accountingPeriodTo"
+      - "obligationMTT"
+      - "electionUKGAAP"
+      - "liabilities"
     uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
       properties:
         code:
-          type: string
+          type: "string"
         message:
-          type: string
+          type: "string"
       required:
-      - code
-      - message
+      - "code"
+      - "message"
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId:
+      properties:
+        pillar2Id:
+          type: "string"
+        organisation:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation"
+      required:
+      - "pillar2Id"
+      - "organisation"
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
+      properties:
+        startDate:
+          type: "string"
+          format: "date"
+        endDate:
+          type: "string"
+          format: "date"
+      required:
+      - "startDate"
+      - "endDate"
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails:
+      properties:
+        domesticOnly:
+          type: "boolean"
+        organisationName:
+          type: "string"
+        registrationDate:
+          type: "string"
+          format: "date"
+      required:
+      - "domesticOnly"
+      - "organisationName"
+      - "registrationDate"
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation:
+      properties:
+        orgDetails:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
+        accountingPeriod:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        lastUpdated:
+          type: "string"
+          format: "date-time"
+      required:
+      - "orgDetails"
+      - "accountingPeriod"
+      - "lastUpdated"
   examples:
-    errors.Submission.InvalidTotalLiabilityUTPR:
-      summary: Invalid Total Liability UTPR
+    requests.BTNRequestExample:
+      summary: "Request example"
       value:
-        code: '099'
-        message: Invalid Total Liability UTPR
-    responses.UKTRSuccessResponseWithoutCrnExample:
-      summary: Nil Return Success response
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+    responses.BTNSuccessResponseExample:
+      summary: "Success response"
       value:
-        processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
-    errors.Submission.InvalidTotalLiabilityIIR:
-      summary: Invalid Total Liability IIR
+        processingDate: "2026-06-26T09:26:17Z"
+    requests.UKTRNilReturnMneAndUk:
+      summary: "Nil Return - MNE and UK"
       value:
-        code: '097'
-        message: Invalid Total Liability IIR
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          returnType: "NIL_RETURN"
+    requests.UKTRNilReturnDomesticOnlyWithUkGaap:
+      summary: "Nil Return - Domestic Only with UK GAAP"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
+        electionUKGAAP: true
+        liabilities:
+          returnType: "NIL_RETURN"
+    requests.UKTRNilReturnDomesticOnlyWithoutUkGaap:
+      summary: "Nil Return - Domestic Only without UK GAAP"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
+        electionUKGAAP: false
+        liabilities:
+          returnType: "NIL_RETURN"
+    requests.UKTRLiabilityReturnMneAndUkWithOneEntity:
+      summary: "Liability Return - MNE and UK with 1 Entity"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 14401.49
+          totalLiabilityDTT: 5000.99
+          totalLiabilityIIR: 3400
+          totalLiabilityUTPR: 6000.5
+          liableEntities:
+          - ukChargeableEntityName: "Newco PLC"
+            idType: "CRN"
+            idValue: "xyz"
+            amountOwedDTT: 5000.99
+            amountOwedIIR: 3400
+            amountOwedUTPR: 6000.5
+    requests.UKTRLiabilityReturnMneAndUkWithTwoEntities:
+      summary: "Liability Return - MNE and UK with 2 Entities"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 40968.88
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiabilityUTPR: 9400.99
+          liableEntities:
+          - ukChargeableEntityName: "Newco PLC"
+            idType: "CRN"
+            idValue: "xyz"
+            amountOwedDTT: 4567
+            amountOwedIIR: 3000
+            amountOwedUTPR: 4000.99
+          - ukChargeableEntityName: "Conew PLC"
+            idType: "CT-UTR"
+            idValue: "xyz"
+            amountOwedDTT: 22000.89
+            amountOwedIIR: 2000
+            amountOwedUTPR: 5400
+    requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap:
+      summary: "Liability Return - Domestic Only with 1 Entity and UK GAAP"
+      value:
+        accountingPeriodFrom: "2025-01-01"
+        accountingPeriodTo: "2026-12-31"
+        obligationMTT: false
+        electionUKGAAP: true
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 34968.98
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 3400
+          totalLiabilityUTPR: 5000.99
+          liableEntities:
+          - ukChargeableEntityName: "Conew PLC"
+            idType: "CT-UTR"
+            idValue: "xyz"
+            amountOwedDTT: 26567.89
+            amountOwedIIR: 3400
+            amountOwedUTPR: 5000.99
+    requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
+      summary: "Liability Return - Domestic Only with 2 Entities"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: false
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 40968.88
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiabilityUTPR: 9400.99
+          liableEntities:
+          - ukChargeableEntityName: "Newco PLC"
+            idType: "CRN"
+            idValue: "xyz"
+            amountOwedDTT: 4567
+            amountOwedIIR: 3000
+            amountOwedUTPR: 4000.99
+          - ukChargeableEntityName: "Conew PLC"
+            idType: "CT-UTR"
+            idValue: "xyz"
+            amountOwedDTT: 22000.89
+            amountOwedIIR: 2000
+            amountOwedUTPR: 5400
     responses.UKTRSuccessResponseWithCrnExample:
-      summary: Liability Success response
+      summary: "Liability Success response"
       value:
-        processingDate: 2026-06-26T09:26:17Z
+        processingDate: "2026-06-26T09:26:17Z"
         formBundleNumber: 119000004320
         chargeReference: 2347913284601
-    requests.UKTRNilReturnDomesticOnlyWithUkGaap:
-      summary: Nil Return - Domestic Only with UK GAAP
+    responses.UKTRSuccessResponseWithoutCrnExample:
+      summary: "Nil Return Success response"
       value:
+        processingDate: "2026-06-26T09:26:17Z"
+        formBundleNumber: 119000004320
+    responses.UKTRNilReturnResponseExample:
+      summary: "Request example for Domestic only with UK GAAP Nil Return"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
         electionUKGAAP: true
-        accountingPeriodFrom: 2024-01-01
         liabilities:
-          returnType: NIL_RETURN
-        accountingPeriodTo: 2024-12-31
-        obligationMTT: false
-    requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap:
-      summary: Liability Return - Domestic Only with 1 Entity and UK GAAP
+          returnType: "NIL_RETURN"
+    errors.TestOrg.NotFound:
+      summary: "Test endpoints not available"
       value:
-        electionUKGAAP: true
-        accountingPeriodFrom: 2025-01-01
-        liabilities:
-          electionUTPRSingleMember: false
-          electionDTTSingleMember: false
-          numberSubGroupDTT: 4
-          totalLiabilityDTT: 26567.89
-          totalLiabilityUTPR: 5000.99
-          numberSubGroupUTPR: 5
-          liableEntities:
-          - idType: CT-UTR
-            idValue: xyz
-            ukChargeableEntityName: Conew PLC
-            amountOwedUTPR: 5000.99
-            amountOwedIIR: 3400
-            amountOwedDTT: 26567.89
-          totalLiabilityIIR: 3400
-          totalLiability: 34968.98
-        accountingPeriodTo: 2026-12-31
-        obligationMTT: false
-    errors.Submission.Forbidden:
-      summary: Forbidden
-      value:
-        code: '006'
-        message: Forbidden
-    errors.Submission.Unauthorized:
-      summary: Unauthorized
-      value:
-        code: '003'
-        message: Not authorized
-    errors.Submission.MissingHeader:
-      summary: Missing header
-      value:
-        code: '005'
-        message: Missing Header in request
-    errors.EmptyBody:
-      summary: Empty request body
-      value:
-        code: '002'
-        message: Empty body in request
-    responses.BTNSuccessResponseExample:
-      summary: Success response
-      value:
-        processingDate: 2026-06-26T09:26:17Z
-    errors.TestOrg.Unauthorized:
-      summary: Not Authorized
-      value:
-        code: '003'
-        message: Not authorized
-    errors.Submission.GenericServerError:
-      summary: Generic server error
-      value:
-        code: 500
-        message: Internal Server Error
-    errors.Submission.InvalidRequest:
-      summary: Invalid request
-      value:
-        code: '003'
-        message: Request could not be processed
-    errors.Submission.InvalidTotalLiability:
-      summary: Invalid Total Liability
-      value:
-        code: '096'
-        message: Invalid Total Liability
-    errors.Submission.NoSubscriptionData:
-      summary: No subscription data
-      value:
-        code: '004'
-        message: No Pillar2 subscription found for -pillar2Id
-    errors.Submission.InvalidUTPR:
-      summary: Invalid UTPR Election
-      value:
-        code: '095'
-        message: Invalid UTPR Election
-    requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
-      summary: Liability Return - Domestic Only with 2 Entities
-      value:
-        electionUKGAAP: false
-        accountingPeriodFrom: 2025-04-06
-        liabilities:
-          electionUTPRSingleMember: false
-          electionDTTSingleMember: false
-          numberSubGroupDTT: 4
-          totalLiabilityDTT: 26567.89
-          totalLiabilityUTPR: 9400.99
-          numberSubGroupUTPR: 5
-          liableEntities:
-          - idType: CRN
-            idValue: xyz
-            ukChargeableEntityName: Newco PLC
-            amountOwedUTPR: 4000.99
-            amountOwedIIR: 3000
-            amountOwedDTT: 4567
-          - idType: CT-UTR
-            idValue: xyz
-            ukChargeableEntityName: Conew PLC
-            amountOwedUTPR: 5400
-            amountOwedIIR: 2000
-            amountOwedDTT: 22000.89
-          totalLiabilityIIR: 5000
-          totalLiability: 40968.88
-        accountingPeriodTo: 2026-04-05
-        obligationMTT: false
-    errors.Submission.NoActiveSubmission:
-      summary: No active submission
-      value:
-        code: '007'
-        message: Business Partner does not have an active subscription
-    requests.UKTRLiabilityReturnMneAndUkWithTwoEntities:
-      summary: Liability Return - MNE and UK with 2 Entities
-      value:
-        electionUKGAAP: false
-        accountingPeriodFrom: 2025-04-06
-        liabilities:
-          electionUTPRSingleMember: false
-          electionDTTSingleMember: false
-          numberSubGroupDTT: 4
-          totalLiabilityDTT: 26567.89
-          totalLiabilityUTPR: 9400.99
-          numberSubGroupUTPR: 5
-          liableEntities:
-          - idType: CRN
-            idValue: xyz
-            ukChargeableEntityName: Newco PLC
-            amountOwedUTPR: 4000.99
-            amountOwedIIR: 3000
-            amountOwedDTT: 4567
-          - idType: CT-UTR
-            idValue: xyz
-            ukChargeableEntityName: Conew PLC
-            amountOwedUTPR: 5400
-            amountOwedIIR: 2000
-            amountOwedDTT: 22000.89
-          totalLiabilityIIR: 5000
-          totalLiability: 40968.88
-        accountingPeriodTo: 2026-04-05
-        obligationMTT: true
-    errors.Submission.InvalidPillar2ID:
-      summary: Invalid Pillar2 ID
-      value:
-        code: '002'
-        message: Pillar 2 ID missing or invalid
+        code: "404"
+        message: "Organisation not found for pillar2Id: XAPLR1234567890"
     errors.TestOrg.Forbidden:
-      summary: Test endpoints not available
+      summary: "Test endpoints not available"
       value:
         code: 403
-        message: Test endpoints are not available in this environment
-    errors.TestOrg.NotFound:
-      summary: Test endpoints not available
+        message: "Test endpoints are not available in this environment"
+    errors.TestOrg.Unauthorized:
+      summary: "Not Authorized"
       value:
-        code: 404
-        message: "Organisation not found for pillar2Id: XAPLR1234567890"
-    errors.Submission.DuplicateSubmission:
-      summary: Duplicate submission
-      value:
-        code: '004'
-        message: Duplicate submission acknowledgment reference
-    errors.Submission.InvalidReturn:
-      summary: Invalid return
-      value:
-        code: '093'
-        message: Invalid Return
-    errors.Submission.TaxObligationFulfilled:
-      summary: Tax obligation fulfilled
-      value:
-        code: '044'
-        message: Tax Obligation already fulfilled
-    requests.BTNRequestExample:
-      summary: Request example
-      value:
-        accountingPeriodFrom: 2024-01-01
-        accountingPeriodTo: 2024-12-31
-    errors.Submission.InvalidTotalLiabilityDTT:
-      summary: Invalid Total Liability DTT
-      value:
-        code: '098'
-        message: Invalid Total Liability DTT
-    responses.UKTRNilReturnResponseExample:
-      summary: Request example for Domestic only with UK GAAP Nil Return
-      value:
-        electionUKGAAP: true
-        accountingPeriodFrom: 2024-01-01
-        liabilities:
-          returnType: NIL_RETURN
-        accountingPeriodTo: 2024-12-31
-        obligationMTT: false
-    errors.Submission.InvalidDTT:
-      summary: Invalid DTT Election
-      value:
-        code: '094'
-        message: Invalid DTT Election
-    requests.UKTRLiabilityReturnMneAndUkWithOneEntity:
-      summary: Liability Return - MNE and UK with 1 Entity
-      value:
-        electionUKGAAP: false
-        accountingPeriodFrom: 2025-04-06
-        liabilities:
-          electionUTPRSingleMember: false
-          electionDTTSingleMember: false
-          numberSubGroupDTT: 4
-          totalLiabilityDTT: 5000.99
-          totalLiabilityUTPR: 6000.5
-          numberSubGroupUTPR: 5
-          liableEntities:
-          - idType: CRN
-            idValue: xyz
-            ukChargeableEntityName: Newco PLC
-            amountOwedUTPR: 6000.5
-            amountOwedIIR: 3400
-            amountOwedDTT: 5000.99
-          totalLiabilityIIR: 3400
-          totalLiability: 14401.49
-        accountingPeriodTo: 2026-04-05
-        obligationMTT: true
-    requests.UKTRNilReturnDomesticOnlyWithoutUkGaap:
-      summary: Nil Return - Domestic Only without UK GAAP
-      value:
-        electionUKGAAP: false
-        accountingPeriodFrom: 2024-01-01
-        liabilities:
-          returnType: NIL_RETURN
-        accountingPeriodTo: 2024-12-31
-        obligationMTT: false
+        code: "003"
+        message: "Not authorized"
     errors.InvalidJson:
-      summary: Invalid JSON payload
+      summary: "Invalid JSON payload"
       value:
-        code: '001'
-        message: Invalid JSON payload
-    requests.UKTRNilReturnMneAndUk:
-      summary: Nil Return - MNE and UK
+        code: "001"
+        message: "Invalid JSON payload"
+    errors.EmptyBody:
+      summary: "Empty request body"
       value:
-        electionUKGAAP: false
-        accountingPeriodFrom: 2024-01-01
-        liabilities:
-          returnType: NIL_RETURN
-        accountingPeriodTo: 2024-12-31
-        obligationMTT: true
+        code: "002"
+        message: "Empty body in request"
+    errors.Submission.InvalidPillar2ID:
+      summary: "Invalid Pillar2 ID"
+      value:
+        code: "002"
+        message: "Pillar 2 ID missing or invalid"
+    errors.Submission.Unauthorized:
+      summary: "Unauthorized"
+      value:
+        code: "003"
+        message: "Not authorized"
+    errors.Submission.InvalidRequest:
+      summary: "Invalid request"
+      value:
+        code: "003"
+        message: "Request could not be processed"
+    errors.Submission.NoSubscriptionData:
+      summary: "No subscription data"
+      value:
+        code: "004"
+        message: "No Pillar2 subscription found for -pillar2Id"
+    errors.Submission.MissingHeader:
+      summary: "Missing header"
+      value:
+        code: "005"
+        message: "Missing Header in request"
+    errors.Submission.GenericServerError:
+      summary: "Generic server error"
+      value:
+        code: 500
+        message: "Internal Server Error"
+    errors.Submission.Forbidden:
+      summary: "Forbidden"
+      value:
+        code: "006"
+        message: "Forbidden"
+    errors.Submission.InvalidReturn:
+      summary: "Invalid return"
+      value:
+        code: "093"
+        message: "Invalid Return"
+    errors.Submission.TaxObligationFulfilled:
+      summary: "Tax obligation fulfilled"
+      value:
+        code: "044"
+        message: "Tax Obligation already fulfilled"
+    errors.Submission.NoActiveSubmission:
+      summary: "No active submission"
+      value:
+        code: "007"
+        message: "Business Partner does not have an active subscription"
+    errors.Submission.DuplicateSubmission:
+      summary: "Duplicate submission"
+      value:
+        code: "004"
+        message: "Duplicate submission acknowledgment reference"
+    errors.Submission.InvalidUTPR:
+      summary: "Invalid UTPR Election"
+      value:
+        code: "095"
+        message: "Invalid UTPR Election"
+    errors.Submission.InvalidTotalLiabilityIIR:
+      summary: "Invalid Total Liability IIR"
+      value:
+        code: "097"
+        message: "Invalid Total Liability IIR"
+    errors.Submission.InvalidDTT:
+      summary: "Invalid DTT Election"
+      value:
+        code: "094"
+        message: "Invalid DTT Election"
+    errors.Submission.InvalidTotalLiabilityUTPR:
+      summary: "Invalid Total Liability UTPR"
+      value:
+        code: "099"
+        message: "Invalid Total Liability UTPR"
+    errors.Submission.InvalidTotalLiability:
+      summary: "Invalid Total Liability"
+      value:
+        code: "096"
+        message: "Invalid Total Liability"
+    errors.Submission.InvalidTotalLiabilityDTT:
+      summary: "Invalid Total Liability DTT"
+      value:
+        code: "098"
+        message: "Invalid Total Liability DTT"
   securitySchemes:
     userRestricted:
-      type: oauth2
-      description: |
-        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
-        Please see the [developer hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) for more details.
+      type: "oauth2"
+      description: "HMRC supports OAuth 2.0 for authenticating user restricted API\
+        \ requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.\n\
+        Please see the [developer hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints)\
+        \ for more details.\n"
       flows:
         authorizationCode:
-          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
-          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
-          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          authorizationUrl: "https://api.service.hmrc.gov.uk/oauth/authorize"
+          tokenUrl: "https://api.service.hmrc.gov.uk/oauth/token"
+          refreshUrl: "https://api.service.hmrc.gov.uk/oauth/refresh"
           scopes:
-            read:pillar2: Read data related to Pillar2 subscription
-            write:pillar2: Write data related to Pillar2 subscription
+            read:pillar2: "Read data related to Pillar2 subscription"
+            write:pillar2: "Write data related to Pillar2 subscription"
