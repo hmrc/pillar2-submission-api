@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.87.0
+  version: 0.93.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -1043,12 +1043,18 @@ components:
         amountOwedUTPR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         amountOwedIIR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         amountOwedDTT:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
       required:
       - ukChargeableEntityName
       - idType
@@ -1142,9 +1148,13 @@ components:
         totalLiabilityDTT:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         totalLiabilityUTPR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         numberSubGroupUTPR:
           type: integer
           format: int32
@@ -1155,9 +1165,13 @@ components:
         totalLiabilityIIR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         totalLiability:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
       required:
       - electionDTTSingleMember
       - electionUTPRSingleMember

@@ -85,11 +85,3 @@ case class TestEndpointDisabled() extends Pillar2Error {
   override val code:    String = "403"
   override val message: String = "Test endpoints are not available in this environment"
 }
-
-sealed trait MonetaryValidationError extends Pillar2Error {
-  val code = "400"
-}
-
-case object MonetaryValidationError extends MonetaryValidationError {
-  val message = "Number field invalid length"
-}
