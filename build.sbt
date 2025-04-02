@@ -52,8 +52,8 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
 
 addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check;routesToYamlOas; validateOas")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
-addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
-addCommandAlias("publishTestOnlyOas", """;set swaggerRoutesFile := "testOnly.routes";createOpenAPISpec; publishOas""")
+addCommandAlias("createOas", ";clean;routesToYamlOas; validateOas")
+addCommandAlias("publishTestOas", """;set swaggerRoutesFile := "testOnly.routes";createOas; publishOas""")
 
 lazy val it = project
   .enablePlugins(PlayScala)
