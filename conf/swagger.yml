@@ -110,38 +110,6 @@ paths:
         </table>
       security:
         - userRestricted: [write:pillar2]
-  /obligations-and-submissions:
-    get:
-      summary: Retrieve Obligations and Submissions
-      description: |
-        Retrieves the Obligations and Submissions for an accounting period.
-        ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a Obligations and Submissions API request is not processed successfully.</p>
-        <table>
-        <thead>
-        <tr>
-        <th>Error Message</th>
-        <th>Next Steps</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
-        <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
-        </tr>
-        <tr>
-        <td>025 - No associated data found</td>
-        <td>No associated data found for this Pillar 2 ID.</td>
-        </tr>
-        <tr>
-        </tbody>
-        </table>
-      security:
-        - userRestricted: [write:pillar2]
   /setup/organisation:
     post:
       summary: Create Test Organisation

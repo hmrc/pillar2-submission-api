@@ -50,10 +50,10 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(PlaySwagger.settings *)
   .disablePlugins(JUnitXmlReportPlugin)
 
-addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check;routesToYamlOas; validateOas")
 addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
-addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
-addCommandAlias("publishTestOnlyOas", ";createOpenAPISpec; publishOas")
+addCommandAlias("createOas", ";clean;routesToYamlOas; validateOas")
+addCommandAlias("publishTestOas", """;set swaggerRoutesFile := "testOnly.routes";createOas; publishOas""")
 
 lazy val it = project
   .enablePlugins(PlayScala)

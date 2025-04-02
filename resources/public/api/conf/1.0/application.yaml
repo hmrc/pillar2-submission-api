@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.90.0
+  version: 0.95.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -38,8 +38,8 @@ paths:
         required: false
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -140,8 +140,8 @@ paths:
         required: false
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -232,8 +232,8 @@ paths:
         required: false
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -334,8 +334,8 @@ paths:
         required: false
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -359,7 +359,7 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               example:
                 code: 500
-                message: Failed to delete organisation due to database error
+                message: Failed to delete organisation and submission data
         "403":
           description: Forbidden
           content:
@@ -370,7 +370,7 @@ paths:
                 code: 403
                 message: Test endpoints are not available in this environment
         "204":
-          description: Test Organisation Deleted Successfully
+          description: Test Organisation and Submission Data Deleted Successfully
         "401":
           description: Unauthorized
           content:
@@ -459,8 +459,8 @@ paths:
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -612,8 +612,8 @@ paths:
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -786,8 +786,8 @@ paths:
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
       - name: Accept
         in: header
-        description: Specifies the expected response format as versioned JSON from
-          the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
         schema:
           type: string
           example: application/vnd.hmrc.1.0+json
@@ -942,12 +942,18 @@ components:
         amountOwedUTPR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         amountOwedIIR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         amountOwedDTT:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
       required:
       - ukChargeableEntityName
       - idType
@@ -1041,9 +1047,13 @@ components:
         totalLiabilityDTT:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         totalLiabilityUTPR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         numberSubGroupUTPR:
           type: integer
           format: int32
@@ -1054,9 +1064,13 @@ components:
         totalLiabilityIIR:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
         totalLiability:
           type: number
           format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
       required:
       - electionDTTSingleMember
       - electionUTPRSingleMember
