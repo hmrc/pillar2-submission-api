@@ -22,27 +22,27 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitORNConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ORNValidationError, UnexpectedResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, SubmitORNErrorResponse, SubmitORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission, ORNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubmitORNService @Inject() (submitORNConnector: SubmitORNConnector)(implicit val ec: ExecutionContext) extends Logging {
 
-  def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[SubmitORNSuccessResponse] =
+  def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
     submitORNConnector.submitORN(request).map(convertToResult)
 
-  private def convertToResult(response: HttpResponse): SubmitORNSuccessResponse =
+  private def convertToResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
       case 201 =>
-        response.json.validate[SubmitORNSuccessResponse] match {
+        response.json.validate[ORNSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(_) =>
             logger.error("Failed to parse success response")
             throw UnexpectedResponse
         }
       case 422 =>
-        response.json.validate[SubmitORNErrorResponse] match {
+        response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) => throw ORNValidationError(response.code, response.message)
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")

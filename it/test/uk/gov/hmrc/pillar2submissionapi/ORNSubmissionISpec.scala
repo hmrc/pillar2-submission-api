@@ -34,7 +34,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{SubmitORNErrorResponse, SubmitORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -63,10 +63,10 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
-        val result = Await.result(baseRequest.withBody(validRequestJson).execute[SubmitORNSuccessResponse], 5.seconds)
+        val result = Await.result(baseRequest.withBody(validRequestJson).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -118,11 +118,11 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[SubmitORNSuccessResponse], 5.seconds)
+          Await.result(baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -137,7 +137,7 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual UNAUTHORIZED
-        val errorResponse = result.json.as[SubmitORNErrorResponse]
+        val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "003"
         errorResponse.message mustEqual "Not authorized"
       }
@@ -152,13 +152,13 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           UNPROCESSABLE_ENTITY,
-          Json.toJson(SubmitORNErrorResponse("093", "Invalid Return"))
+          Json.toJson(ORNErrorResponse("093", "Invalid Return"))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual UNPROCESSABLE_ENTITY
-        val errorResponse = result.json.as[SubmitORNErrorResponse]
+        val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "093"
         errorResponse.message mustEqual "Invalid Return"
       }
@@ -173,13 +173,13 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           UNAUTHORIZED,
-          Json.toJson(SubmitORNErrorResponse("001", "Unauthorized"))
+          Json.toJson(ORNErrorResponse("001", "Unauthorized"))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual INTERNAL_SERVER_ERROR
-        val errorResponse = result.json.as[SubmitORNErrorResponse]
+        val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "Internal Server Error"
       }
@@ -194,13 +194,13 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(SubmitORNErrorResponse("999", "internal_server_error"))
+          Json.toJson(ORNErrorResponse("999", "internal_server_error"))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual INTERNAL_SERVER_ERROR
-        val errorResponse = result.json.as[SubmitORNErrorResponse]
+        val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "Internal Server Error"
       }
@@ -236,11 +236,11 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(baseRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[SubmitORNSuccessResponse], 5.seconds)
+          Await.result(baseRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"

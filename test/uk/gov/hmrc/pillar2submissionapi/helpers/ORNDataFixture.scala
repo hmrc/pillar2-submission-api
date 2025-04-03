@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
+package uk.gov.hmrc.pillar2submissionapi.helpers
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
-case class SubmitORNSuccessResponse(processingDate: String, formBundleNumber: String)
+import java.time.LocalDate
 
-case object SubmitORNSuccessResponse {
-  implicit val successFormat: OFormat[SubmitORNSuccessResponse] = Json.format[SubmitORNSuccessResponse]
+trait ORNDataFixture {
+
+  val ornRequestFixture = ORNSubmission(
+    accountingPeriodFrom = LocalDate.now(),
+    accountingPeriodTo = LocalDate.now().plusYears(1),
+    filedDateGIR = LocalDate.now().plusYears(1),
+    countryGIR = "US",
+    reportingEntityName = "Newco PLC",
+    TIN = "US12345678",
+    issuingCountryTIN = "US"
+  )
+  val ornRequestJs: JsValue = Json.toJson(ornRequestFixture)
 }

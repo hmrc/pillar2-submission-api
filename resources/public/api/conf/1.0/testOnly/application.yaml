@@ -586,7 +586,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SubmitORNSuccessResponse"
+                $ref: "#/components/schemas/ORNSuccessResponse"
               example:
                 processingDate: 2025-01-31T09:26:17Z
                 formBundleNumber: 123456789012345
@@ -1218,15 +1218,6 @@ components:
       - dueDate
       - underEnquiry
       - obligations
-    SubmitORNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        formBundleNumber:
-          type: string
-      required:
-      - processingDate
-      - formBundleNumber
     SubmitBTNSuccessResponse:
       properties:
         processingDate:
@@ -1357,6 +1348,15 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
+    ORNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+      required:
+      - processingDate
+      - formBundleNumber
     LiabilityData:
       properties:
         electionUTPRSingleMember:

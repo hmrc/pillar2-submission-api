@@ -18,8 +18,8 @@ package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
 import play.api.libs.json.{Json, OFormat}
 
-case class SubmitORNErrorResponse(code: String, message: String)
+case class ORNErrorResponse(code: String, message: String)
 
-case object SubmitORNErrorResponse {
-  implicit val errorFormat: OFormat[SubmitORNErrorResponse] = Json.format[SubmitORNErrorResponse]
+case object ORNErrorResponse {
+  implicit val errorFormat: OFormat[ORNErrorResponse] = Json.format[ORNErrorResponse]
 }

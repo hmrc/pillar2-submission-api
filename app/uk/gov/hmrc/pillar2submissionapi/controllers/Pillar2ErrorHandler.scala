@@ -45,12 +45,12 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
           case e @ UktrValidationError(_, _)                      => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
           case e @ BTNValidationError(_, _)                       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
           case e @ ObligationsAndSubmissionsValidationError(_, _) => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case e @ ORNValidationError(_, _)                       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
           case e @ OrganisationAlreadyExists(_)                   => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
           case e @ OrganisationNotFound(_)                        => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
           case e @ DatabaseError(_)                               => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
           case e @ UnexpectedResponse                             => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
           case e @ TestEndpointDisabled()                         => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
-          case e @ ORNValidationError(_, _)                       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)
         Future.successful(ret)

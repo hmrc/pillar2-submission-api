@@ -24,7 +24,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, SubmitORNErrorResponse, SubmitORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitORNServiceSpec.{okResponse, validORNSubmission}
 
 import java.time.LocalDate
@@ -62,7 +62,7 @@ class SubmitORNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitORNConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitORNErrorResponse("093", "Invalid Return")), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[ORNValidationError](await(submitORNService.submitORN(validORNSubmission)))
     }
@@ -100,5 +100,5 @@ object SubmitORNServiceSpec {
     issuingCountryTIN = "US"
   )
 
-  val okResponse: SubmitORNSuccessResponse = SubmitORNSuccessResponse("2022-01-31", "123456789012345")
+  val okResponse: ORNSuccessResponse = ORNSuccessResponse("2022-01-31", "123456789012345")
 }

@@ -19,20 +19,20 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.CREATED
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.ORNSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.ORNSubmissionController
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, SubmitORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, ORNSuccessResponse}
 
 import scala.concurrent.Future
 
-class ORNSubmissionControllerSpec extends ControllerBaseSpec {
+class ORNSubmissionControllerSpec extends ControllerBaseSpec with ORNDataFixture {
 
   val ORNSubmissionController: ORNSubmissionController =
     new ORNSubmissionController(cc, identifierAction, subscriptionDataRetrievalAction, mockSubmitORNService)
@@ -49,16 +49,17 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec {
         when(mockSubmitORNService.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              SubmitORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345")
+              ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345")
             )
           )
 
-        status(result(validRequestJson_data)) mustEqual CREATED
+        status(result(ornRequestJs)) mustEqual CREATED
       }
     }
 
     "submitORN called with an invalid request" should {
       "return InvalidJson response" in {
+        val invalidRequestJson_data: JsValue = ornRequestJs.as[JsObject] - "filedDateGIR" - "TIN" // Remove fields to make the JSON invalid
 
         result(invalidRequestJson_data) shouldFailWith InvalidJson
       }
@@ -67,12 +68,16 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec {
     "submitORN called with an invalid json request" should {
       "return InvalidJson response" in {
 
+        val invalidRequest_Json: JsValue =
+          ornRequestJs.as[JsObject] + ("accountingPeriodFrom" -> JsString("invalid-date"))
+
         result(invalidRequest_Json) shouldFailWith InvalidJson
       }
     }
 
     "submitORN called with an empty json object" should {
       "return InvalidJson response" in {
+        val invalidRequest_emptyBody: JsValue = JsObject.empty
 
         result(invalidRequest_emptyBody) shouldFailWith InvalidJson
       }
@@ -80,6 +85,7 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitORN called with an non-json request" should {
       "return EmptyRequestBody response" in {
+        val invalidRequest_wrongType: String = "This is not Json."
         val result: Future[Result] = ORNSubmissionController.submitORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
@@ -99,6 +105,8 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitORN called with valid request body that contains duplicate entries" should {
       "return 201 CREATED response" in {
+        val validRequestJson_duplicateFields: JsValue =
+          ornRequestJs.as[JsObject] + ("accountingPeriodFrom" -> JsString("2023-01-01"))
 
         status(result(validRequestJson_duplicateFields)) mustEqual CREATED
       }
@@ -107,63 +115,11 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec {
     "submitORN called with valid request body that contains additional fields" should {
       "return 201 CREATED response" in {
 
+        val validRequestJson_additionalFields: JsValue =
+          ornRequestJs.as[JsObject] + ("extraField" -> JsString("extraValue"))
+
         status(result(validRequestJson_additionalFields)) mustEqual CREATED
       }
     }
   }
-}
-
-object ORNSubmissionControllerSpec {
-  val validRequestJson_data: JsValue =
-    Json.parse("""{
-        |  "accountingPeriodFrom": "2023-01-01",
-        |  "accountingPeriodTo": "2024-12-31",
-        |  "filedDateGIR": "2024-12-31",
-        |  "countryGIR":"US",
-        |  "reportingEntityName" : "Newco PLC",
-        |  "TIN" : "US12345678",
-        |  "issuingCountryTIN" : "US"
-        |}""".stripMargin)
-
-  val invalidRequestJson_data: JsValue =
-    Json.parse("""{
-        |  "data1": "value1",
-        |  "data2": "value2"
-        |}""".stripMargin)
-
-  val invalidRequest_Json: JsValue =
-    Json.parse("""{
-        |  "badRequest": ""
-        |}""".stripMargin)
-
-  val invalidRequest_emptyBody: JsValue = JsObject.empty
-
-  val invalidRequest_wrongType: String = "This is not Json."
-
-  val validRequestJson_duplicateFields: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2023-01-01",
-                 |  "accountingPeriodTo": "2024-12-31",
-                 |  "accountingPeriodFrom": "2023-01-01",
-                 |  "accountingPeriodTo": "2024-12-31",
-                 |  "filedDateGIR": "2024-12-31",
-                 |  "countryGIR":"US",
-                 |  "reportingEntityName" : "Newco PLC",
-                 |  "TIN" : "US12345678",
-                 |  "issuingCountryTIN" : "US"
-                 |}""".stripMargin)
-
-  val validRequestJson_additionalFields: JsValue =
-    Json.parse("""{
-                 |  "accountingPeriodFrom": "2023-01-01",
-                 |  "accountingPeriodTo": "2024-12-31",
-                 |  "extraField1": "value1",
-                 |  "extraField1": "value2",
-                 |  "filedDateGIR": "2024-12-31",
-                 |  "countryGIR":"US",
-                 |  "reportingEntityName" : "Newco PLC",
-                 |  "TIN" : "US12345678",
-                 |  "issuingCountryTIN" : "US"
-                 |}""".stripMargin)
-
 }

@@ -525,7 +525,7 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #     content:
 #       application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.SubmitORNSuccessResponse'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
 #         example:
 #           processingDate: "2025-01-31T09:26:17Z"
 #           formBundleNumber: "123456789012345"
