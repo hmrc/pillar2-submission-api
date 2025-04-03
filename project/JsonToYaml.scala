@@ -40,9 +40,9 @@ object JsonToYaml {
       val jsonString = IO.read(jsonFile)
       val parsedJson = Json.parse(jsonString)
 
-      val openapi = (parsedJson \ "openapi").as[JsString]
-      val info = (parsedJson \ "info").as[JsObject]
-      val tags = (parsedJson \ "tags").as[JsArray]
+      val openapi    = (parsedJson \ "openapi").as[JsString]
+      val info       = (parsedJson \ "info").as[JsObject]
+      val tags       = (parsedJson \ "tags").as[JsArray]
       val components = (parsedJson \ "components").as[JsObject]
 
       val pathsJson = (parsedJson \ "paths").as[JsObject]
@@ -53,15 +53,15 @@ object JsonToYaml {
       )
 
       val orderedJson = Json.obj(
-        "openapi" -> openapi,
-        "info" -> info,
-        "tags" -> tags,
-        "paths" -> processedPaths,
+        "openapi"    -> openapi,
+        "info"       -> info,
+        "tags"       -> tags,
+        "paths"      -> processedPaths,
         "components" -> components
       )
 
       val jsonNodeTree = jsonMapper.readTree(orderedJson.toString)
-      val jsonAsYaml = yamlMapper.writeValueAsString(jsonNodeTree)
+      val jsonAsYaml   = yamlMapper.writeValueAsString(jsonNodeTree)
       IO.write(yamlFile, jsonAsYaml)
     }
   )
