@@ -29,42 +29,38 @@ object JsonToYaml {
       val yamlFactory = new YAMLFactory()
         .configure(YAMLGenerator.Feature.WRITE_DOC_START_MARKER, false)
         .configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true)
+        .configure(YAMLGenerator.Feature.USE_NATIVE_TYPE_ID, false)
+        .configure(YAMLGenerator.Feature.SPLIT_LINES, false)
       val jsonMapper = new ObjectMapper().registerModule(DefaultScalaModule)
-      val yamlMapper = new YAMLMapper().registerModule(DefaultScalaModule)
+      val yamlMapper = new YAMLMapper(yamlFactory).registerModule(DefaultScalaModule)
 
       val jsonFile: File = baseDirectory.value / "target/swagger/swagger.json"
       val yamlFile: File = baseDirectory.value / "target/swagger/application.yaml"
 
       val jsonString = IO.read(jsonFile)
-      val paths      = (Json.parse(jsonString) \ "paths").as[JsObject].keys.toList.reverse
+      val parsedJson = Json.parse(jsonString)
 
-      val parsedJson = Json
-        .parse(jsonString)
+      val openapi = (parsedJson \ "openapi").as[JsString]
+      val info = (parsedJson \ "info").as[JsObject]
+      val tags = (parsedJson \ "tags").as[JsArray]
+      val components = (parsedJson \ "components").as[JsObject]
 
-      val copyToNewPaths: Reads[JsObject] = paths
-        .map { path =>
-          __.read[JsObject]
-            .flatMapResult { obj =>
-              obj.transform(
-                __.read[JsObject]
-                  .map(o =>
-                    o ++ JsObject(
-                      List(s"$apiContext$path" -> (parsedJson \ "paths" \ path).as[JsObject])
-                    )
-                  )
-              )
-            }
+      val pathsJson = (parsedJson \ "paths").as[JsObject]
+      val processedPaths = JsObject(
+        pathsJson.fields.map { case (path, value) =>
+          s"$apiContext$path" -> value
         }
-        .fold(__.read[JsObject].map(identity))((a, b) => (a and b).reduce)
+      )
 
-      val removeOldPaths = paths.map(path => (__ \ "paths" \ path).json.prune).fold(__.read[JsObject].map(identity))((a, b) => a andThen b)
+      val orderedJson = Json.obj(
+        "openapi" -> openapi,
+        "info" -> info,
+        "tags" -> tags,
+        "paths" -> processedPaths,
+        "components" -> components
+      )
 
-      val json = parsedJson
-        .transform(updateVersion andThen (__ \ "paths").json.update(copyToNewPaths) andThen removeOldPaths)
-        .get
-
-      val jsonNodeTree = jsonMapper.readTree(json.toString)
-
+      val jsonNodeTree = jsonMapper.readTree(orderedJson.toString)
       val jsonAsYaml = yamlMapper.writeValueAsString(jsonNodeTree)
       IO.write(yamlFile, jsonAsYaml)
     }
