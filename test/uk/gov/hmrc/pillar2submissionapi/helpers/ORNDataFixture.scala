@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
 import java.time.LocalDate
 
 trait ORNDataFixture {
 
-  val ornRequestFixture = ORNSubmission(
+  val ornRequestFixture: ORNSubmission = ORNSubmission(
     accountingPeriodFrom = LocalDate.now(),
     accountingPeriodTo = LocalDate.now().plusYears(1),
     filedDateGIR = LocalDate.now().plusYears(1),
