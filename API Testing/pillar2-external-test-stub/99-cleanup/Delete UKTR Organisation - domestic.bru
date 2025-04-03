@@ -1,0 +1,21 @@
+meta {
+  name: Delete UKTR Organisation - domestic
+  type: http
+  seq: 999998
+}
+
+delete {
+  url: {{baseUrl}}/pillar2/test/organisation/{{domesticOnlyPlrId}}
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: validBearerToken
+}
+
+tests {
+  test("Status code is 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+} 
