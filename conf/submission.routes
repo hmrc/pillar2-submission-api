@@ -52,8 +52,8 @@
 #         examples:
 #           Invalid Pillar2ID:
 #             value:
-#               code: '002'
-#               message: Pillar 2 ID missing or invalid
+#               code: '089'
+#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -64,8 +64,8 @@
 #               message: Duplicate submission acknowledgment reference
 #           No Active Submission:
 #             value:
-#               code: '007'
-#               message: Business Partner does not have an active subscription
+#               code: '063'
+#               message: Business Partner does not have an Active Subscription for this Regime
 #           Tax Obligation Fulfilled:
 #             value:
 #               code: '044'
@@ -198,8 +198,8 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #         examples:
 #           Invalid Pillar2ID:
 #             value:
-#               code: '002'
-#               message: Pillar 2 ID missing or invalid
+#               code: '089'
+#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -210,8 +210,8 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #               message: Duplicate submission acknowledgment reference
 #           No Active Submission:
 #             value:
-#               code: '007'
-#               message: Business Partner does not have an active subscription
+#               code: '063'
+#               message: Business Partner does not have an Active Subscription for this Regime
 #           Invalid Return:
 #             value:
 #               code: '093'
@@ -338,8 +338,8 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #         examples:
 #           Invalid Pillar2ID:
 #             value:
-#               code: '002'
-#               message: Pillar 2 ID missing or invalid
+#               code: '089'
+#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -350,8 +350,8 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #               message: Duplicate acknowledgment reference
 #           No Active Submission:
 #             value:
-#               code: '007'
-#               message: Business Partner does not have an Active Pillar 2 registration
+#               code: '063'
+#               message: Business Partner does not have an Active Subscription for this Regime
 #           Tax Obligation Fulfilled:
 #             value:
 #               code: '044'
@@ -449,8 +449,8 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #         examples:
 #           Invalid Pillar2ID:
 #             value:
-#               code: '002'
-#               message: Pillar 2 ID missing or invalid
+#               code: '089'
+#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
