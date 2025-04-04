@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.submission
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitORNService
@@ -33,12 +33,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class ORNSubmissionController @Inject() (
   cc:               ControllerComponents,
   identify:         IdentifierAction,
+  pillar2Action:    Pillar2IdHeaderAction,
   getSubscription:  SubscriptionDataRetrievalAction,
   submitORNService: SubmitORNService
 )(implicit ec:      ExecutionContext)
     extends BackendController(cc) {
 
-  def submitORN: Action[AnyContent] = (identify andThen getSubscription).async { request =>
+  def submitORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>

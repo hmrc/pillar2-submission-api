@@ -20,17 +20,14 @@ import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{BodyParsers, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, TestEndpointDisabled}
 import uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 
 import java.time.{Instant, LocalDate}
 import scala.concurrent.Future
@@ -39,18 +36,9 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
   val mockAppConfig: AppConfig = mock[AppConfig]
 
-  override val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
-    mockAuthConnector,
-    new BodyParsers.Default,
-    mockAppConfig
-  ) {
-    override def transform[A](request: Request[A]): Future[IdentifierRequest[A]] =
-      Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = pillar2Id))
-  }
-
   def controller(testEndpointsEnabled: Boolean = true): TestOrganisationController = {
     when(mockAppConfig.testOrganisationEnabled).thenReturn(testEndpointsEnabled)
-    new TestOrganisationController(cc, identifierAction, mockTestOrganisationService, mockAppConfig)
+    new TestOrganisationController(cc, identifierAction, pillar2IdAction, mockTestOrganisationService, mockAppConfig)
   }
 
   "TestOrganisationController" when {
@@ -60,20 +48,20 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
           when(mockTestOrganisationService.createTestOrganisation(eqTo(pillar2Id), any[TestOrganisationRequest])(any[HeaderCarrier]))
             .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-          val result = controller().createTestOrganisation(FakeRequest().withJsonBody(validRequestJson))
+          val result = controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson))
 
           status(result) mustBe CREATED
           contentAsJson(result) mustBe validResponseJson
         }
 
         "return InvalidJson for invalid request" in {
-          val result = controller().createTestOrganisation(FakeRequest().withJsonBody(invalidRequestJson))
+          val result = controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidRequestJson))
 
           result shouldFailWith InvalidJson
         }
 
         "return EmptyRequestBody for missing body" in {
-          val result = controller().createTestOrganisation(FakeRequest())
+          val result = controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           result shouldFailWith EmptyRequestBody
         }
@@ -84,7 +72,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
           when(mockTestOrganisationService.getTestOrganisation(eqTo(pillar2Id))(any[HeaderCarrier]))
             .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-          val result = controller().getTestOrganisation(FakeRequest())
+          val result = controller().getTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           status(result) mustBe OK
           contentAsJson(result) mustBe validResponseJson
@@ -96,20 +84,20 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
           when(mockTestOrganisationService.updateTestOrganisation(eqTo(pillar2Id), any[TestOrganisationRequest])(any[HeaderCarrier]))
             .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-          val result = controller().updateTestOrganisation(FakeRequest().withJsonBody(validRequestJson))
+          val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson))
 
           status(result) mustBe OK
           contentAsJson(result) mustBe validResponseJson
         }
 
         "return InvalidJson for invalid request" in {
-          val result = controller().updateTestOrganisation(FakeRequest().withJsonBody(invalidRequestJson))
+          val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidRequestJson))
 
           result shouldFailWith InvalidJson
         }
 
         "return EmptyRequestBody for missing body" in {
-          val result = controller().updateTestOrganisation(FakeRequest())
+          val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           result shouldFailWith EmptyRequestBody
         }
@@ -120,7 +108,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
           when(mockTestOrganisationService.deleteTestOrganisation(eqTo(pillar2Id))(any[HeaderCarrier]))
             .thenReturn(Future.successful(()))
 
-          val result = controller().deleteTestOrganisation(FakeRequest())
+          val result = controller().deleteTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           status(result) mustBe NO_CONTENT
         }
@@ -130,7 +118,9 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
     "test endpoints are disabled" when {
       "createTestOrganisation" must {
         "return 403 FORBIDDEN" in {
-          val result = controller(testEndpointsEnabled = false).createTestOrganisation(FakeRequest().withJsonBody(validRequestJson))
+          val result = controller(testEndpointsEnabled = false).createTestOrganisation(
+            FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
+          )
 
           result shouldFailWith TestEndpointDisabled()
         }
@@ -138,7 +128,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
       "getTestOrganisation" must {
         "return 403 FORBIDDEN" in {
-          val result = controller(testEndpointsEnabled = false).getTestOrganisation(FakeRequest())
+          val result = controller(testEndpointsEnabled = false).getTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           result shouldFailWith TestEndpointDisabled()
         }
@@ -146,7 +136,9 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
       "updateTestOrganisation" must {
         "return 403 FORBIDDEN" in {
-          val result = controller(testEndpointsEnabled = false).updateTestOrganisation(FakeRequest().withJsonBody(validRequestJson))
+          val result = controller(testEndpointsEnabled = false).updateTestOrganisation(
+            FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
+          )
 
           result shouldFailWith TestEndpointDisabled()
         }
@@ -154,7 +146,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
       "deleteTestOrganisation" must {
         "return 403 FORBIDDEN" in {
-          val result = controller(testEndpointsEnabled = false).deleteTestOrganisation(FakeRequest())
+          val result = controller(testEndpointsEnabled = false).deleteTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           result shouldFailWith TestEndpointDisabled()
         }
