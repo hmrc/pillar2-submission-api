@@ -26,7 +26,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.BTNSubmissionController
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}
 
@@ -35,10 +35,11 @@ import scala.concurrent.Future
 class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
   val BTNSubmissionController: BTNSubmissionController =
-    new BTNSubmissionController(cc, identifierAction, subscriptionDataRetrievalAction, mockSubmitBTNService)
+    new BTNSubmissionController(cc, identifierAction, subscriptionDataRetrievalAction, pillar2IdAction, mockSubmitBTNService)
 
   def result(jsRequest: JsValue): Future[Result] = BTNSubmissionController.submitBTN(
     FakeRequest()
+      .withHeaders("X-Pillar2-Id" -> pillar2Id)
       .withJsonBody(jsRequest)
   )
 
@@ -82,6 +83,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest()
+            .withHeaders("X-Pillar2-Id" -> pillar2Id)
             .withTextBody(invalidRequest_wrongType)
         )
         result shouldFailWith EmptyRequestBody
@@ -91,9 +93,18 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
     "submitBTN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest()
+          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
         result shouldFailWith EmptyRequestBody
+      }
+    }
+
+    "submitBTN called with no X-Pillar2-Id header" should {
+      "return MissingHeader response" in {
+        val result: Future[Result] = BTNSubmissionController.submitBTN(
+          FakeRequest()
+        )
+        result shouldFailWith MissingHeader.MissingPillar2Id
       }
     }
 

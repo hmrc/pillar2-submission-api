@@ -21,7 +21,7 @@ import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnService
@@ -35,12 +35,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class UKTaxReturnController @Inject() (
   cc:                       ControllerComponents,
   identify:                 IdentifierAction,
+  pillar2IdAction:          Pillar2IdHeaderExistsAction,
   verifySubscriptionExists: SubscriptionDataRetrievalAction,
   ukTaxReturnService:       UKTaxReturnService
 )(implicit ec:              ExecutionContext)
     extends BackendController(cc) {
 
-  def submitUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+  def submitUKTR: Action[AnyContent] = (pillar2IdAction andThen identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)
@@ -58,7 +59,7 @@ class UKTaxReturnController @Inject() (
     }
   }
 
-  def amendUKTR: Action[AnyContent] = (identify andThen verifySubscriptionExists).async { request =>
+  def amendUKTR: Action[AnyContent] = (pillar2IdAction andThen identify andThen verifySubscriptionExists).async { request =>
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)

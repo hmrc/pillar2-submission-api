@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.submission
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
@@ -34,11 +34,12 @@ class BTNSubmissionController @Inject() (
   cc:               ControllerComponents,
   identify:         IdentifierAction,
   getSubscription:  SubscriptionDataRetrievalAction,
+  pillar2IdAction:  Pillar2IdHeaderExistsAction,
   submitBTNService: SubmitBTNService
 )(implicit ec:      ExecutionContext)
     extends BackendController(cc) {
 
-  def submitBTN: Action[AnyContent] = (identify andThen getSubscription).async { request =>
+  def submitBTN: Action[AnyContent] = (pillar2IdAction andThen identify andThen getSubscription).async { request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>

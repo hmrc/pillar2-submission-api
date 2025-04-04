@@ -29,7 +29,7 @@ import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{AuthenticatedIdentifierAction, SubscriptionDataRetrievalAction}
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions._
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.pillar2submissionapi.services._
@@ -53,13 +53,15 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockTestOrganisationService:          TestOrganisationService          = mock[TestOrganisationService]
   val appConfig:                            AppConfig                        = AppConfig(new ServicesConfig(Configuration.empty))
   val mockSubmitORNService:                 SubmitORNService                 = mock[SubmitORNService]
-  implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+
+  val pillar2IdAction: Pillar2IdHeaderExistsAction = Pillar2IdHeaderExistsAction(new BodyParsers.Default)
+
+  val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    new BodyParsers.Default,
     appConfig
   ) {
-    override def transform[A](request: Request[A]): Future[IdentifierRequest[A]] =
-      Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = ""))
+    override def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] =
+      Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = request.pillar2Id))
   }
 
   val subscriptionDataRetrievalAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {

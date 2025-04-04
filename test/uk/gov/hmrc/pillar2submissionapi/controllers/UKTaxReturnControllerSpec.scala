@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{OK, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.UKTaxReturnController
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData
 
@@ -35,10 +35,12 @@ import scala.concurrent.Future
 class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
   val uktrSubmissionController: UKTaxReturnController =
-    new UKTaxReturnController(cc, identifierAction, subscriptionAction, mockUkTaxReturnService)(ec)
+    new UKTaxReturnController(cc, identifierAction, pillar2IdAction, subscriptionAction, mockUkTaxReturnService)(ec)
 
-  def callWithBody(request: JsValue):      Future[Result] = uktrSubmissionController.submitUKTR()(FakeRequest().withJsonBody(request))
-  def callAmendWithBody(request: JsValue): Future[Result] = uktrSubmissionController.amendUKTR()(FakeRequest().withJsonBody(request))
+  def callWithBody(request: JsValue): Future[Result] =
+    uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(request))
+  def callAmendWithBody(request: JsValue): Future[Result] =
+    uktrSubmissionController.amendUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(request))
 
   "UktrSubmissionController" when {
     "submitUKTR() called with a valid request" should {
@@ -123,7 +125,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "submitUKTR() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUKTR()(FakeRequest().withTextBody(stringBody))
+        val result = uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withTextBody(stringBody))
 
         result shouldFailWith EmptyRequestBody
       }
@@ -131,9 +133,17 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "submitUKTR() called with no request body" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.submitUKTR()(FakeRequest())
+        val result = uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
         result shouldFailWith EmptyRequestBody
+      }
+    }
+
+    "submitUKTR() called with no X-Pillar2-Id" should {
+      "return MissingHeader response" in {
+        val result = uktrSubmissionController.submitUKTR()(FakeRequest())
+
+        result shouldFailWith MissingHeader.MissingPillar2Id
       }
     }
 
@@ -274,7 +284,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.amendUKTR()(FakeRequest().withTextBody(stringBody))
+        val result = uktrSubmissionController.amendUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withTextBody(stringBody))
 
         result shouldFailWith EmptyRequestBody
       }
@@ -282,9 +292,17 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with no request body" should {
       "return 400 BAD_REQUEST response" in {
-        val result = uktrSubmissionController.amendUKTR()(FakeRequest())
+        val result = uktrSubmissionController.amendUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
         result shouldFailWith EmptyRequestBody
+      }
+    }
+
+    "amendUKTR() called with X-Pillar2-Id" should {
+      "return MissingHeader response" in {
+        val result = uktrSubmissionController.amendUKTR()(FakeRequest())
+
+        result shouldFailWith MissingHeader.MissingPillar2Id
       }
     }
 
