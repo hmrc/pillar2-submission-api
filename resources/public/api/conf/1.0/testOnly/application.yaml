@@ -4,6 +4,11 @@ info:
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
 tags: []
 paths:
   /organisations/pillar-two/setup/organisation:
