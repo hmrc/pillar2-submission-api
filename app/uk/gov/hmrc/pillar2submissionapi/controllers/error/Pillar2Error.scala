@@ -57,7 +57,7 @@ case class MissingHeader(message: String) extends Pillar2Error {
 
 object MissingHeader {
   val MissingPillar2Id: MissingHeader = MissingHeader(
-    "Please provide the X-Pillar2-Id header containing the Pillar 2 ID your client was assigned at registration."
+    "Please provide the X-Pillar2-Id header"
   )
 }
 
