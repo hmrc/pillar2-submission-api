@@ -58,4 +58,5 @@ trait UnitTestBaseSpec
   protected val mockSubmitBTNConnector:                SubmitBTNConnector                = mock[SubmitBTNConnector]
   protected val mockObligationAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
   protected val mockTestOrganisationConnector:         TestOrganisationConnector         = mock[TestOrganisationConnector]
+  protected val mockSubmitORNConnector:                SubmitORNConnector                = mock[SubmitORNConnector]
 }

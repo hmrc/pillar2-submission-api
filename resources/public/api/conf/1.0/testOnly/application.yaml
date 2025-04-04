@@ -380,6 +380,281 @@ paths:
               example:
                 code: '003'
                 message: Not authorized
+  /organisations/pillar-two/below-threshold-notification:
+    post:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
+        </tr>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+        </tr>
+        <tr>
+        <td>044 - Tax Obligation already fulfilled</td>
+        <td>A BTN for the specified period has already been submitted.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        </tbody>
+        </table>
+      tags:
+      - submission
+      operationId: submitBTN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BTNSubmission"
+      parameters:
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
+      summary: SubmitBTN
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
+        "201":
+          description: Below-Threshold Notification Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Pillar2ID:
+                  value:
+                    code: '002'
+                    message: Pillar 2 ID missing or invalid
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  value:
+                    code: '007'
+                    message: Business Partner does not have an Active Pillar 2 registration
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
+  /organisations/pillar-two/overseas-return-notification:
+    post:
+      tags:
+      - submission
+      operationId: submitORN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ORNSubmission"
+      parameters:
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
+      summary: Submit a Pillar2  Overseas Return Notification
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
+        "201":
+          description: Overseas Return Notification Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ORNSuccessResponse"
+              example:
+                processingDate: 2025-01-31T09:26:17Z
+                formBundleNumber: 123456789012345
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Pillar2ID:
+                  value:
+                    code: '089'
+                    message: ID number missing or invalid
+                Invalid Return:
+                  value:
+                    code: '093'
+                    message: Invalid Return
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  value:
+                    code: '063'
+                    message: Business Partner does not have an Active Subscription
+                      for this Regime
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
   /organisations/pillar-two/uk-tax-return:
     post:
       security:
@@ -729,156 +1004,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/responses.UKTRSubmitSuccessResponse"
-  /organisations/pillar-two/below-threshold-notification:
-    post:
-      security:
-      - userRestricted:
-        - write:pillar2
-      description: |
-        Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
-        ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
-        <table>
-        <thead>
-        <tr>
-        <th>Error Message</th>
-        <th>Next Steps</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
-        <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
-        </tr>
-        <tr>
-        <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been submitted.</td>
-        </tr>
-        <tr>
-        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
-        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
-        </tr>
-        </tbody>
-        </table>
-      tags:
-      - submission
-      operationId: submitBTN
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/BTNSubmission"
-      parameters:
-      - name: Authorization
-        in: header
-        description: Bearer token for authentication
-        schema:
-          type: string
-        required: true
-      - in: header
-        name: X-Pillar2-Id
-        schema:
-          type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-      - name: Accept
-        in: header
-        description: "Specifies the expected response format as versioned JSON from\
-          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-        schema:
-          type: string
-          example: application/vnd.hmrc.1.0+json
-        required: false
-      summary: SubmitBTN
-      responses:
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  value:
-                    code: '001'
-                    message: Invalid JSON payload
-                Empty Request Body:
-                  value:
-                    code: '002'
-                    message: Empty body in request
-                Missing Header:
-                  value:
-                    code: '005'
-                    message: Missing Header in request
-        "201":
-          description: Below-Threshold Notification Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SubmitBTNSuccessResponse"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  value:
-                    code: 500
-                    message: Internal Server Error
-                No Subscription Data:
-                  value:
-                    code: '004'
-                    message: No Pillar2 subscription found for -pillar2Id
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '006'
-                message: Forbidden
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Pillar2ID:
-                  value:
-                    code: '002'
-                    message: Pillar 2 ID missing or invalid
-                Invalid Request:
-                  value:
-                    code: '003'
-                    message: Request could not be processed
-                Tax Obligation Fulfilled:
-                  value:
-                    code: '044'
-                    message: Tax Obligation already fulfilled
-                Duplicate Acknowledgment:
-                  value:
-                    code: '004'
-                    message: Duplicate acknowledgment reference
-                No Active Submission:
-                  value:
-                    code: '007'
-                    message: Business Partner does not have an Active Pillar 2 registration
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '003'
-                message: Not authorized
   /organisations/pillar-two/obligations-and-submissions:
     get:
       security:
@@ -1224,6 +1349,15 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
+    ORNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+      required:
+      - processingDate
+      - formBundleNumber
     LiabilityData:
       properties:
         electionUTPRSingleMember:
@@ -1302,6 +1436,33 @@ components:
       - status
       - canAmend
       - submissions
+    ORNSubmission:
+      properties:
+        TIN:
+          type: string
+        countryGIR:
+          type: string
+        accountingPeriodFrom:
+          type: string
+          format: date
+        reportingEntityName:
+          type: string
+        issuingCountryTIN:
+          type: string
+        filedDateGIR:
+          type: string
+          format: date
+        accountingPeriodTo:
+          type: string
+          format: date
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
   securitySchemes:
     userRestricted:
       type: oauth2
