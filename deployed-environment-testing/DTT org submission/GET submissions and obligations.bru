@@ -1,13 +1,18 @@
 meta {
-  name: Submit BTN
+  name: GET submissions and obligations
   type: http
-  seq: 5
+  seq: 4
 }
 
-post {
-  url: {{url}}/organisations/pillar-two/below-threshold-notification
-  body: json
+get {
+  url: {{url}}/organisations/pillar-two/obligations-and-submissions?fromDate=2024-01-01&toDate=2025-03-21
+  body: none
   auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2025-03-21
 }
 
 headers {
