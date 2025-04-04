@@ -547,8 +547,8 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #         examples:
 #           Invalid Pillar2ID:
 #             value:
-#               code: '002'
-#               message: Pillar 2 ID missing or invalid
+#               code: '089'
+#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -559,8 +559,8 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #               message: Duplicate acknowledgment reference
 #           No Active Submission:
 #             value:
-#               code: '007'
-#               message: Business Partner does not have an Active Pillar 2 registration
+#               code: '063'
+#               message: Business Partner does not have an Active Subscription for this Regime
 #           Tax Obligation Fulfilled:
 #             value:
 #               code: '044'
