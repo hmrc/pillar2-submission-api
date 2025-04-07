@@ -1,0 +1,37 @@
+meta {
+  name: Update Organisation
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  { 
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Updated Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "dueDate": "2024-04-07"
+    }
+  }
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200)
+  });
+}
