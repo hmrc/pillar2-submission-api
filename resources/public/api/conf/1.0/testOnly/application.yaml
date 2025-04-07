@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.93.0
+  version: 0.96.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -537,6 +537,11 @@ paths:
                 message: Not authorized
   /organisations/pillar-two/overseas-return-notification:
     post:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Submit an Overseas Return Notification
       tags:
       - submission
       operationId: submitORN
@@ -565,7 +570,7 @@ paths:
           type: string
           example: application/vnd.hmrc.1.0+json
         required: false
-      summary: Submit a Pillar2  Overseas Return Notification
+      summary: Submit Overseas Return Notification
       responses:
         "400":
           description: Bad Request
