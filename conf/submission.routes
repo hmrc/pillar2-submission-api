@@ -50,10 +50,6 @@
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Pillar2ID:
-#             value:
-#               code: '089'
-#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -61,7 +57,7 @@
 #           Duplicate Submission:
 #             value:
 #               code: '004'
-#               message: Duplicate submission acknowledgment reference
+#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -196,10 +192,6 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Pillar2ID:
-#             value:
-#               code: '089'
-#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
@@ -207,7 +199,7 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #           Duplicate Submission:
 #             value:
 #               code: '004'
-#               message: Duplicate submission acknowledgment reference
+#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -336,18 +328,14 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Pillar2ID:
-#             value:
-#               code: '089'
-#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Acknowledgment:
+#           Duplicate Submission:
 #             value:
 #               code: '004'
-#               message: Duplicate acknowledgment reference
+#               message: Duplicate Submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -447,22 +435,18 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Pillar2ID:
-#             value:
-#               code: '089'
-#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Acknowledgment:
+#           Duplicate Submission:
 #             value:
 #               code: '004'
-#               message: Duplicate acknowledgment reference
-#           No associated data found:
+#               message: Duplicate Submission
+#           No data found:
 #             value:
-#               code: '025'
-#               message: No associated data found
+#               code: '014'
+#               message: No data found
 #   400:
 #     description: Bad Request
 #     content:
@@ -549,18 +533,14 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 #         examples:
-#           Invalid Pillar2ID:
-#             value:
-#               code: '089'
-#               message: ID number missing or invalid
 #           Invalid Request:
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Acknowledgment:
+#           Duplicate Submission:
 #             value:
 #               code: '004'
-#               message: Duplicate acknowledgment reference
+#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
