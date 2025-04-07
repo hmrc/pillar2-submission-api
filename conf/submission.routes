@@ -8,8 +8,8 @@
 #      type: string
 #    description: Bearer token for authentication
 #  - in: header
-#    name: X-Pillar2-Id
 #    required: true
+#    name: X-Pillar2-Id
 #    schema:
 #      type: string
 #    description: Pillar2 ID for the submission

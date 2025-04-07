@@ -9,10 +9,10 @@
 #     description: Bearer token for authentication
 #   - in: header
 #     name: X-Pillar2-Id
-#    required: true
+#     required: true
 #     schema:
 #       type: string
-#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}."
+#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
 #   - in: header
 #     name: Accept
 #     required: false
@@ -108,10 +108,10 @@ POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controlle
 #     description: Bearer token for authentication
 #   - in: header
 #     name: X-Pillar2-Id
-#    required: true
+#     required: true
 #     schema:
 #       type: string
-#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}."
+#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
 #   - in: header
 #     name: Accept
 #     required: false
@@ -187,10 +187,10 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #     description: Bearer token for authentication
 #   - in: header
 #     name: X-Pillar2-Id
-#    required: true
+#     required: true
 #     schema:
 #       type: string
-#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}."
+#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
 #   - in: header
 #     name: Accept
 #     required: false
@@ -286,10 +286,10 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #     description: Bearer token for authentication
 #   - in: header
 #     name: X-Pillar2-Id
-#    required: true
+#     required: true
 #     schema:
 #       type: string
-#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}."
+#     description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
 #   - in: header
 #     name: Accept
 #     required: false
