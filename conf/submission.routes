@@ -261,3 +261,125 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 
 ###
 GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions.ObligationsAndSubmissionsController.retrieveData(fromDate: String, toDate: String)
+
+###
+# summary: Submit a Pillar2  Overseas Return Notification
+# parameters:
+#   - in: header
+#     name: X-Pillar2-Id
+#     schema:
+#       type: string
+#     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#   - in: header
+#     name: Authorization
+#     required: true
+#     schema:
+#       type: string
+#     description: Bearer token for authentication
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+# requestBody:
+#   content:
+#     application/json:
+#       schema:
+#         $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission'
+# responses:
+#   201:
+#     description: Overseas Return Notification Submission Created
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
+#         example:
+#           processingDate: "2025-01-31T09:26:17Z"
+#           formBundleNumber: "123456789012345"
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: '003'
+#           message: Not authorized
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Invalid Pillar2ID:
+#             value:
+#               code: '089'
+#               message: ID number missing or invalid
+#           Invalid Request:
+#             value:
+#               code: '003'
+#               message: Request could not be processed
+#           Duplicate Acknowledgment:
+#             value:
+#               code: '004'
+#               message: Duplicate acknowledgment reference
+#           No Active Submission:
+#             value:
+#               code: '063'
+#               message: Business Partner does not have an Active Subscription for this Regime
+#           Tax Obligation Fulfilled:
+#             value:
+#               code: '044'
+#               message: Tax Obligation already fulfilled
+#           Invalid Return:
+#             value:
+#               code: '093'
+#               message: Invalid Return
+#   400:
+#     description: Bad Request
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Invalid Json:
+#             value:
+#               code: "001"
+#               message: "Invalid JSON payload"
+#           Empty Request Body:
+#             value:
+#               code: "002"
+#               message: "Empty body in request"
+#           Missing Header:
+#             value:
+#               code: "005"
+#               message: "Missing Header in request"
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         example:
+#           code: "006"
+#           message: "Forbidden"
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#         examples:
+#           Generic Server Error:
+#             value:
+#               code: "500"
+#               message: "Internal Server Error"
+#           No Subscription Data:
+#             value:
+#               code: "004"
+#               message: "No Pillar2 subscription found for [pillar2Id]"
+###
+POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.ORNSubmissionController.submitORN

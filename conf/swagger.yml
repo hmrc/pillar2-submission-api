@@ -429,6 +429,13 @@ paths:
                 $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
       security:
         - userRestricted: [write:pillar2]
+  /overseas-return-notification:
+    post:
+      summary: Submit Overseas Return Notification
+      description: |
+        Submit an Overseas Return Notification
+      security:
+        - userRestricted: [write:pillar2]
   /setup/organisation:
     post:
       summary: Create Test Organisation

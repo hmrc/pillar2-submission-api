@@ -52,6 +52,7 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockObligationsAndSubmissionsService: ObligationsAndSubmissionsService = mock[ObligationsAndSubmissionsService]
   val mockTestOrganisationService:          TestOrganisationService          = mock[TestOrganisationService]
   val appConfig:                            AppConfig                        = AppConfig(new ServicesConfig(Configuration.empty))
+  val mockSubmitORNService:                 SubmitORNService                 = mock[SubmitORNService]
   implicit val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
     new BodyParsers.Default,
