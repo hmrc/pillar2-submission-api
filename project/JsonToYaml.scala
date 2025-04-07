@@ -15,7 +15,7 @@ object JsonToYaml {
   val apiContext      = "/organisations/pillar-two"
   val routesToYamlOas = taskKey[Unit]("Generate YAML OpenAPI specification from JSON")
 
-  val updateVersion = (__ \ "info" \ "version").json.update(
+  val updateVersion = (__ \ "version").json.update(
     __.read[String]
       .map { obj =>
         JsString(obj.stripSuffix("-SNAPSHOT"))
@@ -41,7 +41,7 @@ object JsonToYaml {
       val parsedJson = Json.parse(jsonString)
 
       val openapi    = (parsedJson \ "openapi").as[JsString]
-      val info       = (parsedJson \ "info").as[JsObject]
+      val info       = (parsedJson \ "info").as[JsObject].transform(updateVersion).get
       val tags       = (parsedJson \ "tags").as[JsArray]
       val components = (parsedJson \ "components").as[JsObject]
 
