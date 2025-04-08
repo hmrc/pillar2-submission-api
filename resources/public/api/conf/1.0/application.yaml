@@ -1328,3 +1328,8 @@ components:
           scopes:
             read:pillar2: Read data related to Pillar2 subscription
             write:pillar2: Write data related to Pillar2 subscription
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk
+  description: Production
