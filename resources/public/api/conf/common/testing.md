@@ -2,7 +2,7 @@ API testing is performed in the [HMRC developer hub](https://developer.service.h
 
 Work through the instructions on the [getting started](https://developer.service.hmrc.gov.uk/api-documentation/docs/using-the-hub) page to create an application, then locate and subscribe to the Pillar 2 API.
 
-**Important**:The *Pillar 2 ID* must be included in the request header or an error will be returned when the request is sent. 
+**Important**: The *Pillar 2 ID* must be included in the request header or an error will be returned when the request is sent. 
 
 The next steps are outlined on the Open API Specification (**OAS**) page under "setup". Access to the OAS page is currently restricted, so please use the link in the "Endpoints" section to contact support and join the private trial.
 
