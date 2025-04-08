@@ -35,7 +35,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError, MissingHeader}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError}
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -48,7 +48,6 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    new BodyParsers.Default,
     emptyAppConfig
   )(ec)
 
@@ -67,12 +66,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = await(identifierAction.refine(fakeRequest))
+        val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
 
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.clientPillar2Id    must be(pillar2Id)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
@@ -84,7 +83,6 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          new BodyParsers.Default,
           allowTestUsers
         )(ec)
         when(
@@ -99,7 +97,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -111,7 +109,6 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          new BodyParsers.Default,
           allowTestUsers
         )(ec)
         when(
@@ -134,13 +131,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = await(identifierAction.refine(fakeRequest))
+        val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
 
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.clientPillar2Id    must be(pillar2Id)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
@@ -167,31 +163,14 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = await(identifierAction.refine(fakeRequest))
+        val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
 
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.clientPillar2Id    must be(pillar2Id)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
-      }
-
-      "fail due to missing X-Pillar2-Id header" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        val result = intercept[MissingHeader](await(identifierAction.refine(fakeRequest)))
-
-        result.message mustEqual "Please provide the X-Pillar2-Id header containing the Pillar 2 ID your client was assigned at registration."
       }
 
       "fail due to user being unauthorised" in {
@@ -214,8 +193,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         )
           .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
 
-        val fakeRequest: Request[AnyContent] = FakeRequest().withHeaders("X-Pillar2-Id" -> identifierValue)
-        val result = intercept[AuthenticationError.type](await(identifierAction.refine(fakeRequest)))
+        val result = intercept[AuthenticationError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
         result.message mustEqual "Not authorized"
       }
@@ -237,7 +215,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -263,7 +241,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -285,7 +263,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -307,7 +285,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -321,7 +299,6 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          new BodyParsers.Default,
           allowTestUsers
         )(ec)
         when(
@@ -334,12 +311,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = await(identifierAction.refine(fakeRequest))
+        val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
 
         result.map { identifierRequest =>
           identifierRequest.userId             must be(id)
           identifierRequest.groupId            must be(Some(groupId))
-          identifierRequest.clientPillar2Id    must be(identifierValue)
+          identifierRequest.clientPillar2Id    must be(pillar2Id)
           identifierRequest.userIdForEnrolment must be(providerId)
         }
       }
@@ -349,7 +326,6 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          new BodyParsers.Default,
           disallowTestUsers
         )(ec)
         when(
@@ -364,7 +340,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -390,7 +366,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val result = intercept[ForbiddenError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -404,13 +380,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "user is unauthorized" in {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           new FakeFailingAuthConnector,
-          new BodyParsers.Default,
           emptyAppConfig
         )(ec)
 
         val result = intercept[AuthenticationError.type](
           await(
-            identifierAction.refine(fakeRequest)
+            identifierAction.refine(fakeRequestWithPillar2Id)
           )
         )
 
@@ -429,15 +404,15 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 object AuthenticatedIdentifierActionSpec {
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
-  val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
-  val enrolmentKey    = "HMRC-PILLAR2-ORG"
-  val identifierName  = "PLRID"
-  val identifierValue = "XCCVRUGFJG788"
+  val pillar2Id = "XCCVRUGFJG788"
+  val fakeRequestWithPillar2Id: RequestWithPillar2Id[AnyContent] = RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = ""))
+  val enrolmentKey   = "HMRC-PILLAR2-ORG"
+  val identifierName = "PLRID"
 
   val requiredOrgPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
   val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
     Enrolment(HMRC_PILLAR2_ORG_KEY)
-      .withIdentifier(ENROLMENT_IDENTIFIER, identifierValue)
+      .withIdentifier(ENROLMENT_IDENTIFIER, pillar2Id)
       .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
   val requiredRetrievals
     : Retrieval[Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]] =
@@ -446,7 +421,7 @@ object AuthenticatedIdentifierActionSpec {
       Retrievals.credentialRole and Retrievals.credentials
 
   val pillar2Enrolments: Enrolments = Enrolments(
-    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, identifierValue)), "Activated", None))
+    Set(Enrolment(enrolmentKey, Seq(EnrolmentIdentifier(identifierName, pillar2Id)), "Activated", None))
   )
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString

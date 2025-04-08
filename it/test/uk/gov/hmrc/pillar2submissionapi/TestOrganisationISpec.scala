@@ -58,6 +58,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -70,6 +71,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .post(URI.create(baseUrl).toURL)
             .withBody(invalidRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -89,6 +91,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -106,6 +109,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -127,6 +131,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .get(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -145,6 +150,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .get(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -166,6 +172,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .put(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -185,6 +192,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .put(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -207,6 +215,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .delete(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )
@@ -225,6 +234,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(
           client
             .delete(URI.create(baseUrl).toURL)
+            .setHeader("X-Pillar2-Id" -> plrReference)
             .execute[HttpResponse],
           5.seconds
         )

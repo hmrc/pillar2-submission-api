@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.ORNSubmissionController
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, ORNSuccessResponse}
@@ -35,11 +35,12 @@ import scala.concurrent.Future
 class ORNSubmissionControllerSpec extends ControllerBaseSpec with ORNDataFixture {
 
   val ORNSubmissionController: ORNSubmissionController =
-    new ORNSubmissionController(cc, identifierAction, subscriptionDataRetrievalAction, mockSubmitORNService)
+    new ORNSubmissionController(cc, identifierAction, pillar2IdAction, subscriptionDataRetrievalAction, mockSubmitORNService)
 
   def result(jsRequest: JsValue): Future[Result] = ORNSubmissionController.submitORN(
     FakeRequest()
       .withJsonBody(jsRequest)
+      .withHeaders("X-Pillar2-Id" -> pillar2Id)
   )
 
   "ORNSubmissionController" when {
@@ -83,12 +84,21 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec with ORNDataFixture
       }
     }
 
+    "submitORN called without X-Pillar2-Id" should {
+      "return MissingHeader response" in {
+        ORNSubmissionController.submitORN(
+          FakeRequest()
+        ) shouldFailWith MissingHeader.MissingPillar2Id
+      }
+    }
+
     "submitORN called with an non-json request" should {
       "return EmptyRequestBody response" in {
         val invalidRequest_wrongType: String = "This is not Json."
         val result: Future[Result] = ORNSubmissionController.submitORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
+            .withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
         result shouldFailWith EmptyRequestBody
       }
@@ -97,7 +107,7 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec with ORNDataFixture
     "submitORN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = ORNSubmissionController.submitORN(
-          FakeRequest()
+          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
         result shouldFailWith EmptyRequestBody
       }

@@ -50,8 +50,10 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
-  def requestWithBody(body: JsValue = validLiabilityReturn):        RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
-  def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder = client.post(URI.create(str).toURL).withBody(body)
+  def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder =
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
+  def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
@@ -259,7 +261,8 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
     }
 
     "amendUKTR by organisation" must {
-      val amendRequest: JsValue => RequestBuilder = (body: JsValue) => client.put(URI.create(str).toURL).withBody(body)
+      val amendRequest: JsValue => RequestBuilder =
+        (body: JsValue) => client.put(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
 
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub

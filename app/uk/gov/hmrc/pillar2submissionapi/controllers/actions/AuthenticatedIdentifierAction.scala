@@ -18,7 +18,6 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
-import play.api.mvc._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
@@ -26,7 +25,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError, MissingHeader}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -35,7 +34,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
-  val parser:                    BodyParsers.Default,
   val config:                    AppConfig
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
@@ -50,7 +48,7 @@ class AuthenticatedIdentifierAction @Inject() (
     } yield identifier.value
 
   private def processPillar2Enrolment[A](
-    request:    Request[A],
+    request:    RequestWithPillar2Id[A],
     enrolments: Enrolments,
     internalId: String,
     groupId:    String,
@@ -73,7 +71,7 @@ class AuthenticatedIdentifierAction @Inject() (
       Future.failed(ForbiddenError)
   }
 
-  override protected def transform[A](request: Request[A]): Future[IdentifierRequest[A]] = {
+  override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
@@ -87,9 +85,9 @@ class AuthenticatedIdentifierAction @Inject() (
         case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
           processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
-          agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
+          agentAuth[A](request, request.pillar2Id)
         case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
-          agentAuth[A](request, request.headers.get("X-Pillar2-Id"))
+          agentAuth[A](request, request.pillar2Id)
         case _ =>
           logger.warn("User is not valid for this API")
           Future.failed(ForbiddenError)
@@ -99,44 +97,36 @@ class AuthenticatedIdentifierAction @Inject() (
     }
   }
 
-  def agentAuth[A](request: Request[A], pillar2Id: Option[String])(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
+  def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
-    pillar2Id match {
-      case Some(pillar2IdValue) =>
-        authorised(
-          AuthProviders(GovernmentGateway) and
-            AffinityGroup.Agent and
-            Enrolment(HMRC_PILLAR2_ORG_KEY)
-              .withIdentifier(ENROLMENT_IDENTIFIER, pillar2IdValue)
-              .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
-        ).retrieve(retrievals) {
-          case Some(internalId) ~ Some(groupId) ~ _ ~ Some(_) ~ _ ~ Some(credentials) =>
-            logger.info(
-              s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment"
-            )
-            Future.successful(
-              IdentifierRequest(
-                request,
-                internalId,
-                Some(groupId),
-                clientPillar2Id = pillar2IdValue,
-                userIdForEnrolment = credentials.providerId
-              )
-            )
-          case _ =>
-            Future.failed(ForbiddenError)
-        }
-
-      case None =>
-        Future.failed(
-          MissingHeader(
-            "Please provide the X-Pillar2-Id header containing the Pillar 2 ID your client was assigned at registration."
+    authorised(
+      AuthProviders(GovernmentGateway) and
+        AffinityGroup.Agent and
+        Enrolment(HMRC_PILLAR2_ORG_KEY)
+          .withIdentifier(ENROLMENT_IDENTIFIER, pillar2Id)
+          .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+    ).retrieve(retrievals) {
+      case Some(internalId) ~ Some(groupId) ~ _ ~ Some(_) ~ _ ~ Some(credentials) =>
+        logger.info(
+          s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment"
+        )
+        Future.successful(
+          IdentifierRequest(
+            request,
+            internalId,
+            Some(groupId),
+            clientPillar2Id = pillar2Id,
+            userIdForEnrolment = credentials.providerId
           )
         )
+      case _ =>
+        Future.failed(ForbiddenError)
     }
+
   }
+
 }
 
 object AuthenticatedIdentifierAction {

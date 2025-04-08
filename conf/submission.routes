@@ -8,10 +8,11 @@
 #      type: string
 #    description: Bearer token for authentication
 #  - in: header
+#    required: true
 #    name: X-Pillar2-Id
 #    schema:
 #      type: string
-#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#    description: Pillar2 ID for the submission
 #  - in: header
 #    name: Accept
 #    required: false
@@ -154,9 +155,10 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #    description: Bearer token for authentication
 #  - in: header
 #    name: X-Pillar2-Id
+#    required: true
 #    schema:
 #      type: string
-#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#    description: Pillar2 ID for the submission
 #  - in: header
 #    name: Accept
 #    required: false
@@ -295,9 +297,10 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #    description: Bearer token for authentication
 #  - in: header
 #    name: X-Pillar2-Id
+#    required: true
 #    schema:
 #      type: string
-#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#    description: Pillar2 ID for the submission
 #  - in: header
 #    name: Accept
 #    required: false
@@ -410,9 +413,10 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #    description: Bearer token for authentication
 #  - in: header
 #    name: X-Pillar2-Id
+#    required: true
 #    schema:
 #      type: string
-#    description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#    description: Pillar2 ID for the submission
 #  - in: header
 #    name: Accept
 #    required: false

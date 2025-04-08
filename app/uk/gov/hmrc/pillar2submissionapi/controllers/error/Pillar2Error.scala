@@ -55,6 +55,12 @@ case class MissingHeader(message: String) extends Pillar2Error {
   val code = "005"
 }
 
+object MissingHeader {
+  val MissingPillar2Id: MissingHeader = MissingHeader(
+    "Please provide the X-Pillar2-Id header"
+  )
+}
+
 case object ForbiddenError extends Pillar2Error {
   val code    = "006"
   val message = "Forbidden"

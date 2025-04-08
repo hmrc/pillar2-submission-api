@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
-import play.api.mvc._
-import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import play.api.mvc.{Request, WrappedRequest}
 
-trait IdentifierAction extends ActionTransformer[RequestWithPillar2Id, IdentifierRequest]
+case class RequestWithPillar2Id[A](pillar2Id: String, request: Request[A]) extends WrappedRequest(request)
