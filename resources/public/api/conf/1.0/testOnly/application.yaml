@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.101.0
+  version: 0.103.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -35,12 +35,10 @@ paths:
         required: true
       - name: X-Pillar2-Id
         in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
         schema:
           type: string
-        required: false
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -137,12 +135,10 @@ paths:
         required: true
       - name: X-Pillar2-Id
         in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
         schema:
           type: string
-        required: false
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -229,12 +225,10 @@ paths:
         required: true
       - name: X-Pillar2-Id
         in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
         schema:
           type: string
-        required: false
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -331,12 +325,10 @@ paths:
         required: true
       - name: X-Pillar2-Id
         in: header
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
-          \ authorised as an agent to specify which client's Pillar 2 Id to associate\
-          \ the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
         schema:
           type: string
-        required: false
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -435,11 +427,12 @@ paths:
         schema:
           type: string
         required: true
-      - in: header
-        name: X-Pillar2-Id
+      - name: X-Pillar2-Id
+        in: header
+        description: Pillar2 ID for the submission
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -737,11 +730,12 @@ paths:
         schema:
           type: string
         required: true
-      - in: header
-        name: X-Pillar2-Id
+      - name: X-Pillar2-Id
+        in: header
+        description: Pillar2 ID for the submission
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -890,11 +884,12 @@ paths:
         schema:
           type: string
         required: true
-      - in: header
-        name: X-Pillar2-Id
+      - name: X-Pillar2-Id
+        in: header
+        description: Pillar2 ID for the submission
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
@@ -1066,11 +1061,12 @@ paths:
         schema:
           type: string
         required: true
-      - in: header
-        name: X-Pillar2-Id
+      - name: X-Pillar2-Id
+        in: header
+        description: Pillar2 ID for the submission
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        required: true
       - name: Accept
         in: header
         description: "Specifies the expected response format as versioned JSON from\
