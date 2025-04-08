@@ -45,7 +45,7 @@ object JsonToYaml {
       val tags       = (parsedJson \ "tags").as[JsArray]
       val components = (parsedJson \ "components").as[JsObject]
       val servers    = (parsedJson \ "servers").asOpt[JsArray].getOrElse(JsArray())
-      
+
       val pathsJson = (parsedJson \ "paths").as[JsObject]
       val processedPaths = JsObject(
         pathsJson.fields.map { case (path, value) =>
