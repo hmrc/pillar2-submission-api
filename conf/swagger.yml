@@ -282,7 +282,7 @@ paths:
         </tr>
         <tr>
         <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
-        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
         </table>
