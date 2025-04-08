@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions.IdentifierAction
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.InvalidRequest
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissions
 import uk.gov.hmrc.pillar2submissionapi.services.ObligationsAndSubmissionsService
@@ -34,11 +34,12 @@ import scala.util.Try
 class ObligationsAndSubmissionsController @Inject() (
   cc:                              ControllerComponents,
   identify:                        IdentifierAction,
+  pillar2IdAction:                 Pillar2IdHeaderExistsAction,
   obligationAndSubmissionsService: ObligationsAndSubmissionsService
 )(implicit ec:                     ExecutionContext)
     extends BackendController(cc) {
 
-  def retrieveData(fromDate: String, toDate: String): Action[AnyContent] = identify.async { request =>
+  def retrieveData(fromDate: String, toDate: String): Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     Try {
       val accountingPeriod = ObligationsAndSubmissions(fromDate = LocalDate.parse(fromDate), toDate = LocalDate.parse(toDate))

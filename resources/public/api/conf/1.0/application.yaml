@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.93.0-SNAPSHOT
+  version: 0.93.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -20,10 +20,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
-        required: false
+        required: true
         schema:
           type: string
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
       - in: header
         name: Accept
         required: false
@@ -120,10 +120,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
-        required: false
+        required: true
         schema:
           type: string
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
       - in: header
         name: Accept
         required: false
@@ -213,10 +213,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
-        required: false
+        required: true
         schema:
           type: string
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
       - in: header
         name: Accept
         required: false
@@ -313,10 +313,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
-        required: false
+        required: true
         schema:
           type: string
-        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are authorised as an agent to specify which client's Pillar 2 Id to associate the test organisation."
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}"
       - in: header
         name: Accept
         required: false
@@ -382,10 +382,11 @@ paths:
           type: string
         description: Bearer token for authentication
       - in: header
+        required: true
         name: X-Pillar2-Id
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        description: Pillar2 ID for the submission
       - in: header
         name: Accept
         required: false
@@ -575,9 +576,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
+        required: true
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        description: Pillar2 ID for the submission
       - in: header
         name: Accept
         required: false
@@ -709,9 +711,10 @@ paths:
         description: Bearer token for authentication
       - in: header
         name: X-Pillar2-Id
+        required: true
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        description: Pillar2 ID for the submission
       - in: header
         name: Accept
         required: false
