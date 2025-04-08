@@ -36,7 +36,8 @@ object JsonToYaml {
           "paths" -> jsonMap("paths")
             .asInstanceOf[Map[String, Any]]
             .map((t: (String, Any)) => s"$apiContext${t._1}" -> t._2),
-          "components" -> jsonMap("components")
+          "components" -> jsonMap("components"),
+          "servers" -> jsonMap("servers")
         )
 
         val yamlString    = yamlMapper.writeValueAsString(specification)

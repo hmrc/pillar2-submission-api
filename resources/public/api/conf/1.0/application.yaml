@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.100.0
+  version: 0.101.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -9,12 +9,12 @@ paths:
   /organisations/pillar-two/setup/organisation:
     post:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: |
         Creates a test organisation associated with your authed organisation.
       tags:
-        - setup
+      - setup
       operationId: createTestOrganisation
       requestBody:
         content:
@@ -22,28 +22,28 @@ paths:
             schema:
               $ref: "#/components/schemas/TestOrganisation"
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - name: X-Pillar2-Id
-          in: header
-          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-          schema:
-            type: string
-          required: false
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+        schema:
+          type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Create Test Organisation
       responses:
         "400":
@@ -116,36 +116,36 @@ paths:
                 message: Not authorized
     get:
       security:
-        - userRestricted:
-            - read:pillar2
+      - userRestricted:
+        - read:pillar2
       description: |
         Gets a test organisation associated with your authed organisation.
       tags:
-        - setup
+      - setup
       operationId: getTestOrganisation
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - name: X-Pillar2-Id
-          in: header
-          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-          schema:
-            type: string
-          required: false
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+        schema:
+          type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Get Test Organisation
       responses:
         "404":
@@ -203,12 +203,12 @@ paths:
                   lastUpdated: 2024-01-01T12:00:00Z
     put:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: |
         Updates a test organisation associated with your authed organisation.
       tags:
-        - setup
+      - setup
       operationId: updateTestOrganisation
       requestBody:
         content:
@@ -216,28 +216,28 @@ paths:
             schema:
               $ref: "#/components/schemas/TestOrganisation"
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - name: X-Pillar2-Id
-          in: header
-          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-          schema:
-            type: string
-          required: false
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+        schema:
+          type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Update Test Organisation
       responses:
         "400":
@@ -310,36 +310,36 @@ paths:
                   lastUpdated: 2024-01-01T12:00:00Z
     delete:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: |
         Deletes a test organisation associated with your authed organisation.
       tags:
-        - setup
+      - setup
       operationId: deleteTestOrganisation
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - name: X-Pillar2-Id
-          in: header
-          description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: X-Pillar2-Id
+        in: header
+        description: "Pillar 2 Id - Pattern: [A-Z0-9]{1,15}. Only requred if you are\
           \ authorised as an agent to specify which client's Pillar 2 Id to associate\
           \ the test organisation."
-          schema:
-            type: string
-          required: false
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+        schema:
+          type: string
+        required: false
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Delete Test Organisation
       responses:
         "404":
@@ -383,8 +383,8 @@ paths:
   /organisations/pillar-two/below-threshold-notification:
     post:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
@@ -416,7 +416,7 @@ paths:
         </tbody>
         </table>
       tags:
-        - submission
+      - submission
       operationId: submitBTN
       requestBody:
         content:
@@ -424,25 +424,25 @@ paths:
             schema:
               $ref: "#/components/schemas/BTNSubmission"
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - in: header
-          name: X-Pillar2-Id
-          schema:
-            type: string
-          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitBTN
       responses:
         "400":
@@ -530,11 +530,141 @@ paths:
               example:
                 code: '003'
                 message: Not authorized
+  /organisations/pillar-two/overseas-return-notification:
+    post:
+      security:
+      - userRestricted:
+        - write:pillar2
+      description: |
+        Submit an Overseas Return Notification
+      tags:
+      - submission
+      operationId: submitORN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ORNSubmission"
+      parameters:
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
+          \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
+      summary: Submit Overseas Return Notification
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
+        "201":
+          description: Overseas Return Notification Submission Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ORNSuccessResponse"
+              example:
+                processingDate: 2025-01-31T09:26:17Z
+                formBundleNumber: 123456789012345
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '006'
+                message: Forbidden
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Pillar2ID:
+                  value:
+                    code: '089'
+                    message: ID number missing or invalid
+                Invalid Return:
+                  value:
+                    code: '093'
+                    message: Invalid Return
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  value:
+                    code: '063'
+                    message: Business Partner does not have an Active Subscription
+                      for this Regime
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              example:
+                code: '003'
+                message: Not authorized
   /organisations/pillar-two/uk-tax-return:
     post:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: "Submits a UK Tax Return for a specified accounting period.\n###\
         \ Error Codes\n<p>This table contains a list of 422 error codes returned when\
         \ a SubmitUKTR or AmendUKTR API request is not processed successfully. Error\
@@ -586,35 +716,35 @@ paths:
         \ these fields matches and submit the request again.</td>\n</tr>\n</tbody>\n\
         </table>       \n"
       tags:
-        - submission
+      - submission
       operationId: submitUKTR
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/UKTRSubmissionData"
-                - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+              - $ref: "#/components/schemas/UKTRSubmissionData"
+              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - in: header
-          name: X-Pillar2-Id
-          schema:
-            type: string
-          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: SubmitUKTR
       responses:
         "400":
@@ -732,42 +862,42 @@ paths:
                 message: Not authorized
     put:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: "Amends a UK tax return submitted for a specified accounting period.\
         \   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit\
         \ UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\
         \        \n"
       tags:
-        - submission
+      - submission
       operationId: amendUKTR
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
-                - $ref: "#/components/schemas/UKTRSubmissionData"
-                - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
+              - $ref: "#/components/schemas/UKTRSubmissionData"
+              - $ref: "#/components/schemas/UKTRSubmissionNilReturn"
       parameters:
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - in: header
-          name: X-Pillar2-Id
-          schema:
-            type: string
-          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: AmendUKTR
       responses:
         "400":
@@ -882,8 +1012,8 @@ paths:
   /organisations/pillar-two/obligations-and-submissions:
     get:
       security:
-        - userRestricted:
-            - write:pillar2
+      - userRestricted:
+        - write:pillar2
       description: |
         Retrieves the Obligations and Submissions for an accounting period.
         ### Error Codes
@@ -912,38 +1042,38 @@ paths:
         </tbody>
         </table>
       tags:
-        - submission
+      - submission
       operationId: retrieveData
       parameters:
-        - in: query
-          name: fromDate
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: toDate
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Bearer token for authentication
-          schema:
-            type: string
-          required: true
-        - in: header
-          name: X-Pillar2-Id
-          schema:
-            type: string
-          description: Pillar2 ID for the submission. Mandatory if the user is an Agent
-        - name: Accept
-          in: header
-          description: "Specifies the expected response format as versioned JSON from\
+      - in: query
+        name: fromDate
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: toDate
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: Bearer token for authentication
+        schema:
+          type: string
+        required: true
+      - in: header
+        name: X-Pillar2-Id
+        schema:
+          type: string
+        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+      - name: Accept
+        in: header
+        description: "Specifies the expected response format as versioned JSON from\
           \ the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-          schema:
-            type: string
-            example: application/vnd.hmrc.1.0+json
-          required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        required: false
       summary: Retrieve Obligations and Submissions
       responses:
         "400":
@@ -1022,10 +1152,10 @@ components:
         submissionType:
           type: string
           enum:
-            - UKTR
-            - ORN
-            - BTN
-            - GIR
+          - UKTR
+          - ORN
+          - BTN
+          - GIR
         receivedDate:
           type: string
           format: date-time
@@ -1033,8 +1163,8 @@ components:
           type: string
           nullable: true
       required:
-        - submissionType
-        - receivedDate
+      - submissionType
+      - receivedDate
     TestOrganisation:
       properties:
         orgDetails:
@@ -1045,9 +1175,9 @@ components:
           type: string
           format: date-time
       required:
-        - orgDetails
-        - accountingPeriod
-        - lastUpdated
+      - orgDetails
+      - accountingPeriod
+      - lastUpdated
     BTNSubmission:
       properties:
         accountingPeriodFrom:
@@ -1057,8 +1187,8 @@ components:
           type: string
           format: date
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
+      - accountingPeriodFrom
+      - accountingPeriodTo
     ObligationsAndSubmissionsSuccessResponse:
       properties:
         processingDate:
@@ -1069,8 +1199,8 @@ components:
           items:
             $ref: "#/components/schemas/AccountingPeriodDetails"
       required:
-        - processingDate
-        - accountingPeriodDetails
+      - processingDate
+      - accountingPeriodDetails
     AccountingPeriodDetails:
       properties:
         endDate:
@@ -1089,17 +1219,17 @@ components:
           type: string
           format: date
       required:
-        - startDate
-        - endDate
-        - dueDate
-        - underEnquiry
-        - obligations
+      - startDate
+      - endDate
+      - dueDate
+      - underEnquiry
+      - obligations
     SubmitBTNSuccessResponse:
       properties:
         processingDate:
           type: string
       required:
-        - processingDate
+      - processingDate
     UKTRSubmissionData:
       properties:
         electionUKGAAP:
@@ -1115,11 +1245,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
-        - obligationMTT
-        - electionUKGAAP
-        - liabilities
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - obligationMTT
+      - electionUKGAAP
+      - liabilities
     LiableEntity:
       properties:
         idType:
@@ -1144,12 +1274,12 @@ components:
           minimum: 0
           maximum: 9.99999999999999E12
       required:
-        - ukChargeableEntityName
-        - idType
-        - idValue
-        - amountOwedDTT
-        - amountOwedIIR
-        - amountOwedUTPR
+      - ukChargeableEntityName
+      - idType
+      - idValue
+      - amountOwedDTT
+      - amountOwedIIR
+      - amountOwedUTPR
     AccountingPeriod:
       properties:
         startDate:
@@ -1159,8 +1289,8 @@ components:
           type: string
           format: date
       required:
-        - startDate
-        - endDate
+      - startDate
+      - endDate
     TestOrganisationWithId:
       properties:
         pillar2Id:
@@ -1168,8 +1298,8 @@ components:
         organisation:
           $ref: "#/components/schemas/TestOrganisation"
       required:
-        - pillar2Id
-        - organisation
+      - pillar2Id
+      - organisation
     OrgDetails:
       properties:
         domesticOnly:
@@ -1180,9 +1310,9 @@ components:
           type: string
           format: date
       required:
-        - domesticOnly
-        - organisationName
-        - registrationDate
+      - domesticOnly
+      - organisationName
+      - registrationDate
     responses.UKTRSubmitSuccessResponse:
       properties:
         processingDate:
@@ -1194,16 +1324,16 @@ components:
           type: string
           nullable: true
       required:
-        - processingDate
-        - formBundleNumber
+      - processingDate
+      - formBundleNumber
     LiabilityNilReturn:
       properties:
         returnType:
           type: string
           enum:
-            - NIL_RETURN
+          - NIL_RETURN
       required:
-        - returnType
+      - returnType
     UKTRSubmissionNilReturn:
       properties:
         electionUKGAAP:
@@ -1219,11 +1349,11 @@ components:
         obligationMTT:
           type: boolean
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
-        - obligationMTT
-        - electionUKGAAP
-        - liabilities
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - obligationMTT
+      - electionUKGAAP
+      - liabilities
     ORNSuccessResponse:
       properties:
         processingDate:
@@ -1231,8 +1361,8 @@ components:
         formBundleNumber:
           type: string
       required:
-        - processingDate
-        - formBundleNumber
+      - processingDate
+      - formBundleNumber
     LiabilityData:
       properties:
         electionUTPRSingleMember:
@@ -1270,15 +1400,15 @@ components:
           minimum: 0
           maximum: 9.99999999999999E12
       required:
-        - electionDTTSingleMember
-        - electionUTPRSingleMember
-        - numberSubGroupDTT
-        - numberSubGroupUTPR
-        - totalLiability
-        - totalLiabilityDTT
-        - totalLiabilityIIR
-        - totalLiabilityUTPR
-        - liableEntities
+      - electionDTTSingleMember
+      - electionUTPRSingleMember
+      - numberSubGroupDTT
+      - numberSubGroupUTPR
+      - totalLiability
+      - totalLiabilityDTT
+      - totalLiabilityIIR
+      - totalLiabilityUTPR
+      - liableEntities
     uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
       properties:
         code:
@@ -1286,20 +1416,20 @@ components:
         message:
           type: string
       required:
-        - code
-        - message
+      - code
+      - message
     Obligation:
       properties:
         obligationType:
           type: string
           enum:
-            - Pillar2TaxReturn
-            - GlobeInformationReturn
+          - Pillar2TaxReturn
+          - GlobeInformationReturn
         status:
           type: string
           enum:
-            - Open
-            - Fulfilled
+          - Open
+          - Fulfilled
         canAmend:
           type: boolean
         submissions:
@@ -1307,10 +1437,10 @@ components:
           items:
             $ref: "#/components/schemas/Submission"
       required:
-        - obligationType
-        - status
-        - canAmend
-        - submissions
+      - obligationType
+      - status
+      - canAmend
+      - submissions
     ORNSubmission:
       properties:
         TIN:
@@ -1331,13 +1461,13 @@ components:
           type: string
           format: date
       required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
-        - filedDateGIR
-        - countryGIR
-        - reportingEntityName
-        - TIN
-        - issuingCountryTIN
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
   securitySchemes:
     userRestricted:
       type: oauth2
@@ -1352,3 +1482,8 @@ components:
           scopes:
             read:pillar2: Read data related to Pillar2 subscription
             write:pillar2: Write data related to Pillar2 subscription
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk
+  description: Production
