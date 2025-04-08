@@ -33,6 +33,7 @@ object JsonToYaml {
           "openapi" -> jsonMap("openapi"),
           "info"    -> (jsonMap("info").asInstanceOf[Map[String, Any]] + ("version" -> version.value.stripSuffix("-SNAPSHOT"))),
           "tags"    -> jsonMap("tags"),
+          "servers" -> jsonMap("servers"),
           "paths" -> jsonMap("paths")
             .asInstanceOf[Map[String, Any]]
             .map((t: (String, Any)) => s"$apiContext${t._1}" -> t._2),

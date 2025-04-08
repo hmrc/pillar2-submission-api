@@ -1,10 +1,15 @@
 openapi: 3.0.3
 info:
-  version: 0.100.0
+  version: 0.101.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
 tags: []
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk
+  description: Production
 paths:
   /organisations/pillar-two/setup/organisation:
     post:
