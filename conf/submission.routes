@@ -54,10 +54,6 @@
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Submission:
-#             value:
-#               code: '004'
-#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -196,10 +192,6 @@ POST       /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Submission:
-#             value:
-#               code: '004'
-#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -332,10 +324,6 @@ PUT        /uk-tax-return              uk.gov.hmrc.pillar2submissionapi.controll
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Submission:
-#             value:
-#               code: '004'
-#               message: Duplicate Submission
 #           No Active Submission:
 #             value:
 #               code: '063'
@@ -439,10 +427,6 @@ POST       /below-threshold-notification              uk.gov.hmrc.pillar2submiss
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Submission:
-#             value:
-#               code: '004'
-#               message: Duplicate Submission
 #           No data found:
 #             value:
 #               code: '014'
@@ -537,10 +521,6 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #             value:
 #               code: '003'
 #               message: Request could not be processed
-#           Duplicate Submission:
-#             value:
-#               code: '004'
-#               message: Duplicate submission
 #           No Active Submission:
 #             value:
 #               code: '063'
