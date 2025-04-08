@@ -24,10 +24,6 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
@@ -37,11 +33,11 @@ paths:
         </tr>
         <tr>
         <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
-        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
@@ -57,7 +53,7 @@ paths:
         </tr>
         <tr>
         <td>097 - Invalid Total Liability IIR</td>
-        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. IIR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         <tr>
         <td>098 - Invalid Total Liability DTT</td>
@@ -65,7 +61,7 @@ paths:
         </tr>
         <tr>
         <td>099 - Invalid Total Liability UTPR</td>
-        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         </tbody>
         </table>
@@ -277,10 +273,6 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
@@ -377,16 +369,12 @@ paths:
         </thead>
         <tbody>
         <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
-        <tr>
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
-        <td>025 - No associated data found</td>
-        <td>No associated data found for this Pillar 2 ID.</td>
+        <td>014 - No data found</td>
+        <td>No data found for this Pillar 2 ID.</td>
         </tr>
         <tr>
         </tbody>
