@@ -9,7 +9,7 @@ The next steps are outlined on the Open API Specification (**OAS**) page under "
 - Set up a test organisation.
 - Run a SubmitUKTR request.
 
-The [Pillar 2 service guide](https://developer.service.hmrc.gov.uk/guides/pillar2-service-guide/) contains more detailed information on testing for each endpoint.
+The [service guide](https://developer.service.hmrc.gov.uk/guides/pillar2-service-guide/) contains more detailed information on testing for each endpoint.
 
 **Header Parameters**
 
