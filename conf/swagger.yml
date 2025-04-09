@@ -446,7 +446,20 @@ paths:
       summary: Create Test Organisation
       description: |
         Creates a test organisation associated with your authed organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              CreateTestOrganisationRequestExample:
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
       responses:
+        "201":
+          description: Test Organisation Created
+          content:
+            application/json:
+              examples:
+                CreateTestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
         "400":
           description: Invalid Request
           content:
@@ -477,6 +490,13 @@ paths:
       description: |
         Gets a test organisation associated with your authed organisation.
       responses:
+        "200":
+          description: Test Organisation Found
+          content:
+            application/json:
+              examples:
+                TestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
         "400":
           description: Invalid Request
           content:
@@ -513,7 +533,20 @@ paths:
       summary: Update Test Organisation
       description: |
         Updates a test organisation associated with your authed organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              UpdateTestOrganisationRequestExample:
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
       responses:
+        "200":
+          description: Test Organisation Updated
+          content:
+            application/json:
+              examples:
+                UpdateTestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
         "400":
           description: Invalid Request
           content:
@@ -597,7 +630,13 @@ components:
       - receivedDate
     AccountingPeriodDetails:
       properties:
+        startDate:
+          type: string
+          format: date
         endDate:
+          type: string
+          format: date
+        dueDate:
           type: string
           format: date
         underEnquiry:
@@ -606,12 +645,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Obligation"
-        dueDate:
-          type: string
-          format: date
-        startDate:
-          type: string
-          format: date
       required:
       - startDate
       - endDate
@@ -654,6 +687,30 @@ components:
       - processingDate
       - accountingPeriodDetails
   examples:
+    requests.TestOrganisationRequestExample:
+      summary: Request example
+      value:
+        orgDetails:
+          domesticOnly: true
+          organisationName: Test Organisation Ltd
+          registrationDate: "2024-01-01"
+        accountingPeriod:
+          startDate: "2024-01-01"
+          endDate: "2024-12-31"
+        lastUpdated: "2024-01-01T12:00:00Z"
+    responses.TestOrganisationResponseExample:
+      summary: Response example
+      value:
+        pillar2Id: XAPLR1234567890
+        organisation:
+          orgDetails:
+            domesticOnly: true
+            organisationName: Test Organisation Ltd
+            registrationDate: "2024-01-01"
+          accountingPeriod:
+            startDate: "2024-01-01"
+            endDate: "2024-12-31"
+          lastUpdated: "2024-01-01T12:00:00Z"
     requests.BTNRequestExample:
       summary: "Request example"
       value:

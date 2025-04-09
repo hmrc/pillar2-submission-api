@@ -32,17 +32,6 @@
 #        application/json:
 #          schema:
 #            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId'
-#          example:
-#            pillar2Id: "XAPLR1234567890"
-#            organisation:
-#              orgDetails:
-#                domesticOnly: true
-#                organisationName: "Test Organisation Ltd"
-#                registrationDate: "2024-01-01"
-#              accountingPeriod:
-#                startDate: "2024-01-01"
-#                endDate: "2024-12-31"
-#              lastUpdated: "2024-01-01T12:00:00Z"
 #   400:
 #     description: Invalid Request
 #     content:
@@ -111,17 +100,6 @@ POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controlle
 #        application/json:
 #          schema:
 #            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId'
-#          example:
-#            pillar2Id: "XAPLR1234567890"
-#            organisation:
-#              orgDetails:
-#                domesticOnly: true
-#                organisationName: "Test Organisation Ltd"
-#                registrationDate: "2024-01-01"
-#              accountingPeriod:
-#                startDate: "2024-01-01"
-#                endDate: "2024-12-31"
-#              lastUpdated: "2024-01-01T12:00:00Z"
 #   401:
 #     description: Unauthorized
 #     content:
@@ -186,17 +164,6 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #        application/json:
 #          schema:
 #            $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId'
-#          example:
-#            pillar2Id: "XAPLR1234567890"
-#            organisation:
-#              orgDetails:
-#                domesticOnly: true
-#                organisationName: "Test Organisation Ltd"
-#                registrationDate: "2024-01-01"
-#              accountingPeriod:
-#                startDate: "2024-01-01"
-#                endDate: "2024-12-31"
-#              lastUpdated: "2024-01-01T12:00:00Z"
 #   400:
 #     description: Invalid Request
 #     content:
