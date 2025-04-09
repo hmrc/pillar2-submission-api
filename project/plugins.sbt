@@ -4,7 +4,8 @@ resolvers += Resolver.typesafeRepo("releases")
 libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module"    %% "jackson-module-scala"    % "2.18.3",
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.18.3",
-  "io.swagger.parser.v3"             % "swagger-parser"          % "2.1.26"
+  "io.swagger.parser.v3"             % "swagger-parser"          % "2.1.26",
+  "org.playframework"               %% "play-json"               % "3.0.4"
 )
 
 addSbtPlugin("uk.gov.hmrc"            % "sbt-auto-build"     % "3.24.0")
