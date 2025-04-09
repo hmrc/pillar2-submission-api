@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json.{Json, JsonValidationError, OFormat, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
 import java.time.LocalDate
 
 case class ORNSubmission(
@@ -47,20 +49,15 @@ object ORNSubmission {
       str.length >= 1 && str.length <= 2
     )
 
-  implicit val reads: Reads[ORNSubmission] = {
-    import play.api.libs.functional.syntax._
-    import play.api.libs.json._
+  implicit val reads: Reads[ORNSubmission] = (
+    (JsPath \ "accountingPeriodFrom").read[LocalDate] and
+      (JsPath \ "accountingPeriodTo").read[LocalDate] and
+      (JsPath \ "filedDateGIR").read[LocalDate] and
+      (JsPath \ "countryGIR").read(countryGIRReads) and
+      (JsPath \ "reportingEntityName").read(reportingEntityNameReads) and
+      (JsPath \ "TIN").read(tinReads) and
+      (JsPath \ "issuingCountryTIN").read(issuingCountryTINReads)
+  )(ORNSubmission.apply _)
 
-    (
-      (JsPath \ "accountingPeriodFrom").read[LocalDate] and
-        (JsPath \ "accountingPeriodTo").read[LocalDate] and
-        (JsPath \ "filedDateGIR").read[LocalDate] and
-        (JsPath \ "countryGIR").read(countryGIRReads) and
-        (JsPath \ "reportingEntityName").read(reportingEntityNameReads) and
-        (JsPath \ "TIN").read(tinReads) and
-        (JsPath \ "issuingCountryTIN").read(issuingCountryTINReads)
-    )(ORNSubmission.apply _)
-  }
-
-  implicit val format: OFormat[ORNSubmission] = Json.format[ORNSubmission]
+  implicit val format: OFormat[ORNSubmission] = OFormat(reads, Json.writes[ORNSubmission])
 }
