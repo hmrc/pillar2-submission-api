@@ -23,7 +23,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ObligationsAndSubmissionsValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions._
 
@@ -63,7 +63,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
           Future.successful(HttpResponse.apply(422, Json.toJson(ObligationsAndSubmissionsErrorResponse("003", "Invalid request")), Map.empty))
         )
 
-      intercept[ObligationsAndSubmissionsValidationError](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
+      intercept[DownstreamValidationError](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
     }
   }
 

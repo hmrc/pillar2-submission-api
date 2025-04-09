@@ -55,31 +55,40 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val response = classUnderTest.onServerError(dummyRequest, EmptyRequestBody)
     status(response) mustEqual 400
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "002"
-    result.message mustEqual "Empty body in request"
+    result.code mustEqual "EMPTY_REQUEST_BODY"
+    result.message mustEqual "Empty request body"
   }
 
-  test("InvalidRequest error response") {
-    val response = classUnderTest.onServerError(dummyRequest, InvalidRequest)
+  test("InvalidDateFormat error response") {
+    val response = classUnderTest.onServerError(dummyRequest, InvalidDateFormat)
     status(response) mustEqual 400
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "000"
-    result.message mustEqual "Invalid Request"
+    result.code mustEqual "INVALID_DATE_FORMAT"
+    result.message mustEqual "Invalid date format"
+  }
+
+  test("InvalidDateRange error response") {
+    val response = classUnderTest.onServerError(dummyRequest, InvalidDateRange)
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "INVALID_DATE_RANGE"
+    result.message mustEqual "Invalid date range"
   }
 
   test("MissingHeader error response") {
     val response = classUnderTest.onServerError(dummyRequest, MissingHeader("Missing Header"))
     status(response) mustEqual 400
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "005"
+    result.code mustEqual "MISSING_HEADER"
+    result.message mustEqual "Missing Header"
   }
 
   test("InvalidJson error response") {
     val response = classUnderTest.onServerError(dummyRequest, InvalidJson)
     status(response) mustEqual 400
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "001"
-    result.message mustEqual "Invalid JSON Payload"
+    result.code mustEqual "INVALID_JSON"
+    result.message mustEqual "Invalid JSON payload"
   }
 
   test("AuthenticationError error response") {
@@ -106,32 +115,16 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "No Pillar2 subscription found for XTC01234123412"
   }
 
-  test("UktrValidationError error response") {
-    val response = classUnderTest.onServerError(dummyRequest, UktrValidationError("093", "Invalid Return"))
+  test("DownstreamValidationError error response") {
+    val response = classUnderTest.onServerError(dummyRequest, DownstreamValidationError("093", "Invalid Return"))
     status(response) mustEqual 422
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "093"
     result.message mustEqual "Invalid Return"
-  }
-
-  test("BTNValidationError error response") {
-    val response = classUnderTest.onServerError(dummyRequest, BTNValidationError("093", "Invalid Return"))
-    status(response) mustEqual 422
-    val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "093"
-    result.message mustEqual "Invalid Return"
-  }
-
-  test("ObligationsAndSubmissionsValidationError response") {
-    val response = classUnderTest.onServerError(dummyRequest, ObligationsAndSubmissionsValidationError("code", "message"))
-    status(response) mustEqual 422
-    val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "code"
-    result.message mustEqual "message"
   }
 
   test("TestEndpointDisabled response") {
-    val response = classUnderTest.onServerError(dummyRequest, TestEndpointDisabled())
+    val response = classUnderTest.onServerError(dummyRequest, TestEndpointDisabled)
     status(response) mustEqual 403
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "403"

@@ -21,19 +21,24 @@ sealed trait Pillar2Error extends Exception {
   val message: String
 }
 
-case object InvalidRequest extends Pillar2Error {
-  val code    = "000"
-  val message = "Invalid Request"
+case object InvalidDateRange extends Pillar2Error {
+  val code    = "INVALID_DATE_RANGE"
+  val message = "Invalid date range"
+}
+
+case object InvalidDateFormat extends Pillar2Error {
+  val code    = "INVALID_DATE_FORMAT"
+  val message = "Invalid date format"
 }
 
 case object InvalidJson extends Pillar2Error {
-  val code    = "001"
-  val message = "Invalid JSON Payload"
+  val code    = "INVALID_JSON"
+  val message = "Invalid JSON payload"
 }
 
 case object EmptyRequestBody extends Pillar2Error {
-  val code    = "002"
-  val message = "Empty body in request"
+  val code    = "EMPTY_REQUEST_BODY"
+  val message = "Empty request body"
 }
 
 case object UnexpectedResponse extends Pillar2Error {
@@ -43,7 +48,7 @@ case object UnexpectedResponse extends Pillar2Error {
 
 case object AuthenticationError extends Pillar2Error {
   val code = "003"
-  val message: String = s"Not authorized"
+  val message: String = "Not authorized"
 }
 
 case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
@@ -52,7 +57,7 @@ case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
 }
 
 case class MissingHeader(message: String) extends Pillar2Error {
-  val code = "005"
+  val code = "MISSING_HEADER"
 }
 
 object MissingHeader {
@@ -66,11 +71,7 @@ case object ForbiddenError extends Pillar2Error {
   val message = "Forbidden"
 }
 
-case class UktrValidationError(code: String, message: String) extends Pillar2Error
-
-case class BTNValidationError(code: String, message: String) extends Pillar2Error
-
-case class ObligationsAndSubmissionsValidationError(code: String, message: String) extends Pillar2Error
+case class DownstreamValidationError(code: String, message: String) extends Pillar2Error
 
 case class OrganisationAlreadyExists(pillar2Id: String) extends Pillar2Error {
   override val code:    String = "409"
@@ -87,9 +88,7 @@ case class DatabaseError(operation: String) extends Pillar2Error {
   override val message: String = s"Failed to $operation organisation due to database error"
 }
 
-case class TestEndpointDisabled() extends Pillar2Error {
+case object TestEndpointDisabled extends Pillar2Error {
   override val code:    String = "403"
   override val message: String = "Test endpoints are not available in this environment"
 }
-
-case class ORNValidationError(code: String, message: String) extends Pillar2Error
