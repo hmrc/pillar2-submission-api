@@ -68,7 +68,98 @@ paths:
         <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
         </tr>
         </tbody>
-        </table>       
+        </table>
+      requestBody:
+        content:
+          application/json:
+            examples:
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"       
+      responses:
+        "201":
+          description: UK Tax Return Submission Created
+          content:
+            application/json:
+              examples:
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
       security:
         - userRestricted: [write:pillar2]
     put:
@@ -77,7 +168,97 @@ paths:
         Amends a UK tax return submitted for a specified accounting period.   
         
         ### Error Codes
-        <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>        
+        <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>
+      requestBody:
+        content:
+          application/json:
+            examples:
+              NilReturnMneAndUk:
+                $ref: "#/components/examples/requests.UKTRNilReturnMneAndUk"
+              NilReturnDomesticOnlyWithUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithUkGaap"
+              NilReturnDomesticOnlyWithoutUkGaap:
+                $ref: "#/components/examples/requests.UKTRNilReturnDomesticOnlyWithoutUkGaap"
+              LiabilityReturnMneAndUkOneEntity:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithOneEntity"
+              LiabilityReturnMneAndUkTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnMneAndUkWithTwoEntities"
+              LiabilityReturnDomesticOneEntityUkGaap:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
+              LiabilityReturnDomesticTwoEntities:
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
+      responses:
+        "200":
+          description: UK Tax Return Submission Updated
+          content:
+            application/json:
+              examples:
+                responses.UKTRSuccessResponseWithCRNExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithCrnExample"
+                responses.UKTRSuccessResponseWithoutCrnExample:
+                  $ref: "#/components/examples/responses.UKTRSuccessResponseWithoutCrnExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid UTPR Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Total Liability IIR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
+                Invalid DTT Election:
+                  $ref: "#/components/examples/errors.Submission.InvalidDTT"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                Invalid Total Liability UTPR:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
+                Invalid Total Liability:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                Invalid Total Liability DTT:
+                  $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+
       security:
         - userRestricted: [write:pillar2]
   /below-threshold-notification:
@@ -113,6 +294,71 @@ paths:
         </tr>
         </tbody>
         </table>
+      requestBody:
+        content:
+          application/json:
+            examples:
+              requests.BTNRequestExample:
+                $ref: "#/components/examples/requests.BTNRequestExample"
+      responses:
+        "201":
+          description: Below-Threshold Notification Submission Created
+          content:
+            application/json:
+              examples:
+                responses.BTNSuccessResponseExample:
+                  $ref: "#/components/examples/responses.BTNSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
       security:
         - userRestricted: [write:pillar2]
   /obligations-and-submissions:
@@ -145,6 +391,47 @@ paths:
         <tr>
         </tbody>
         </table>
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Acknowledgment:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                No associated data found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "200":
+          description: OK Obligations and Submissions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
       security:
         - userRestricted: [write:pillar2]
   /overseas-return-notification:
@@ -159,28 +446,560 @@ paths:
       summary: Create Test Organisation
       description: |
         Creates a test organisation associated with your authed organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              CreateTestOrganisationRequestExample:
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
+      responses:
+        "201":
+          description: Test Organisation Created
+          content:
+            application/json:
+              examples:
+                CreateTestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
       security:
         - userRestricted: [write:pillar2]
     get:
       summary: Get Test Organisation
       description: |
         Gets a test organisation associated with your authed organisation.
+      responses:
+        "200":
+          description: Test Organisation Found
+          content:
+            application/json:
+              examples:
+                TestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [read:pillar2]
     put:
       summary: Update Test Organisation
       description: |
         Updates a test organisation associated with your authed organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              UpdateTestOrganisationRequestExample:
+                $ref: "#/components/examples/requests.TestOrganisationRequestExample"
+      responses:
+        "200":
+          description: Test Organisation Updated
+          content:
+            application/json:
+              examples:
+                UpdateTestOrganisationResponseExample:
+                  $ref: "#/components/examples/responses.TestOrganisationResponseExample"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
     delete:
       summary: Delete Test Organisation
       description: |
         Deletes a test organisation associated with your authed organisation.
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                Not Found:
+                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
-   
+
 components:
+  schemas:
+    Submission:
+      properties:
+        submissionType:
+          type: string
+          enum:
+          - UKTR
+          - ORN
+          - BTN
+          - GIR
+        receivedDate:
+          type: string
+          format: date-time
+        country:
+          type: string
+          nullable: true
+      required:
+      - submissionType
+      - receivedDate
+    AccountingPeriodDetails:
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        underEnquiry:
+          type: boolean
+        obligations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Obligation"
+      required:
+      - startDate
+      - endDate
+      - dueDate
+      - underEnquiry
+      - obligations
+    Obligation:
+      properties:
+        obligationType:
+          type: string
+          enum:
+          - Pillar2TaxReturn
+          - GlobeInformationReturn
+        status:
+          type: string
+          enum:
+          - Open
+          - Fulfilled
+        canAmend:
+          type: boolean
+        submissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Submission"
+      required:
+      - obligationType
+      - status
+      - canAmend
+      - submissions
+    ObligationsAndSubmissionsSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+          format: date-time
+        accountingPeriodDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountingPeriodDetails"
+      required:
+      - processingDate
+      - accountingPeriodDetails
+  examples:
+    requests.TestOrganisationRequestExample:
+      summary: Request example
+      value:
+        orgDetails:
+          domesticOnly: true
+          organisationName: Test Organisation Ltd
+          registrationDate: "2024-01-01"
+        accountingPeriod:
+          startDate: "2024-01-01"
+          endDate: "2024-12-31"
+        lastUpdated: "2024-01-01T12:00:00Z"
+    responses.TestOrganisationResponseExample:
+      summary: Response example
+      value:
+        pillar2Id: XAPLR1234567890
+        organisation:
+          orgDetails:
+            domesticOnly: true
+            organisationName: Test Organisation Ltd
+            registrationDate: "2024-01-01"
+          accountingPeriod:
+            startDate: "2024-01-01"
+            endDate: "2024-12-31"
+          lastUpdated: "2024-01-01T12:00:00Z"
+    requests.BTNRequestExample:
+      summary: "Request example"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+
+    responses.BTNSuccessResponseExample:
+      summary: "Success response"
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+
+    #mne and uk
+    requests.UKTRNilReturnMneAndUk:
+      summary: "Nil Return - MNE and UK"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          returnType: NIL_RETURN
+
+
+    #nil return - domestic only w/ uk gaap
+    requests.UKTRNilReturnDomesticOnlyWithUkGaap:
+      summary: "Nil Return - Domestic Only with UK GAAP"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
+        electionUKGAAP: true
+        liabilities:
+          returnType: NIL_RETURN
+
+    #nil return - domestic only w/o uk gaap
+    requests.UKTRNilReturnDomesticOnlyWithoutUkGaap:
+      summary: "Nil Return - Domestic Only without UK GAAP"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
+        electionUKGAAP: false
+        liabilities:
+          returnType: NIL_RETURN
+
+    #liability return - mne and uk w/ 1 entity
+    requests.UKTRLiabilityReturnMneAndUkWithOneEntity:
+      summary: "Liability Return - MNE and UK with 1 Entity"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 14401.49
+          totalLiabilityDTT: 5000.99
+          totalLiabilityIIR: 3400
+          totalLiabilityUTPR: 6000.5
+          liableEntities:
+          - ukChargeableEntityName: Newco PLC
+            idType: CRN
+            idValue: xyz
+            amountOwedDTT: 5000.99
+            amountOwedIIR: 3400
+            amountOwedUTPR: 6000.5
+
+
+    #liability return - mne and uk w/ 2 entities
+    requests.UKTRLiabilityReturnMneAndUkWithTwoEntities:
+      summary: "Liability Return - MNE and UK with 2 Entities"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: true
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 40968.88
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiabilityUTPR: 9400.99
+          liableEntities:
+          - ukChargeableEntityName: Newco PLC
+            idType: CRN
+            idValue: xyz
+            amountOwedDTT: 4567
+            amountOwedIIR: 3000
+            amountOwedUTPR: 4000.99
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: xyz
+            amountOwedDTT: 22000.89
+            amountOwedIIR: 2000
+            amountOwedUTPR: 5400
+
+    #liability return - uk only - domestic flag, 1 entity and uk gaap
+    requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap:
+      summary: "Liability Return - Domestic Only with 1 Entity and UK GAAP"
+      value:
+        accountingPeriodFrom: "2025-01-01"
+        accountingPeriodTo: "2026-12-31"
+        obligationMTT: false
+        electionUKGAAP: true
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 34968.98
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 3400
+          totalLiabilityUTPR: 5000.99
+          liableEntities:
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: xyz
+            amountOwedDTT: 26567.89
+            amountOwedIIR: 3400
+            amountOwedUTPR: 5000.99
+
+    #liability return - uk only - domestic flag, 2 entities
+    requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
+      summary: "Liability Return - Domestic Only with 2 Entities"
+      value:
+        accountingPeriodFrom: "2025-04-06"
+        accountingPeriodTo: "2026-04-05"
+        obligationMTT: false
+        electionUKGAAP: false
+        liabilities:
+          electionDTTSingleMember: false
+          electionUTPRSingleMember: false
+          numberSubGroupDTT: 4
+          numberSubGroupUTPR: 5
+          totalLiability: 40968.88
+          totalLiabilityDTT: 26567.89
+          totalLiabilityIIR: 5000
+          totalLiabilityUTPR: 9400.99
+          liableEntities:
+          - ukChargeableEntityName: Newco PLC
+            idType: CRN
+            idValue: xyz
+            amountOwedDTT: 4567
+            amountOwedIIR: 3000
+            amountOwedUTPR: 4000.99
+          - ukChargeableEntityName: Conew PLC
+            idType: CT-UTR
+            idValue: xyz
+            amountOwedDTT: 22000.89
+            amountOwedIIR: 2000
+            amountOwedUTPR: 5400
+
+    responses.UKTRSuccessResponseWithCrnExample:
+      summary: Liability Success response
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+        formBundleNumber: 119000004320
+        chargeReference: 2347913284601
+    responses.UKTRSuccessResponseWithoutCrnExample:
+      summary: Nil Return Success response
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+        formBundleNumber: 119000004320
+    responses.UKTRNilReturnResponseExample:
+      summary: "Request example for Domestic only with UK GAAP Nil Return"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        obligationMTT: false
+        electionUKGAAP: true
+        liabilities:
+          returnType: "NIL_RETURN"
+    errors.TestOrg.NotFound:
+      summary: Test endpoints not available
+      value:
+        code: "404"
+        message: "Organisation not found for pillar2Id: XAPLR1234567890"
+    errors.TestOrg.Forbidden:
+      summary: Test endpoints not available
+      value:
+        code: 403
+        message: Test endpoints are not available in this environment
+    errors.TestOrg.Unauthorized:
+      summary: Not Authorized
+      value:
+        code: "003"
+        message: "Not authorized"
+    errors.InvalidJson:
+      summary: Invalid JSON payload
+      value:
+        code: '001'
+        message: Invalid JSON payload
+    errors.EmptyBody:
+      summary: Empty request body
+      value:
+        code: '002'
+        message: Empty body in request
+    errors.Submission.InvalidPillar2ID:
+      summary: Invalid Pillar2 ID
+      value:
+        code: '002'
+        message: Pillar 2 ID missing or invalid
+    errors.Submission.Unauthorized:
+      summary: Unauthorized
+      value:
+        code: '003'
+        message: Not authorized
+    errors.Submission.InvalidRequest:
+      summary: Invalid request
+      value:
+        code: '003'
+        message: Request could not be processed
+    errors.Submission.NoSubscriptionData:
+      summary: No subscription data
+      value:
+        code: '004'
+        message: No Pillar2 subscription found for -pillar2Id
+    errors.Submission.MissingHeader:
+      summary: Missing header
+      value:
+        code: '005'
+        message: Missing Header in request
+    errors.Submission.GenericServerError:
+      summary: Generic server error
+      value:
+        code: 500
+        message: Internal Server Error
+    errors.Submission.Forbidden:
+      summary: Forbidden
+      value:
+        code: '006'
+        message: Forbidden
+    errors.Submission.InvalidReturn:
+      summary: Invalid return
+      value:
+        code: '093'
+        message: Invalid Return
+    errors.Submission.TaxObligationFulfilled:
+      summary: Tax obligation fulfilled
+      value:
+        code: '044'
+        message: Tax Obligation already fulfilled
+    errors.Submission.NoActiveSubmission:
+      summary: No active submission
+      value:
+        code: '007'
+        message: Business Partner does not have an active subscription
+    errors.Submission.DuplicateSubmission:
+      summary: Duplicate submission
+      value:
+        code: '004'
+        message: Duplicate submission acknowledgment reference
+    errors.Submission.InvalidUTPR:
+      summary: Invalid UTPR Election
+      value:
+        code: '095'
+        message: Invalid UTPR Election
+    errors.Submission.InvalidTotalLiabilityIIR:
+      summary: Invalid Total Liability IIR
+      value:
+        code: '097'
+        message: Invalid Total Liability IIR
+    errors.Submission.InvalidDTT:
+      summary: Invalid DTT Election
+      value:
+        code: '094'
+        message: Invalid DTT Election
+    errors.Submission.InvalidTotalLiabilityUTPR:
+      summary: Invalid Total Liability UTPR
+      value:
+        code: '099'
+        message: Invalid Total Liability UTPR
+    errors.Submission.InvalidTotalLiability:
+      summary: Invalid Total Liability
+      value:
+        code: '096'
+        message: Invalid Total Liability
+    errors.Submission.InvalidTotalLiabilityDTT:
+      summary: Invalid Total Liability DTT
+      value:
+        code: '098'
+        message: Invalid Total Liability DTT
+
   securitySchemes:
     userRestricted:
       type: oauth2
