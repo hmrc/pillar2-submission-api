@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.103.0
+  version: 0.104.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2
     tax rules.
@@ -542,7 +542,41 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ORNSubmission"
+              type: object
+              required:
+              - accountingPeriodFrom
+              - accountingPeriodTo
+              - filedDateGIR
+              - countryGIR
+              - reportingEntityName
+              - TIN
+              - issuingCountryTIN
+              properties:
+                TIN:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                countryGIR:
+                  type: string
+                  minLength: 1
+                  maxLength: 2
+                accountingPeriodFrom:
+                  type: string
+                  format: date
+                reportingEntityName:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                issuingCountryTIN:
+                  type: string
+                  minLength: 1
+                  maxLength: 2
+                filedDateGIR:
+                  type: string
+                  format: date
+                accountingPeriodTo:
+                  type: string
+                  format: date
       parameters:
       - in: header
         name: X-Pillar2-Id
@@ -1442,33 +1476,6 @@ components:
       - status
       - canAmend
       - submissions
-    ORNSubmission:
-      properties:
-        TIN:
-          type: string
-        countryGIR:
-          type: string
-        accountingPeriodFrom:
-          type: string
-          format: date
-        reportingEntityName:
-          type: string
-        issuingCountryTIN:
-          type: string
-        filedDateGIR:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-      required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
   securitySchemes:
     userRestricted:
       type: oauth2
