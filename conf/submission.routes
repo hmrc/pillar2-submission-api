@@ -291,7 +291,41 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #   content:
 #     application/json:
 #       schema:
-#         $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission'
+#         type: object
+#         required:
+#         - accountingPeriodFrom
+#         - accountingPeriodTo
+#         - filedDateGIR
+#         - countryGIR
+#         - reportingEntityName
+#         - TIN
+#         - issuingCountryTIN
+#         properties:
+#           accountingPeriodFrom:
+#             type: string
+#             format: date
+#           accountingPeriodTo:
+#             type: string
+#             format: date
+#           filedDateGIR:
+#             type: string
+#             format: date
+#           countryGIR:
+#             type: string
+#             minLength: 1
+#             maxLength: 2
+#           reportingEntityName:
+#             type: string
+#             minLength: 1
+#             maxLength: 200
+#           TIN:
+#             type: string
+#             minLength: 1
+#             maxLength: 200
+#           issuingCountryTIN:
+#             type: string
+#             minLength: 1
+#             maxLength: 2
 # responses:
 #   201:
 #     description: Overseas Return Notification Submission Created
