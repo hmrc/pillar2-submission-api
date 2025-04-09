@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.93.0
+  version: 0.105.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -428,8 +428,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -462,7 +460,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "403":
           description: Forbidden
           content:
@@ -495,10 +493,6 @@ paths:
         </tr>
         </thead>
         <tbody>
-        <tr>
-        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
         <tr>
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
@@ -621,8 +615,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -653,7 +645,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "403":
           description: Forbidden
           content:
@@ -738,8 +730,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
@@ -780,7 +770,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
@@ -793,10 +783,6 @@ paths:
         </tr>
         </thead>
         <tbody>
-        <tr>
-        <td>002 - Pillar2 ID (SAP Number) is missing or invalid</td>
-        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
-        </tr>
         <tr>
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
@@ -811,6 +797,97 @@ paths:
         </tr>
         </tbody>
         </table>
+      security:
+      - userRestricted:
+        - write:pillar2
+  /organisations/pillar-two/obligations-and-submissions:
+    get:
+      operationId: retrieveData
+      tags:
+      - submission
+      parameters:
+      - in: query
+        name: fromDate
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: toDate
+        required: true
+        schema:
+          type: string
+      summary: Retrieve Obligations and Submissions
+      description: |
+        Retrieves the Obligations and Submissions for an accounting period.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a Obligations and Submissions API request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+        </tr>
+        <tr>
+        <td>025 - No associated data found</td>
+        <td>No associated data found for this Pillar 2 ID.</td>
+        </tr>
+        <tr>
+        </tbody>
+        </table>
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Acknowledgment:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                No associated data found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
+        "200":
+          description: OK Obligations and Submissions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
       security:
       - userRestricted:
         - write:pillar2
@@ -1025,6 +1102,82 @@ components:
       - orgDetails
       - accountingPeriod
       - lastUpdated
+    Submission:
+      properties:
+        submissionType:
+          type: string
+          enum:
+          - UKTR
+          - ORN
+          - BTN
+          - GIR
+        receivedDate:
+          type: string
+          format: date-time
+        country:
+          type: string
+          nullable: true
+      required:
+      - submissionType
+      - receivedDate
+    AccountingPeriodDetails:
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        underEnquiry:
+          type: boolean
+        obligations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Obligation"
+      required:
+      - startDate
+      - endDate
+      - dueDate
+      - underEnquiry
+      - obligations
+    Obligation:
+      properties:
+        obligationType:
+          type: string
+          enum:
+          - Pillar2TaxReturn
+          - GlobeInformationReturn
+        status:
+          type: string
+          enum:
+          - Open
+          - Fulfilled
+        canAmend:
+          type: boolean
+        submissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Submission"
+      required:
+      - obligationType
+      - status
+      - canAmend
+      - submissions
+    ObligationsAndSubmissionsSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+          format: date-time
+        accountingPeriodDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountingPeriodDetails"
+      required:
+      - processingDate
+      - accountingPeriodDetails
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example
@@ -1225,21 +1378,26 @@ components:
       value:
         code: '003'
         message: Not authorized
+    errors.InvalidDateRange:
+      summary: Invalid date range
+      value:
+        code: INVALID_DATE_RANGE
+        message: Invalid date range
+    errors.InvalidDateFormat:
+      summary: Invalid date format
+      value:
+        code: INVALID_DATE_FORMAT
+        message: Invalid date format
     errors.InvalidJson:
       summary: Invalid JSON payload
       value:
-        code: '001'
+        code: INVALID_JSON
         message: Invalid JSON payload
     errors.EmptyBody:
       summary: Empty request body
       value:
-        code: '002'
-        message: Empty body in request
-    errors.Submission.InvalidPillar2ID:
-      summary: Invalid Pillar2 ID
-      value:
-        code: '002'
-        message: Pillar 2 ID missing or invalid
+        code: EMPTY_REQUEST_BODY
+        message: Empty request body
     errors.Submission.Unauthorized:
       summary: Unauthorized
       value:
@@ -1255,11 +1413,11 @@ components:
       value:
         code: '004'
         message: No Pillar2 subscription found for -pillar2Id
-    errors.Submission.MissingHeader:
-      summary: Missing header
+    errors.Submission.MissingPillar2Header:
+      summary: Missing Pillar 2 header
       value:
-        code: '005'
-        message: Missing Header in request
+        code: MISSING_HEADER
+        message: Please provide the X-Pillar2-Id header
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
