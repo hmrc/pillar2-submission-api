@@ -644,6 +644,41 @@ paths:
 
 components:
   schemas:
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
+      properties:
+        accountingPeriodFrom:
+          type: string
+          format: date
+        accountingPeriodTo:
+          type: string
+          format: date
+        filedDateGIR:
+          type: string
+          format: date
+        countryGIR:
+          type: string
+          minLength: 1
+          maxLength: 2
+        reportingEntityName:
+          type: string
+          minLength: 1
+          maxLength: 200
+        TIN:
+          type: string
+          minLength: 1
+          maxLength: 200
+        issuingCountryTIN:
+          type: string
+          minLength: 1
+          maxLength: 2
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
     Submission:
       properties:
         submissionType:

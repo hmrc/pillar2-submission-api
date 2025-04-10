@@ -428,6 +428,11 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+<<<<<<< HEAD
+=======
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -436,14 +441,24 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
+<<<<<<< HEAD
+=======
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+<<<<<<< HEAD
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+=======
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "400":
@@ -458,7 +473,11 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
+<<<<<<< HEAD
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+=======
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+>>>>>>> a669647 (updated tests and oas)
         "403":
           description: Forbidden
           content:
@@ -492,10 +511,18 @@ paths:
         </thead>
         <tbody>
         <tr>
+<<<<<<< HEAD
+=======
+        <td>002 - Pillar 2 ID (SAP Number) is missing or invalid</td>
+        <td>Please provide the request header for your client, to check it contains the Pillar 2 ID (SAP Number) they were assigned at registration.</td>
+        </tr>
+        <tr>
+>>>>>>> a669647 (updated tests and oas)
         <td>003 - Request could not be processed</td>
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
+<<<<<<< HEAD
         <td>044 - Tax obligation already fulfilled</td>
         <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
         </tr>
@@ -530,6 +557,42 @@ paths:
         <tr>
         <td>099 - Invalid total liability UTPR</td>
         <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
+=======
+        <td>044 - Tax Obligation Already Fulfilled</td>
+        <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID (SAP Number) in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>093 - Invalid Return</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Please check the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> fields to ensure the dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        </tr>
+        <tr>
+        <td>094 - Invalid DTT Election</td>
+        <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
+        </tr>
+        <tr>
+        <td>095 - Invalid UTPR Election</td>
+        <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
+        </tr>
+        <tr>
+        <td>096 - Invalid Total Liability</td>
+        <td>The <em>totalLiability</em> value in the request does not match the combined values of <em>totalLiabilityDTT</em>, <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check the sum of these fields matches the <em>totalLiability</em> value and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>097 - Invalid Total Liability IIR</td>
+        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>098 - Invalid Total Liability DTT</td>
+        <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        </tr>
+        <tr>
+        <td>099 - Invalid Total Liability UTPR</td>
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+>>>>>>> a669647 (updated tests and oas)
         </tr>
         </tbody>
         </table>
@@ -613,6 +676,11 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
+<<<<<<< HEAD
+=======
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -621,12 +689,22 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
+<<<<<<< HEAD
+=======
+                Duplicate Submission:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
+<<<<<<< HEAD
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+=======
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "400":
@@ -641,7 +719,11 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
+<<<<<<< HEAD
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+=======
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+>>>>>>> a669647 (updated tests and oas)
         "403":
           description: Forbidden
           content:
@@ -726,12 +808,26 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
+<<<<<<< HEAD
+=======
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+>>>>>>> a669647 (updated tests and oas)
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+<<<<<<< HEAD
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+=======
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+>>>>>>> a669647 (updated tests and oas)
         "403":
           description: Forbidden
           content:
@@ -762,7 +858,11 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
+<<<<<<< HEAD
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+=======
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+>>>>>>> a669647 (updated tests and oas)
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
@@ -852,10 +952,21 @@ paths:
           content:
             application/json:
               examples:
+<<<<<<< HEAD
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 No Data Found:
                   $ref: "#/components/examples/errors.Submission.NoDataFound"
+=======
+                Invalid Pillar2ID:
+                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                Duplicate Acknowledgment:
+                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
+                No associated data found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+>>>>>>> a669647 (updated tests and oas)
         "401":
           description: Unauthorized
           content:
@@ -863,6 +974,7 @@ paths:
               examples:
                 Unauthorized:
                   $ref: "#/components/examples/errors.Submission.Unauthorized"
+<<<<<<< HEAD
         "400":
           description: Invalid Request
           content:
@@ -872,6 +984,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidDateRange"
                 Invalid Date Format:
                   $ref: "#/components/examples/errors.InvalidDateFormat"
+=======
+>>>>>>> a669647 (updated tests and oas)
         "200":
           description: OK Obligations and Submissions retrieved
           content:
@@ -918,18 +1032,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse"
+<<<<<<< HEAD
               examples:
                 responses.ORNSuccessResponseExample:
                   $ref: "#/components/examples/responses.ORNSuccessResponseExample"
+=======
+              example:
+                processingDate: 2025-01-31T09:26:17Z
+                formBundleNumber: 123456789012345
+>>>>>>> a669647 (updated tests and oas)
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+<<<<<<< HEAD
               examples:
                 Unauthorized:
                   $ref: "#/components/examples/errors.Submission.Unauthorized"
+=======
+              example:
+                code: '003'
+                message: Not authorized
+>>>>>>> a669647 (updated tests and oas)
         "422":
           description: Business Validation Failure
           content:
@@ -937,6 +1063,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
+<<<<<<< HEAD
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 No Active Subscription Found:
@@ -945,6 +1072,32 @@ paths:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
                 Invalid Return:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
+=======
+                Invalid Pillar2ID:
+                  value:
+                    code: '089'
+                    message: ID number missing or invalid
+                Invalid Request:
+                  value:
+                    code: '003'
+                    message: Request could not be processed
+                Duplicate Acknowledgment:
+                  value:
+                    code: '004'
+                    message: Duplicate acknowledgment reference
+                No Active Submission:
+                  value:
+                    code: '063'
+                    message: Business Partner does not have an Active Subscription for this Regime
+                Tax Obligation Fulfilled:
+                  value:
+                    code: '044'
+                    message: Tax Obligation already fulfilled
+                Invalid Return:
+                  value:
+                    code: '093'
+                    message: Invalid Return
+>>>>>>> a669647 (updated tests and oas)
         "400":
           description: Bad Request
           content:
@@ -953,20 +1106,40 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Invalid Json:
+<<<<<<< HEAD
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+=======
+                  value:
+                    code: '001'
+                    message: Invalid JSON payload
+                Empty Request Body:
+                  value:
+                    code: '002'
+                    message: Empty body in request
+                Missing Header:
+                  value:
+                    code: '005'
+                    message: Missing Header in request
+>>>>>>> a669647 (updated tests and oas)
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+<<<<<<< HEAD
               examples:
                 Forbidden:
                   $ref: "#/components/examples/errors.Submission.Forbidden"
+=======
+              example:
+                code: '006'
+                message: Forbidden
+>>>>>>> a669647 (updated tests and oas)
         "500":
           description: Internal Server Error
           content:
@@ -975,9 +1148,19 @@ paths:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
                 Generic Server Error:
+<<<<<<< HEAD
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+=======
+                  value:
+                    code: 500
+                    message: Internal Server Error
+                No Subscription Data:
+                  value:
+                    code: '004'
+                    message: No Pillar2 subscription found for -pillar2Id
+>>>>>>> a669647 (updated tests and oas)
       description: |
         Submit an Overseas Return Notification
       security:
@@ -1007,12 +1190,29 @@ components:
           format: date
         countryGIR:
           type: string
+<<<<<<< HEAD
         reportingEntityName:
           type: string
         TIN:
           type: string
         issuingCountryTIN:
           type: string
+=======
+          minLength: 1
+          maxLength: 2
+        reportingEntityName:
+          type: string
+          minLength: 1
+          maxLength: 200
+        TIN:
+          type: string
+          minLength: 1
+          maxLength: 200
+        issuingCountryTIN:
+          type: string
+          minLength: 1
+          maxLength: 2
+>>>>>>> a669647 (updated tests and oas)
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
@@ -1491,11 +1691,14 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: NIL_RETURN
+<<<<<<< HEAD
     responses.ORNSuccessResponseExample:
       summary: ORN Success response
       value:
         processingDate: 2026-06-26T09:26:17Z
         formBundleNumber: 119000004320
+=======
+>>>>>>> a669647 (updated tests and oas)
     errors.TestOrg.NotFound:
       summary: Test endpoints not available
       value:
@@ -1511,6 +1714,7 @@ components:
       value:
         code: '003'
         message: Not authorized
+<<<<<<< HEAD
     errors.InvalidDateRange:
       summary: Invalid date range
       value:
@@ -1525,12 +1729,28 @@ components:
       summary: Invalid JSON payload
       value:
         code: INVALID_JSON
+=======
+    errors.InvalidJson:
+      summary: Invalid JSON payload
+      value:
+        code: '001'
+>>>>>>> a669647 (updated tests and oas)
         message: Invalid JSON payload
     errors.EmptyBody:
       summary: Empty request body
       value:
+<<<<<<< HEAD
         code: EMPTY_REQUEST_BODY
         message: Empty request body
+=======
+        code: '002'
+        message: Empty body in request
+    errors.Submission.InvalidPillar2ID:
+      summary: Invalid Pillar2 ID
+      value:
+        code: '002'
+        message: Pillar 2 ID missing or invalid
+>>>>>>> a669647 (updated tests and oas)
     errors.Submission.Unauthorized:
       summary: Unauthorized
       value:
@@ -1546,11 +1766,19 @@ components:
       value:
         code: '004'
         message: No Pillar2 subscription found for -pillar2Id
+<<<<<<< HEAD
     errors.Submission.MissingPillar2Header:
       summary: Missing Pillar 2 header
       value:
         code: MISSING_HEADER
         message: Please provide the X-Pillar2-Id header
+=======
+    errors.Submission.MissingHeader:
+      summary: Missing header
+      value:
+        code: '005'
+        message: Missing Header in request
+>>>>>>> a669647 (updated tests and oas)
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
@@ -1571,16 +1799,28 @@ components:
       value:
         code: '044'
         message: Tax Obligation already fulfilled
+<<<<<<< HEAD
     errors.Submission.NoActiveSubscription:
       summary: No active subscription
       value:
         code: '063'
         message: Business Partner does not have an Active Subscription for this Regime
+=======
+    errors.Submission.NoActiveSubmission:
+      summary: No active submission
+      value:
+        code: '007'
+        message: Business Partner does not have an active subscription
+>>>>>>> a669647 (updated tests and oas)
     errors.Submission.DuplicateSubmission:
       summary: Duplicate submission
       value:
         code: '004'
+<<<<<<< HEAD
         message: Duplicate submission
+=======
+        message: Duplicate submission acknowledgment reference
+>>>>>>> a669647 (updated tests and oas)
     errors.Submission.InvalidUTPR:
       summary: Invalid UTPR Election
       value:
@@ -1611,11 +1851,14 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+<<<<<<< HEAD
     errors.Submission.NoDataFound:
       summary: No data found
       value:
         code: '014'
         message: No data found
+=======
+>>>>>>> a669647 (updated tests and oas)
   securitySchemes:
     userRestricted:
       type: oauth2
