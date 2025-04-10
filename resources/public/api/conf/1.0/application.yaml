@@ -874,42 +874,6 @@ paths:
         - write:pillar2
 components:
   schemas:
-    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        formBundleNumber:
-          type: string
-      required:
-      - processingDate
-      - formBundleNumber
-    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
-      properties:
-        accountingPeriodFrom:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-        filedDateGIR:
-          type: string
-          format: date
-        countryGIR:
-          type: string
-        reportingEntityName:
-          type: string
-        TIN:
-          type: string
-        issuingCountryTIN:
-          type: string
-      required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
     uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse:
       properties:
         processingDate:
