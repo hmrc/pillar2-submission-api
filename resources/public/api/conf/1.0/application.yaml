@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.105.0
+  version: 0.106.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -428,8 +428,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -438,16 +436,14 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "400":
@@ -617,8 +613,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -627,14 +621,12 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "400":
@@ -734,18 +726,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                Duplicate Acknowledgment:
-                  value:
-                    code: '004'
-                    message: Duplicate acknowledgment reference
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
         "403":
           description: Forbidden
           content:
@@ -866,14 +852,10 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Acknowledgment:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
-                No associated data found:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
@@ -892,6 +874,42 @@ paths:
         - write:pillar2
 components:
   schemas:
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+      required:
+      - processingDate
+      - formBundleNumber
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
+      properties:
+        accountingPeriodFrom:
+          type: string
+          format: date
+        accountingPeriodTo:
+          type: string
+          format: date
+        filedDateGIR:
+          type: string
+          format: date
+        countryGIR:
+          type: string
+        reportingEntityName:
+          type: string
+        TIN:
+          type: string
+        issuingCountryTIN:
+          type: string
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
     uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse:
       properties:
         processingDate:
@@ -1432,16 +1450,16 @@ components:
       value:
         code: '044'
         message: Tax Obligation already fulfilled
-    errors.Submission.NoActiveSubmission:
-      summary: No active submission
+    errors.Submission.NoActiveSubscription:
+      summary: No active subscription
       value:
-        code: '007'
-        message: Business Partner does not have an active subscription
+        code: '063'
+        message: Business Partner does not have an Active Subscription for this Regime
     errors.Submission.DuplicateSubmission:
       summary: Duplicate submission
       value:
         code: '004'
-        message: Duplicate submission acknowledgment reference
+        message: Duplicate submission
     errors.Submission.InvalidUTPR:
       summary: Invalid UTPR Election
       value:
@@ -1472,6 +1490,11 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+    errors.Submission.NoDataFound:
+      summary: No data found
+      value:
+        code: '014'
+        message: No data found
   securitySchemes:
     userRestricted:
       type: oauth2

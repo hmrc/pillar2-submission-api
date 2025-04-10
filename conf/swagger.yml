@@ -127,8 +127,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -137,16 +135,14 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "401":
@@ -227,8 +223,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -237,14 +231,12 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidReturn"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Submission:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
                 Invalid Total Liability UTPR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityUTPR"
                 Invalid Total Liability:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiability"
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
                 Invalid Total Liability DTT:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityDTT"
         "401":
@@ -332,18 +324,12 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                Duplicate Acknowledgment:
-                  value:
-                    code: '004'
-                    message: Duplicate acknowledgment reference
-                No Active Submission:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Active Subscription:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
         "401":
           description: Unauthorized
           content:
@@ -399,14 +385,10 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                Duplicate Acknowledgment:
-                  $ref: "#/components/examples/errors.Submission.DuplicateSubmission"
-                No associated data found:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubmission"
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
@@ -427,6 +409,61 @@ paths:
       summary: Submit Overseas Return Notification
       description: |
         Submit an Overseas Return Notification
+      responses:
+        "201":
+          description: Overseas Return Notification Submission Created
+          content:
+            application/json:
+              examples:
+                responses.ORNSuccessResponseExample:
+                  $ref: "#/components/examples/responses.ORNSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Request Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Missing Header:
+                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Forbidden:
+                  $ref: "#/components/examples/errors.Submission.Forbidden"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Active Subscription Found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+                Invalid Return:
+                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Unauthorized:
+                  $ref: "#/components/examples/errors.Submission.Unauthorized"
       security:
         - userRestricted: [write:pillar2]
   /setup/organisation:
@@ -877,6 +914,11 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: "NIL_RETURN"
+    responses.ORNSuccessResponseExample:
+      summary: ORN Success response
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+        formBundleNumber: 119000004320
     errors.TestOrg.NotFound:
       summary: Test endpoints not available
       value:
@@ -947,16 +989,16 @@ components:
       value:
         code: '044'
         message: Tax Obligation already fulfilled
-    errors.Submission.NoActiveSubmission:
-      summary: No active submission
+    errors.Submission.NoActiveSubscription:
+      summary: No active subscription
       value:
-        code: '007'
-        message: Business Partner does not have an active subscription
+        code: '063'
+        message: Business Partner does not have an Active Subscription for this Regime
     errors.Submission.DuplicateSubmission:
       summary: Duplicate submission
       value:
         code: '004'
-        message: Duplicate submission acknowledgment reference
+        message: Duplicate submission
     errors.Submission.InvalidUTPR:
       summary: Invalid UTPR Election
       value:
@@ -987,6 +1029,11 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+    errors.Submission.NoDataFound:
+      summary: No data found
+      value:
+        code: '014'
+        message: No data found
 
   securitySchemes:
     userRestricted:
