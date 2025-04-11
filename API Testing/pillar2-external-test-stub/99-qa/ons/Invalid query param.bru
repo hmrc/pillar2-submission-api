@@ -1,0 +1,33 @@
+meta {
+  name: Invalid query param
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-310
+  body: none
+  auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2024-12-310
+}
+
+headers {
+  Authorization: valid bearerToken
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("should return 422 UnprocessableEntity", function() {
+    expect(res.getStatus()).to.equal(422);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.errors.processingDate).to.not.be.undefined;
+    expect(res.body.errors.code).to.equal("003");
+    expect(res.body.errors.text).to.equal("Request could not be processed");
+  });
+}

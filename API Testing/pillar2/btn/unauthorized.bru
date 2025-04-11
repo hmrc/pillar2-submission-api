@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/below-threshold-notification/submit
+  url: {{localPillar2Url}}/below-threshold-notification/submit
   body: json
   auth: none
 }
@@ -26,4 +26,4 @@ tests {
   test("should return 401 when no auth token provided", function() {
     expect(res.getStatus()).to.equal(401);
   });
-} 
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Missing query param (toDate)
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/obligations-and-submissions?fromDate=2024-01-01
+  body: none
+  auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+}
+
+headers {
+  Authorization: valid bearerToken
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

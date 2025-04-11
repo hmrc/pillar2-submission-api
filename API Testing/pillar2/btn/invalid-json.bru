@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/below-threshold-notification/submit
+  url: {{localPillar2Url}}/below-threshold-notification/submit
   body: json
   auth: none
 }
@@ -33,4 +33,4 @@ tests {
     expect(res.body.code).to.equal("400");
     expect(res.body.message).to.include("Json validation error");
   });
-} 
+}

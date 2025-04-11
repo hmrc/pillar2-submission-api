@@ -1,0 +1,16 @@
+meta {
+  name: Get ORN
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/overseas-return-notification?accountingPeriodFrom=2024-01-01&accountingPeriodTo=2024-12-31
+  body: none
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
+}
