@@ -1,15 +1,16 @@
 meta {
-  name: Get ORN - Valid Request
+  name: Valid Retrieval
   type: http
-  seq: 3
+  seq: 11
 }
 
 get {
   url: {{externalTestStubUrl}}/RESTAdapter/plr/overseas-return-notification?accountingPeriodFrom=2024-01-01&accountingPeriodTo=2024-12-31
+  body: none
+  auth: none
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }

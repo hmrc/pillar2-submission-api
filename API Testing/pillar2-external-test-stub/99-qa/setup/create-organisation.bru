@@ -30,17 +30,14 @@ body:json {
 }
 
 tests {
-  // Status code should be 201 for successful creation
   test("Status code is 201", function() {
     expect(res.getStatus()).to.equal(201)
   });
   
-  // Response should contain the created organisation details
   test("Response contains organisation details", function() {
     expect(res.body.organisation.orgDetails.organisationName).to.equal("Test Organisation Ltd")
   });
   
-  // Response should contain the pillar2Id
   test("Response contains pillar2Id", function() {
     expect(res.body).to.have.property("pillar2Id")
   });

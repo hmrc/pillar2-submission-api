@@ -1,7 +1,7 @@
 meta {
-  name: Submit ORN - Server Error
+  name: Server Error
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{serverErrorPillar2Id}}
   Authorization: validBearerToken
 }
@@ -34,8 +33,9 @@ tests {
   });
   
   test("should include error details", function() {
-    expect(res.body.errors).to.not.be.undefined;
-    expect(res.body.errors.code).to.equal("500");
-    expect(res.body.errors.text).to.include("Internal server error");
+    expect(res.body.error).to.not.be.undefined;
+    expect(res.body.error.code).to.equal("500");
+    expect(res.body.error.message).to.include("Internal server error");
+    expect(res.body.error.logID).to.include("C0000000000000000000000000000500");
   });
 }

@@ -1,7 +1,7 @@
 meta {
-  name: Submit ORN - Missing Pillar2-ID Header
+  name: Missing Pillar2-ID Header
   type: http
-  seq: 6
+  seq: 2
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   Authorization: validBearerToken
 }
 
@@ -34,7 +33,7 @@ tests {
   
   test("should include error details about missing Pillar2-ID", function() {
     expect(res.body.errors).to.not.be.undefined;
-    expect(res.body.errors.code).to.equal("002");
-    expect(res.body.errors.text).to.include("Pillar2 ID Missing or Invalid");
+    expect(res.body.errors.code).to.equal("089");
+    expect(res.body.errors.text).to.include("ID number missing or invalid");
   });
-} 
+}

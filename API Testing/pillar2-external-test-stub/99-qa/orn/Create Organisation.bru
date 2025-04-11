@@ -18,7 +18,7 @@ headers {
 body:json {
   {
     "orgDetails": {
-      "domesticOnly": true,
+      "domesticOnly": false,
       "organisationName": "Domestic Test Organisation Ltd",
       "registrationDate": "2024-01-01"
     },
@@ -38,7 +38,7 @@ tests {
     expect(res.body.organisation.orgDetails.organisationName).to.equal("Domestic Test Organisation Ltd");
   });
   
-  test("Organisation is domestic only", function() {
-    expect(res.body.organisation.orgDetails.domesticOnly).to.be.true;
+  test("Organisation is not domestic only", function() {
+    expect(res.body.organisation.orgDetails.domesticOnly).to.be.false;
   });
 }

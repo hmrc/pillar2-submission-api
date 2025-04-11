@@ -1,15 +1,16 @@
 meta {
-  name: Get ORN - No Submission Found
+  name: No Submission Found
   type: http
-  seq: 11
+  seq: 9
 }
 
 get {
   url: {{externalTestStubUrl}}/RESTAdapter/plr/overseas-return-notification?accountingPeriodFrom=2025-01-01&accountingPeriodTo=2025-12-31
+  body: none
+  auth: none
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -28,4 +29,4 @@ tests {
 
 docs {
   Note: "This test uses a different accounting period (2025) than what would normally be submitted to ensure no matching records are found."
-} 
+}

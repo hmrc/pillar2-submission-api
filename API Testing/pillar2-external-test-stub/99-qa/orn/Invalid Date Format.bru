@@ -1,7 +1,7 @@
 meta {
-  name: Submit ORN - Invalid Date Format
+  name: Invalid Date Format
   type: http
-  seq: 9
+  seq: 6
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -34,7 +33,9 @@ tests {
   });
   
   test("should contain error about invalid date format", function() {
-    expect(res.body.errors).to.not.be.undefined;
-    expect(res.body.errors.code).to.equal("400");
+    expect(res.body.error).to.not.be.undefined;
+    expect(res.body.error.code).to.equal("400");
+    expect(res.body.error.message).to.equal("Bad request");
+    expect(res.body.error.logID).to.equal("C0000000000000000000000000000400");
   });
-} 
+}

@@ -1,7 +1,7 @@
 meta {
-  name: Submit ORN - Duplicate Submission
+  name: Duplicate Submission
   type: http
-  seq: 10
+  seq: 8
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -42,4 +41,4 @@ tests {
 
 docs {
   Note: "This test needs to be run after a successful submission with the same accounting period. The first submission should return 201, but running it again with the same data should trigger this 422 error."
-} 
+}

@@ -1,7 +1,7 @@
 meta {
-  name: Submit ORN - Invalid JSON
+  name: Unauthorized
   type: http
-  seq: 8
+  seq: 4
 }
 
 post {
@@ -11,16 +11,13 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: validBearerToken
 }
 
 body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
-    "accountingPeriodTo": "2024-12-31"
-    invalid_json_here
+    "accountingPeriodTo": "2024-12-31",
     "filedDateGIR": "2025-01-10",
     "countryGIR": "US",
     "reportingEntityName": "Newco PLC",
@@ -30,7 +27,7 @@ body:json {
 }
 
 tests {
-  test("should return 400 for invalid JSON", function() {
-    expect(res.status).to.equal(400);
+  test("should return 403 when no authorization token provided", function() {
+    expect(res.status).to.equal(403);
   });
 }

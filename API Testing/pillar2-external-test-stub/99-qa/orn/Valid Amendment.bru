@@ -1,17 +1,16 @@
 meta {
-  name: Submit ORN - Valid Request
+  name: Valid Amendment
   type: http
-  seq: 1
+  seq: 10
 }
 
-post {
+put {
   url: {{externalTestStubUrl}}/RESTAdapter/plr/overseas-return-notification
   body: json
   auth: none
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -29,8 +28,8 @@ body:json {
 }
 
 tests {
-  test("should return 201 Created", function() {
-    expect(res.status).to.equal(201);
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
   });
   
   test("should contain form bundle number", function() {
