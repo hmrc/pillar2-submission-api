@@ -21,7 +21,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.ObligationAndSubmissionsConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ObligationsAndSubmissionsValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.{ObligationsAndSubmissionsErrorResponse, ObligationsAndSubmissionsSuccessResponse}
 
 import java.time.LocalDate
@@ -47,7 +47,7 @@ class ObligationsAndSubmissionsService @Inject() (
         }
       case 422 =>
         response.json.validate[ObligationsAndSubmissionsErrorResponse] match {
-          case JsSuccess(response, _) => throw ObligationsAndSubmissionsValidationError(response.code, response.message)
+          case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse

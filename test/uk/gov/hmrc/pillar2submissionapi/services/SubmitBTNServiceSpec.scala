@@ -65,7 +65,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return")), Map.empty)))
 
-      intercept[BTNValidationError](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[DownstreamValidationError](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 

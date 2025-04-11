@@ -94,7 +94,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
             )
           )
 
-        intercept[UktrValidationError](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
+        intercept[DownstreamValidationError](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
       }
     }
 
@@ -177,7 +177,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
             )
           )
 
-        intercept[UktrValidationError](await(mockUkTaxReturnService.amendUKTR(validNilSubmission)))
+        intercept[DownstreamValidationError](await(mockUkTaxReturnService.amendUKTR(validNilSubmission)))
       }
     }
 

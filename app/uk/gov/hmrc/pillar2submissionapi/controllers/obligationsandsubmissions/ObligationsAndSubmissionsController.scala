@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.InvalidRequest
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{InvalidDateFormat, InvalidDateRange}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissions
 import uk.gov.hmrc.pillar2submissionapi.services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -48,7 +48,7 @@ class ObligationsAndSubmissionsController @Inject() (
         obligationAndSubmissionsService
           .handleData(accountingPeriod.fromDate, accountingPeriod.toDate)
           .map(response => Ok(Json.toJson(response)))
-      } else { Future.failed(InvalidRequest) }
-    }.getOrElse(Future.failed(InvalidRequest))
+      } else { Future.failed(InvalidDateRange) }
+    }.getOrElse(Future.failed(InvalidDateFormat))
   }
 }

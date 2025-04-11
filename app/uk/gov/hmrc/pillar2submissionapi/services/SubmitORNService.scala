@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitORNConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ORNValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission, ORNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class SubmitORNService @Inject() (submitORNConnector: SubmitORNConnector)(implic
         }
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
-          case JsSuccess(response, _) => throw ORNValidationError(response.code, response.message)
+          case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse

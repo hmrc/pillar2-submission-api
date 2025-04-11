@@ -122,7 +122,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
 
-          result shouldFailWith TestEndpointDisabled()
+          result shouldFailWith TestEndpointDisabled
         }
       }
 
@@ -130,7 +130,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return 403 FORBIDDEN" in {
           val result = controller(testEndpointsEnabled = false).getTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result shouldFailWith TestEndpointDisabled()
+          result shouldFailWith TestEndpointDisabled
         }
       }
 
@@ -140,7 +140,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
 
-          result shouldFailWith TestEndpointDisabled()
+          result shouldFailWith TestEndpointDisabled
         }
       }
 
@@ -148,7 +148,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return 403 FORBIDDEN" in {
           val result = controller(testEndpointsEnabled = false).deleteTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result shouldFailWith TestEndpointDisabled()
+          result shouldFailWith TestEndpointDisabled
         }
       }
     }
