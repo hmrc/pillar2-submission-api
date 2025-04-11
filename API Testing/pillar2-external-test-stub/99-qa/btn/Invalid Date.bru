@@ -1,7 +1,7 @@
 meta {
-  name: Submit BTN - Invalid JSON
+  name: Invalid Date
   type: http
-  seq: 5
+  seq: 4
 }
 
 post {
@@ -17,14 +17,19 @@ headers {
 
 body:json {
   {
-    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodFrom": "2024-001-01",
     "accountingPeriodTo": "2024-12-31"
-    invalid_json_here
   }
 }
 
 tests {
   test("should return 400 for invalid JSON", function() {
     expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain error about invalid JSON", function() {
+    expect(res.body.error.code).to.equal("400");
+    expect(res.body.error.message).to.include("Bad request");
+      expect(res.body.error.logID).to.include("C0000000000000000000000000000400");
   });
 }

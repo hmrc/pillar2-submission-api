@@ -1,7 +1,7 @@
 meta {
-  name: Submit BTN - Unauthorized
+  name: Invalid JSON
   type: http
-  seq: 6
+  seq: 5
 }
 
 post {
@@ -12,17 +12,19 @@ post {
 
 headers {
   X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
 }
 
 body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31"
+    invalid_json_here
   }
 }
 
 tests {
-  test("should return 403 when no auth token provided", function() {
-    expect(res.getStatus()).to.equal(403);
+  test("should return 400 for invalid JSON", function() {
+    expect(res.getStatus()).to.equal(400);
   });
 }

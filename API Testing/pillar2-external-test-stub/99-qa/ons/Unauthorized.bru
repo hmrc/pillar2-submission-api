@@ -1,12 +1,12 @@
 meta {
-  name: Retrieve OaS - Unauthorized
+  name: Unauthorized
   type: http
-  seq: 3
+  seq: 2
 }
 
 get {
   url: {{externalTestStubUrl}}/RESTAdapter/plr/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-31
-  body: json
+  body: none
   auth: none
 }
 
@@ -16,19 +16,11 @@ params:query {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
 }
 
-body:json {
-  {
-    "accountingPeriodFrom": "2024-01-01",
-    "accountingPeriodTo": "2024-12-31"
-  }
-}
-
 tests {
-  test("should return 403 when no auth token provided", function() {
+  test("should return 401 Unauthorized", function() {
     expect(res.getStatus()).to.equal(403);
   });
 }
