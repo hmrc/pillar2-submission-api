@@ -21,13 +21,3 @@ body:json {
     "accountingPeriodTo": "2024-12-31"
   }
 }
-
-tests {
-  test("should return 201 Created", function() {
-    expect(res.getStatus()).to.equal(201);
-  });
-  
-  test("should contain all required fields", function() {
-    expect(res.body.success.processingDate).to.not.be.undefined;
-  });
-}

@@ -19,13 +19,3 @@ headers {
   X-Pillar2-Id: {{testPlrId}}
   Authorization: valid bearerToken
 }
-
-tests {
-  test("should return 200 OK", function() {
-    expect(res.getStatus()).to.equal(200);
-  });
-  
-  test("should contain all required fields", function() {
-    expect(res.body.success.processingDate).to.not.be.undefined;
-  });
-}

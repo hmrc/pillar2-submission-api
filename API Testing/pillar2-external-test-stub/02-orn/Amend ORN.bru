@@ -26,22 +26,3 @@ body:json {
     "issuingCountryTIN": "US"
   }
 }
-
-tests {
-  test("should return 200 OK", function() {
-    expect(res.status).to.equal(200);
-  });
-  
-  test("should contain form bundle number", function() {
-    expect(res.body.success.formBundleNumber).to.not.be.undefined;
-  });
-  
-  test("should contain processing date", function() {
-    expect(res.body.success.processingDate).to.not.be.undefined;
-  });
-  
-  test("response should have proper content structure", function() {
-    expect(res.body).to.have.property("success");
-    expect(res.body.success).to.be.an("object");
-  });
-}

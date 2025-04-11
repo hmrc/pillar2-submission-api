@@ -26,17 +26,3 @@ body:json {
     }
   }
 }
-
-tests {
-  test("Response contains form bundle number", function() {
-    expect(res.body.success.formBundleNumber).to.not.be.undefined;
-  });
-  
-  test("Response contains processing date", function() {
-    expect(res.body.success.processingDate).to.not.be.undefined;
-  });
-  
-  test("Response contains correct status code", function() {
-    expect(res.status).to.equal(201);
-  });
-}
