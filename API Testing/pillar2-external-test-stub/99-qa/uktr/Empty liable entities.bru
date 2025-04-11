@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - empty liable entities
+  name: Empty liable entities
   type: http
   seq: 5
 }
@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Content-Type: application/json
+
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -42,11 +42,11 @@ tests {
   test("Response contains correct error code", function() {
     expect(res.body.errors.code).to.equal("093");
   });
-
+  
   test("Response contains correct error message", function() {
     expect(res.body.errors.text).to.equal("Invalid return");
   });
-
+  
   test("Status code is 422", function() {
     expect(res.status).to.equal(422);
   });

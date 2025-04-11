@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - total liabilityDTT too high
+  name: total liabilityDTT too high
   type: http
   seq: 4
 }
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -56,11 +55,11 @@ tests {
   test("Status code is 422", function() {
     expect(res.getStatus()).to.equal(422)
   });
-
+  
   test("Response contains error code 098", function() {
     expect(res.body.errors.code).to.equal('098')
   });
-
+  
   test("Response contains error message", function() {
     expect(res.body.errors.text).to.equal('Invalid total liability DTT')
   });

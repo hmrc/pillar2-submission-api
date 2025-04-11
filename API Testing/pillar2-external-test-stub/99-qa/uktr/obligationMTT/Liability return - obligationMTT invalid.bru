@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - total liabilityIIR too high
+  name: Liability return - obligationMTT invalid
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -20,16 +19,16 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": false,
+    "obligationMTT": true,
     "electionUKGAAP": true,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 1000,
+      "totalLiability": 10000.99,
       "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": {{totalLiabilityIIR}},
+      "totalLiabilityIIR": 4000,
       "totalLiabilityUTPR": 10000.99,
       "liableEntities": [
         {
@@ -49,19 +48,12 @@ tests {
   test("Status code is 422", function() {
     expect(res.getStatus()).to.equal(422)
   });
-
-  test("Response contains error code 097", function() {
-    expect(res.body.errors.code).to.equal('097')
+  
+  test("Error code is 093", function() {
+    expect(res.body.errors.code).to.equal('093')
   });
-
-  test("Response contains error message", function() {
-    expect(res.body.errors.text).to.equal('Invalid total liability IIR')
-  }); 
-}
-
-script:pre-request {
-  let testAmount = ( Math.random() * (99999999999999 - 10000000000000) + 10000000000000).toFixed(2)
-  let negative = Math.random() < 0.5;
-  var testValue = negative ? testAmount * -1 : testAmount
-  bru.setVar("totalLiabilityIIR",testValue)
+  
+  test("Error message is correct", function() {
+    expect(res.body.errors.text).to.equal('Invalid return')
+  });
 }

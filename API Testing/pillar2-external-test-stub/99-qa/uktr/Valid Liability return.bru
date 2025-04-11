@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - obligationMTT valid
+  name: Valid Liability return
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -27,18 +26,18 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000.99,
-      "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": 4000,
-      "totalLiabilityUTPR": 10000.99,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 3400,
-          "amountOwedUTPR": 6000.5
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
         }
       ]
     }
@@ -46,20 +45,20 @@ body:json {
 }
 
 tests {
-  test("Status code is 201", function() {
-    expect(res.getStatus()).to.equal(201)
+  test("Response contains form bundle number", function() {
+    expect(res.body.success.formBundleNumber).to.not.be.undefined;
   });
-
-  test("Response contains processingDate", function() {
-    expect(res.body.success.processingDate).to.be.not.undefined
+  
+  test("Response contains processing date", function() {
+    expect(res.body.success.processingDate).to.not.be.undefined;
   });
-
-  test("Response contains formBundleNumber", function() {
-    expect(res.body.success.formBundleNumber).to.be.not.undefined
+  
+  test("Response contains charge reference", function() {
+    expect(res.body.success.chargeReference).to.not.be.undefined;
   });
-
-  test("Response contains chargeReference", function() {
-    expect(res.body.success.chargeReference).to.be.not.undefined
+  
+  test("Response contains correct status code", function() {
+    expect(res.status).to.equal(201);
   });
-
+  
 }

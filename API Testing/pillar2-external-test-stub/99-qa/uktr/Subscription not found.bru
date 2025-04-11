@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - GAAP valid
+  name: Subscription not found
   type: http
   seq: 1
 }
@@ -11,16 +11,16 @@ post {
 }
 
 headers {
-  Content-Type: application/json
+
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
 
 body:json {
   {
-    "accountingPeriodFrom": "2024-01-01",
-    "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": false,
+    "accountingPeriodFrom": "2024-08-14",
+    "accountingPeriodTo": "2024-12-14",
+    "obligationMTT": true,
     "electionUKGAAP": true,
     "liabilities": {
       "electionDTTSingleMember": false,
@@ -46,20 +46,15 @@ body:json {
 }
 
 tests {
-  test("Status code is 201", function() {
-    expect(res.getStatus()).to.equal(201)
-  });
-
-  test("Response contains processingDate", function() {
-    expect(res.body.success.processingDate).to.be.not.undefined
-  });
-
-  test("Response contains formBundleNumber", function() {
-    expect(res.body.success.formBundleNumber).to.be.not.undefined
+  test("Response contains correct error code", function() {
+    expect(res.body.errors.code).to.equal("007");
   });
   
-  test("Response contains chargeReference", function() {
-    expect(res.body.success.chargeReference).to.be.not.undefined
+  test("Response contains correct error code", function() {
+    expect(res.body.errors.text).to.equal("Business partner does not have an Active subscription");
   });
   
+  test("Status code is 422", function() {
+    expect(res.status).to.equal(422);
+  });
 }

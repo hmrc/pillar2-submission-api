@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - total liabilityDTT valid
+  name: total liabilityDTT valid
   type: http
   seq: 1
 }
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -54,15 +53,15 @@ tests {
   test("Status code is 201", function() {
     expect(res.getStatus()).to.equal(201)
   });
-
+  
   test("Response contains processingDate", function() {
     expect(res.body.success.processingDate).to.be.not.undefined
   });
-
+  
   test("Response contains formBundleNumber", function() {
     expect(res.body.success.formBundleNumber).to.be.not.undefined
   });
-
+  
   test("Response contains chargeReference", function() {
     expect(res.body.success.chargeReference).to.be.not.undefined
   });

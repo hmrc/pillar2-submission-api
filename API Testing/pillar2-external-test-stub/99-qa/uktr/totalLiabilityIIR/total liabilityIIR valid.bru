@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - subscription not found
+  name: total liabilityIIR valid
   type: http
   seq: 1
 }
@@ -11,25 +11,24 @@ post {
 }
 
 headers {
-  Content-Type: application/json
-  X-Pillar2-Id: XMPLR0012345674
+  X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
 
 body:json {
   {
-    "accountingPeriodFrom": "2024-08-14",
-    "accountingPeriodTo": "2024-12-14",
-    "obligationMTT": true,
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
     "electionUKGAAP": true,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000.99,
+      "totalLiability": 100101,
       "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": 4000,
+      "totalLiabilityIIR": {{totalLiabilityIIR}},
       "totalLiabilityUTPR": 10000.99,
       "liableEntities": [
         {
@@ -45,16 +44,21 @@ body:json {
   }
 }
 
+script:pre-request {
+  let testValue = Math.random(0, 9999999999999.99).toFixed(2)
+  bru.setVar("totalLiabilityIIR",testValue)
+}
+
 tests {
-  test("Response contains correct error code", function() {
-    expect(res.body.errors.code).to.equal("007");
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201)
   });
-
-  test("Response contains correct error code", function() {
-    expect(res.body.errors.text).to.equal("Business partner does not have an Active subscription");
+  
+  test("Response contains processingDate", function() {
+    expect(res.body.success.processingDate).to.be.not.undefined
   });
-
-  test("Status code is 422", function() {
-    expect(res.status).to.equal(422);
+  
+  test("Response contains formBundleNumber", function() {
+    expect(res.body.success.formBundleNumber).to.be.not.undefined
   });
 }

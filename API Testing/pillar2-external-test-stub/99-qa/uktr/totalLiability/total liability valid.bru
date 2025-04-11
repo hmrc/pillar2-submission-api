@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - valid request
+  name: total liability valid
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -27,7 +26,7 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000.99,
+      "totalLiability": {{totalLiability}},
       "totalLiabilityDTT": 5000.99,
       "totalLiabilityIIR": 4000,
       "totalLiabilityUTPR": 10000.99,
@@ -45,21 +44,25 @@ body:json {
   }
 }
 
-tests {
-  test("Response contains form bundle number", function() {
-    expect(res.body.success.formBundleNumber).to.not.be.undefined;
-  });
-  
-  test("Response contains processing date", function() {
-    expect(res.body.success.processingDate).to.not.be.undefined;
-  });
+script:pre-request {
+  let testValue =( Math.random() * (9999999999999.99)).toFixed(2)
+  bru.setVar("totalLiability",testValue)
+}
 
-  test("Response contains charge reference", function() {
-    expect(res.body.success.chargeReference).to.not.be.undefined;
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201)
   });
   
-  test("Response contains correct status code", function() {
-    expect(res.status).to.equal(201);
+  test("Response contains processingDate", function() {
+    expect(res.body.success.processingDate).to.be.not.undefined
   });
   
+  test("Response contains formBundleNumber", function() {
+    expect(res.body.success.formBundleNumber).to.be.not.undefined
+  });
+  
+  test("Response contains chargeReference", function() {
+    expect(res.body.success.chargeReference).to.be.not.undefined
+  });
 }

@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - total liability invalid decimals
+  name: total liabilityDTT invalid decimals
   type: http
   seq: 3
 }
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -27,8 +26,8 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": {{totalLiability}},
-      "totalLiabilityDTT": 5000.99,
+      "totalLiability": 100,
+      "totalLiabilityDTT": {{totalLiabilityDTT}},
       "totalLiabilityIIR": 4000,
       "totalLiabilityUTPR": 10000.99,
       "liableEntities": [
@@ -46,23 +45,24 @@ body:json {
 }
 
 script:pre-request {
-  let testAmount = ( Math.random() * (9999999999 - 1000000000) + 1000000000).toFixed(3)
+  let testAmount = ( Math.random() * (99999999999999 - 10000000000000) + 10000000000000).toFixed(2)
   let negative = Math.random() < 0.5;
   var testValue = negative ? testAmount * -1 : testAmount
-  bru.setVar("totalLiability",testValue)
+  bru.setVar("totalLiabilityDTT",testValue)
 }
 
 tests {
   test("Status code is 422", function() {
     expect(res.getStatus()).to.equal(422)
   });
-
-  test("Response contains error code 096", function() {
-    expect(res.body.errors.code).to.equal('096')
+  
+  test("Response contains error code 098", function() {
+    expect(res.body.errors.code).to.equal('098')
   });
-
+  
   test("Response contains error message", function() {
-    expect(res.body.errors.text).to.equal('Invalid total liability')
+    expect(res.body.errors.text).to.equal('Invalid total liability DTT')
   });
+  
   
 }
