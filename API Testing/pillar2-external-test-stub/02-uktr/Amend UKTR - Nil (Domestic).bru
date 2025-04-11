@@ -1,7 +1,7 @@
 meta {
-  name: Amend UKTR - Nil return
+  name: Amend UKTR - Nil (Domestic)
   type: http
-  seq: 4
+  seq: 8
 }
 
 put {
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "returnType": "NIL_RETURN"
@@ -37,6 +37,6 @@ tests {
   });
   
   test("Response contains correct status code", function() {
-    expect(res.status).to.equal(200);
+    expect(res.status).to.equal(201);
   });
 }

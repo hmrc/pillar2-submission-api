@@ -1,0 +1,42 @@
+meta {
+  name: Create Organisation (Domestic)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    }
+  }
+}
+
+tests {
+  // Status code should be 201 for successful creation
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201)
+  });
+  
+  // Response should contain the created organisation details
+  test("Response contains organisation details", function() {
+    expect(res.body.organisation.orgDetails.organisationName).to.equal("Test Organisation Ltd")
+  });
+  
+  // Response should contain the pillar2Id
+  test("Response contains pillar2Id", function() {
+    expect(res.body).to.have.property("pillar2Id")
+  });
+}

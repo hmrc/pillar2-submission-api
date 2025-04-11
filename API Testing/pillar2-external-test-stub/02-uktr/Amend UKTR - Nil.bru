@@ -1,0 +1,42 @@
+meta {
+  name: Amend UKTR - Nil
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": true,
+    "electionUKGAAP": false,
+    "liabilities": {
+      "returnType": "NIL_RETURN"
+    }
+  }
+}
+
+tests {
+  test("Response contains form bundle number", function() {
+    expect(res.body.success.formBundleNumber).to.not.be.undefined;
+  });
+  
+  test("Response contains processing date", function() {
+    expect(res.body.success.processingDate).to.not.be.undefined;
+  });
+  
+  test("Response contains correct status code", function() {
+    expect(res.status).to.equal(200);
+  });
+}

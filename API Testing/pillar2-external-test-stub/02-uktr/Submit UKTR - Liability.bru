@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - Nil return
+  name: Submit UKTR - Liability
   type: http
-  seq: 4
+  seq: 1
 }
 
 post {
@@ -22,7 +22,24 @@ body:json {
     "obligationMTT": true,
     "electionUKGAAP": false,
     "liabilities": {
-      "returnType": "NIL_RETURN"
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Newco PLC",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 5000,
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
+        }
+      ]
     }
   }
 }
@@ -36,7 +53,12 @@ tests {
     expect(res.body.success.processingDate).to.not.be.undefined;
   });
   
+  test("Response contains charge reference", function() {
+    expect(res.body.success.chargeReference).to.not.be.undefined;
+  });
+  
   test("Response contains correct status code", function() {
     expect(res.status).to.equal(201);
   });
+  
 }
