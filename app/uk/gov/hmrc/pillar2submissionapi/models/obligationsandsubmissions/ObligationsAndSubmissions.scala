@@ -59,8 +59,8 @@ sealed trait ObligationType extends EnumEntry
 object ObligationType extends Enum[ObligationType] with PlayJsonEnum[ObligationType] {
   val values: IndexedSeq[ObligationType] = findValues
 
-  case object Pillar2TaxReturn extends ObligationType
-  case object GlobeInformationReturn extends ObligationType
+  case object UKTR extends ObligationType
+  case object GIR extends ObligationType
 }
 
 case class Submission(submissionType: SubmissionType, receivedDate: ZonedDateTime, country: Option[String])
@@ -73,8 +73,10 @@ sealed trait SubmissionType extends EnumEntry
 object SubmissionType extends Enum[SubmissionType] with PlayJsonEnum[SubmissionType] {
   val values: IndexedSeq[SubmissionType] = findValues
 
-  case object UKTR extends SubmissionType
-  case object ORN extends SubmissionType
+  case object UKTR_CREATE extends SubmissionType
+  case object UKTR_AMEND extends SubmissionType
+  case object ORN_CREATE extends SubmissionType
+  case object ORN_AMEND extends SubmissionType
   case object BTN extends SubmissionType
   case object GIR extends SubmissionType
 }
