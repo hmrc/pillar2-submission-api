@@ -119,8 +119,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
         result.status mustEqual BAD_REQUEST
         val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        errorResponse.code mustEqual "INVALID_JSON"
+        errorResponse.message mustEqual "Invalid JSON payload"
       }
 
       "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
@@ -133,9 +133,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(invalidIssuingCountryTINJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual BAD_REQUEST
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
       }
 
       "return 400 BAD_REQUEST when reportingEntityName is empty" in {
@@ -148,9 +147,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(emptyReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual BAD_REQUEST
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
       }
 
       "return 400 BAD_REQUEST when TIN is empty" in {
@@ -163,9 +161,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(emptyTINJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual BAD_REQUEST
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
       }
 
       "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
@@ -178,9 +175,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(longReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual BAD_REQUEST
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
       }
 
       "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
@@ -193,9 +189,8 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         val result = Await.result(baseRequest.withBody(longTINJson).execute[HttpResponse], 5.seconds)
 
         result.status mustEqual BAD_REQUEST
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "001"
-        errorResponse.message mustEqual "Invalid JSON Payload"
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
       }
 
       "return 201 CREATED for request with duplicate fields and additional fields" in {
