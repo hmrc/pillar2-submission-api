@@ -937,6 +937,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 No Active Subscription Found:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
                 Tax Obligation Fulfilled:
