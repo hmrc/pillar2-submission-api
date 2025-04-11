@@ -64,7 +64,7 @@ class SubmitORNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitORNConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("093", "Invalid Return")), Map.empty)))
 
-      intercept[ORNValidationError](await(submitORNService.submitORN(validORNSubmission)))
+      intercept[DownstreamValidationError](await(submitORNService.submitORN(validORNSubmission)))
     }
   }
 

@@ -428,8 +428,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -462,7 +460,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "403":
           description: Forbidden
           content:
@@ -617,8 +615,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -649,7 +645,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "403":
           description: Forbidden
           content:
@@ -734,8 +730,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
@@ -776,7 +770,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
@@ -866,8 +860,6 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Duplicate Acknowledgment:
@@ -881,6 +873,15 @@ paths:
               examples:
                 Unauthorized:
                   $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
         "200":
           description: OK Obligations and Submissions retrieved
           content:
@@ -936,83 +937,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '003'
-                message: Not authorized
         "422":
           description: Business Validation Failure
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Pillar2ID:
-                  value:
-                    code: '089'
-                    message: ID number missing or invalid
-                Invalid Request:
-                  value:
-                    code: '003'
-                    message: Request could not be processed
-                Duplicate Acknowledgment:
-                  value:
-                    code: '004'
-                    message: Duplicate acknowledgment reference
-                No Active Submission:
-                  value:
-                    code: '063'
-                    message: Business Partner does not have an Active Subscription for this Regime
-                Tax Obligation Fulfilled:
-                  value:
-                    code: '044'
-                    message: Tax Obligation already fulfilled
-                Invalid Return:
-                  value:
-                    code: '093'
-                    message: Invalid Return
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  value:
-                    code: '001'
-                    message: Invalid JSON payload
-                Empty Request Body:
-                  value:
-                    code: '002'
-                    message: Empty body in request
-                Missing Header:
-                  value:
-                    code: '005'
-                    message: Missing Header in request
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              example:
-                code: '006'
-                message: Forbidden
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  value:
-                    code: 500
-                    message: Internal Server Error
-                No Subscription Data:
-                  value:
-                    code: '004'
-                    message: No Pillar2 subscription found for -pillar2Id
       description: |
         Submit an Overseas Return Notification
       security:
@@ -1541,21 +1489,26 @@ components:
       value:
         code: '003'
         message: Not authorized
+    errors.InvalidDateRange:
+      summary: Invalid date range
+      value:
+        code: INVALID_DATE_RANGE
+        message: Invalid date range
+    errors.InvalidDateFormat:
+      summary: Invalid date format
+      value:
+        code: INVALID_DATE_FORMAT
+        message: Invalid date format
     errors.InvalidJson:
       summary: Invalid JSON payload
       value:
-        code: '001'
+        code: INVALID_JSON
         message: Invalid JSON payload
     errors.EmptyBody:
       summary: Empty request body
       value:
-        code: '002'
-        message: Empty body in request
-    errors.Submission.InvalidPillar2ID:
-      summary: Invalid Pillar2 ID
-      value:
-        code: '002'
-        message: Pillar 2 ID missing or invalid
+        code: EMPTY_REQUEST_BODY
+        message: Empty request body
     errors.Submission.Unauthorized:
       summary: Unauthorized
       value:
@@ -1571,11 +1524,11 @@ components:
       value:
         code: '004'
         message: No Pillar2 subscription found for -pillar2Id
-    errors.Submission.MissingHeader:
-      summary: Missing header
+    errors.Submission.MissingPillar2Header:
+      summary: Missing Pillar 2 header
       value:
-        code: '005'
-        message: Missing Header in request
+        code: MISSING_HEADER
+        message: Please provide the X-Pillar2-Id header
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:

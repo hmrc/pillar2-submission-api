@@ -103,7 +103,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "500":
           description: Internal Server Error
           content:
@@ -127,8 +127,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -203,7 +201,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "500":
           description: Internal Server Error
           content:
@@ -227,8 +225,6 @@ paths:
               examples:
                 Invalid UTPR Election:
                   $ref: "#/components/examples/errors.Submission.InvalidUTPR"
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Total Liability IIR:
                   $ref: "#/components/examples/errors.Submission.InvalidTotalLiabilityIIR"
                 Invalid DTT Election:
@@ -310,7 +306,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "500":
           description: Internal Server Error
           content:
@@ -332,8 +328,6 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Tax Obligation Fulfilled:
@@ -399,8 +393,6 @@ paths:
           content:
             application/json:
               examples:
-                Invalid Pillar2ID:
-                  $ref: "#/components/examples/errors.Submission.InvalidPillar2ID"
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 Duplicate Acknowledgment:
@@ -414,6 +406,15 @@ paths:
               examples:
                 Unauthorized:
                   $ref: "#/components/examples/errors.Submission.Unauthorized"
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
         "200":
           description: OK Obligations and Submissions retrieved
           content:
@@ -892,21 +893,26 @@ components:
       value:
         code: "003"
         message: "Not authorized"
+    errors.InvalidDateRange:
+      summary: Invalid date range
+      value:
+        code: 'INVALID_DATE_RANGE'
+        message: Invalid date range
+    errors.InvalidDateFormat:
+      summary: Invalid date format
+      value:
+        code: 'INVALID_DATE_FORMAT'
+        message: Invalid date format
     errors.InvalidJson:
       summary: Invalid JSON payload
       value:
-        code: '001'
+        code: 'INVALID_JSON'
         message: Invalid JSON payload
     errors.EmptyBody:
       summary: Empty request body
       value:
-        code: '002'
-        message: Empty body in request
-    errors.Submission.InvalidPillar2ID:
-      summary: Invalid Pillar2 ID
-      value:
-        code: '002'
-        message: Pillar 2 ID missing or invalid
+        code: 'EMPTY_REQUEST_BODY'
+        message: Empty request body
     errors.Submission.Unauthorized:
       summary: Unauthorized
       value:
@@ -922,11 +928,11 @@ components:
       value:
         code: '004'
         message: No Pillar2 subscription found for -pillar2Id
-    errors.Submission.MissingHeader:
-      summary: Missing header
+    errors.Submission.MissingPillar2Header:
+      summary: Missing Pillar 2 header
       value:
-        code: '005'
-        message: Missing Header in request
+        code: 'MISSING_HEADER'
+        message: Please provide the X-Pillar2-Id header
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
