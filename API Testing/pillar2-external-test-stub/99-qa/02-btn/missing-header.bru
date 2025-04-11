@@ -1,7 +1,7 @@
 meta {
   name: Submit BTN - Missing X-Pillar2-Id Header
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -11,8 +11,7 @@ post {
 }
 
 headers {
-  Content-Type: application/json
-  Authorization: {{bearerToken}}
+  Authorization: valid bearerToken
 }
 
 body:json {
@@ -25,6 +24,7 @@ body:json {
 tests {
   test("should return 422 when X-Pillar2-Id header is missing", function() {
     expect(res.status).to.equal(422);
-    expect(res.body.errors.text).to.include("Pillar2 ID is missing or invalid");
+    expect(res.body.errors.code).to.include("089");
+    expect(res.body.errors.text).to.include("ID number missing or invalid");
   });
 }

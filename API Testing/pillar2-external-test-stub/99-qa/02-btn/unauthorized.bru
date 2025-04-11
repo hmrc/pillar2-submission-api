@@ -1,7 +1,7 @@
 meta {
   name: Submit BTN - Unauthorized
   type: http
-  seq: 7
+  seq: 6
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
 }
 
@@ -26,4 +25,4 @@ tests {
   test("should return 403 when no auth token provided", function() {
     expect(res.getStatus()).to.equal(403);
   });
-} 
+}

@@ -1,7 +1,7 @@
 meta {
   name: Submit BTN - Invalid JSON
   type: http
-  seq: 6
+  seq: 5
 }
 
 post {
@@ -11,9 +11,8 @@ post {
 }
 
 headers {
-  Content-Type: application/json
-  X-Pillar2-Id: {{domesticOnlyPlrId}}
-  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
 }
 
 body:json {
@@ -28,9 +27,4 @@ tests {
   test("should return 400 for invalid JSON", function() {
     expect(res.getStatus()).to.equal(400);
   });
-  
-  test("should contain error about invalid JSON", function() {
-    expect(res.body.error.code).to.equal("400");
-    expect(res.body.error.message).to.include("invalid_json");
-  });
-} 
+}

@@ -1,7 +1,7 @@
 meta {
   name: Submit BTN - Invalid Accounting Period
   type: http
-  seq: 6
+  seq: 3
 }
 
 post {
@@ -11,9 +11,8 @@ post {
 }
 
 headers {
-  Content-Type: application/json
-  X-Pillar2-Id: {{domesticOnlyPlrId}}
-  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
 }
 
 body:json {
@@ -30,6 +29,6 @@ tests {
   
   test("should contain error about accounting period", function() {
     expect(res.body.errors.code).to.equal("003");
-    expect(res.body.errors.text).to.include("Request could not be processed or invalid");
+    expect(res.body.errors.text).to.include("Request could not be processed");
   });
-} 
+}

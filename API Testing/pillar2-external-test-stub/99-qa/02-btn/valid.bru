@@ -1,7 +1,7 @@
 meta {
   name: Submit BTN - Valid Submission
   type: http
-  seq: 2
+  seq: 7
 }
 
 post {
@@ -12,8 +12,8 @@ post {
 
 headers {
   Content-Type: application/json
-  X-Pillar2-Id: {{domesticOnlyPlrId}}
-  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
 }
 
 body:json {
