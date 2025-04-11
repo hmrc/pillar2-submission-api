@@ -108,6 +108,91 @@ class ORNSubmissionISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual BAD_REQUEST
       }
 
+      "return 400 BAD_REQUEST when countryGIR is longer than 2 characters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(invalidCountryGIRJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "INVALID_JSON"
+        errorResponse.message mustEqual "Invalid JSON payload"
+      }
+
+      "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(invalidIssuingCountryTINJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
+      }
+
+      "return 400 BAD_REQUEST when reportingEntityName is empty" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(emptyReportingEntityNameJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
+      }
+
+      "return 400 BAD_REQUEST when TIN is empty" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(emptyTINJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
+      }
+
+      "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(longReportingEntityNameJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
+      }
+
+      "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val result = Await.result(baseRequest.withBody(longTINJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        result.json.as[ORNErrorResponse].code mustEqual "INVALID_JSON"
+        result.json.as[ORNErrorResponse].message mustEqual "Invalid JSON payload"
+      }
+
       "return 201 CREATED for request with duplicate fields and additional fields" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
@@ -265,6 +350,76 @@ object ORNSubmissionISpec {
     Json.parse("""{
                  |  "badRequest": ""
                  |}""".stripMargin)
+
+  val invalidCountryGIRJson: JsValue =
+    Json.parse("""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"USA",
+                 |  "reportingEntityName" : "Newco PLC",
+                 |  "TIN" : "US12345678",
+                 |  "issuingCountryTIN" : "US"
+                 |}""".stripMargin)
+
+  val invalidIssuingCountryTINJson: JsValue =
+    Json.parse("""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"US",
+                 |  "reportingEntityName" : "Newco PLC",
+                 |  "TIN" : "US12345678",
+                 |  "issuingCountryTIN" : "USA"
+                 |}""".stripMargin)
+
+  val emptyReportingEntityNameJson: JsValue =
+    Json.parse("""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"US",
+                 |  "reportingEntityName" : "",
+                 |  "TIN" : "US12345678",
+                 |  "issuingCountryTIN" : "US"
+                 |}""".stripMargin)
+
+  val emptyTINJson: JsValue =
+    Json.parse("""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"US",
+                 |  "reportingEntityName" : "Newco PLC",
+                 |  "TIN" : "",
+                 |  "issuingCountryTIN" : "US"
+                 |}""".stripMargin)
+
+  val longReportingEntityNameJson: JsValue = {
+    val longString = "a" * 201
+    Json.parse(s"""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"US",
+                 |  "reportingEntityName" : "$longString",
+                 |  "TIN" : "US12345678",
+                 |  "issuingCountryTIN" : "US"
+                 |}""".stripMargin)
+  }
+
+  val longTINJson: JsValue = {
+    val longString = "a" * 201
+    Json.parse(s"""{
+                 |  "accountingPeriodFrom": "2023-01-01",
+                 |  "accountingPeriodTo": "2024-12-31",
+                 |  "filedDateGIR": "2024-12-31",
+                 |  "countryGIR":"US",
+                 |  "reportingEntityName" : "Newco PLC",
+                 |  "TIN" : "$longString",
+                 |  "issuingCountryTIN" : "US"
+                 |}""".stripMargin)
+  }
 
   val validRequestJson_duplicateFieldsAndAdditionalFields: JsValue =
     Json.parse("""{

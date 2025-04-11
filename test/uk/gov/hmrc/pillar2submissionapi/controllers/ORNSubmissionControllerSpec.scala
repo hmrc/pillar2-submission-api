@@ -131,5 +131,42 @@ class ORNSubmissionControllerSpec extends ControllerBaseSpec with ORNDataFixture
         status(result(validRequestJson_additionalFields)) mustEqual CREATED
       }
     }
+
+    "submitORN called with invalid field lengths" should {
+
+      "return InvalidJson response when countryGIR is longer than 2 characters" in {
+        val invalidCountryGIRJson: JsObject = ornRequestJs.as[JsObject] + ("countryGIR" -> JsString("USA"))
+        result(invalidCountryGIRJson) shouldFailWith InvalidJson
+      }
+
+      "return InvalidJson response when issuingCountryTIN is longer than 2 characters" in {
+        val invalidIssuingCountryTINJson: JsObject = ornRequestJs.as[JsObject] + ("issuingCountryTIN" -> JsString("USA"))
+        result(invalidIssuingCountryTINJson) shouldFailWith InvalidJson
+      }
+
+      "return InvalidJson response when reportingEntityName is empty" in {
+        val invalidReportingEntityNameJson: JsObject = ornRequestJs.as[JsObject] + ("reportingEntityName" -> JsString(""))
+        result(invalidReportingEntityNameJson) shouldFailWith InvalidJson
+      }
+
+      "return InvalidJson response when TIN is empty" in {
+        val invalidTinJson: JsObject = ornRequestJs.as[JsObject] + ("TIN" -> JsString(""))
+        result(invalidTinJson) shouldFailWith InvalidJson
+      }
+
+      "return InvalidJson response when reportingEntityName exceeds 200 characters" in {
+        val longString = "a" * 201
+        val invalidLongReportingEntityJson: JsObject = ornRequestJs.as[JsObject] + ("reportingEntityName" -> JsString(longString))
+        result(invalidLongReportingEntityJson) shouldFailWith InvalidJson
+      }
+
+      "return InvalidJson response when TIN exceeds 200 characters" in {
+        val longTin = "a" * 201
+        val invalidLongTinJson: JsObject = ornRequestJs.as[JsObject] + ("TIN" -> JsString(longTin))
+        result(invalidLongTinJson) shouldFailWith InvalidJson
+      }
+    }
+
   }
+
 }
