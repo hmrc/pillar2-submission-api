@@ -436,7 +436,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "500":
           description: Internal Server Error
           content:
