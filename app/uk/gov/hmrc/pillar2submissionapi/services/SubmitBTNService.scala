@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{BTNValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +43,7 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implic
         }
       case 422 =>
         response.json.validate[SubmitBTNErrorResponse] match {
-          case JsSuccess(response, _) => throw BTNValidationError(response.code, response.message)
+          case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
