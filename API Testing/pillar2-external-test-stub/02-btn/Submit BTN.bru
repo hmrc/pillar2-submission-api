@@ -1,19 +1,18 @@
 meta {
-  name: Submit Below Threshold Notification
+  name: Submit BTN
   type: http
   seq: 2
 }
 
 post {
-  url: {{localPillar2Url}}/below-threshold-notification/submit
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/below-threshold-notification
   body: json
   auth: none
 }
 
 headers {
-  Content-Type: application/json
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearerToken}}
+  Authorization: valid bearerToken
 }
 
 body:json {
@@ -29,8 +28,6 @@ tests {
   });
   
   test("should contain all required fields", function() {
-    expect(res.body.chargeReference).to.not.be.undefined;
-    expect(res.body.formBundleNumber).to.not.be.undefined;
-    expect(res.body.processingDate).to.not.be.undefined;
+    expect(res.body.success.processingDate).to.not.be.undefined;
   });
 }
