@@ -23,7 +23,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{InvalidRequest, MissingHeader, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions.ObligationsAndSubmissionsController
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
 
@@ -49,10 +49,10 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
     }
   }
 
-  "return InvalidRequest when date format is invalid" in {
+  "return InvalidDateFormat when date format is invalid" in {
     val result = request("invalid-date", toDate)
 
-    result shouldFailWith InvalidRequest
+    result shouldFailWith InvalidDateFormat
   }
 
   "return MissingHeader when X-Pillar2-Id header not provided" in {
@@ -61,10 +61,10 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
     result shouldFailWith MissingHeader.MissingPillar2Id
   }
 
-  "return InvalidRequest when date range is invalid" in {
+  "return InvalidDateRange when date range is invalid" in {
     val result = request(toDate, fromDate)
 
-    result shouldFailWith InvalidRequest
+    result shouldFailWith InvalidDateRange
   }
 
   "return InternalServerError when service call fails" in {

@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import play.api.Logging
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
+import play.api.mvc.Results.Status
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
@@ -27,30 +28,29 @@ import scala.concurrent.Future
 
 class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
-    Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(statusCode.toString, message))))
-
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+    val errorResponse = statusCode match {
+      case 400 => Pillar2ErrorResponse("BAD_REQUEST", message)
+      case 408 => Pillar2ErrorResponse("REQUEST_TIMEOUT", message)
+      case 413 => Pillar2ErrorResponse("PAYLOAD_TOO_LARGE", message)
+      case 415 => Pillar2ErrorResponse("UNSUPPORTED_MEDIA_TYPE", message)
+      case _   => Pillar2ErrorResponse(statusCode.toString, message)
+    }
+    Future.successful(Status(statusCode)(Json.toJson(errorResponse)))
+  }
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
-      case err if err.isInstanceOf[Pillar2Error] =>
-        val pillar2Error: Pillar2Error = err.asInstanceOf[Pillar2Error]
-        val ret = pillar2Error match {
-          case e @ InvalidRequest                                 => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
-          case e @ InvalidJson                                    => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
-          case e @ EmptyRequestBody                               => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
-          case e @ MissingHeader(_)                               => Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
-          case e @ AuthenticationError                            => Results.Unauthorized(Pillar2ErrorResponse(e.code, e.message))
-          case e @ ForbiddenError                                 => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
-          case e @ NoSubscriptionData(_)                          => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UktrValidationError(_, _)                      => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ BTNValidationError(_, _)                       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ ObligationsAndSubmissionsValidationError(_, _) => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ ORNValidationError(_, _)                       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case e @ OrganisationAlreadyExists(_)                   => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
-          case e @ OrganisationNotFound(_)                        => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
-          case e @ DatabaseError(_)                               => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ UnexpectedResponse                             => Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
-          case e @ TestEndpointDisabled()                         => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
+      case e: Pillar2Error =>
+        val ret = e match {
+          case InvalidDateRange | InvalidDateFormat | InvalidJson | EmptyRequestBody | MissingHeader(_) =>
+            Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
+          case AuthenticationError                   => Results.Unauthorized(Pillar2ErrorResponse(e.code, e.message))
+          case ForbiddenError | TestEndpointDisabled => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
+          case OrganisationNotFound(_)               => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
+          case OrganisationAlreadyExists(_)          => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
+          case DownstreamValidationError(_, _)       => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case DatabaseError(_) | UnexpectedResponse | NoSubscriptionData(_) =>
+            Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)
         Future.successful(ret)

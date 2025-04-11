@@ -39,11 +39,7 @@ class TestOrganisationController @Inject() (
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
-    if (config.testOrganisationEnabled) {
-      block
-    } else {
-      Future.failed(TestEndpointDisabled())
-    }
+    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
 
   def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
     checkTestEndpointsEnabled {
