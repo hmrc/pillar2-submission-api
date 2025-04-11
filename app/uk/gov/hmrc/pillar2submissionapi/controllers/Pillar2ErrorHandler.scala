@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import play.api.Logging
 import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
+import play.api.mvc.Results.Status
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
@@ -27,9 +28,16 @@ import scala.concurrent.Future
 
 class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
-    Future.successful(Results.BadRequest(Json.toJson(Pillar2ErrorResponse(statusCode.toString, message))))
-
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+    val errorResponse = statusCode match {
+      case 400 => Pillar2ErrorResponse("BAD_REQUEST", message)
+      case 408 => Pillar2ErrorResponse("REQUEST_TIMEOUT", message)
+      case 413 => Pillar2ErrorResponse("PAYLOAD_TOO_LARGE", message)
+      case 415 => Pillar2ErrorResponse("UNSUPPORTED_MEDIA_TYPE", message)
+      case _   => Pillar2ErrorResponse(statusCode.toString, message)
+    }
+    Future.successful(Status(statusCode)(Json.toJson(errorResponse)))
+  }
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
       case e: Pillar2Error =>

@@ -36,11 +36,57 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val messageGen  = Gen.alphaStr
     forAll(validStatus, messageGen) { (statusCode, message) =>
       val result = classUnderTest.onClientError(dummyRequest, statusCode, message)
-      status(result) mustEqual 400
+      status(result) mustEqual statusCode
       val response = contentAsJson(result).as[Pillar2ErrorResponse]
       response.message mustEqual message
-      response.code mustEqual statusCode.toString
+      response.code mustEqual (statusCode match {
+        case 400 => "BAD_REQUEST"
+        case 408 => "REQUEST_TIMEOUT"
+        case 413 => "PAYLOAD_TOO_LARGE"
+        case 415 => "UNSUPPORTED_MEDIA_TYPE"
+        case _   => statusCode.toString
+      })
     }
+  }
+
+  test("400 BAD_REQUEST error response") {
+    val response = classUnderTest.onClientError(dummyRequest, 400, "Invalid request")
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "BAD_REQUEST"
+    result.message mustEqual "Invalid request"
+  }
+
+  test("408 REQUEST_TIMEOUT error response") {
+    val response = classUnderTest.onClientError(dummyRequest, 408, "Request timeout")
+    status(response) mustEqual 408
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "REQUEST_TIMEOUT"
+    result.message mustEqual "Request timeout"
+  }
+
+  test("413 PAYLOAD_TOO_LARGE error response") {
+    val response = classUnderTest.onClientError(dummyRequest, 413, "Payload too large")
+    status(response) mustEqual 413
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "PAYLOAD_TOO_LARGE"
+    result.message mustEqual "Payload too large"
+  }
+
+  test("415 UNSUPPORTED_MEDIA_TYPE error response") {
+    val response = classUnderTest.onClientError(dummyRequest, 415, "Unsupported media type")
+    status(response) mustEqual 415
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "UNSUPPORTED_MEDIA_TYPE"
+    result.message mustEqual "Unsupported media type"
+  }
+
+  test("Unhandled client error status code response") {
+    val response = classUnderTest.onClientError(dummyRequest, 418, "I'm a teapot")
+    status(response) mustEqual 418
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "418"
+    result.message mustEqual "I'm a teapot"
   }
 
   test("Catch-all error response") {
