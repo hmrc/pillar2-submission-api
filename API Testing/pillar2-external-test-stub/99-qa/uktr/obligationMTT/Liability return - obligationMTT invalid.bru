@@ -26,18 +26,18 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000.99,
-      "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": 4000,
-      "totalLiabilityUTPR": 10000.99,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 3400,
-          "amountOwedUTPR": 6000.5
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
         }
       ]
     }
@@ -54,6 +54,6 @@ tests {
   });
   
   test("Error message is correct", function() {
-    expect(res.body.errors.text).to.equal('Invalid return')
+    expect(res.body.errors.text).to.equal('Invalid Return')
   });
 }

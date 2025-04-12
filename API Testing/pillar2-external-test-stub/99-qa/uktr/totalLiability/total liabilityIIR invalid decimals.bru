@@ -1,7 +1,7 @@
 meta {
-  name: Liability return - GAAP valid
+  name: total liabilityIIR invalid decimals
   type: http
-  seq: 2
+  seq: 6
 }
 
 post {
@@ -20,7 +20,7 @@ body:json {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
     "obligationMTT": false,
-    "electionUKGAAP": true,
+    "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
@@ -28,7 +28,7 @@ body:json {
       "numberSubGroupUTPR": 1,
       "totalLiability": 5000,
       "totalLiabilityDTT": 5000,
-      "totalLiabilityIIR": 0,
+      "totalLiabilityIIR": 0.999,
       "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
@@ -44,21 +44,25 @@ body:json {
   }
 }
 
+script:pre-request {
+  let testAmount = ( Math.random() * (99999999999999 - 10000000000000) + 10000000000000).toFixed(2)
+  let negative = Math.random() < 0.5;
+  var testValue = negative ? testAmount * -1 : testAmount
+  bru.setVar("totalLiabilityIIR",testValue)
+}
+
 tests {
-  test("Status code is 201", function() {
-    expect(res.getStatus()).to.equal(201)
+  test("Status code is 400", function() {
+    expect(res.getStatus()).to.equal(400)
   });
   
-  test("Response contains processingDate", function() {
-    expect(res.body.success.processingDate).to.be.not.undefined
+  test("Response contains error code 400", function() {
+    expect(res.body.error.code).to.equal('400')
   });
   
-  test("Response contains formBundleNumber", function() {
-    expect(res.body.success.formBundleNumber).to.be.not.undefined
-  });
-  
-  test("Response contains chargeReference", function() {
-    expect(res.body.success.chargeReference).to.be.not.undefined
+  test("Response contains error message", function() {
+    expect(res.body.error.message).to.equal('Bad request')
+    expect(res.body.error.logID).to.equal('C0000000000000000000000000000400')
   });
   
 }

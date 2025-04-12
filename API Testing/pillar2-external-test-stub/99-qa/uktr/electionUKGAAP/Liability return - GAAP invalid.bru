@@ -1,7 +1,7 @@
 meta {
-  name: total liabilityIIR zero
+  name: Liability return - GAAP invalid
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
@@ -19,46 +19,41 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": false,
+    "obligationMTT": true,
     "electionUKGAAP": true,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 100101,
-      "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": {{totalLiabilityIIR}},
-      "totalLiabilityUTPR": 10000.99,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 3400,
-          "amountOwedUTPR": 6000.5
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
         }
       ]
     }
   }
 }
 
-script:pre-request {
-  let testValue = 0
-  bru.setVar("totalLiabilityIIR",testValue)
-}
-
 tests {
-  test("Status code is 201", function() {
-    expect(res.getStatus()).to.equal(201)
+  test("Status code is 422", function() {
+    expect(res.getStatus()).to.equal(422)
   });
   
-  test("Response contains processingDate", function() {
-    expect(res.body.success.processingDate).to.be.not.undefined
+  test("Error code is 093", function() {
+    expect(res.body.errors.code).to.equal('093')
   });
   
-  test("Response contains formBundleNumber", function() {
-    expect(res.body.success.formBundleNumber).to.be.not.undefined
+  test("Error message is correct", function() {
+    expect(res.body.errors.text).to.equal('Invalid Return')
   });
 }

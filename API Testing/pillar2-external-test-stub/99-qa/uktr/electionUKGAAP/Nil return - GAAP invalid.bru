@@ -1,7 +1,7 @@
 meta {
   name: Nil return - GAAP invalid
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
@@ -37,7 +37,7 @@ tests {
   });
   
   test("Error message is correct", function() {
-    expect(res.body.errors.text).to.equal('Invalid return')
+    expect(res.body.errors.text).to.equal('Invalid Return')
   });
   
   

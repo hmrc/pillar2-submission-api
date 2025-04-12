@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - total liabilityUTPR too high
+  name: total liabilityUTPR invalid decimals
   type: http
-  seq: 4
+  seq: 8
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -27,36 +26,22 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 1000,
-      "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": 123,
-      "totalLiabilityUTPR": {{totalLiabilityUTPR}},
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0.999,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 3400,
-          "amountOwedUTPR": 6000.5
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
         }
       ]
     }
   }
-}
-
-tests {
-  test("Status code is 422", function() {
-    expect(res.getStatus()).to.equal(422)
-  });
-
-  test("Response contains error code 099", function() {
-    expect(res.body.errors.code).to.equal('099')
-  });
-
-  test("Response contains error message", function() {
-    expect(res.body.errors.text).to.equal('Invalid total liability UTPR')
-  });
 }
 
 script:pre-request {
@@ -64,4 +49,20 @@ script:pre-request {
   let negative = Math.random() < 0.5;
   var testValue = negative ? testAmount * -1 : testAmount
   bru.setVar("totalLiabilityUTPR",testValue)
+}
+
+tests {
+  test("Status code is 400", function() {
+    expect(res.getStatus()).to.equal(400)
+  });
+  
+  test("Response contains error code 400", function() {
+    expect(res.body.error.code).to.equal('400')
+  });
+  
+  test("Response contains error message", function() {
+    expect(res.body.error.message).to.equal('Bad request')
+    expect(res.body.error.logID).to.equal('C0000000000000000000000000000400')
+  });
+  
 }

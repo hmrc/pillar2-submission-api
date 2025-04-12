@@ -1,7 +1,7 @@
 meta {
   name: Valid Nil return
   type: http
-  seq: 4
+  seq: 6
 }
 
 post {
@@ -11,7 +11,6 @@ post {
 }
 
 headers {
-
   X-Pillar2-Id: {{testPlrId}}
   Authorization: validBearerToken
 }
@@ -21,7 +20,7 @@ body:json {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
     "obligationMTT": false,
-    "electionUKGAAP": true,
+    "electionUKGAAP": false,
     "liabilities": {
       "returnType": "NIL_RETURN"
     }

@@ -11,33 +11,32 @@ post {
 }
 
 headers {
-
   Authorization: validBearerToken
 }
 
 body:json {
   {
-    "accountingPeriodFrom": "2024-08-14",
-    "accountingPeriodTo": "2024-12-14",
-    "obligationMTT": true,
-    "electionUKGAAP": true,
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 10000.99,
-      "totalLiabilityDTT": 5000.99,
-      "totalLiabilityIIR": 4000,
-      "totalLiabilityUTPR": 10000.99,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 3400,
-          "amountOwedUTPR": 6000.5
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
         }
       ]
     }
@@ -50,11 +49,11 @@ tests {
   });
   
   test("Response contains correct error code", function() {
-    expect(res.body.errors.code).to.equal("002");
+    expect(res.body.errors.code).to.equal("089");
   });
   
   test("Response contains correct error message", function() {
-    expect(res.body.errors.text).to.equal("Pillar2 ID Missing or Invalid");
+    expect(res.body.errors.text).to.equal("ID number missing or invalid");
   });
   
 }
