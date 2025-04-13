@@ -1,8 +1,9 @@
 vars {
   environment: development
-  apiUrl: https://api.development.tax.service.gov.uk/organisations/pillar-two
+  url: https://api.development.tax.service.gov.uk
+  apiUrl: {{url}}/organisations/pillar-two
   client_id: 3P091N0H49jKqMfDky9pNz3aczpF
-  auth_code_url: https://www.{{environment}}.tax.service.gov.uk
+  auth_code_url: https://www.development.tax.service.gov.uk
 }
 vars:secret [
   client_secret,

@@ -1,11 +1,11 @@
 meta {
-  name: Exchange auth code
+  name: Exchange Auth Code
   type: http
   seq: 2
 }
 
 post {
-  url: {{apiUrl}}/oauth/token
+  url: {{url}}/oauth/token
   body: formUrlEncoded
   auth: none
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 body:form-urlencoded {
-  code: be30099a659d49489f53b8556e14eb21
+  code: 
   client_id: {{client_id}}
   client_secret: {{client_secret}}
   redirect_uri: urn:ietf:wg:oauth:2.0:oob
