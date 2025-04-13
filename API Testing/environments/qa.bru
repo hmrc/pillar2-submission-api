@@ -1,0 +1,12 @@
+vars {
+  environment: qa
+  client_id: eLNk3y1S9BZbJfOha873QfWy6APu
+  apiUrl: https://api.{{environment}}.tax.service.gov.uk/organisations/pillar-two
+  auth_code_url: https://www.{{environment}}.tax.service.gov.uk
+}
+vars:secret [
+  client_secret,
+  bearer_token,
+  access_token,
+  refresh_token
+]

@@ -1,0 +1,24 @@
+meta {
+  name: Create Test User
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/create-test-user/organisations
+  body: json
+  auth: none
+}
+
+headers {
+
+  Authorization: Bearer {{applicationBearerToken}}
+}
+
+body:json {
+  {
+    "serviceNames": [
+      "pillar-2"
+    ]
+  }
+}
