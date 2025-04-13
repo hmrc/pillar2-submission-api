@@ -1,11 +1,11 @@
 meta {
   name: Get Auth Code
   type: http
-  seq: 5
+  seq: 3
 }
 
 get {
-  url: {{auth_code_url}}/oauth/authorize?client_id={{client_id}}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=write:pillar2+read:pillar2&response_type=code
+  url: {{auth_code_url}}/oauth/authorize?client_id={{client_id}}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=write:pillar2 read:pillar2&response_type=code&testUserId={{testUserId}}&testUserPassword={{testUserPassword}}
   body: none
   auth: none
 }
@@ -15,4 +15,6 @@ params:query {
   redirect_uri: urn:ietf:wg:oauth:2.0:oob
   scope: write:pillar2 read:pillar2
   response_type: code
+  testUserId: {{testUserId}}
+  testUserPassword: {{testUserPassword}}
 }

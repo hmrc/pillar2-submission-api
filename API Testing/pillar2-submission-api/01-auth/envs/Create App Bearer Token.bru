@@ -1,5 +1,5 @@
 meta {
-  name: Create Application Bearer Token
+  name: Create App Bearer Token
   type: http
   seq: 1
 }
@@ -21,5 +21,5 @@ body:form-urlencoded {
 }
 
 script:post-response {
-  bru.setEnvVar("applicationBearerToken",res.body.access_token)
+  bru.setEnvVar("appBearerToken",res.body.access_token)
 }

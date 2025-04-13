@@ -1,7 +1,7 @@
 meta {
   name: Exchange Auth Code
   type: http
-  seq: 2
+  seq: 4
 }
 
 post {
@@ -23,6 +23,6 @@ body:form-urlencoded {
 }
 
 script:post-response {
-  bru.setEnvVar("bearer_token",res.body.access_token)
-  bru.setEnvVar("refresh_token",res.body.refresh_token)
+  bru.setEnvVar("bearerToken", "Bearer " + res.body.access_token)
+  bru.setEnvVar("refreshToken",res.body.refresh_token)
 }

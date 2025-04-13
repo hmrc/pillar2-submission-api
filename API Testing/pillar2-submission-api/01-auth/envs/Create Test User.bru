@@ -1,7 +1,7 @@
 meta {
   name: Create Test User
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{applicationBearerToken}}
+  Authorization: Bearer {{appBearerToken}}
 }
 
 body:json {
@@ -20,4 +20,10 @@ body:json {
       "pillar-2"
     ]
   }
+}
+
+script:post-response {
+  bru.setEnvVar("testUserId",res.body.userId)
+  bru.setEnvVar("testUserPassword",res.body.password)
+  bru.setEnvVar("testPlrId",res.body.pillar2Id)
 }
