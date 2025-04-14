@@ -1,0 +1,31 @@
+meta {
+  name: Delete Test Organisation
+  type: http
+  seq: 11
+}
+
+delete {
+  url: {{apiUrl}}/setup/organisation
+  body: json
+  auth: none
+}
+
+headers {
+  accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    }
+  }
+}

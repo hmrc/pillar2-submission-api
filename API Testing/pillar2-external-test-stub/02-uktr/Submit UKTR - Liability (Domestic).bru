@@ -1,0 +1,45 @@
+meta {
+  name: Submit UKTR - Liability (Domestic)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Newco PLC",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 5000,
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
+        }
+      ]
+    }
+  }
+}

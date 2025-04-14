@@ -1,0 +1,31 @@
+meta {
+  name: Update Organisation
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{apiUrl}}/setup/organisation
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  { 
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Updated Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "dueDate": "2024-04-07"
+    }
+  }
+}

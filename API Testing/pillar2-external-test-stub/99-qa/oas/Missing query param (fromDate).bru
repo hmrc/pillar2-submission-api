@@ -1,0 +1,22 @@
+meta {
+  name: Missing query param (fromDate)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/obligations-and-submissions
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: valid bearerToken
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

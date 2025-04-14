@@ -1,0 +1,32 @@
+meta {
+  name: Invalid date range
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/obligations-and-submissions?fromDate=2024-01-01&toDate=2023-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2023-12-31
+}
+
+headers {
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("INVALID_DATE_RANGE");
+    expect(res.body.message).to.equal("Invalid date range");
+  });
+}

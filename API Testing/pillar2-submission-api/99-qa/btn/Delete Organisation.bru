@@ -1,0 +1,16 @@
+meta {
+  name: Delete Organisation
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{apiUrl}}/setup/organisation
+  body: none
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearerToken}}
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Get Organisation
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/setup/organisation
+  body: none
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearerToken}}
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200)
+  });
+}

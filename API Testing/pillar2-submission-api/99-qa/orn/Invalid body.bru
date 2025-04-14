@@ -1,0 +1,33 @@
+meta {
+  name: Invalid body
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{apiUrl}}/overseas-return-notification
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+    "badRequest": ""
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("INVALID_JSON");
+    expect(res.body.message).to.equal("Invalid JSON payload");
+  });
+}

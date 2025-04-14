@@ -1,9 +1,0 @@
-{
-  "version": "1",
-  "name": "Deployed Environment Tests",
-  "type": "collection",
-  "ignore": [
-    "node_modules",
-    ".git"
-  ]
-}
