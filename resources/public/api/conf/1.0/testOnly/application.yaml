@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.106.0
+  version: 0.110.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -957,7 +957,7 @@ paths:
                 Empty Request Body:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingHeader"
+                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
         "403":
           description: Forbidden
           content:
