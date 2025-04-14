@@ -34,20 +34,18 @@ case class ORNSubmission(
 object ORNSubmission {
 
   private val countryGIRReads: Reads[String] =
-    implicitly[Reads[String]].filter(JsonValidationError("countryGIR must be between 1 and 2 characters"))(str => str.length >= 1 && str.length <= 2)
+    implicitly[Reads[String]].filter(JsonValidationError("countryGIR must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
 
   private val reportingEntityNameReads: Reads[String] =
-    implicitly[Reads[String]].filter(JsonValidationError("reportingEntityName must be between 1 and 200 characters"))(str =>
+    implicitly[Reads[String]].filter(JsonValidationError("reportingEntityName must be from 1 to 200 characters"))(str =>
       str.length >= 1 && str.length <= 200
     )
 
   private val tinReads: Reads[String] =
-    implicitly[Reads[String]].filter(JsonValidationError("TIN must be between 1 and 200 characters"))(str => str.length >= 1 && str.length <= 200)
+    implicitly[Reads[String]].filter(JsonValidationError("TIN must be from 1 to 200 characters"))(str => str.length >= 1 && str.length <= 200)
 
   private val issuingCountryTINReads: Reads[String] =
-    implicitly[Reads[String]].filter(JsonValidationError("issuingCountryTIN must be between 1 and 2 characters"))(str =>
-      str.length >= 1 && str.length <= 2
-    )
+    implicitly[Reads[String]].filter(JsonValidationError("issuingCountryTIN must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
 
   implicit val reads: Reads[ORNSubmission] = (
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
