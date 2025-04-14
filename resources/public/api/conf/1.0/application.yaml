@@ -1353,11 +1353,6 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: NIL_RETURN
-    responses.ORNSuccessResponseExample:
-      summary: ORN Success response
-      value:
-        processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
     errors.TestOrg.NotFound:
       summary: Test endpoints not available
       value:
