@@ -1,0 +1,32 @@
+meta {
+  name: Amend Empty UKTR
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{apiUrl}}/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.message).to.equal("Invalid JSON payload");
+  });
+}

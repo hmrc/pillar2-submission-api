@@ -1,25 +1,29 @@
 meta {
-  name: Submit Below Threshold Notification
+  name: Valid request
   type: http
-  seq: 2
+  seq: 6
 }
 
 post {
-  url: {{localPillar2Url}}/below-threshold-notification/submit
+  url: {{apiUrl}}/overseas-return-notification
   body: json
   auth: none
 }
 
 headers {
-  Content-Type: application/json
-  X-Pillar2-Id: {{testPlrId}}
   Authorization: {{bearerToken}}
+  X-Pillar2-Id: XMPLR0012345674
 }
 
 body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
-    "accountingPeriodTo": "2024-12-31"
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
   }
 }
 
@@ -29,8 +33,6 @@ tests {
   });
   
   test("should contain all required fields", function() {
-    expect(res.body.chargeReference).to.not.be.undefined;
-    expect(res.body.formBundleNumber).to.not.be.undefined;
     expect(res.body.processingDate).to.not.be.undefined;
   });
 }

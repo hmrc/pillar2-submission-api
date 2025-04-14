@@ -1,0 +1,15 @@
+meta {
+  name: Delete Test Organisation
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: valid bearerToken
+}

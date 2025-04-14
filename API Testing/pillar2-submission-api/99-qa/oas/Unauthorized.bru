@@ -1,0 +1,31 @@
+meta {
+  name: Unauthorized
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{apiUrl}}/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2024-12-31
+}
+
+headers {
+  Authorization: "Bearer invalid-token"
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("should return 401 Unauthorized", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.message).to.equal("Not authorized");
+  });
+}

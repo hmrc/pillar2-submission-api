@@ -1,0 +1,48 @@
+meta {
+  name: Retrieve OaS
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{apiUrl}}/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2024-12-31
+}
+
+headers {
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should contain all required fields", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
+    
+    expect(res.body.accountingPeriodDetails).to.be.an('array').that.is.not.empty;
+    const period = res.body.accountingPeriodDetails[0];
+    
+    expect(period.startDate).to.not.be.undefined;
+    expect(period.endDate).to.not.be.undefined;
+    expect(period.dueDate).to.not.be.undefined;
+    expect(period.underEnquiry).to.not.be.undefined;
+    
+    expect(period.obligations).to.be.an('array').that.is.not.empty;
+    const obligation = period.obligations[0];
+    
+    expect(obligation.obligationType).to.not.be.undefined;
+    expect(obligation.status).to.not.be.undefined;
+    expect(obligation.canAmend).to.not.be.undefined;  
+    expect(obligation.submissions).to.not.be.undefined;
+  });
+}

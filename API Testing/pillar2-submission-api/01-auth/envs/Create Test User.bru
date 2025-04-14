@@ -1,0 +1,29 @@
+meta {
+  name: Create Test User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/create-test-user/organisations
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{appBearerToken}}
+}
+
+body:json {
+  {
+    "serviceNames": [
+      "pillar-2"
+    ]
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("testUserId",res.body.userId)
+  bru.setEnvVar("testUserPassword",res.body.password)
+  bru.setEnvVar("testPlrId",res.body.pillar2Id)
+}

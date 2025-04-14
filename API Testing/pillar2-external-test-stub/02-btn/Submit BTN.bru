@@ -1,0 +1,23 @@
+meta {
+  name: Submit BTN
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/below-threshold-notification
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31"
+  }
+}
