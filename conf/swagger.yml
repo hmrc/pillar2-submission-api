@@ -646,15 +646,6 @@ components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
       properties:
-        accountingPeriodFrom:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-        filedDateGIR:
-          type: string
-          format: date
         countryGIR:
           type: string
           minLength: 1
