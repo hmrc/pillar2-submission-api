@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.110.0
+  version: 0.112.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1007,12 +1007,20 @@ components:
           format: date
         countryGIR:
           type: string
+          minLength: 1
+          maxLength: 2
         reportingEntityName:
           type: string
+          minLength: 1
+          maxLength: 200
         TIN:
           type: string
+          minLength: 1
+          maxLength: 200
         issuingCountryTIN:
           type: string
+          minLength: 1
+          maxLength: 2
       required:
       - accountingPeriodFrom
       - accountingPeriodTo

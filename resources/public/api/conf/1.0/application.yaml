@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.106.0
+  version: 0.112.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []

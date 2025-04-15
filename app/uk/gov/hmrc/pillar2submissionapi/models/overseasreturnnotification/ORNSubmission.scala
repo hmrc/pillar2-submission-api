@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.LocalDate
 
@@ -31,5 +32,30 @@ case class ORNSubmission(
 )
 
 object ORNSubmission {
-  implicit val ORNSubmission: OFormat[ORNSubmission] = Json.format[ORNSubmission]
+
+  private val countryGIRReads: Reads[String] =
+    implicitly[Reads[String]].filter(JsonValidationError("countryGIR must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
+
+  private val reportingEntityNameReads: Reads[String] =
+    implicitly[Reads[String]].filter(JsonValidationError("reportingEntityName must be from 1 to 200 characters"))(str =>
+      str.length >= 1 && str.length <= 200
+    )
+
+  private val tinReads: Reads[String] =
+    implicitly[Reads[String]].filter(JsonValidationError("TIN must be from 1 to 200 characters"))(str => str.length >= 1 && str.length <= 200)
+
+  private val issuingCountryTINReads: Reads[String] =
+    implicitly[Reads[String]].filter(JsonValidationError("issuingCountryTIN must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
+
+  implicit val reads: Reads[ORNSubmission] = (
+    (JsPath \ "accountingPeriodFrom").read[LocalDate] and
+      (JsPath \ "accountingPeriodTo").read[LocalDate] and
+      (JsPath \ "filedDateGIR").read[LocalDate] and
+      (JsPath \ "countryGIR").read(countryGIRReads) and
+      (JsPath \ "reportingEntityName").read(reportingEntityNameReads) and
+      (JsPath \ "TIN").read(tinReads) and
+      (JsPath \ "issuingCountryTIN").read(issuingCountryTINReads)
+  )(ORNSubmission.apply _)
+
+  implicit val format: OFormat[ORNSubmission] = OFormat(reads, Json.writes[ORNSubmission])
 }

@@ -9,3 +9,7 @@
       format: double
       minimum: 0
       maximum: 9999999999999.99
+- type: java\.time\.LocalDate
+  specAsParameter:
+    - type: string
+      format: date
