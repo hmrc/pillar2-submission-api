@@ -46,9 +46,14 @@ case object UnexpectedResponse extends Pillar2Error {
   val message: String = "Internal Server Error"
 }
 
-case object AuthenticationError extends Pillar2Error {
-  val code = "003"
-  val message: String = "Not authorized"
+case object MissingCredentials extends Pillar2Error {
+  val code = "MISSING_CREDENTIALS"
+  val message: String = "Authentication information is not provided"
+}
+
+case object InvalidCredentials extends Pillar2Error {
+  val code = "INVALID_CREDENTIALS"
+  val message: String = "Invalid Authentication information provided"
 }
 
 case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {

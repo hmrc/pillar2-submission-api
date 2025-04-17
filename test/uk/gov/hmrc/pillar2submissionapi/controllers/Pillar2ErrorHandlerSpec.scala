@@ -137,12 +137,20 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "Invalid JSON payload"
   }
 
-  test("AuthenticationError error response") {
-    val response = classUnderTest.onServerError(dummyRequest, AuthenticationError)
+  test("MissingCredentials error response") {
+    val response = classUnderTest.onServerError(dummyRequest, MissingCredentials)
     status(response) mustEqual 401
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "003"
-    result.message mustEqual "Not authorized"
+    result.code mustEqual "MISSING_CREDENTIALS"
+    result.message mustEqual "Authentication information is not provided"
+  }
+
+  test("InvalidCredentials error response") {
+    val response = classUnderTest.onServerError(dummyRequest, InvalidCredentials)
+    status(response) mustEqual 401
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "INVALID_CREDENTIALS"
+    result.message mustEqual "Invalid Authentication information provided"
   }
 
   test("ForbiddenError error response") {

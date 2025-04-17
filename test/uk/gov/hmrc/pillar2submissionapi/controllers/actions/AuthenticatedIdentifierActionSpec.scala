@@ -35,7 +35,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ForbiddenError, InvalidCredentials, MissingCredentials}
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -173,29 +173,36 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         }
       }
 
-      "fail due to user being unauthorised" in {
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
+      "fail due to user being unauthorised" when {
+        "Authorization is invalid" in {
+          when(
+            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+              any[HeaderCarrier](),
+              any[ExecutionContext]()
+            )
           )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            .thenReturn(
+              Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+            )
+
+          when(
+            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+              any[HeaderCarrier](),
+              any[ExecutionContext]()
+            )
           )
+            .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
 
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
+          val result = intercept[InvalidCredentials.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        val result = intercept[AuthenticationError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+          result.message mustEqual "Invalid Authentication information provided"
+        }
 
-        result.message mustEqual "Not authorized"
+        "Authorization is missing" in {
+          val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
+
+          result.message mustEqual "Authentication information is not provided"
+        }
       }
     }
 
@@ -377,19 +384,20 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
   "IdentifierAction - exceptions" when {
     "AuthorisationException is thrown" should {
-      "user is unauthorized" in {
+      "user is unauthorized for providing invalid credentials" in {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           new FakeFailingAuthConnector,
           emptyAppConfig
         )(ec)
 
-        val result = intercept[AuthenticationError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[InvalidCredentials.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Not authorized"
+        result.message mustEqual "Invalid Authentication information provided"
+      }
+      "user is unauthorized for providing no credentials" in {
+        val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
+
+        result.message mustEqual "Authentication information is not provided"
       }
     }
   }
@@ -405,7 +413,10 @@ object AuthenticatedIdentifierActionSpec {
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val pillar2Id = "XCCVRUGFJG788"
-  val fakeRequestWithPillar2Id: RequestWithPillar2Id[AnyContent] = RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = ""))
+  val fakeRequestWithPillar2Id: RequestWithPillar2Id[AnyContent] =
+    RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> ""))
+  val requestMissingAuthorization: RequestWithPillar2Id[AnyContent] =
+    RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = ""))
   val enrolmentKey   = "HMRC-PILLAR2-ORG"
   val identifierName = "PLRID"
 

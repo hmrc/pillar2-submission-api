@@ -24,14 +24,12 @@ import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
@@ -48,7 +46,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
-  lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference)
+  lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "")
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
@@ -125,20 +123,6 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           Await.result(baseRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[SubmitBTNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
-      }
-
-      "return 401 UNAUTHORIZED when user cannot be identified" in {
-        when(
-          mockAuthConnector
-            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-        ).thenReturn(Future.failed(AuthenticationError))
-
-        val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
-
-        result.status mustEqual UNAUTHORIZED
-        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
-        errorResponse.code mustEqual "003"
-        errorResponse.message mustEqual "Not authorized"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
