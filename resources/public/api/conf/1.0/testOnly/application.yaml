@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.112.0
+  version: 0.114.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -67,8 +67,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -143,8 +145,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -247,8 +251,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -316,8 +322,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -417,8 +425,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "422":
           description: Business Validation Failure
           content:
@@ -602,8 +612,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "422":
           description: Business Validation Failure
           content:
@@ -717,8 +729,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "422":
           description: Business Validation Failure
           content:
@@ -861,8 +875,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "400":
           description: Invalid Request
           content:
@@ -928,8 +944,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "422":
           description: Business Validation Failure
           content:
@@ -1514,11 +1532,16 @@ components:
       value:
         code: 403
         message: Test endpoints are not available in this environment
-    errors.TestOrg.Unauthorized:
-      summary: Not Authorized
+    errors.MissingCredentials:
+      summary: Missing Credentials
       value:
-        code: '003'
-        message: Not authorized
+        code: MISSING_CREDENTIALS
+        message: Authentication information is not provided
+    errors.InvalidCredentials:
+      summary: Invalid Credentials
+      value:
+        code: INVALID_CREDENTIALS
+        message: Invalid Authentication information provided
     errors.InvalidDateRange:
       summary: Invalid date range
       value:
@@ -1539,11 +1562,6 @@ components:
       value:
         code: EMPTY_REQUEST_BODY
         message: Empty request body
-    errors.Submission.Unauthorized:
-      summary: Unauthorized
-      value:
-        code: '003'
-        message: Not authorized
     errors.Submission.InvalidRequest:
       summary: Invalid request
       value:

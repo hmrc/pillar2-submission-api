@@ -1,10 +1,10 @@
 meta {
-  name: Amend UKTR Success
+  name: Valid request
   type: http
-  seq: 6
+  seq: 7
 }
 
-put {
+post {
   url: {{apiUrl}}/uk-tax-return
   body: json
   auth: none
@@ -27,8 +27,8 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 6000,
-      "totalLiabilityDTT": 6000,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
       "totalLiabilityIIR": 0,
       "totalLiabilityUTPR": 0,
       "liableEntities": [
@@ -36,7 +36,7 @@ body:json {
           "ukChargeableEntityName": "Newco PLC",
           "idType": "CRN",
           "idValue": "12345678",
-          "amountOwedDTT": 6000,
+          "amountOwedDTT": 5000,
           "amountOwedIIR": 0,
           "amountOwedUTPR": 0
         }
@@ -46,8 +46,8 @@ body:json {
 }
 
 tests {
-  test("should return 200 OK", function() {
-    expect(res.getStatus()).to.equal(200);
+  test("should return 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
   });
   
   test("should contain all required fields", function() {

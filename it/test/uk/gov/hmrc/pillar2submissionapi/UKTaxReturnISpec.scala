@@ -26,13 +26,11 @@ import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
@@ -51,9 +49,9 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
   def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder =
-    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
   def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
-    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
@@ -63,7 +61,6 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
     "submitUKTR by organisation" must {
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub
-        //implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
         stubRequest(
           "POST",
           submitUrl,
@@ -149,20 +146,6 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         val errorResponse = result.json.as[UKTRSubmitErrorResponse]
         errorResponse.code mustEqual "004"
         errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
-      }
-
-      "return 401 UNAUTHORIZED when user cannot be identified" in {
-        when(
-          mockAuthConnector
-            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-        ).thenReturn(Future.failed(AuthenticationError))
-
-        val result = Await.result(requestWithBody().execute[HttpResponse], 5.seconds)
-
-        result.status mustEqual UNAUTHORIZED
-        val errorResponse = result.json.as[UKTRSubmitErrorResponse]
-        errorResponse.code mustEqual "003"
-        errorResponse.message mustEqual "Not authorized"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
@@ -262,11 +245,10 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
     "amendUKTR by organisation" must {
       val amendRequest: JsValue => RequestBuilder =
-        (body: JsValue) => client.put(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference).withBody(body)
+        (body: JsValue) => client.put(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
 
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub
-        //implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> plrReference)
         stubRequest(
           "PUT",
           amendUrl,
@@ -354,20 +336,6 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         errorResponse.message mustEqual "No Pillar2 subscription found for XCCVRUGFJG788"
       }
 
-      "return 401 UNAUTHORIZED when user cannot be identified" in {
-        when(
-          mockAuthConnector
-            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-        ).thenReturn(Future.failed(AuthenticationError))
-
-        val result = Await.result(amendRequest(validLiabilityReturn).execute[HttpResponse], 5.seconds)
-
-        result.status mustEqual UNAUTHORIZED
-        val errorResponse = result.json.as[Pillar2ErrorResponse]
-        errorResponse.code mustEqual "003"
-        errorResponse.message mustEqual "Not authorized"
-      }
-
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
         getSubscriptionStub
         stubRequest(
@@ -452,7 +420,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         )
 
         val amendRequest: JsValue => RequestBuilder =
-          (body: JsValue) => client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference)
+          (body: JsValue) => client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "")
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
         result.chargeReference.value mustEqual pillar2Id
