@@ -150,8 +150,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [write:pillar2]
     put:
@@ -244,9 +246,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
-
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [write:pillar2]
   /below-threshold-notification:
@@ -335,8 +338,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [write:pillar2]
   /obligations-and-submissions:
@@ -394,8 +399,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "400":
           description: Invalid Request
           content:
@@ -471,8 +478,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.Submission.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [write:pillar2]
   /setup/organisation:
@@ -508,8 +517,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -545,8 +556,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -595,8 +608,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -623,8 +638,10 @@ paths:
           content:
             application/json:
               examples:
-                Unauthorized:
-                  $ref: "#/components/examples/errors.TestOrg.Unauthorized"
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
@@ -964,11 +981,16 @@ components:
       value:
         code: 403
         message: Test endpoints are not available in this environment
-    errors.TestOrg.Unauthorized:
-      summary: Not Authorized
+    errors.MissingCredentials:
+      summary: Missing Credentials
       value:
-        code: "003"
-        message: "Not authorized"
+        code: "MISSING_CREDENTIALS"
+        message: Authentication information is not provided
+    errors.InvalidCredentials:
+      summary: Invalid Credentials
+      value:
+        code: "INVALID_CREDENTIALS"
+        message: Invalid Authentication information provided
     errors.InvalidDateRange:
       summary: Invalid date range
       value:
@@ -989,11 +1011,6 @@ components:
       value:
         code: 'EMPTY_REQUEST_BODY'
         message: Empty request body
-    errors.Submission.Unauthorized:
-      summary: Unauthorized
-      value:
-        code: '003'
-        message: Not authorized
     errors.Submission.InvalidRequest:
       summary: Invalid request
       value:
