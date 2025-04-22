@@ -1,11 +1,11 @@
 meta {
-  name: Submit UKTR - Nil
+  name: Amend UKTR - Nil
   type: http
-  seq: 2
+  seq: 4
 }
 
-post {
-  url: {{pillar2Url}}/submit-uk-tax-return
+put {
+  url: {{pillar2Url}}/amend-uk-tax-return
   body: json
   auth: none
 }

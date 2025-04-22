@@ -1,11 +1,11 @@
 meta {
-  name: Amend UKTR - Nil
+  name: Submit UKTR - Nil (Domestic)
   type: http
-  seq: 2
+  seq: 7
 }
 
-put {
-  url: {{pillar2Url}}/amend-uk-tax-return
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
   body: json
   auth: none
 }
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "returnType": "NIL_RETURN"

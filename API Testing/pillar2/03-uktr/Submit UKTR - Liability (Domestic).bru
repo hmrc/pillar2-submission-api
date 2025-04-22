@@ -1,11 +1,11 @@
 meta {
-  name: Amend UKTR - Liability
+  name: Submit UKTR - Liability (Domestic)
   type: http
-  seq: 1
+  seq: 5
 }
 
-put {
-  url: {{pillar2Url}}/amend-uk-tax-return
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
   body: json
   auth: none
 }
@@ -19,8 +19,8 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
-    "electionUKGAAP": false,
+    "obligationMTT": false,
+    "electionUKGAAP": true,
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,

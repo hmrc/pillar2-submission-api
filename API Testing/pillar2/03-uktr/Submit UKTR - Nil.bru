@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - Nil (Domestic)
+  name: Submit UKTR - Nil
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": false,
+    "obligationMTT": true,
     "electionUKGAAP": false,
     "liabilities": {
       "returnType": "NIL_RETURN"
