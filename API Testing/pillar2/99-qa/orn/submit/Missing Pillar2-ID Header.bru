@@ -1,0 +1,39 @@
+meta {
+  name: Missing Pillar2-ID Header
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{pillar2Url}}/overseas-return-notification/submit
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 400 when X-Pillar2-Id header is missing", function() {
+    expect(res.status).to.equal(400);
+  });
+  
+  test("should include error details about missing Pillar2-ID", function() {
+    expect(res.body).to.not.be.undefined;
+    expect(res.body.code).to.equal("001");
+    expect(res.body.message).to.include("Missing X-Pillar2-Id header");
+  });
+}

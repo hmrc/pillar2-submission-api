@@ -1,0 +1,17 @@
+meta {
+  name: Get Organisation
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("Status code is 200", function() {
+    expect(res.getStatus()).to.equal(200)
+  });
+}

@@ -1,0 +1,40 @@
+meta {
+  name: Invalid Date Format
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{pillar2Url}}/overseas-return-notification/amend
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-001-01",
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 422 for invalid date format", function() {
+    expect(res.status).to.equal(422);
+  });
+  
+  test("should contain error about invalid date format", function() {
+    expect(res.body).to.not.be.undefined;
+    expect(res.body.code).to.equal("003");
+    expect(res.body.message).to.equal("Request could not be processed");
+  });
+}

@@ -1,0 +1,28 @@
+meta {
+  name: Submit UKTR - Nil
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearerToken}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": true,
+    "electionUKGAAP": false,
+    "liabilities": {
+      "returnType": "NIL_RETURN"
+    }
+  }
+}
