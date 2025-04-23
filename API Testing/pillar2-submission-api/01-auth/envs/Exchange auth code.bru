@@ -23,6 +23,6 @@ body:form-urlencoded {
 }
 
 script:post-response {
-  bru.setEnvVar("bearerToken", "Bearer " + res.body.access_token)
-  bru.setEnvVar("refreshToken",res.body.refresh_token)
+  bru.setEnvVar("bearer_token", "Bearer " + res.body.access_token)
+  bru.setEnvVar("refresh_token",res.body.refresh_token)
 }
