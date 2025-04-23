@@ -1,11 +1,11 @@
 meta {
-  name: Amend UKTR - Liability
+  name: total liabilityIIR invalid decimals
   type: http
-  seq: 2
+  seq: 6
 }
 
-put {
-  url: {{pillar2Url}}/amend-uk-tax-return
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
   body: json
   auth: none
 }
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
@@ -28,7 +28,7 @@ body:json {
       "numberSubGroupUTPR": 1,
       "totalLiability": 5000,
       "totalLiabilityDTT": 5000,
-      "totalLiabilityIIR": 0,
+      "totalLiabilityIIR": 0.999,
       "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
@@ -42,4 +42,23 @@ body:json {
       ]
     }
   }
+}
+
+script:pre-request {
+  let testAmount = ( Math.random() * (99999999999999 - 10000000000000) + 10000000000000).toFixed(2)
+  let negative = Math.random() < 0.5;
+  var testValue = negative ? testAmount * -1 : testAmount
+  bru.setVar("totalLiabilityIIR",testValue)
+}
+
+tests {
+  test("should return 500 Server Error", function() {
+    expect(res.status).to.equal(500);
+  });
+  
+  test("should include error details", function() {
+    expect(res.body).to.not.be.undefined;
+    expect(res.body.code).to.include("003");
+    expect(res.body.message).to.include("Internal server error");
+  });
 }

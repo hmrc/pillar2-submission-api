@@ -1,7 +1,7 @@
 meta {
   name: Invalid Date
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
@@ -12,7 +12,7 @@ post {
 
 headers {
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: valid bearerToken
+  Authorization: valid bearer_token
 }
 
 body:json {
@@ -28,7 +28,8 @@ tests {
   });
   
   test("should contain error about invalid JSON", function() {
-    expect(res.body.error.message).to.include("Bad request");
-      expect(res.body.error.logID).to.include("C0000000000000000000000000000400");
+    expect(res.body.code).to.include("400");
+    
+    expect(res.body.message).to.include("Json validation error");
   });
 }

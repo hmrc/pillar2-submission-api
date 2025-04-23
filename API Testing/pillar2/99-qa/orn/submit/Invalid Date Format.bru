@@ -12,7 +12,7 @@ post {
 
 headers {
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearerToken}}
+  Authorization: {{bearer_token}}
 }
 
 body:json {
@@ -28,13 +28,13 @@ body:json {
 }
 
 tests {
-  test("should return 400 for invalid date format", function() {
-    expect(res.status).to.equal(400);
+  test("should return 400 for invalid JSON", function() {
+    expect(res.getStatus()).to.equal(400);
   });
   
-  test("should contain error about invalid date format", function() {
-    expect(res.body).to.not.be.undefined;
-    expect(res.body.code).to.equal("400");
-    expect(res.body.message).to.equal("Bad request");
+  test("should contain error about invalid JSON", function() {
+    expect(res.body.code).to.include("400");
+    
+    expect(res.body.message).to.include("Json validation error");
   });
 }

@@ -1,0 +1,15 @@
+meta {
+  name: Delete Organisation
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{pillar2Url}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+}

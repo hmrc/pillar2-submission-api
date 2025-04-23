@@ -1,11 +1,11 @@
 meta {
-  name: Amend UKTR - Liability
+  name: Liability return - Valid
   type: http
-  seq: 2
+  seq: 3
 }
 
-put {
-  url: {{pillar2Url}}/amend-uk-tax-return
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
   body: json
   auth: none
 }
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
@@ -42,4 +42,23 @@ body:json {
       ]
     }
   }
+}
+
+tests {
+  test("Response contains form bundle number", function() {
+    expect(res.body.formBundleNumber).to.not.be.undefined;
+  });
+  
+  test("Response contains processing date", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
+  });
+  
+  test("Response contains charge reference", function() {
+    expect(res.body.chargeReference).to.not.be.undefined;
+  });
+  
+  test("Response contains correct status code", function() {
+    expect(res.status).to.equal(201);
+  });
+  
 }

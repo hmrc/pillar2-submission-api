@@ -1,5 +1,5 @@
 meta {
-  name: Submit UKTR - Liability
+  name: total liability invalid sum
   type: http
   seq: 1
 }
@@ -19,7 +19,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
@@ -28,7 +28,7 @@ body:json {
       "numberSubGroupUTPR": 1,
       "totalLiability": 5000,
       "totalLiabilityDTT": 5000,
-      "totalLiabilityIIR": 0,
+      "totalLiabilityIIR": 1000,
       "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
@@ -36,10 +36,32 @@ body:json {
           "idType": "CRN",
           "idValue": "12345678",
           "amountOwedDTT": 5000,
-          "amountOwedIIR": 0,
+          "amountOwedIIR": 1000,
           "amountOwedUTPR": 0
         }
       ]
     }
   }
+}
+
+script:pre-request {
+  let testAmount = ( Math.random() * (9999999999 - 1000000000) + 1000000000).toFixed(3)
+  let negative = Math.random() < 0.5;
+  var testValue = negative ? testAmount * -1 : testAmount
+  bru.setVar("totalLiability",testValue)
+}
+
+tests {
+  test("Status code is 422", function() {
+    expect(res.getStatus()).to.equal(422)
+  });
+  
+  test("Response contains error code 096", function() {
+    expect(res.body.code).to.equal('096')
+  });
+  
+  test("Response contains error message", function() {
+    expect(res.body.message).to.equal('Invalid Total Liability')
+  });
+  
 }

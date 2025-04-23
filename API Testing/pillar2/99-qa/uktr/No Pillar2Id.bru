@@ -1,17 +1,16 @@
 meta {
-  name: Amend UKTR - Liability
+  name: No Pillar2Id
   type: http
-  seq: 2
+  seq: 1
 }
 
-put {
-  url: {{pillar2Url}}/amend-uk-tax-return
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
   body: json
   auth: none
 }
 
 headers {
-  X-Pillar2-Id: {{testPlrId}}
   Authorization: {{bearer_token}}
 }
 
@@ -19,7 +18,7 @@ body:json {
   {
     "accountingPeriodFrom": "2024-01-01",
     "accountingPeriodTo": "2024-12-31",
-    "obligationMTT": true,
+    "obligationMTT": false,
     "electionUKGAAP": false,
     "liabilities": {
       "electionDTTSingleMember": false,
@@ -42,4 +41,19 @@ body:json {
       ]
     }
   }
+}
+
+tests {
+  test("Status code is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("Response contains correct error code", function() {
+    expect(res.body.code).to.equal("001");
+  });
+  
+  test("Response contains correct error message", function() {
+    expect(res.body.message).to.equal("Missing X-Pillar2-Id header");
+  });
+  
 }

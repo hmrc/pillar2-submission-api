@@ -1,7 +1,7 @@
 meta {
-  name: Valid Amendment
+  name: Amend before Submit
   type: http
-  seq: 8
+  seq: 1
 }
 
 put {
@@ -28,15 +28,13 @@ body:json {
 }
 
 tests {
-  test("should return 200 OK", function() {
-    expect(res.status).to.equal(200);
+  test("should return 422 for invalid date format", function() {
+    expect(res.status).to.equal(422);
   });
   
-  test("should contain form bundle number", function() {
-    expect(res.body.formBundleNumber).to.not.be.undefined;
-  });
-  
-  test("should contain processing date", function() {
-    expect(res.body.processingDate).to.not.be.undefined;
+  test("should contain error about invalid date format", function() {
+    expect(res.body).to.not.be.undefined;
+    expect(res.body.code).to.equal("003");
+    expect(res.body.message).to.equal("Request could not be processed");
   });
 }

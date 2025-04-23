@@ -1,7 +1,7 @@
 meta {
-  name: Submit UKTR - Liability (Domestic)
+  name: Empty liable entities
   type: http
-  seq: 5
+  seq: 2
 }
 
 post {
@@ -26,20 +26,27 @@ body:json {
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
       "numberSubGroupUTPR": 1,
-      "totalLiability": 5000,
-      "totalLiabilityDTT": 5000,
-      "totalLiabilityIIR": 0,
-      "totalLiabilityUTPR": 0,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.99,
+      "totalLiabilityIIR": 4000,
+      "totalLiabilityUTPR": 10000.99,
       "liableEntities": [
-        {
-          "ukChargeableEntityName": "Newco PLC",
-          "idType": "CRN",
-          "idValue": "12345678",
-          "amountOwedDTT": 5000,
-          "amountOwedIIR": 0,
-          "amountOwedUTPR": 0
-        }
+        
       ]
     }
   }
+}
+
+tests {
+  test("Response contains correct error code", function() {
+    expect(res.body.code).to.equal("093");
+  });
+  
+  test("Response contains correct error message", function() {
+    expect(res.body.message).to.equal("Invalid Return");
+  });
+  
+  test("Status code is 422", function() {
+    expect(res.status).to.equal(422);
+  });
 }
