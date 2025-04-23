@@ -73,7 +73,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    if (request.headers.get(HeaderNames.authorisation).isEmpty) throw MissingCredentials
+    if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentials
     else {
       val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
         Retrievals.allEnrolments and Retrievals.affinityGroup and

@@ -54,7 +54,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -68,7 +68,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(invalidRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -89,7 +89,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -112,7 +112,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .get(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -132,7 +132,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .get(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -155,7 +155,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .put(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -176,7 +176,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .put(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -200,7 +200,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .delete(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -220,7 +220,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .delete(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
-            .setHeader("Authorization" -> "")
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )

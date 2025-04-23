@@ -198,10 +198,24 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           result.message mustEqual "Invalid Authentication information provided"
         }
 
-        "Authorization is missing" in {
-          val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
+        "Authorization is missing" when {
+          "Authorization header is missing" in {
+            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
 
-          result.message mustEqual "Authentication information is not provided"
+            result.message mustEqual "Authentication information is not provided"
+          }
+
+          "Authorization header exists but is empty" in {
+            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestEmptyAuthorization)))
+
+            result.message mustEqual "Authentication information is not provided"
+          }
+
+          "Authorization header exists but has space characters only" in {
+            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestSpacesOnlyAuthorization)))
+
+            result.message mustEqual "Authentication information is not provided"
+          }
         }
       }
     }
@@ -414,7 +428,11 @@ object AuthenticatedIdentifierActionSpec {
 
   val pillar2Id = "XCCVRUGFJG788"
   val fakeRequestWithPillar2Id: RequestWithPillar2Id[AnyContent] =
+    RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> "bearerToken"))
+  val requestEmptyAuthorization: RequestWithPillar2Id[AnyContent] =
     RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> ""))
+  val requestSpacesOnlyAuthorization: RequestWithPillar2Id[AnyContent] =
+    RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> "  "))
   val requestMissingAuthorization: RequestWithPillar2Id[AnyContent] =
     RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = ""))
   val enrolmentKey   = "HMRC-PILLAR2-ORG"

@@ -49,9 +49,9 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
   def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder =
-    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
   def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
-    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
   def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
@@ -245,7 +245,8 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
     "amendUKTR by organisation" must {
       val amendRequest: JsValue => RequestBuilder =
-        (body: JsValue) => client.put(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "").withBody(body)
+        (body: JsValue) =>
+          client.put(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
 
       "forward the X-Pillar2-Id header" in {
         getSubscriptionStub
@@ -420,7 +421,8 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         )
 
         val amendRequest: JsValue => RequestBuilder =
-          (body: JsValue) => client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "")
+          (body: JsValue) =>
+            client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
         result.chargeReference.value mustEqual pillar2Id

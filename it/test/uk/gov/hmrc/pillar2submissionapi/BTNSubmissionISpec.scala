@@ -46,7 +46,8 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
-  lazy val baseRequest: RequestBuilder = client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "")
+  lazy val baseRequest: RequestBuilder =
+    client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
