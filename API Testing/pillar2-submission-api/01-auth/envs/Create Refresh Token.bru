@@ -22,6 +22,6 @@ body:form-urlencoded {
 }
 
 script:post-response {
-  bru.setEnvVar("bearer_token",res.body.access_token)
+  bru.setEnvVar("bearer_token", "Bearer " + res.body.access_token)
   bru.setEnvVar("refresh_token",res.body.refresh_token)
 }
