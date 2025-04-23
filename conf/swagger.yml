@@ -37,7 +37,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid return</td>
-        <td>There is an error with the tax return you've submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under "Personal Details".</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT election</td>
