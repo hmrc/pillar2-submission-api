@@ -157,8 +157,16 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val response = classUnderTest.onServerError(dummyRequest, ForbiddenError)
     status(response) mustEqual 403
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "006"
-    result.message mustEqual "Forbidden"
+    result.code mustEqual "FORBIDDEN"
+    result.message mustEqual "Access to the requested resource is forbidden"
+  }
+
+  test("InvalidEnrolment error response") {
+    val response = classUnderTest.onServerError(dummyRequest, InvalidEnrolment)
+    status(response) mustEqual 403
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "INVALID_ENROLMENT"
+    result.message mustEqual "Invalid Pillar 2 enrolment"
   }
 
   test("NoSubscriptionData error response") {
@@ -181,7 +189,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     val response = classUnderTest.onServerError(dummyRequest, TestEndpointDisabled)
     status(response) mustEqual 403
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
-    result.code mustEqual "403"
+    result.code mustEqual "TEST_ENDPOINT_DISABLED"
     result.message mustEqual "Test endpoints are not available in this environment"
   }
 

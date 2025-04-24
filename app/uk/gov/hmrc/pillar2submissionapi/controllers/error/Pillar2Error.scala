@@ -72,8 +72,13 @@ object MissingHeader {
 }
 
 case object ForbiddenError extends Pillar2Error {
-  val code    = "006"
-  val message = "Forbidden"
+  val code    = "FORBIDDEN"
+  val message = "Access to the requested resource is forbidden"
+}
+
+case object InvalidEnrolment extends Pillar2Error {
+  val code    = "INVALID_ENROLMENT"
+  val message = "Invalid Pillar 2 enrolment"
 }
 
 case class DownstreamValidationError(code: String, message: String) extends Pillar2Error
@@ -94,6 +99,6 @@ case class DatabaseError(operation: String) extends Pillar2Error {
 }
 
 case object TestEndpointDisabled extends Pillar2Error {
-  override val code:    String = "403"
+  override val code:    String = "TEST_ENDPOINT_DISABLED"
   override val message: String = "Test endpoints are not available in this environment"
 }
