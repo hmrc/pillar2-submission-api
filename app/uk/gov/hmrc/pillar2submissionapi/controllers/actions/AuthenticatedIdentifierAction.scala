@@ -23,9 +23,9 @@ import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AuthenticationError, ForbiddenError}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ForbiddenError, InvalidCredentials, MissingCredentials}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -73,27 +73,29 @@ class AuthenticatedIdentifierAction @Inject() (
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentials
+    else {
+      val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
+        Retrievals.allEnrolments and Retrievals.affinityGroup and
+        Retrievals.credentialRole and Retrievals.credentials
 
-    val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
-      Retrievals.allEnrolments and Retrievals.affinityGroup and
-      Retrievals.credentialRole and Retrievals.credentials
-
-    authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-      .retrieve(retrievals) {
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ None ~ Some(credentials) if config.allowTestUsers =>
-          processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
-        case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-          processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
-        case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
-          agentAuth[A](request, request.pillar2Id)
-        case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
-          agentAuth[A](request, request.pillar2Id)
-        case _ =>
-          logger.warn("User is not valid for this API")
-          Future.failed(ForbiddenError)
-      } recoverWith { case e: AuthorisationException =>
-      logger.warn(s"Authorization failed", e)
-      Future.failed(AuthenticationError)
+      authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
+        .retrieve(retrievals) {
+          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ None ~ Some(credentials) if config.allowTestUsers =>
+            processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
+          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
+            processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
+          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
+            agentAuth[A](request, request.pillar2Id)
+          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
+            agentAuth[A](request, request.pillar2Id)
+          case _ =>
+            logger.warn("User is not valid for this API")
+            Future.failed(ForbiddenError)
+        } recoverWith { case e: AuthorisationException =>
+        logger.warn(s"Authorization failed", e)
+        Future.failed(InvalidCredentials)
+      }
     }
   }
 

@@ -27,7 +27,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
-import play.api.test.FakeRequest
 import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
@@ -61,8 +60,6 @@ trait IntegrationSpecBase
   implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
-
-  val fakeRequest: Request[AnyContent] = FakeRequest(method = "", path = "")
 
   val plrReference         = "XCCVRUGFJG788"
   val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"

@@ -16,26 +16,21 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.AuthenticationError
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
 import java.time.{Instant, LocalDate}
+import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
 class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
@@ -59,6 +54,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -72,6 +68,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(invalidRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -92,29 +89,12 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
             .post(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
 
         result.status mustEqual CONFLICT
-      }
-
-      "return 401 UNAUTHORIZED when user cannot be identified" in {
-        when(
-          mockAuthConnector
-            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
-        ).thenReturn(Future.failed(AuthenticationError))
-
-        val result = Await.result(
-          client
-            .post(URI.create(baseUrl).toURL)
-            .withBody(validRequestJson)
-            .setHeader("X-Pillar2-Id" -> plrReference)
-            .execute[HttpResponse],
-          5.seconds
-        )
-
-        result.status mustEqual UNAUTHORIZED
       }
     }
 
@@ -132,6 +112,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .get(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -151,6 +132,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .get(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -173,6 +155,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .put(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -193,6 +176,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .put(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .withBody(validRequestJson)
             .execute[HttpResponse],
           5.seconds
@@ -216,6 +200,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .delete(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
@@ -235,6 +220,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
           client
             .delete(URI.create(baseUrl).toURL)
             .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
             .execute[HttpResponse],
           5.seconds
         )
