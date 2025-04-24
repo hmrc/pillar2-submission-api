@@ -1,0 +1,42 @@
+meta {
+  name: Valid Amendment
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{pillar2Url}}/overseas-return-notification/amend
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.status).to.equal(200);
+  });
+  
+  test("should contain form bundle number", function() {
+    expect(res.body.formBundleNumber).to.not.be.undefined;
+  });
+  
+  test("should contain processing date", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
+  });
+}
