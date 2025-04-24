@@ -1,0 +1,59 @@
+meta {
+  name: No Pillar2Id
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{pillar2Url}}/submit-uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": false,
+    "liabilities": {
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 5000,
+      "totalLiabilityDTT": 5000,
+      "totalLiabilityIIR": 0,
+      "totalLiabilityUTPR": 0,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Newco PLC",
+          "idType": "CRN",
+          "idValue": "12345678",
+          "amountOwedDTT": 5000,
+          "amountOwedIIR": 0,
+          "amountOwedUTPR": 0
+        }
+      ]
+    }
+  }
+}
+
+tests {
+  test("Status code is 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("Response contains correct error code", function() {
+    expect(res.body.code).to.equal("001");
+  });
+  
+  test("Response contains correct error message", function() {
+    expect(res.body.message).to.equal("Missing X-Pillar2-Id header");
+  });
+  
+}

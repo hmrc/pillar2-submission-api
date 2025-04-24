@@ -1,0 +1,16 @@
+meta {
+  name: Retrieve OaS
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{pillar2Url}}/obligations-and-submissions/2024-01-01/2024-12-31
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}

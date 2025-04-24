@@ -1,0 +1,35 @@
+meta {
+  name: Invalid JSON
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{pillar2Url}}/overseas-return-notification/amend
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: validbearer_token
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31"
+    invalid_json_here
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 400 for invalid JSON", function() {
+    expect(res.status).to.equal(400);
+  });
+}

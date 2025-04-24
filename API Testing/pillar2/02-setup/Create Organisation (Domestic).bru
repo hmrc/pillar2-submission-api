@@ -1,0 +1,25 @@
+meta {
+  name: Create Organisation (Domestic)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": true,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    }
+  }
+}

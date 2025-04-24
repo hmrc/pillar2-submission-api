@@ -1,0 +1,24 @@
+meta {
+  name: Submit BTN
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{pillar2Url}}/below-threshold-notification/submit
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31"
+  }
+}

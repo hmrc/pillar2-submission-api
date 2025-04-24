@@ -1,0 +1,33 @@
+meta {
+  name: Unauthorized
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{pillar2Url}}/overseas-return-notification/amend
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "2025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 401 when no authorization token provided", function() {
+    expect(res.status).to.equal(401);
+  });
+}
