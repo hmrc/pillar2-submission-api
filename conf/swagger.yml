@@ -419,7 +419,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ObligationsAndSubmissionsSuccessResponse"
       security:
-        - userRestricted: [write:pillar2]
+        - userRestricted: [read:pillar2]
   /overseas-return-notification:
     post:
       summary: Submit Overseas Return Notification
