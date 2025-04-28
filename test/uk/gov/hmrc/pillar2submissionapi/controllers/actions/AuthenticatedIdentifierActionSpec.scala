@@ -35,7 +35,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ForbiddenError, InvalidCredentials, MissingCredentials}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -95,13 +95,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
 
       "pass if agent is a test user and test users are enabled" in {
@@ -234,13 +230,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
     }
   }
@@ -260,13 +252,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
     }
 
@@ -282,13 +270,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ None ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
     }
 
@@ -304,13 +288,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
     }
 
@@ -359,13 +339,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ None ~ Some(Credentials(providerId, providerType)))
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Access to the requested resource is forbidden"
       }
     }
   }
@@ -385,13 +361,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[ForbiddenError.type](
-          await(
-            identifierAction.refine(fakeRequestWithPillar2Id)
-          )
-        )
+        val result = intercept[InvalidEnrolment.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
-        result.message mustEqual "Forbidden"
+        result.message mustEqual "Invalid Pillar 2 enrolment"
       }
     }
   }
