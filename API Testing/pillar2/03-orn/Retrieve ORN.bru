@@ -1,0 +1,16 @@
+meta {
+  name: Retrieve ORN
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{pillar2Url}}/overseas-return-notification/2024-01-01/2024-12-31
+  body: none
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
