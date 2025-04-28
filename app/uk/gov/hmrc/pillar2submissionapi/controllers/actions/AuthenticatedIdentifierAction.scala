@@ -25,7 +25,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{ForbiddenError, InvalidCredentials, MissingCredentials}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -67,8 +67,8 @@ class AuthenticatedIdentifierAction @Inject() (
         )
       )
     case None =>
-      logger.warn(s"Pillar2 ID not found in enrolments for user $internalId")
-      Future.failed(ForbiddenError)
+      logger.warn(s"Invalid Pillar2 enrolment - userId: $internalId")
+      Future.failed(InvalidEnrolment)
   }
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
@@ -99,7 +99,7 @@ class AuthenticatedIdentifierAction @Inject() (
     }
   }
 
-  def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
+  private def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
@@ -123,12 +123,9 @@ class AuthenticatedIdentifierAction @Inject() (
             userIdForEnrolment = credentials.providerId
           )
         )
-      case _ =>
-        Future.failed(ForbiddenError)
+      case _ => Future.failed(ForbiddenError)
     }
-
   }
-
 }
 
 object AuthenticatedIdentifierAction {

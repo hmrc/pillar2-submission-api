@@ -78,8 +78,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "409":
           description: Organisation Already Exists
           content:
@@ -156,8 +158,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
           description: Not Found
           content:
@@ -262,8 +266,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
           description: Not Found
           content:
@@ -333,8 +339,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.TestOrg.Forbidden"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
           description: Not Found
           content:
@@ -476,8 +484,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "500":
           description: Internal Server Error
           content:
@@ -661,8 +669,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "500":
           description: Internal Server Error
           content:
@@ -753,8 +761,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "500":
           description: Internal Server Error
           content:
@@ -859,8 +867,8 @@ paths:
           content:
             application/json:
               examples:
-                Forbidden:
-                  $ref: "#/components/examples/errors.Submission.Forbidden"
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "422":
           description: Business Validation Failure
           content:
@@ -1370,14 +1378,14 @@ components:
         liabilities:
           returnType: NIL_RETURN
     errors.TestOrg.NotFound:
-      summary: Test endpoints not available
+      summary: Test organisation not found
       value:
         code: 404
         message: "Organisation not found for pillar2Id: XAPLR1234567890"
-    errors.TestOrg.Forbidden:
+    errors.TestOrg.EndpointDisabled:
       summary: Test endpoints not available
       value:
-        code: 403
+        code: TEST_ENDPOINT_DISABLED
         message: Test endpoints are not available in this environment
     errors.MissingCredentials:
       summary: Missing Credentials
@@ -1429,11 +1437,11 @@ components:
       value:
         code: 500
         message: Internal Server Error
-    errors.Submission.Forbidden:
-      summary: Forbidden
+    errors.InvalidScope:
+      summary: Invalid scope
       value:
-        code: '006'
-        message: Forbidden
+        code: INVALID_SCOPE
+        message: Can not access the required resource. Ensure this token has all the required scopes.
     errors.Submission.InvalidReturn:
       summary: Invalid return
       value:
