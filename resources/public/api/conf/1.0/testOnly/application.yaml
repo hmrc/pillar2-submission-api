@@ -1269,8 +1269,10 @@ components:
         submissionType:
           type: string
           enum:
-          - UKTR
-          - ORN
+          - UKTR_CREATE
+          - UKTR_AMEND
+          - ORN_CREATE
+          - ORN_AMEND
           - BTN
           - GIR
         receivedDate:
@@ -1310,8 +1312,8 @@ components:
         obligationType:
           type: string
           enum:
-          - Pillar2TaxReturn
-          - GlobeInformationReturn
+          - UKTR
+          - GIR
         status:
           type: string
           enum:
