@@ -917,7 +917,7 @@ paths:
         required: true
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        description: Pillar2 ID for the submission.
       - in: header
         name: Authorization
         required: true
@@ -1024,7 +1024,7 @@ paths:
         required: true
         schema:
           type: string
-        description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+        description: Pillar2 ID for the submission.
       - in: header
         name: Authorization
         required: true

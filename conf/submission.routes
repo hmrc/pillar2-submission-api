@@ -274,7 +274,7 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #     required: true
 #     schema:
 #       type: string
-#     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#     description: Pillar2 ID for the submission.
 #   - in: header
 #     name: Authorization
 #     required: true
@@ -341,7 +341,7 @@ POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers
 #     required: true
 #     schema:
 #       type: string
-#     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#     description: Pillar2 ID for the submission.
 #   - in: header
 #     name: Authorization
 #     required: true
