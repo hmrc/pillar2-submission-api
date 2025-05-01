@@ -11,9 +11,9 @@ post {
 }
 
 headers {
-  Authorization: "Bearer invalid-token"
+  Authorization: {{bearer_token}}
   Accept: application/vnd.hmrc.1.0+json
-  X-Pillar2-Id: {{testPlrId}}
+  X-Pillar2-Id: XEPLR0000000001
 }
 
 body:json {
@@ -24,12 +24,12 @@ body:json {
 }
 
 tests {
-  test("should return 401 Unauthorized", function() {
-    expect(res.getStatus()).to.equal(401);
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
   });
   
   test("should contain correct error message", function() {
-    expect(res.body.code).to.equal("INVALID_CREDENTIALS");
-    expect(res.body.message).to.equal("Invalid Authentication information provided");
+    expect(res.body.code).to.equal("INCORRECT_HEADER_VALUE");
+    expect(res.body.message).to.equal("X-Pillar2-Id Header value does not match the bearer token");
   });
 }
