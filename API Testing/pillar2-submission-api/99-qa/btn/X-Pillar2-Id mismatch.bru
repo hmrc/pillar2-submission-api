@@ -1,24 +1,26 @@
 meta {
-  name: Unauthorized (invalid credentials)
+  name: X-Pillar2-Id mismatch
   type: http
-  seq: 7
+  seq: 2
 }
 
-get {
-  url: {{apiUrl}}/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-31
-  body: none
+post {
+  url: {{apiUrl}}/below-threshold-notification
+  body: json
   auth: none
-}
-
-params:query {
-  fromDate: 2024-01-01
-  toDate: 2024-12-31
 }
 
 headers {
   Authorization: "Bearer invalid-token"
+  Accept: application/vnd.hmrc.1.0+json
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: "Bearer invalid-token"
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2025-01-01"
+  }
 }
 
 tests {

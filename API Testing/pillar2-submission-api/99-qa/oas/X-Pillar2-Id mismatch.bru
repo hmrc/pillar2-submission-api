@@ -1,7 +1,7 @@
 meta {
-  name: Invalid query param
+  name: X-Pillar2-Id mismatch
   type: http
-  seq: 3
+  seq: 2
 }
 
 get {
@@ -17,7 +17,8 @@ params:query {
 
 headers {
   Authorization: {{bearer_token}}
-  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+  X-Pillar2-Id: XEPLR0000000001
 }
 
 tests {
@@ -26,7 +27,7 @@ tests {
   });
   
   test("should contain correct error message", function() {
-      expect(res.body.code).to.equal("INVALID_DATE_FORMAT");
-    expect(res.body.message).to.equal("Invalid date format");
+    expect(res.body.code).to.equal("INCORRECT_HEADER_VALUE");
+    expect(res.body.message).to.equal("X-Pillar2-Id Header value does not match the bearer token");
   });
 }

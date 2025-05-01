@@ -76,6 +76,11 @@ case object ForbiddenError extends Pillar2Error {
   val message = "Access to the requested resource is forbidden"
 }
 
+case object IncorrectHeaderValue extends Pillar2Error {
+  val code    = "INCORRECT_HEADER_VALUE"
+  val message = "X-Pillar2-Id Header value does not match the bearer token"
+}
+
 case object InvalidEnrolment extends Pillar2Error {
   val code    = "INVALID_ENROLMENT"
   val message = "Invalid Pillar 2 enrolment"
