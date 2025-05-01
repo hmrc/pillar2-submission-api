@@ -914,6 +914,7 @@ paths:
       parameters:
       - in: header
         name: X-Pillar2-Id
+        required: true
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent
@@ -1020,6 +1021,7 @@ paths:
       parameters:
       - in: header
         name: X-Pillar2-Id
+        required: true
         schema:
           type: string
         description: Pillar2 ID for the submission. Mandatory if the user is an Agent

@@ -271,6 +271,7 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 # parameters:
 #   - in: header
 #     name: X-Pillar2-Id
+#     required: true
 #     schema:
 #       type: string
 #     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
@@ -337,6 +338,7 @@ POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers
 # parameters:
 #   - in: header
 #     name: X-Pillar2-Id
+#     required: true
 #     schema:
 #       type: string
 #     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
