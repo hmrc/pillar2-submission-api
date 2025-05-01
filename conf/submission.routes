@@ -330,4 +330,70 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 ###
-POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.ORNSubmissionController.submitORN
+POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController.submitORN
+
+###
+# summary: Amend a Pillar2  Overseas Return Notification
+# parameters:
+#   - in: header
+#     name: X-Pillar2-Id
+#     schema:
+#       type: string
+#     description: Pillar2 ID for the submission. Mandatory if the user is an Agent
+#   - in: header
+#     name: Authorization
+#     required: true
+#     schema:
+#       type: string
+#     description: Bearer token for authentication
+#   - in: header
+#     name: Accept
+#     required: false
+#     schema:
+#       type: string
+#       example: application/vnd.hmrc.1.0+json
+#     description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
+# requestBody:
+#   content:
+#     application/json:
+#       schema:
+#         $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission'
+# responses:
+#   200:
+#     description: Overseas Return Notification Submission Amended
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
+#   401:
+#     description: Unauthorized
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   422:
+#     description: Business Validation Failure
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   400:
+#     description: Bad Request
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   403:
+#     description: Forbidden
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+#   500:
+#     description: Internal Server Error
+#     content:
+#       application/json:
+#         schema:
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
+###
+PUT /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController.amendORN

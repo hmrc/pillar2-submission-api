@@ -30,14 +30,23 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitORNConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
 
-  private val ORNSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/submit"
+  private val ORNSubmitUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/submit"
+  private val ORNAmendUrl:  String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/amend"
 
   def submitORN(ORNSubmission: ORNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
-    logger.info(s"Calling $ORNSubmissionUrl to submit a BTN")
+    logger.info(s"Calling $ORNSubmitUrl to submit a ORN")
     http
-      .post(URI.create(ORNSubmissionUrl).toURL)
+      .post(URI.create(ORNSubmitUrl).toURL)
+      .withBody(Json.toJson(ORNSubmission))
+      .execute[HttpResponse]
+  }
+
+  def amendORN(ORNSubmission: ORNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    logger.info(s"Calling $ORNAmendUrl to amend a ORN")
+    http
+      .put(URI.create(ORNAmendUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
       .execute[HttpResponse]
   }

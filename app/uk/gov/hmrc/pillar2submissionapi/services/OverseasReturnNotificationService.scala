@@ -20,21 +20,25 @@ import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitORNConnector
+import uk.gov.hmrc.pillar2submissionapi.connectors.OverseasReturnNotificationConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission, ORNSuccessResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitORNService @Inject() (submitORNConnector: SubmitORNConnector)(implicit val ec: ExecutionContext) extends Logging {
+class OverseasReturnNotificationService @Inject() (submitORNConnector: OverseasReturnNotificationConnector)(implicit val ec: ExecutionContext)
+    extends Logging {
 
   def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
     submitORNConnector.submitORN(request).map(convertToResult)
 
+  def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
+    submitORNConnector.amendORN(request).map(convertToResult)
+
   private def convertToResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
-      case 201 =>
+      case 201 | 200 =>
         response.json.validate[ORNSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(_) =>
