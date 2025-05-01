@@ -1,7 +1,7 @@
 meta {
   name: No Submission Found
   type: http
-  seq: 9
+  seq: 12
 }
 
 get {
@@ -20,10 +20,10 @@ tests {
     expect(res.status).to.equal(422);
   });
   
-  test("should include error details about no submission found", function() {
+  test("should include correct error details", function() {
     expect(res.body.errors).to.not.be.undefined;
-    expect(res.body.errors.code).to.equal("003");
-    expect(res.body.errors.text).to.include("Request could not be processed");
+    expect(res.body.errors.code).to.equal("005");
+    expect(res.body.errors.text).to.include("No Form Bundle found");
   });
 }
 
