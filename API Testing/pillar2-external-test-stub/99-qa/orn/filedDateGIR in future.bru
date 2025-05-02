@@ -1,0 +1,40 @@
+meta {
+  name: filedDateGIR in future
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/overseas-return-notification
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: validBearerToken
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "filedDateGIR": "3025-01-10",
+    "countryGIR": "US",
+    "reportingEntityName": "Newco PLC",
+    "TIN": "US12345678",
+    "issuingCountryTIN": "US"
+  }
+}
+
+tests {
+  test("should return 422 UnprocessableEntity", function() {
+    expect(res.status).to.equal(422);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.errors.processingDate).to.not.be.undefined;
+    expect(res.body.errors.code).to.equal("003");
+    expect(res.body.errors.text).to.equal("Request could not be processed");
+  });
+}
