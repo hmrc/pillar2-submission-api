@@ -27,7 +27,7 @@ body:json {
 }
 
 tests {
-  test("should return 403 when no authorization token provided", function() {
-    expect(res.status).to.equal(403);
+  test("should return 401 when no authorization token provided", function() {
+    expect(res.status).to.equal(401);
   });
 }
