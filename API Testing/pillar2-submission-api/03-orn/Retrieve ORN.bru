@@ -1,0 +1,23 @@
+meta {
+  name: Retrieve ORN
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{pillar2BaseUrl}}/overseas-return-notification/2024-01-01/2024-12-31
+  body: none
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{pillar2Id}}
+  Authorization: Bearer {{bearerToken}}
+  Accept: application/vnd.hmrc.1.0+json
+  Content-Type: application/json
+}
+
+docs {
+  title: Retrieve ORN
+  description: Retrieves Overseas Return Notification information for the specified accounting period
+} 
