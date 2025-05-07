@@ -38,11 +38,11 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       "return 201 CREATED response" in {
 
         when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(submitOrnResponse), Map.empty)))
 
         val result = await(ornService.submitORN(ornRequestFixture))
 
-        assertEquals(okResponse, result)
+        assertEquals(submitOrnResponse, result)
       }
     }
   }
@@ -92,11 +92,11 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       "return 200 OK response" in {
 
         when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(submitOrnResponse), Map.empty)))
 
         val result = await(ornService.amendORN(ornRequestFixture))
 
-        assertEquals(okResponse, result)
+        assertEquals(submitOrnResponse, result)
       }
     }
   }
@@ -141,4 +141,5 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
     }
   }
 
+  // TODO: Add tests for retrieveORN method
 }
