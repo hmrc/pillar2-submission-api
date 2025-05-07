@@ -84,7 +84,7 @@ class OverseasReturnNotificationController @Inject() (
           case e: DownstreamValidationError =>
             UnprocessableEntity(Json.toJson(Pillar2ErrorResponse(e.code, e.message)))
           case UnexpectedResponse =>
-            InternalServerError(Json.toJson(Pillar2ErrorResponse("INTERNAL_SERVER_ERROR", "Internal server error")))
+            InternalServerError(Json.toJson(Pillar2ErrorResponse("500", "Internal Server Error")))
         }
     }
 }

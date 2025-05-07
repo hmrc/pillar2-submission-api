@@ -32,7 +32,7 @@ import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmitSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -53,6 +53,8 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
   private val submitUrl = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
   private val amendUrl  = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
+  private def retrieveUrl(from: String, to: String) =
+    s"/report-pillar2-top-up-taxes/overseas-return-notification/$from/$to"
 
   "ORNSubmissionController" when {
     "submitORN as a organisation" must {
@@ -66,10 +68,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
-        val result = Await.result(submitRequest.withBody(validRequestJson).execute[ORNSuccessResponse], 5.seconds)
+        val result = Await.result(submitRequest.withBody(validRequestJson).execute[ORNSubmitSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -206,11 +208,11 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(submitRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSuccessResponse], 5.seconds)
+          Await.result(submitRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSubmitSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -247,7 +249,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           UNAUTHORIZED,
-          Json.toJson(ORNErrorResponse("001", "Unauthorized"))
+          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
         )
 
         val result = Await.result(submitRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -268,7 +270,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(ORNErrorResponse("999", "internal_server_error"))
+          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
         )
 
         val result = Await.result(submitRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -290,10 +292,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
-        val result = Await.result(amendRequest.withBody(validRequestJson).execute[ORNSuccessResponse], 5.seconds)
+        val result = Await.result(amendRequest.withBody(validRequestJson).execute[ORNSubmitSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -430,11 +432,11 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(amendRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSuccessResponse], 5.seconds)
+          Await.result(amendRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSubmitSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -471,7 +473,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           UNAUTHORIZED,
-          Json.toJson(ORNErrorResponse("001", "Unauthorized"))
+          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
         )
 
         val result = Await.result(amendRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -492,10 +494,201 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(ORNErrorResponse("999", "internal_server_error"))
+          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
         )
 
         val result = Await.result(amendRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
+    }
+
+    "retrieveORN as an organization" must {
+      "return 200 OK when given valid period parameters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          OK,
+          Json
+            .toJson(
+              Json.obj(
+                "success" -> ORNSuccessResponse(
+                  processingDate = "2022-01-31T09:26:17Z",
+                  accountingPeriodFrom = fromDate,
+                  accountingPeriodTo = toDate,
+                  filedDateGIR = "2025-01-10",
+                  countryGIR = "US",
+                  reportingEntityName = "Newco PLC",
+                  TIN = "US12345678",
+                  issuingCountryTIN = "US"
+                )
+              )
+            )
+            .toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
+
+        result.processingDate mustEqual "2022-01-31T09:26:17Z"
+        result.accountingPeriodFrom mustEqual fromDate
+        result.accountingPeriodTo mustEqual toDate
+        result.filedDateGIR mustEqual "2025-01-10"
+        result.countryGIR mustEqual "US"
+        result.reportingEntityName mustEqual "Newco PLC"
+        result.TIN mustEqual "US12345678"
+        result.issuingCountryTIN mustEqual "US"
+      }
+
+      "return 404 NOT_FOUND when ORN doesn't exist" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          NOT_FOUND,
+          Json.toJson(ORNErrorResponse("NOT_FOUND", "The requested resource was not found")).toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual NOT_FOUND
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "NOT_FOUND"
+        errorResponse.message mustEqual "The requested ORN could not be found"
+      }
+
+      "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          UNPROCESSABLE_ENTITY,
+          Json.toJson(ORNErrorResponse("093", "Invalid parameters")).toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual UNPROCESSABLE_ENTITY
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "093"
+        errorResponse.message mustEqual "Invalid parameters"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          INTERNAL_SERVER_ERROR,
+          Json.toJson(ORNErrorResponse("500", "Internal Server Error")).toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR when receiving malformed JSON on successful response" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+    
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          OK,
+          Json.obj("processingDate" -> "2022-01-31T09:26:17Z", "invalidField" -> "value").toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR when receiving malformed error JSON on 422 response" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+     
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          UNPROCESSABLE_ENTITY,
+          Json.obj("invalidErrorFormat" -> "value").toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
 
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
@@ -534,11 +727,14 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(submitRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSuccessResponse], 5.seconds)
+          Await.result(
+            submitRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSubmitSuccessResponse],
+            5.seconds
+          )
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -575,14 +771,83 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(amendRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSuccessResponse], 5.seconds)
+          Await.result(amendRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSubmitSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
+      }
+    }
+
+    "retrieveORN as an agent" must {
+      "return 200 OK when given valid period parameters" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2023-01-01"
+        val toDate   = "2024-12-31"
+
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          OK,
+          Json
+            .toJson(
+              Json.obj(
+                "success" -> ORNSuccessResponse(
+                  processingDate = "2022-01-31T09:26:17Z",
+                  accountingPeriodFrom = fromDate,
+                  accountingPeriodTo = toDate,
+                  filedDateGIR = "2025-01-10",
+                  countryGIR = "US",
+                  reportingEntityName = "Newco PLC",
+                  TIN = "US12345678",
+                  issuingCountryTIN = "US"
+                )
+              )
+            )
+            .toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
+
+        result.processingDate mustEqual "2022-01-31T09:26:17Z"
+        result.accountingPeriodFrom mustEqual fromDate
+        result.accountingPeriodTo mustEqual toDate
+        result.filedDateGIR mustEqual "2025-01-10"
+        result.countryGIR mustEqual "US"
+        result.reportingEntityName mustEqual "Newco PLC"
+        result.TIN mustEqual "US12345678"
+        result.issuingCountryTIN mustEqual "US"
       }
     }
   }
