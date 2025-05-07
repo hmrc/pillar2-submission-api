@@ -34,6 +34,8 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
 
   private val ORNSubmitUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/submit"
   private val ORNAmendUrl:  String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/amend"
+  private def ORNRetrieveUrl(accountingPeriodFrom: String, accountingPeriodTo: String): String = 
+    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/retrieve?accountingPeriodFrom=$accountingPeriodFrom&accountingPeriodTo=$accountingPeriodTo"
 
   def submitORN(ORNSubmission: ORNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling $ORNSubmitUrl to submit a ORN")
@@ -48,6 +50,14 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
     http
       .put(URI.create(ORNAmendUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
+      .execute[HttpResponse]
+  }
+
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = ORNRetrieveUrl(accountingPeriodFrom, accountingPeriodTo)
+    logger.info(s"Calling $url to retrieve a ORN")
+    http
+      .get(URI.create(url).toURL)
       .execute[HttpResponse]
   }
 }
