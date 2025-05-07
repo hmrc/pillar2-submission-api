@@ -20,8 +20,9 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderAction, SubscriptionDataRetrievalAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.services.OverseasReturnNotificationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -31,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OverseasReturnNotificationController @Inject() (
-  cc:               ControllerComponents,
-  identify:         IdentifierAction,
-  pillar2Action:    Pillar2IdHeaderAction,
-  getSubscription:  SubscriptionDataRetrievalAction,
-  submitORNService: OverseasReturnNotificationService
-)(implicit ec:      ExecutionContext)
+  cc:              ControllerComponents,
+  identify:        IdentifierAction,
+  pillar2Action:   Pillar2IdHeaderAction,
+  getSubscription: SubscriptionDataRetrievalAction,
+  ornService:      OverseasReturnNotificationService
+)(implicit ec:     ExecutionContext)
     extends BackendController(cc) {
 
   def submitORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
@@ -45,7 +46,7 @@ class OverseasReturnNotificationController @Inject() (
       case Some(request) =>
         request.validate[ORNSubmission] match {
           case JsSuccess(value, _) =>
-            submitORNService
+            ornService
               .submitORN(value)
               .map(response => Created(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
@@ -60,7 +61,7 @@ class OverseasReturnNotificationController @Inject() (
       case Some(request) =>
         request.validate[ORNSubmission] match {
           case JsSuccess(value, _) =>
-            submitORNService
+            ornService
               .amendORN(value)
               .map(response => Ok(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
@@ -68,4 +69,22 @@ class OverseasReturnNotificationController @Inject() (
       case None => Future.failed(EmptyRequestBody)
     }
   }
+
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String): Action[AnyContent] =
+    (pillar2Action andThen identify andThen getSubscription).async { implicit request =>
+      val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+      ornService
+        .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
+        .map { response =>
+          Ok(Json.toJson(response))
+        }
+        .recover {
+          case ResourceNotFoundException =>
+            NotFound(Json.toJson(Pillar2ErrorResponse("NOT_FOUND", "The requested ORN could not be found")))
+          case e: DownstreamValidationError =>
+            UnprocessableEntity(Json.toJson(Pillar2ErrorResponse(e.code, e.message)))
+          case UnexpectedResponse =>
+            InternalServerError(Json.toJson(Pillar2ErrorResponse("INTERNAL_SERVER_ERROR", "Internal server error")))
+        }
+    }
 }
