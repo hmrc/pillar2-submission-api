@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.118.0
+  version: 0.125.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -905,8 +905,20 @@ paths:
       security:
       - userRestricted:
         - read:pillar2
-components:
-  schemas:
+      security:
+      - userRestricted:
+        - write:pillar2
+          type: string
+          format: date
+
+      required:
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
     uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse:
       properties:
         processingDate:
@@ -1123,8 +1135,6 @@ components:
           enum:
           - UKTR_CREATE
           - UKTR_AMEND
-          - ORN_CREATE
-          - ORN_AMEND
           - BTN
           - GIR
         receivedDate:
@@ -1224,6 +1234,7 @@ components:
       value:
         accountingPeriodFrom: 2024-01-01
         accountingPeriodTo: 2024-12-31
+
     responses.BTNSuccessResponseExample:
       summary: Success response
       value:
@@ -1379,6 +1390,7 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: NIL_RETURN
+
     errors.TestOrg.NotFound:
       summary: Test organisation not found
       value:
