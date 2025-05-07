@@ -16,10 +16,53 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class ORNSuccessResponse(processingDate: String, formBundleNumber: String)
+// Response for Retrieve operations (GET)
+case class ORNSuccessResponse(
+  processingDate:       String,
+  accountingPeriodFrom: String,
+  accountingPeriodTo:   String,
+  filedDateGIR:         String,
+  countryGIR:           String,
+  reportingEntityName:  String,
+  TIN:                  String,
+  issuingCountryTIN:    String
+)
 
-case object ORNSuccessResponse {
+// Response for Submit and Amend operations (POST/PUT)
+case class ORNSubmitSuccessResponse(
+  processingDate:   String,
+  formBundleNumber: String
+)
+
+object ORNSuccessResponse {
+
   implicit val successFormat: OFormat[ORNSuccessResponse] = Json.format[ORNSuccessResponse]
+
+  implicit val reads: Reads[ORNSuccessResponse] = new Reads[ORNSuccessResponse] {
+    override def reads(json: JsValue): JsResult[ORNSuccessResponse] =
+      successFormat.reads(json) match {
+        case success: JsSuccess[ORNSuccessResponse] => success
+        case _ =>
+          (json \ "success").validate[ORNSuccessResponse](successFormat)
+      }
+  }
+
+  implicit val writes: OWrites[ORNSuccessResponse] = successFormat
+}
+
+object ORNSubmitSuccessResponse {
+  implicit val format: OFormat[ORNSubmitSuccessResponse] = Json.format[ORNSubmitSuccessResponse]
+
+  implicit val reads: Reads[ORNSubmitSuccessResponse] = new Reads[ORNSubmitSuccessResponse] {
+    override def reads(json: JsValue): JsResult[ORNSubmitSuccessResponse] =
+      format.reads(json) match {
+        case success: JsSuccess[ORNSubmitSuccessResponse] => success
+        case _ =>
+          (json \ "success").validate[ORNSubmitSuccessResponse](format)
+      }
+  }
+
+  implicit val writes: OWrites[ORNSubmitSuccessResponse] = format
 }
