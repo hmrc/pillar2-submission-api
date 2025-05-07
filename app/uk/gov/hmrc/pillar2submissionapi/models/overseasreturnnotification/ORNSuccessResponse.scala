@@ -18,7 +18,6 @@ package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
 import play.api.libs.json._
 
-// Response for Retrieve operations (GET)
 case class ORNSuccessResponse(
   processingDate:       String,
   accountingPeriodFrom: String,
@@ -30,7 +29,6 @@ case class ORNSuccessResponse(
   issuingCountryTIN:    String
 )
 
-// Response for Submit and Amend operations (POST/PUT)
 case class ORNSubmitSuccessResponse(
   processingDate:   String,
   formBundleNumber: String

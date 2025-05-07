@@ -34,7 +34,6 @@ trait ORNDataFixture {
   )
   val ornRequestJs: JsValue = Json.toJson(ornRequestFixture)
 
-  // Response for Retrieve operations (GET)
   val retrieveOrnResponse: ORNSuccessResponse = ORNSuccessResponse(
     processingDate = "2022-01-31T09:26:17Z",
     accountingPeriodFrom = "2024-01-01",
@@ -46,7 +45,6 @@ trait ORNDataFixture {
     issuingCountryTIN = "US"
   )
 
-  // Response for Submit and Amend operations (POST/PUT)
   val submitOrnResponse: ORNSubmitSuccessResponse = ORNSubmitSuccessResponse(
     processingDate = "2022-01-31T09:26:17Z",
     formBundleNumber = "123456789012345"
