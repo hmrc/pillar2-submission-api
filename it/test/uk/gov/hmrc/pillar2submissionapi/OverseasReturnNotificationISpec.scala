@@ -648,7 +648,6 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
 
-    
         stubGet(
           retrieveUrl(fromDate, toDate),
           OK,
@@ -677,7 +676,6 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
 
-     
         stubGet(
           retrieveUrl(fromDate, toDate),
           UNPROCESSABLE_ENTITY,
