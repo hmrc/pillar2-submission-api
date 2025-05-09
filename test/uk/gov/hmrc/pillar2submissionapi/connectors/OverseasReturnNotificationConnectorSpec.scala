@@ -25,19 +25,17 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitORNConnectorSpec.validORNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
+import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 
-import java.time.LocalDate
+class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixture {
 
-class SubmitORNConnectorSpec extends UnitTestBaseSpec {
-
-  lazy val submitORNConnector: SubmitORNConnector = app.injector.instanceOf[SubmitORNConnector]
+  lazy val ornConnector: OverseasReturnNotificationConnector = app.injector.instanceOf[OverseasReturnNotificationConnector]
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
   private val submitUrl = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
+  private val amendUrl  = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
 
   "SubmitORNConnector" when {
     "submitORN" must {
@@ -45,7 +43,7 @@ class SubmitORNConnectorSpec extends UnitTestBaseSpec {
         implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(submitORNConnector.submitORN(validORNSubmission))
+        val result = await(ornConnector.submitORN(ornRequestFixture))
 
         result.status should be(CREATED)
         server.verify(
@@ -56,7 +54,7 @@ class SubmitORNConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED for valid request" in {
         stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(submitORNConnector.submitORN(validORNSubmission)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
 
         result.status should be(CREATED)
       }
@@ -64,7 +62,7 @@ class SubmitORNConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(submitORNConnector.submitORN(validORNSubmission)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -72,22 +70,50 @@ class SubmitORNConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(submitORNConnector.submitORN(validORNSubmission)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
 
         result.status should be(NOT_FOUND)
       }
     }
   }
-}
 
-object SubmitORNConnectorSpec {
-  val validORNSubmission: ORNSubmission = new ORNSubmission(
-    accountingPeriodFrom = LocalDate.now(),
-    accountingPeriodTo = LocalDate.now().plusYears(1),
-    filedDateGIR = LocalDate.now().plusYears(1),
-    countryGIR = "US",
-    reportingEntityName = "Newco PLC",
-    TIN = "US12345678",
-    issuingCountryTIN = "US"
-  )
+  "AmendORNConnector" when {
+    "amendORN" must {
+      "forward the X-Pillar2-Id header" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        stubRequestWithPillar2Id("PUT", amendUrl, OK, JsObject.empty)
+
+        val result = await(ornConnector.amendORN(ornRequestFixture))
+
+        result.status should be(OK)
+        server.verify(
+          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
+      }
+
+      "return 200 CREATED for valid request" in {
+        stubRequest("PUT", amendUrl, OK, JsObject.empty)
+
+        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+
+        result.status should be(OK)
+      }
+
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("PUT", amendUrl, BAD_REQUEST, JsObject.empty)
+
+        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+
+        result.status should be(BAD_REQUEST)
+      }
+
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
+
+        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+
+        result.status should be(NOT_FOUND)
+      }
+    }
+  }
 }

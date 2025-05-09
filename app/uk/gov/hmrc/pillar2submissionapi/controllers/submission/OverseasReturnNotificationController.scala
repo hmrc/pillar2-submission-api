@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitORNService
+import uk.gov.hmrc.pillar2submissionapi.services.OverseasReturnNotificationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -30,12 +30,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ORNSubmissionController @Inject() (
+class OverseasReturnNotificationController @Inject() (
   cc:               ControllerComponents,
   identify:         IdentifierAction,
   pillar2Action:    Pillar2IdHeaderAction,
   getSubscription:  SubscriptionDataRetrievalAction,
-  submitORNService: SubmitORNService
+  submitORNService: OverseasReturnNotificationService
 )(implicit ec:      ExecutionContext)
     extends BackendController(cc) {
 
@@ -48,6 +48,21 @@ class ORNSubmissionController @Inject() (
             submitORNService
               .submitORN(value)
               .map(response => Created(Json.toJson(response)))
+          case JsError(_) => Future.failed(InvalidJson)
+        }
+      case None => Future.failed(EmptyRequestBody)
+    }
+  }
+
+  def amendORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    request.body.asJson match {
+      case Some(request) =>
+        request.validate[ORNSubmission] match {
+          case JsSuccess(value, _) =>
+            submitORNService
+              .amendORN(value)
+              .map(response => Ok(Json.toJson(response)))
           case JsError(_) => Future.failed(InvalidJson)
         }
       case None => Future.failed(EmptyRequestBody)
