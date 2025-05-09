@@ -486,6 +486,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -671,6 +673,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -997,6 +1001,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -1102,6 +1108,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -1188,6 +1196,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "404":
           description: Not Found
           content:

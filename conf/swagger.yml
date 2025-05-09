@@ -121,6 +121,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -219,6 +221,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -467,6 +471,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -536,6 +542,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -629,6 +637,8 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
+                Test Endpoint Disabled:
+                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
