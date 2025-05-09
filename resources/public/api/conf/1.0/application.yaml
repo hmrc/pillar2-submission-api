@@ -55,33 +55,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "409":
           description: Organisation Already Exists
           content:
@@ -146,31 +131,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -180,15 +152,6 @@ paths:
               example:
                 code: 500
                 message: Internal Server Error
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
       description: |
         Gets a test organisation associated with your authed organisation.
       security:
@@ -243,42 +206,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -327,31 +272,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -486,8 +418,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -525,7 +455,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid return</td>
-        <td>There is an error with the tax return you've submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under "Personal Details".</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT election</td>
@@ -673,8 +603,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -855,7 +783,6 @@ paths:
         <td>014 - No data found</td>
         <td>No data found for this Pillar 2 ID.</td>
         </tr>
-        <tr>
         </tbody>
         </table>
       responses:
@@ -880,8 +807,6 @@ paths:
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:

@@ -55,33 +55,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "409":
           description: Organisation Already Exists
           content:
@@ -146,31 +131,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -180,15 +152,6 @@ paths:
               example:
                 code: 500
                 message: Internal Server Error
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
       description: |
         Gets a test organisation associated with your authed organisation.
       security:
@@ -243,42 +206,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -327,31 +272,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
-          description: Not Found
+          description: Organisation Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
         "500":
           description: Internal Server Error
           content:
@@ -486,8 +418,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -673,8 +603,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "500":
           description: Internal Server Error
           content:
@@ -855,7 +783,6 @@ paths:
         <td>014 - No data found</td>
         <td>No data found for this Pillar 2 ID.</td>
         </tr>
-        <tr>
         </tbody>
         </table>
       responses:
@@ -880,8 +807,6 @@ paths:
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
@@ -909,394 +834,8 @@ paths:
       security:
       - userRestricted:
         - read:pillar2
-  /organisations/pillar-two/overseas-return-notification:
-    post:
-      operationId: submitORN
-      tags:
-      - submission
-      summary: Submit Overseas Return Notification
-      parameters:
-      - in: header
-        name: X-Pillar2-Id
-        required: true
-        schema:
-          type: string
-        description: Pillar2 ID for the submission.
-      - in: header
-        name: Authorization
-        required: true
-        schema:
-          type: string
-        description: Bearer token for authentication
-      - in: header
-        name: Accept
-        required: false
-        schema:
-          type: string
-          example: application/vnd.hmrc.1.0+json
-        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission"
-            examples:
-              requests.ORNRequestExample:
-                $ref: "#/components/examples/requests.ORNRequestExample"
-      responses:
-        "201":
-          description: Overseas Return Notification Submission Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse"
-              examples:
-                responses.ORNSuccessResponseExample:
-                  $ref: "#/components/examples/responses.ORNSuccessResponseExample"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Active Subscription Found:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
-                Tax Obligation Fulfilled:
-                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-                Invalid Return:
-                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Request Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-                Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-                No Subscription Data:
-                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-      description: |
-        Submit an Overseas Return Notification
-      security:
-      - userRestricted:
-        - write:pillar2
-    put:
-      operationId: amendORN
-      tags:
-      - submission
-      summary: Amend Overseas Return Notification
-      parameters:
-      - in: header
-        name: X-Pillar2-Id
-        required: true
-        schema:
-          type: string
-        description: Pillar2 ID for the submission.
-      - in: header
-        name: Authorization
-        required: true
-        schema:
-          type: string
-        description: Bearer token for authentication
-      - in: header
-        name: Accept
-        required: false
-        schema:
-          type: string
-          example: application/vnd.hmrc.1.0+json
-        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission"
-            examples:
-              requests.ORNRequestExample:
-                $ref: "#/components/examples/requests.ORNRequestExample"
-      responses:
-        "200":
-          description: Overseas Return Notification Submission Amended
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse"
-              examples:
-                responses.ORNSuccessResponseExample:
-                  $ref: "#/components/examples/responses.ORNSuccessResponseExample"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Active Subscription Found:
-                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
-                Invalid Return:
-                  $ref: "#/components/examples/errors.Submission.InvalidReturn"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Json:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Request Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-                Missing Header:
-                  $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-                No Subscription Data:
-                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-      description: |
-        Amend an Overseas Return Notification
-      security:
-      - userRestricted:
-        - write:pillar2
-  /organisations/pillar-two/overseas-return-notification/{accountingPeriodFrom}/{accountingPeriodTo}:
-    get:
-      operationId: retrieveORN
-      tags:
-      - submission
-      summary: Retrieve a Pillar2 Overseas Return Notification
-      parameters:
-      - name: accountingPeriodFrom
-        in: path
-        description: Period start date
-        required: true
-        schema:
-          type: string
-          format: date
-      - name: accountingPeriodTo
-        in: path
-        description: Period end date
-        required: true
-        schema:
-          type: string
-          format: date
-      responses:
-        "200":
-          description: Overseas Return Notification Retrieved Successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ORNSuccessResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Date Range:
-                  $ref: "#/components/examples/errors.InvalidDateRange"
-                Invalid Date Format:
-                  $ref: "#/components/examples/errors.InvalidDateFormat"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Resource Not Found:
-                  summary: Resource not found
-                  value:
-                    code: NOT_FOUND
-                    message: The requested ORN could not be found
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-      description: |
-        Retrieve an Overseas Return Notification by accounting period
-      security:
-      - userRestricted:
-        - read:pillar2
 components:
   schemas:
-    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        accountingPeriodFrom:
-          type: string
-        accountingPeriodTo:
-          type: string
-        filedDateGIR:
-          type: string
-        countryGIR:
-          type: string
-        reportingEntityName:
-          type: string
-        TIN:
-          type: string
-        issuingCountryTIN:
-          type: string
-      required:
-      - processingDate
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
-    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        formBundleNumber:
-          type: string
-      required:
-      - processingDate
-      - formBundleNumber
-    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
-      properties:
-        accountingPeriodFrom:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-        filedDateGIR:
-          type: string
-          format: date
-        countryGIR:
-          type: string
-          minLength: 1
-          maxLength: 2
-        reportingEntityName:
-          type: string
-          minLength: 1
-          maxLength: 200
-        TIN:
-          type: string
-          minLength: 1
-          maxLength: 200
-        issuingCountryTIN:
-          type: string
-          minLength: 1
-          maxLength: 2
-      required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
     uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse:
       properties:
         processingDate:
@@ -1584,33 +1123,6 @@ components:
       required:
       - processingDate
       - accountingPeriodDetails
-    ORNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        accountingPeriodFrom:
-          type: string
-        accountingPeriodTo:
-          type: string
-        filedDateGIR:
-          type: string
-        countryGIR:
-          type: string
-        reportingEntityName:
-          type: string
-        TIN:
-          type: string
-        issuingCountryTIN:
-          type: string
-      required:
-      - processingDate
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example
@@ -1641,16 +1153,6 @@ components:
       value:
         accountingPeriodFrom: 2024-01-01
         accountingPeriodTo: 2024-12-31
-    requests.ORNRequestExample:
-      summary: Request example
-      value:
-        accountingPeriodFrom: 2024-01-01
-        accountingPeriodTo: 2024-12-31
-        filedDateGIR: 2025-01-10
-        countryGIR: US
-        reportingEntityName: Newco PLC
-        TIN: US12345678
-        issuingCountryTIN: US
     responses.BTNSuccessResponseExample:
       summary: Success response
       value:
@@ -1806,11 +1308,6 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: NIL_RETURN
-    responses.ORNSuccessResponseExample:
-      summary: ORN Success response
-      value:
-        processingDate: 2026-06-26T09:26:17Z
-        formBundleNumber: 119000004320
     errors.TestOrg.NotFound:
       summary: Test organisation not found
       value:
