@@ -1,7 +1,7 @@
 meta {
-  name: Submit Invalid BTN
+  name: X-Pillar2-Id mismatch
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -12,13 +12,14 @@ post {
 
 headers {
   Authorization: {{bearer_token}}
-  X-Pillar2-Id: {{testPlrId}}
   Accept: application/vnd.hmrc.1.0+json
+  X-Pillar2-Id: XEPLR0000000001
 }
 
 body:json {
   {
-    "badRequest": ""
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2025-01-01"
   }
 }
 
@@ -28,6 +29,7 @@ tests {
   });
   
   test("should contain correct error message", function() {
-    expect(res.body.message).to.equal("Invalid JSON payload");
+    expect(res.body.code).to.equal("INCORRECT_HEADER_VALUE");
+    expect(res.body.message).to.equal("X-Pillar2-Id Header value does not match the bearer token");
   });
 }

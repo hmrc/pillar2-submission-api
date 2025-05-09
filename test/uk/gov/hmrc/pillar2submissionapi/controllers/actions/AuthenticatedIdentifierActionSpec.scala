@@ -347,8 +347,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
   }
 
   "IdentifierAction - invalid details" when {
-    "pillar2Id is missing" should {
-      "user is unauthorized" in {
+    "pillar2Id is missing or does not match the request's header" should {
+      "pillar2Id is missing" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
@@ -364,6 +364,24 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val result = intercept[InvalidEnrolment.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
         result.message mustEqual "Invalid Pillar 2 enrolment"
+      }
+
+      "pillar2Id does not match the request's header" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        val result = intercept[IncorrectHeaderValue.type](await(identifierAction.refine(fakeRequestWithDifferentPillar2Id)))
+
+        result.message mustEqual "X-Pillar2-Id Header value does not match the bearer token"
       }
     }
   }
@@ -398,9 +416,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 object AuthenticatedIdentifierActionSpec {
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
-  val pillar2Id = "XCCVRUGFJG788"
+  val pillar2Id        = "XCCVRUGFJG788"
+  val anotherPillar2Id = "XCCVRUGFJG780"
   val fakeRequestWithPillar2Id: RequestWithPillar2Id[AnyContent] =
     RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> "bearerToken"))
+  val fakeRequestWithDifferentPillar2Id: RequestWithPillar2Id[AnyContent] =
+    RequestWithPillar2Id(anotherPillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> "bearerToken"))
   val requestEmptyAuthorization: RequestWithPillar2Id[AnyContent] =
     RequestWithPillar2Id(pillar2Id, FakeRequest(method = "", path = "").withHeaders("Authorization" -> ""))
   val requestSpacesOnlyAuthorization: RequestWithPillar2Id[AnyContent] =
