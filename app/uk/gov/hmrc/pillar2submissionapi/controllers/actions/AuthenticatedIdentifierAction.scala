@@ -57,15 +57,17 @@ class AuthenticatedIdentifierAction @Inject() (
     enrolments
   ) match {
     case Some(pillar2Id) =>
-      Future.successful(
-        IdentifierRequest(
-          request = request,
-          userId = internalId,
-          groupId = Some(groupId),
-          clientPillar2Id = pillar2Id,
-          userIdForEnrolment = providerId
+      if (request.pillar2Id != pillar2Id) throw IncorrectHeaderValue
+      else
+        Future.successful(
+          IdentifierRequest(
+            request = request,
+            userId = internalId,
+            groupId = Some(groupId),
+            clientPillar2Id = pillar2Id,
+            userIdForEnrolment = providerId
+          )
         )
-      )
     case None =>
       logger.warn(s"Invalid Pillar2 enrolment - userId: $internalId")
       Future.failed(InvalidEnrolment)
