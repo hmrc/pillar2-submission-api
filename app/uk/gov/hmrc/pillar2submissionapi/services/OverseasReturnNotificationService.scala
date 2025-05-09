@@ -73,8 +73,6 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
             logger.error(s"JSON structure: ${Json.prettyPrint(response.json)}")
             throw UnexpectedResponse
         }
-      case 404 =>
-        throw ResourceNotFoundException
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) =>

@@ -1,6 +1,5 @@
 openapi: 3.0.3
 info:
-  version: 0.125.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 servers:
@@ -38,7 +37,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid return</td>
-        <td>There is an error with the tax return you've submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under "Personal Details".</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT election</td>
@@ -121,8 +120,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -221,8 +218,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -372,7 +367,6 @@ paths:
         <td>014 - No data found</td>
         <td>No data found for this Pillar 2 ID.</td>
         </tr>
-        <tr>
         </tbody>
         </table>
       responses:
@@ -397,8 +391,6 @@ paths:
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
@@ -471,8 +463,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -542,8 +532,6 @@ paths:
               examples:
                 Invalid Scope:
                   $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
         "422":
           description: Business Validation Failure
           content:
@@ -566,88 +554,6 @@ paths:
                   $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [ write:pillar2 ]
-  /overseas-return-notification/{accountingPeriodFrom}/{accountingPeriodTo}:
-    get:
-      summary: Retrieve a Pillar2 Overseas Return Notification
-      description: |
-        Retrieve an Overseas Return Notification by accounting period
-      parameters:
-        - name: accountingPeriodFrom
-          in: path
-          description: Period start date
-          required: true
-          schema:
-            type: string
-            format: date
-        - name: accountingPeriodTo
-          in: path
-          description: Period end date
-          required: true
-          schema:
-            type: string
-            format: date
-      responses:
-        "200":
-          description: Overseas Return Notification Retrieved Successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ORNSuccessResponse"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "422":
-          description: Business Validation Failure
-          content:
-            application/json:
-              examples:
-                Invalid Request:
-                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Resource Not Found:
-                  summary: Resource not found
-                  value:
-                    code: "NOT_FOUND"
-                    message: "The requested ORN could not be found"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              examples:
-                Invalid Date Range:
-                  $ref: "#/components/examples/errors.InvalidDateRange"
-                Invalid Date Format:
-                  $ref: "#/components/examples/errors.InvalidDateFormat"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              examples:
-                Generic Server Error:
-                  $ref: "#/components/examples/errors.Submission.GenericServerError"
-      security:
-        - userRestricted: [read:pillar2]
   /setup/organisation:
     post:
       summary: Create Test Organisation
@@ -667,33 +573,6 @@ paths:
               examples:
                 CreateTestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
       security:
         - userRestricted: [write:pillar2]
     get:
@@ -708,40 +587,6 @@ paths:
               examples:
                 TestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [read:pillar2]
     put:
@@ -762,72 +607,12 @@ paths:
               examples:
                 UpdateTestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
     delete:
       summary: Delete Test Organisation
       description: |
         Deletes a test organisation associated with your authed organisation.
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
 
@@ -937,33 +722,6 @@ components:
       required:
       - processingDate
       - accountingPeriodDetails
-    ORNSuccessResponse:
-      properties:
-        processingDate:
-          type: string
-        accountingPeriodFrom:
-          type: string
-        accountingPeriodTo:
-          type: string
-        filedDateGIR:
-          type: string
-        countryGIR:
-          type: string
-        reportingEntityName:
-          type: string
-        TIN:
-          type: string
-        issuingCountryTIN:
-          type: string
-      required:
-      - processingDate
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example

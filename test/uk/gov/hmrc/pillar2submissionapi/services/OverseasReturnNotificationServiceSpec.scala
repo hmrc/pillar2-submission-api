@@ -164,11 +164,11 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   }
 
   "retrieveORN() 404 response back" should {
-    "ResourceNotFoundException thrown" in {
+    "UnexpectedResponse thrown" in {
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(404, Json.toJson("Not Found"), Map.empty)))
 
-      intercept[ResourceNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
