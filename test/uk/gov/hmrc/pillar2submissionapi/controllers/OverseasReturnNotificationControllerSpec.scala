@@ -62,7 +62,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         when(mockOverseasReturnNotificationService.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              okResponse
+              submitOrnResponse
             )
           )
 
@@ -161,7 +161,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         when(mockOverseasReturnNotificationService.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
           .thenReturn(
             Future.successful(
-              okResponse
+              submitOrnResponse
             )
           )
         status(callAmendWithBody(ornRequestJs)) mustEqual OK

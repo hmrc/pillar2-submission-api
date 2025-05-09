@@ -16,11 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import org.scalacheck.Gen
 import org.scalatest.EitherValues
-import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.http.Status.OK
+import play.api.http.Status.{BAD_REQUEST, OK}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnectorSpec._
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
@@ -38,7 +36,7 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
 
     "return a BadRequest when the backend has returned a response else than 200 status" in {
       val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-      stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
+      stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
       val result = subscriptionConnector.readSubscription(plrReference).futureValue
       result.isLeft mustBe true
       result mustBe Left(BadRequest)
@@ -47,7 +45,5 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
 }
 
 object SubscriptionConnectorSpec {
-  private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
-
   private val unsuccessfulResponseJson = """{ "status": "error" }"""
 }

@@ -367,7 +367,6 @@ paths:
         <td>014 - No data found</td>
         <td>No data found for this Pillar 2 ID.</td>
         </tr>
-        <tr>
         </tbody>
         </table>
       responses:
@@ -392,8 +391,6 @@ paths:
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                No Data Found:
-                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
@@ -576,33 +573,6 @@ paths:
               examples:
                 CreateTestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
       security:
         - userRestricted: [write:pillar2]
     get:
@@ -617,40 +587,6 @@ paths:
               examples:
                 TestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [read:pillar2]
     put:
@@ -671,72 +607,12 @@ paths:
               examples:
                 UpdateTestOrganisationResponseExample:
                   $ref: "#/components/examples/responses.TestOrganisationResponseExample"
-        "400":
-          description: Invalid Request
-          content:
-            application/json:
-              examples:
-                Invalid JSON:
-                  $ref: "#/components/examples/errors.InvalidJson"
-                Empty Body:
-                  $ref: "#/components/examples/errors.EmptyBody"
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
     delete:
       summary: Delete Test Organisation
       description: |
         Deletes a test organisation associated with your authed organisation.
-      responses:
-        "401":
-          description: Unauthorized
-          content:
-            application/json:
-              examples:
-                Missing Credentials:
-                  $ref: "#/components/examples/errors.MissingCredentials"
-                Invalid Credentials:
-                  $ref: "#/components/examples/errors.InvalidCredentials"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              examples:
-                Test Endpoint Disabled:
-                  $ref: "#/components/examples/errors.TestOrg.EndpointDisabled"
-                Invalid Scope:
-                  $ref: "#/components/examples/errors.InvalidScope"
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              examples:
-                Not Found:
-                  $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
 
