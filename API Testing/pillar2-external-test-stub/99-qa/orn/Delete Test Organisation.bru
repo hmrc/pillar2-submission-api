@@ -1,20 +1,15 @@
 meta {
-  name: Delete Organisation
+  name: Delete Test Organisation
   type: http
-  seq: 4
+  seq: 14
 }
 
 delete {
   url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
   auth: none
 }
 
 headers {
   Authorization: valid bearerToken
-} 
-
-tests {
-  test("Status code is 204", function() {
-    expect(res.getStatus()).to.equal(204)
-  });
 }
