@@ -47,12 +47,12 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
   val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
 
-  val mockUkTaxReturnService:               UKTaxReturnService               = mock[UKTaxReturnService]
-  val mockSubmitBTNService:                 SubmitBTNService                 = mock[SubmitBTNService]
-  val mockObligationsAndSubmissionsService: ObligationsAndSubmissionsService = mock[ObligationsAndSubmissionsService]
-  val mockTestOrganisationService:          TestOrganisationService          = mock[TestOrganisationService]
-  val appConfig:                            AppConfig                        = AppConfig(new ServicesConfig(Configuration.empty))
-  val mockSubmitORNService:                 SubmitORNService                 = mock[SubmitORNService]
+  val mockUkTaxReturnService:                UKTaxReturnService                = mock[UKTaxReturnService]
+  val mockSubmitBTNService:                  SubmitBTNService                  = mock[SubmitBTNService]
+  val mockObligationsAndSubmissionsService:  ObligationsAndSubmissionsService  = mock[ObligationsAndSubmissionsService]
+  val mockTestOrganisationService:           TestOrganisationService           = mock[TestOrganisationService]
+  val appConfig:                             AppConfig                         = AppConfig(new ServicesConfig(Configuration.empty))
+  val mockOverseasReturnNotificationService: OverseasReturnNotificationService = mock[OverseasReturnNotificationService]
 
   val pillar2IdAction: Pillar2IdHeaderExistsAction = Pillar2IdHeaderExistsAction(new BodyParsers.Default)
 

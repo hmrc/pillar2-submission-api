@@ -50,13 +50,13 @@ trait UnitTestBaseSpec
   implicit lazy val system:       ActorSystem          = ActorSystem()
   implicit lazy val materializer: Materializer         = Materializer(system)
 
-  protected val mockConfiguration:                     Configuration                     = mock[Configuration]
-  protected val mockServicesConfig:                    ServicesConfig                    = mock[ServicesConfig]
-  protected val mockHttpClient:                        HttpClientV2                      = mock[HttpClientV2]
-  protected val mockPillar2Connector:                  UKTaxReturnConnector              = mock[UKTaxReturnConnector]
-  protected val mockUKTaxReturnConnector:              UKTaxReturnConnector              = mock[UKTaxReturnConnector]
-  protected val mockSubmitBTNConnector:                SubmitBTNConnector                = mock[SubmitBTNConnector]
-  protected val mockObligationAndSubmissionsConnector: ObligationAndSubmissionsConnector = mock[ObligationAndSubmissionsConnector]
-  protected val mockTestOrganisationConnector:         TestOrganisationConnector         = mock[TestOrganisationConnector]
-  protected val mockSubmitORNConnector:                SubmitORNConnector                = mock[SubmitORNConnector]
+  protected val mockConfiguration:                       Configuration                       = mock[Configuration]
+  protected val mockServicesConfig:                      ServicesConfig                      = mock[ServicesConfig]
+  protected val mockHttpClient:                          HttpClientV2                        = mock[HttpClientV2]
+  protected val mockPillar2Connector:                    UKTaxReturnConnector                = mock[UKTaxReturnConnector]
+  protected val mockUKTaxReturnConnector:                UKTaxReturnConnector                = mock[UKTaxReturnConnector]
+  protected val mockSubmitBTNConnector:                  SubmitBTNConnector                  = mock[SubmitBTNConnector]
+  protected val mockObligationAndSubmissionsConnector:   ObligationAndSubmissionsConnector   = mock[ObligationAndSubmissionsConnector]
+  protected val mockTestOrganisationConnector:           TestOrganisationConnector           = mock[TestOrganisationConnector]
+  protected val mockOverseasReturnNotificationConnector: OverseasReturnNotificationConnector = mock[OverseasReturnNotificationConnector]
 }
