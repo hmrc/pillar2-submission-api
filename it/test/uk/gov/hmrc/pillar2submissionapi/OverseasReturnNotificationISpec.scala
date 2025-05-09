@@ -551,7 +551,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.issuingCountryTIN mustEqual customResponse.issuingCountryTIN
       }
 
-      "return 404 NOT_FOUND when ORN doesn't exist" in {
+      "return 500 INTERNAL_SERVER_ERROR when ORN doesn't exist" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,
@@ -564,7 +564,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         stubGet(
           retrieveUrl(fromDate, toDate),
           NOT_FOUND,
-          Json.toJson(ORNErrorResponse("NOT_FOUND", "The requested resource was not found")).toString()
+          Json.toJson(ORNErrorResponse("404", "Not Found")).toString()
         )
 
         val retrieveRequest = client
@@ -573,10 +573,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
         val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
 
-        result.status mustEqual NOT_FOUND
+        result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "NOT_FOUND"
-        errorResponse.message mustEqual "The requested ORN could not be found"
+        errorResponse.code mustEqual "500"
+        errorResponse.message mustEqual "Internal Server Error"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
