@@ -36,31 +36,35 @@ case class ORNSubmitSuccessResponse(
 
 object ORNSuccessResponse {
 
-  implicit val successFormat: OFormat[ORNSuccessResponse] = Json.format[ORNSuccessResponse]
-
   implicit val reads: Reads[ORNSuccessResponse] = new Reads[ORNSuccessResponse] {
-    override def reads(json: JsValue): JsResult[ORNSuccessResponse] =
-      successFormat.reads(json) match {
+    override def reads(json: JsValue): JsResult[ORNSuccessResponse] = {
+      val standardReads = Json.reads[ORNSuccessResponse]
+      standardReads.reads(json) match {
         case success: JsSuccess[ORNSuccessResponse] => success
         case _ =>
-          (json \ "success").validate[ORNSuccessResponse](successFormat)
+          (json \ "success").validate[ORNSuccessResponse](standardReads)
       }
+    }
   }
 
-  implicit val writes: OWrites[ORNSuccessResponse] = successFormat
+  implicit val writes: OWrites[ORNSuccessResponse] = Json.writes[ORNSuccessResponse]
+
+  implicit val successFormat: OFormat[ORNSuccessResponse] = OFormat(reads, writes)
 }
 
 object ORNSubmitSuccessResponse {
-  implicit val format: OFormat[ORNSubmitSuccessResponse] = Json.format[ORNSubmitSuccessResponse]
-
   implicit val reads: Reads[ORNSubmitSuccessResponse] = new Reads[ORNSubmitSuccessResponse] {
-    override def reads(json: JsValue): JsResult[ORNSubmitSuccessResponse] =
-      format.reads(json) match {
+    override def reads(json: JsValue): JsResult[ORNSubmitSuccessResponse] = {
+      val standardReads = Json.reads[ORNSubmitSuccessResponse]
+      standardReads.reads(json) match {
         case success: JsSuccess[ORNSubmitSuccessResponse] => success
         case _ =>
-          (json \ "success").validate[ORNSubmitSuccessResponse](format)
+          (json \ "success").validate[ORNSubmitSuccessResponse](standardReads)
       }
+    }
   }
 
-  implicit val writes: OWrites[ORNSubmitSuccessResponse] = format
+  implicit val writes: OWrites[ORNSubmitSuccessResponse] = Json.writes[ORNSubmitSuccessResponse]
+
+  implicit val submitSuccessFormat: OFormat[ORNSubmitSuccessResponse] = OFormat(reads, writes)
 }

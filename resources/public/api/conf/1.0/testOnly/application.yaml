@@ -523,7 +523,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you've submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under "Personal Details".</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT election</td>
@@ -945,7 +945,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse"
               examples:
                 responses.ORNSuccessResponseExample:
                   $ref: "#/components/examples/responses.ORNSuccessResponseExample"
@@ -1052,7 +1052,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse"
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse"
               examples:
                 responses.ORNSuccessResponseExample:
                   $ref: "#/components/examples/responses.ORNSuccessResponseExample"
@@ -1125,82 +1125,95 @@ paths:
       - submission
       summary: Retrieve a Pillar2 Overseas Return Notification
       parameters:
-      - in: path
-        name: accountingPeriodFrom
-        required: true
-        schema:
-          type: string
-          format: date
+      - name: accountingPeriodFrom
+        in: path
         description: Period start date
-      - in: path
-        name: accountingPeriodTo
         required: true
         schema:
           type: string
           format: date
+      - name: accountingPeriodTo
+        in: path
         description: Period end date
-      - in: header
-        name: Authorization
         required: true
         schema:
           type: string
-        description: Bearer token for authentication
-      - in: header
-        name: X-Pillar2-Id
-        required: true
-        schema:
-          type: string
-        description: Pillar2 ID for the submission
-      - in: header
-        name: Accept
-        required: false
-        schema:
-          type: string
-          example: application/vnd.hmrc.1.0+json
-        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+          format: date
       responses:
         "200":
           description: Overseas Return Notification Retrieved Successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse"
+                $ref: "#/components/schemas/ORNSuccessResponse"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
         "422":
           description: Business Validation Failure
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
         "403":
           description: Forbidden
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "404":
           description: Not Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Resource Not Found:
+                  summary: Resource not found
+                  value:
+                    code: NOT_FOUND
+                    message: The requested ORN could not be found
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+      description: |
+        Retrieve an Overseas Return Notification by accounting period
+      security:
+      - userRestricted:
+        - read:pillar2
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse:
@@ -1230,6 +1243,15 @@ components:
       - reportingEntityName
       - TIN
       - issuingCountryTIN
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        formBundleNumber:
+          type: string
+      required:
+      - processingDate
+      - formBundleNumber
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
       properties:
         accountingPeriodFrom:
@@ -1552,6 +1574,33 @@ components:
       required:
       - processingDate
       - accountingPeriodDetails
+    ORNSuccessResponse:
+      properties:
+        processingDate:
+          type: string
+        accountingPeriodFrom:
+          type: string
+        accountingPeriodTo:
+          type: string
+        filedDateGIR:
+          type: string
+        countryGIR:
+          type: string
+        reportingEntityName:
+          type: string
+        TIN:
+          type: string
+        issuingCountryTIN:
+          type: string
+      required:
+      - processingDate
+      - accountingPeriodFrom
+      - accountingPeriodTo
+      - filedDateGIR
+      - countryGIR
+      - reportingEntityName
+      - TIN
+      - issuingCountryTIN
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example

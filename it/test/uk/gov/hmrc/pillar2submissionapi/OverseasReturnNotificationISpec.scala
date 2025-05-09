@@ -31,6 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
+import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmitSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
@@ -40,7 +41,7 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues {
+class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixture {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
@@ -517,22 +518,18 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
 
+        val customResponse = retrieveOrnResponse.copy(
+          accountingPeriodFrom = fromDate,
+          accountingPeriodTo = toDate
+        )
+
         stubGet(
           retrieveUrl(fromDate, toDate),
           OK,
           Json
             .toJson(
               Json.obj(
-                "success" -> ORNSuccessResponse(
-                  processingDate = "2022-01-31T09:26:17Z",
-                  accountingPeriodFrom = fromDate,
-                  accountingPeriodTo = toDate,
-                  filedDateGIR = "2025-01-10",
-                  countryGIR = "US",
-                  reportingEntityName = "Newco PLC",
-                  TIN = "US12345678",
-                  issuingCountryTIN = "US"
-                )
+                "success" -> customResponse
               )
             )
             .toString()
@@ -544,14 +541,14 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
         val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
 
-        result.processingDate mustEqual "2022-01-31T09:26:17Z"
+        result.processingDate mustEqual customResponse.processingDate
         result.accountingPeriodFrom mustEqual fromDate
         result.accountingPeriodTo mustEqual toDate
-        result.filedDateGIR mustEqual "2025-01-10"
-        result.countryGIR mustEqual "US"
-        result.reportingEntityName mustEqual "Newco PLC"
-        result.TIN mustEqual "US12345678"
-        result.issuingCountryTIN mustEqual "US"
+        result.filedDateGIR mustEqual customResponse.filedDateGIR
+        result.countryGIR mustEqual customResponse.countryGIR
+        result.reportingEntityName mustEqual customResponse.reportingEntityName
+        result.TIN mustEqual customResponse.TIN
+        result.issuingCountryTIN mustEqual customResponse.issuingCountryTIN
       }
 
       "return 404 NOT_FOUND when ORN doesn't exist" in {
@@ -811,22 +808,18 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
 
+        val customResponse = retrieveOrnResponse.copy(
+          accountingPeriodFrom = fromDate,
+          accountingPeriodTo = toDate
+        )
+
         stubGet(
           retrieveUrl(fromDate, toDate),
           OK,
           Json
             .toJson(
               Json.obj(
-                "success" -> ORNSuccessResponse(
-                  processingDate = "2022-01-31T09:26:17Z",
-                  accountingPeriodFrom = fromDate,
-                  accountingPeriodTo = toDate,
-                  filedDateGIR = "2025-01-10",
-                  countryGIR = "US",
-                  reportingEntityName = "Newco PLC",
-                  TIN = "US12345678",
-                  issuingCountryTIN = "US"
-                )
+                "success" -> customResponse
               )
             )
             .toString()
@@ -838,14 +831,14 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
         val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
 
-        result.processingDate mustEqual "2022-01-31T09:26:17Z"
+        result.processingDate mustEqual customResponse.processingDate
         result.accountingPeriodFrom mustEqual fromDate
         result.accountingPeriodTo mustEqual toDate
-        result.filedDateGIR mustEqual "2025-01-10"
-        result.countryGIR mustEqual "US"
-        result.reportingEntityName mustEqual "Newco PLC"
-        result.TIN mustEqual "US12345678"
-        result.issuingCountryTIN mustEqual "US"
+        result.filedDateGIR mustEqual customResponse.filedDateGIR
+        result.countryGIR mustEqual customResponse.countryGIR
+        result.reportingEntityName mustEqual customResponse.reportingEntityName
+        result.TIN mustEqual customResponse.TIN
+        result.issuingCountryTIN mustEqual customResponse.issuingCountryTIN
       }
     }
   }

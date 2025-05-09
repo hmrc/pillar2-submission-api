@@ -6,15 +6,12 @@ meta {
 
 get {
   url: {{apiUrl}}/overseas-return-notification/2024-01-01/2024-12-31
-  body: none
   auth: inherit
 }
 
 headers {
   Authorization: {{bearer_token}}
   X-Pillar2-Id: {{testPlrId}}
-  Accept: application/vnd.hmrc.1.0+json
-  Content-Type: application/json
 }
 
 docs {
