@@ -137,6 +137,14 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     result.message mustEqual "Invalid JSON payload"
   }
 
+  test("IncorrectHeaderValue error response") {
+    val response = classUnderTest.onServerError(dummyRequest, IncorrectHeaderValue)
+    status(response) mustEqual 400
+    val result = contentAsJson(response).as[Pillar2ErrorResponse]
+    result.code mustEqual "INCORRECT_HEADER_VALUE"
+    result.message mustEqual "X-Pillar2-Id Header value does not match the bearer token"
+  }
+
   test("MissingCredentials error response") {
     val response = classUnderTest.onServerError(dummyRequest, MissingCredentials)
     status(response) mustEqual 401
