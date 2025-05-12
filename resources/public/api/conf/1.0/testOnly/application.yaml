@@ -876,6 +876,8 @@ paths:
               examples:
                 Invalid Request:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "401":
           description: Unauthorized
           content:
