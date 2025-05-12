@@ -19,13 +19,13 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, TestEndpointDisabled}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 
@@ -65,6 +65,13 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
           result shouldFailWith EmptyRequestBody
         }
+
+        "return InvalidDateRange for invalid accounting period" in {
+          val result =
+            controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidAccountingPeriodJson))
+
+          result shouldFailWith InvalidDateRange
+        }
       }
 
       "getTestOrganisation" must {
@@ -100,6 +107,13 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
           val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
           result shouldFailWith EmptyRequestBody
+        }
+
+        "return InvalidDateRange for invalid accounting period" in {
+          val result =
+            controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidAccountingPeriodJson))
+
+          result shouldFailWith InvalidDateRange
         }
       }
 
@@ -165,6 +179,10 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
       "endDate"   -> "2024-12-31"
     )
   )
+
+  val invalidAccountingPeriodJson: JsValue = validRequestJson
+    .as[JsObject]
+    .deepMerge(Json.obj("accountingPeriod" -> Json.obj("endDate" -> "2000-12-31")))
 
   val invalidRequestJson: JsValue = Json.obj(
     "invalidField" -> "invalidValue"
