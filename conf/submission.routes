@@ -299,7 +299,7 @@ GET       /obligations-and-submissions              uk.gov.hmrc.pillar2submissio
 #     content:
 #       application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
 #   401:
 #     description: Unauthorized
 #     content:
@@ -366,7 +366,7 @@ POST /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers
 #     content:
 #       application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmitSuccessResponse'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
 #   401:
 #     description: Unauthorized
 #     content:
@@ -442,7 +442,7 @@ PUT /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.
 #     content:
 #       application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNRetrieveSuccessResponse'
 #   401:
 #     description: Unauthorized
 #     content:
@@ -480,4 +480,4 @@ PUT /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 ###
-GET  /overseas-return-notification/:accountingPeriodFrom/:accountingPeriodTo  uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController.retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)
+GET  /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController.retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)

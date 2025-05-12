@@ -30,19 +30,19 @@ import scala.concurrent.{ExecutionContext, Future}
 class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNotificationConnector)(implicit val ec: ExecutionContext)
     extends Logging {
 
-  def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSubmitSuccessResponse] =
+  def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
     connector.submitORN(request).map(convertToSubmitResult)
 
-  def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSubmitSuccessResponse] =
+  def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
     connector.amendORN(request).map(convertToSubmitResult)
 
-  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] =
     connector.retrieveORN(accountingPeriodFrom, accountingPeriodTo).map(convertToRetrieveResult)
 
-  private def convertToSubmitResult(response: HttpResponse): ORNSubmitSuccessResponse =
+  private def convertToSubmitResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
       case 201 | 200 =>
-        response.json.validate[ORNSubmitSuccessResponse](ORNSubmitSuccessResponse.reads) match {
+        response.json.validate[ORNSuccessResponse](ORNSuccessResponse.reads) match {
           case JsSuccess(success, _) => success
           case JsError(errors) =>
             logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
@@ -60,11 +60,11 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
         throw UnexpectedResponse
     }
 
-  private def convertToRetrieveResult(response: HttpResponse): ORNSuccessResponse =
+  private def convertToRetrieveResult(response: HttpResponse): ORNRetrieveSuccessResponse =
     response.status match {
       case 200 =>
         logger.info(s"Received response body: ${response.body}")
-        response.json.validate[ORNSuccessResponse](ORNSuccessResponse.reads) match {
+        response.json.validate[ORNRetrieveSuccessResponse](ORNRetrieveSuccessResponse.reads) match {
           case JsSuccess(success, _) =>
             logger.info(s"Successfully parsed response: $success")
             success
@@ -76,7 +76,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) =>
-            if (response.code == "005" && response.message.contains("No Form bundle found")) {
+            if (response.code == "005" && response.message.contains("No Form Bundle found")) {
               throw ResourceNotFoundException
             } else {
               throw DownstreamValidationError(response.code, response.message)

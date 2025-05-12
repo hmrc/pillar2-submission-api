@@ -33,7 +33,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmitSuccessResponse, ORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -69,10 +69,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
-        val result = Await.result(submitRequest.withBody(validRequestJson).execute[ORNSubmitSuccessResponse], 5.seconds)
+        val result = Await.result(submitRequest.withBody(validRequestJson).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -209,11 +209,11 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(submitRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSubmitSuccessResponse], 5.seconds)
+          Await.result(submitRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -293,10 +293,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
-        val result = Await.result(amendRequest.withBody(validRequestJson).execute[ORNSubmitSuccessResponse], 5.seconds)
+        val result = Await.result(amendRequest.withBody(validRequestJson).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -433,11 +433,11 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(amendRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSubmitSuccessResponse], 5.seconds)
+          Await.result(amendRequest.withBody(validRequestJson_duplicateFieldsAndAdditionalFields).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -539,7 +539,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
           .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
-        val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
+        val result = Await.result(retrieveRequest.execute[ORNRetrieveSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual customResponse.processingDate
         result.accountingPeriodFrom mustEqual fromDate
@@ -722,12 +722,12 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
           Await.result(
-            submitRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSubmitSuccessResponse],
+            submitRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSuccessResponse],
             5.seconds
           )
 
@@ -766,11 +766,11 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           OK,
-          Json.toJson(ORNSubmitSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
+          Json.toJson(ORNSuccessResponse("2022-01-31T09:26:17Z", "123456789012345"))
         )
 
         val result =
-          Await.result(amendRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSubmitSuccessResponse], 5.seconds)
+          Await.result(amendRequest.withBody(validRequestJson).setHeader("X-Pillar2-Id" -> plrReference).execute[ORNSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual "2022-01-31T09:26:17Z"
         result.formBundleNumber mustEqual "123456789012345"
@@ -829,7 +829,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
           .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
-        val result = Await.result(retrieveRequest.execute[ORNSuccessResponse], 5.seconds)
+        val result = Await.result(retrieveRequest.execute[ORNRetrieveSuccessResponse], 5.seconds)
 
         result.processingDate mustEqual customResponse.processingDate
         result.accountingPeriodFrom mustEqual fromDate
