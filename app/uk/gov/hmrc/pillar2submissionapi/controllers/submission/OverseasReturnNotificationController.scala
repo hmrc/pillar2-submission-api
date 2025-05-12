@@ -21,14 +21,16 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissions
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.services.OverseasReturnNotificationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class OverseasReturnNotificationController @Inject() (
@@ -73,18 +75,15 @@ class OverseasReturnNotificationController @Inject() (
   def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String): Action[AnyContent] =
     (pillar2Action andThen identify andThen getSubscription).async { implicit request =>
       val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
-      ornService
-        .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
-        .map { response =>
-          Ok(Json.toJson(response))
-        }
-        .recover {
-          case ResourceNotFoundException =>
-            NotFound(Json.toJson(Pillar2ErrorResponse("NOT_FOUND", "The requested ORN could not be found")))
-          case e: DownstreamValidationError =>
-            UnprocessableEntity(Json.toJson(Pillar2ErrorResponse(e.code, e.message)))
-          case UnexpectedResponse =>
-            InternalServerError(Json.toJson(Pillar2ErrorResponse("500", "Internal Server Error")))
-        }
+
+      Try {
+        val accountingPeriod =
+          ObligationsAndSubmissions(fromDate = LocalDate.parse(accountingPeriodFrom), toDate = LocalDate.parse(accountingPeriodTo))
+        if (accountingPeriod.validDateRange) {
+          ornService
+            .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
+            .map(response => Ok(Json.toJson(response)))
+        } else { Future.failed(InvalidDateRange) }
+      }.getOrElse(Future.failed(InvalidDateFormat))
     }
 }
