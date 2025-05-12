@@ -5,9 +5,14 @@ meta {
 }
 
 get {
-  url: {{apiUrl}}/overseas-return-notification/2024-01-01/2024-12-31
+  url: {{apiUrl}}/overseas-return-notification?accountingPeriodFrom=2024-01-01&accountingPeriodTo=2024-12-31
   body: none
   auth: none
+}
+
+params:query {
+  accountingPeriodFrom: 2024-01-01
+  accountingPeriodTo: 2024-12-31
 }
 
 headers {
@@ -19,4 +24,4 @@ headers {
 docs {
   title: Retrieve ORN
   description: Retrieves Overseas Return Notification information for the specified accounting period
-} 
+}
