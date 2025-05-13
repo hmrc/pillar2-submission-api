@@ -18,36 +18,69 @@ package uk.gov.hmrc.pillar2submissionapi.services
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.OverseasReturnNotificationConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission, ORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, ResourceNotFoundException, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OverseasReturnNotificationService @Inject() (submitORNConnector: OverseasReturnNotificationConnector)(implicit val ec: ExecutionContext)
+class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNotificationConnector)(implicit val ec: ExecutionContext)
     extends Logging {
 
   def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
-    submitORNConnector.submitORN(request).map(convertToResult)
+    connector.submitORN(request).map(convertToSubmitResult)
 
   def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
-    submitORNConnector.amendORN(request).map(convertToResult)
+    connector.amendORN(request).map(convertToSubmitResult)
 
-  private def convertToResult(response: HttpResponse): ORNSuccessResponse =
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] =
+    connector.retrieveORN(accountingPeriodFrom, accountingPeriodTo).map(convertToRetrieveResult)
+
+  private def convertToSubmitResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
       case 201 | 200 =>
-        response.json.validate[ORNSuccessResponse] match {
+        response.json.validate[ORNSuccessResponse](ORNSuccessResponse.reads) match {
           case JsSuccess(success, _) => success
-          case JsError(_) =>
-            logger.error("Failed to parse success response")
+          case JsError(errors) =>
+            logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
+          case JsError(_) =>
+            logger.error("Failed to parse unprocessible entity response")
+            throw UnexpectedResponse
+        }
+      case status =>
+        logger.error(s"Error calling pillar2 backend. Got response: $status")
+        throw UnexpectedResponse
+    }
+
+  private def convertToRetrieveResult(response: HttpResponse): ORNRetrieveSuccessResponse =
+    response.status match {
+      case 200 =>
+        logger.info(s"Received response body: ${response.body}")
+        response.json.validate[ORNRetrieveSuccessResponse](ORNRetrieveSuccessResponse.reads) match {
+          case JsSuccess(success, _) =>
+            logger.info(s"Successfully parsed response: $success")
+            success
+          case JsError(errors) =>
+            logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
+            logger.error(s"JSON structure: ${Json.prettyPrint(response.json)}")
+            throw UnexpectedResponse
+        }
+      case 422 =>
+        response.json.validate[ORNErrorResponse] match {
+          case JsSuccess(response, _) =>
+            if (response.code == "005" && response.message.contains("No Form Bundle found")) {
+              throw ResourceNotFoundException
+            } else {
+              throw DownstreamValidationError(response.code, response.message)
+            }
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse

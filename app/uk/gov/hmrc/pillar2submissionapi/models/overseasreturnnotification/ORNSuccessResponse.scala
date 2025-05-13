@@ -16,10 +16,48 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
+
+case class ORNRetrieveSuccessResponse(
+  processingDate:       String,
+  accountingPeriodFrom: String,
+  accountingPeriodTo:   String,
+  filedDateGIR:         String,
+  countryGIR:           String,
+  reportingEntityName:  String,
+  TIN:                  String,
+  issuingCountryTIN:    String
+)
 
 case class ORNSuccessResponse(processingDate: String, formBundleNumber: String)
 
-case object ORNSuccessResponse {
-  implicit val successFormat: OFormat[ORNSuccessResponse] = Json.format[ORNSuccessResponse]
+object ORNRetrieveSuccessResponse {
+
+  implicit val reads: Reads[ORNRetrieveSuccessResponse] = (json: JsValue) => {
+    val standardReads = Json.reads[ORNRetrieveSuccessResponse]
+    standardReads.reads(json) match {
+      case success: JsSuccess[ORNRetrieveSuccessResponse] => success
+      case _ =>
+        (json \ "success").validate[ORNRetrieveSuccessResponse](standardReads)
+    }
+  }
+
+  implicit val writes: OWrites[ORNRetrieveSuccessResponse] = Json.writes[ORNRetrieveSuccessResponse]
+
+  implicit val successFormat: OFormat[ORNRetrieveSuccessResponse] = OFormat(reads, writes)
+}
+
+object ORNSuccessResponse {
+  implicit val reads: Reads[ORNSuccessResponse] = (json: JsValue) => {
+    val standardReads = Json.reads[ORNSuccessResponse]
+    standardReads.reads(json) match {
+      case success: JsSuccess[ORNSuccessResponse] => success
+      case _ =>
+        (json \ "success").validate[ORNSuccessResponse](standardReads)
+    }
+  }
+
+  implicit val writes: OWrites[ORNSuccessResponse] = Json.writes[ORNSuccessResponse]
+
+  implicit val submitSuccessFormat: OFormat[ORNSuccessResponse] = OFormat(reads, writes)
 }
