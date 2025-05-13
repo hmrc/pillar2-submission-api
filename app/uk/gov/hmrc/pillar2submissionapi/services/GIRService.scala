@@ -32,13 +32,13 @@ import scala.concurrent.Future
 @Singleton
 class GIRService @Inject() (
   girConnector: GIRConnector
-)(implicit ec: ExecutionContext) extends Logging {
+)(implicit ec:  ExecutionContext)
+    extends Logging {
 
   def createGIR(submission: GIRSubmission)(implicit
-    hc:                                 HeaderCarrier
-  ): Future[SubmitGIRSuccessResponse] = {
+    hc:                     HeaderCarrier
+  ): Future[SubmitGIRSuccessResponse] =
     girConnector.createGIR(submission).map(convertToResult)
-  }
 
   private def convertToResult(response: HttpResponse): SubmitGIRSuccessResponse =
     response.status match {

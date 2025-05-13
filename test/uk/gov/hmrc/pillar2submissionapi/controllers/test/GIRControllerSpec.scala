@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class GIRControllerSpec extends ControllerBaseSpec {
 
-  val mockAppConfig: AppConfig = mock[AppConfig]
+  val mockAppConfig:  AppConfig  = mock[AppConfig]
   val mockGIRService: GIRService = mock[GIRService]
 
   def controller(testEndpointsEnabled: Boolean = true): GIRController = {
@@ -45,10 +45,10 @@ class GIRControllerSpec extends ControllerBaseSpec {
   val validSubmission: GIRSubmission = GIRSubmission(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"))
   val validRequestJson: JsValue = Json.obj(
     "accountingPeriodFrom" -> "2024-01-01",
-    "accountingPeriodTo" -> "2024-12-31"
+    "accountingPeriodTo"   -> "2024-12-31"
   )
-  val validResponse: SubmitGIRSuccessResponse = SubmitGIRSuccessResponse(GIRSuccess("2024-01-01T12:00:00Z"))
-  val validResponseJson: JsValue = Json.toJson(validResponse)
+  val validResponse:     SubmitGIRSuccessResponse = SubmitGIRSuccessResponse(GIRSuccess("2024-01-01T12:00:00Z"))
+  val validResponseJson: JsValue                  = Json.toJson(validResponse)
 
   "GIRController" when {
     "test endpoints are enabled" when {
@@ -64,7 +64,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
         }
         "return InvalidJson for invalid request" in {
           val invalidJson = Json.obj("badField" -> "badValue")
-          val result = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidJson))
+          val result      = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidJson))
           result shouldFailWith InvalidJson
         }
         "return EmptyRequestBody for missing body" in {
@@ -85,4 +85,3 @@ class GIRControllerSpec extends ControllerBaseSpec {
     }
   }
 }
-

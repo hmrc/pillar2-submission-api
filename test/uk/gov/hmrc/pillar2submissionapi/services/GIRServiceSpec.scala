@@ -32,11 +32,11 @@ import scala.concurrent.Future
 class GIRServiceSpec extends UnitTestBaseSpec {
 
   val mockGIRConnector: GIRConnector = mock[GIRConnector]
-  val service: GIRService = new GIRService(mockGIRConnector)
+  val service:          GIRService   = new GIRService(mockGIRConnector)
 
-  val validSubmission: GIRSubmission = GIRSubmission(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"))
-  val okResponse: SubmitGIRSuccessResponse = SubmitGIRSuccessResponse(GIRSuccess("2024-01-01T12:00:00Z"))
-  val errorResponse: SubmitGIRErrorResponse = SubmitGIRErrorResponse(GIRError("093", "Invalid Return"))
+  val validSubmission: GIRSubmission            = GIRSubmission(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"))
+  val okResponse:      SubmitGIRSuccessResponse = SubmitGIRSuccessResponse(GIRSuccess("2024-01-01T12:00:00Z"))
+  val errorResponse:   SubmitGIRErrorResponse   = SubmitGIRErrorResponse(GIRError("093", "Invalid Return"))
 
   "GIRService" when {
     "createGIR() called with a valid submission" should {
@@ -82,4 +82,3 @@ class GIRServiceSpec extends UnitTestBaseSpec {
     }
   }
 }
-

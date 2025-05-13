@@ -45,4 +45,3 @@ class GIRConnector @Inject() (
       .execute[HttpResponse]
   }
 }
-
