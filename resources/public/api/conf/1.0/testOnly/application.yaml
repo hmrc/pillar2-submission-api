@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.123.0
+  version: 0.126.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -60,6 +60,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
           description: Unauthorized
           content:
@@ -248,6 +250,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
           description: Unauthorized
           content:
