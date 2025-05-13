@@ -164,18 +164,18 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   }
 
   "retrieveORN() 404 response back" should {
-    "UnexpectedResponse thrown" in {
+    "ResourceNotFoundException thrown" in {
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(404, Json.toJson("Not Found"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[ResourceNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
   "retrieveORN() 422 response with No Form bundle found" should {
     "ResourceNotFoundException thrown" in {
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form Bundle found")), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form bundle found")), Map.empty)))
 
       intercept[ResourceNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }

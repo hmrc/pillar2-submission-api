@@ -36,8 +36,16 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
   def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
     connector.amendORN(request).map(convertToSubmitResult)
 
-  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] =
-    connector.retrieveORN(accountingPeriodFrom, accountingPeriodTo).map(convertToRetrieveResult)
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] = {
+    logger.info(s"Retrieving ORN for period from $accountingPeriodFrom to $accountingPeriodTo")
+    connector
+      .retrieveORN(accountingPeriodFrom, accountingPeriodTo)
+      .map(convertToRetrieveResult)
+      .recoverWith { case e: Exception =>
+        logger.error(s"Error retrieving ORN: ${e.getMessage}", e)
+        Future.failed(e)
+      }
+  }
 
   private def convertToSubmitResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
@@ -73,16 +81,31 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
             logger.error(s"JSON structure: ${Json.prettyPrint(response.json)}")
             throw UnexpectedResponse
         }
+      case 404 =>
+        logger.info(s"Received 404 response with body: ${response.body}")
+        logger.info("No ORN found for the specified accounting period, converting to ResourceNotFoundException")
+        throw ResourceNotFoundException
       case 422 =>
-        response.json.validate[ORNErrorResponse] match {
-          case JsSuccess(response, _) =>
-            if (response.code == "005" && response.message.contains("No Form Bundle found")) {
+        logger.info(s"Received 422 response with body: ${response.body}")
+        try response.json.validate[ORNErrorResponse] match {
+          case JsSuccess(errorResponse, _) =>
+            logger.info(s"Parsed error response: $errorResponse")
+            if (errorResponse.code == "005" && errorResponse.message.toLowerCase.contains("no form bundle found")) {
+              logger.info("Detected 'No Form bundle found' error, converting to ResourceNotFoundException")
               throw ResourceNotFoundException
             } else {
-              throw DownstreamValidationError(response.code, response.message)
+              logger.warn(s"Unexpected 422 error code: ${errorResponse.code}, message: ${errorResponse.message}")
+              throw DownstreamValidationError(errorResponse.code, errorResponse.message)
             }
-          case JsError(_) =>
-            logger.error("Failed to parse unprocessible entity response")
+          case JsError(errors) =>
+            logger.error(s"Failed to parse unprocessible entity response. Errors: ${errors.toString()}")
+            logger.error(s"Response body was: ${response.body}")
+            throw UnexpectedResponse
+        } catch {
+          case e: ResourceNotFoundException.type => throw e
+          case e: DownstreamValidationError      => throw e
+          case e: Exception =>
+            logger.error(s"Unexpected error processing 422 response: ${e.getMessage}", e)
             throw UnexpectedResponse
         }
       case status =>
