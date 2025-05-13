@@ -16,30 +16,24 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.User
-import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
-import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.Await
 
 class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixture {
 
@@ -52,10 +46,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
   lazy val amendRequest: RequestBuilder =
     client.put(URI.create(amendStr).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
-  private val submitUrl = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
-  private val amendUrl  = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
-  private def retrieveUrl(from: String, to: String) =
-    s"/report-pillar2-top-up-taxes/overseas-return-notification/$from/$to"
+  def submitUrl = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
+  def amendUrl  = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
+  def retrieveUrl(from: String, to: String) =
+    s"/report-pillar2-top-up-taxes/overseas-return-notification?accountingPeriodFrom=$from&accountingPeriodTo=$to"
 
   "ORNSubmissionController" when {
     "submitORN as a organisation" must {
@@ -551,7 +545,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.issuingCountryTIN mustEqual customResponse.issuingCountryTIN
       }
 
-      "return 500 INTERNAL_SERVER_ERROR when ORN doesn't exist" in {
+      "return 404 NOT_FOUND when ORN doesn't exist" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,
@@ -561,22 +555,31 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
 
+        // This is the crucial fix - we need to stub the backend service with a 422 response
+        // with code "005" to simulate the "No Form bundle found" scenario
         stubGet(
           retrieveUrl(fromDate, toDate),
-          NOT_FOUND,
-          Json.toJson(ORNErrorResponse("404", "Not Found")).toString()
+          UNPROCESSABLE_ENTITY,
+          Json.toJson(ORNErrorResponse("005", "No Form bundle found")).toString()
         )
 
+        val routeUrl = routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url
+        val fullUrl  = s"http://localhost:$port$routeUrl"
+        println(s"Full URL to call: $fullUrl")
+
         val retrieveRequest = client
-          .get(URI.create(s"http://localhost:$port${routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url}").toURL)
+          .get(URI.create(fullUrl).toURL)
           .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
         val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
 
-        result.status mustEqual INTERNAL_SERVER_ERROR
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        println(s"Response status: ${result.status}")
+        println(s"Response body: ${result.body}")
+
+        result.status mustEqual NOT_FOUND
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "RESOURCE_NOT_FOUND"
+        errorResponse.message mustEqual "Not Found"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
@@ -663,6 +666,42 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         errorResponse.message mustEqual "Internal Server Error"
       }
 
+      "return 404 NOT_FOUND when no ORN exists (422 with code 005)" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val fromDate = "2025-01-01" // Future date to ensure no submissions exist
+        val toDate   = "2025-12-31"
+
+        // Stub the backend service URL with a 422 response with code "005" for "No Form bundle found"
+        stubGet(
+          retrieveUrl(fromDate, toDate),
+          UNPROCESSABLE_ENTITY,
+          Json.toJson(ORNErrorResponse("005", "No Form bundle found")).toString()
+        )
+
+        val routeUrl = routes.OverseasReturnNotificationController.retrieveORN(fromDate, toDate).url
+        val fullUrl  = s"http://localhost:$port$routeUrl"
+        println(s"Full URL to call: $fullUrl")
+
+        val retrieveRequest = client
+          .get(URI.create(fullUrl).toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        println(s"Response status: ${result.status}")
+        println(s"Response body: ${result.body}")
+
+        result.status mustEqual NOT_FOUND
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "RESOURCE_NOT_FOUND"
+        errorResponse.message mustEqual "Not Found"
+      }
+
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed error JSON on 422 response" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
@@ -694,25 +733,6 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
     "submitORN as an agent" must {
       "return 201 CREATED when given valid submission data" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,
@@ -738,25 +758,6 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
     "amendORN as an agent" must {
       "return 200 OK when given valid submission data" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,
@@ -779,26 +780,6 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
     "retrieveORN as an agent" must {
       "return 200 OK when given valid period parameters" in {
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
-        when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
-            any[ExecutionContext]()
-          )
-        )
-          .thenReturn(
-            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
-          )
-
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,

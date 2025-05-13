@@ -18,17 +18,18 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status.{CREATED, OK}
-import play.api.libs.json.JsValue
+import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MissingHeader}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 import scala.concurrent.Future
 
@@ -250,6 +251,75 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
 
       "return InvalidJson response when TIN exceeds 200 characters" in {
         callAmendWithBody(invalidLongTinJson) shouldFailWith InvalidJson
+      }
+    }
+
+    "retrieveORN() called with valid parameters" should {
+      "return 200 OK response" in {
+        when(mockOverseasReturnNotificationService.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.successful(
+              retrieveOrnResponse
+            )
+          )
+
+        val request = FakeRequest()
+          .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        val result = ornController.retrieveORN("2024-01-01", "2024-12-31")(request)
+
+        status(result) mustEqual OK
+      }
+    }
+
+    "retrieveORN() when no ORN exists" should {
+      "return 404 NOT_FOUND with correct error code and message" in {
+        when(mockOverseasReturnNotificationService.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.failed(ResourceNotFoundException)
+          )
+
+        val request = FakeRequest()
+          .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        val result = ornController.retrieveORN("2024-01-01", "2024-12-31")(request)
+
+        status(result) mustEqual NOT_FOUND
+        contentAsJson(result) mustEqual Json.toJson(Pillar2ErrorResponse("RESOURCE_NOT_FOUND", "Not Found"))
+      }
+    }
+
+    "retrieveORN() with downstream validation error" should {
+      "return 422 UNPROCESSABLE_ENTITY with correct error code and message" in {
+        when(mockOverseasReturnNotificationService.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.failed(DownstreamValidationError("093", "Invalid Return"))
+          )
+
+        val request = FakeRequest()
+          .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        val result = ornController.retrieveORN("2024-01-01", "2024-12-31")(request)
+
+        status(result) mustEqual UNPROCESSABLE_ENTITY
+        contentAsJson(result) mustEqual Json.toJson(Pillar2ErrorResponse("093", "Invalid Return"))
+      }
+    }
+
+    "retrieveORN() with unexpected error" should {
+      "return 500 INTERNAL_SERVER_ERROR with correct error code and message" in {
+        when(mockOverseasReturnNotificationService.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
+          .thenReturn(
+            Future.failed(UnexpectedResponse)
+          )
+
+        val request = FakeRequest()
+          .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        val result = ornController.retrieveORN("2024-01-01", "2024-12-31")(request)
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        contentAsJson(result) mustEqual Json.toJson(Pillar2ErrorResponse("500", "Internal Server Error"))
       }
     }
   }

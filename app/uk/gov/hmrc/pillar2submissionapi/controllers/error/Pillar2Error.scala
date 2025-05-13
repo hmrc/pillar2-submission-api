@@ -110,5 +110,5 @@ case object TestEndpointDisabled extends Pillar2Error {
 
 case object ResourceNotFoundException extends Pillar2Error {
   override val code:    String = "RESOURCE_NOT_FOUND"
-  override val message: String = "The requested resource could not be found"
+  override val message: String = "Not Found"
 }

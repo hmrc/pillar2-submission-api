@@ -23,6 +23,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, P
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissions
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.services.OverseasReturnNotificationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -83,6 +84,14 @@ class OverseasReturnNotificationController @Inject() (
           ornService
             .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
             .map(response => Ok(Json.toJson(response)))
+            .recover {
+              case ResourceNotFoundException =>
+                NotFound(Json.toJson(Pillar2ErrorResponse(ResourceNotFoundException.code, ResourceNotFoundException.message)))
+              case e: DownstreamValidationError =>
+                UnprocessableEntity(Json.toJson(Pillar2ErrorResponse(e.code, e.message)))
+              case UnexpectedResponse =>
+                InternalServerError(Json.toJson(Pillar2ErrorResponse(UnexpectedResponse.code, UnexpectedResponse.message)))
+            }
         } else { Future.failed(InvalidDateRange) }
       }.getOrElse(Future.failed(InvalidDateFormat))
     }
