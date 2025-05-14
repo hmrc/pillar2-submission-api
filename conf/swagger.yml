@@ -557,6 +557,66 @@ paths:
                   $ref: "#/components/examples/errors.InvalidCredentials"
       security:
         - userRestricted: [ write:pillar2 ]
+    get:
+      summary: Retrieve Overseas Return Notification
+      description: |
+        Retrieve an Overseas Return Notification
+      responses:
+        "200":
+          description: Overseas Return Notification Retrieved Successfully
+          content:
+            application/json:
+              examples:
+                responses.ORNSuccessResponseExample:
+                  $ref: "#/components/examples/responses.ORNRetrieveSuccessResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  $ref: "#/components/examples/errors.Retrieval.NotFound"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+      security:
+        - userRestricted: [read:pillar2]
   /setup/organisation:
     post:
       summary: Create Test Organisation
@@ -743,6 +803,72 @@ paths:
                   $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
+  /setup/globe-information-return :
+      post:
+        summary: Create A Test Globe Information Return
+        description: |
+          Creates a Globe Information Return for a test organisation.
+        requestBody:
+          content:
+            application/json:
+              examples:
+                CreateTestGlobeInformationReturnRequestExample:
+                  $ref: "#/components/examples/requests.CreateTestGlobeInformationReturnRequestExample"
+        responses:
+          "201":
+            description: Globe Information Return Created
+            content:
+              application/json:
+                examples:
+                  CreateTestGlobeInformationReturnResponseExample:
+                    $ref: "#/components/examples/responses.CreateTestGlobeInformationReturnResponseExample"
+          "400":
+            description: Bad Request
+            content:
+              application/json:
+                examples:
+                  Invalid JSON:
+                    $ref: "#/components/examples/errors.InvalidJson"
+                  Empty Body:
+                    $ref: "#/components/examples/errors.EmptyBody"
+          "401":
+            description: Unauthorized
+            content:
+              application/json:
+                examples:
+                  Missing Credentials:
+                    $ref: "#/components/examples/errors.MissingCredentials"
+                  Invalid Credentials:
+                    $ref: "#/components/examples/errors.InvalidCredentials"
+          "403":
+            description: Forbidden
+            content:
+              application/json:
+                examples:
+                  Invalid Scope:
+                    $ref: "#/components/examples/errors.InvalidScope"
+          "422":
+            description: Unprocessable Entity
+            content:
+              application/json:
+                examples:
+                  Invalid Request:
+                    $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                  No Active Subscription Found:
+                    $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                  Tax Obligation Fulfilled:
+                    $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+          "500":
+            description: Internal Server Error
+            content:
+              application/json:
+                examples:
+                  Generic Server Error:
+                    $ref: "#/components/examples/errors.Submission.GenericServerError"
+                  No Subscription Data:
+                    $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+        security:
+          - userRestricted: [write:pillar2]
 
 components:
   schemas:
@@ -895,7 +1021,16 @@ components:
       summary: "Success response"
       value:
         processingDate: "2026-06-26T09:26:17Z"
+    responses.CreateTestGlobeInformationReturnResponseExample:
+      summary: "Success response"
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
 
+    requests.CreateTestGlobeInformationReturnRequestExample:
+      summary: "Request example"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
     #mne and uk
     requests.UKTRNilReturnMneAndUk:
       summary: "Nil Return - MNE and UK"
@@ -1064,10 +1199,21 @@ components:
         liabilities:
           returnType: "NIL_RETURN"
     responses.ORNSuccessResponseExample:
-      summary: ORN Success response
+      summary: ORN Submit/Amend Success response
       value:
         processingDate: "2026-06-26T09:26:17Z"
         formBundleNumber: "119000004320"
+    responses.ORNRetrieveSuccessResponseExample:
+      summary: ORN Retrieve Success response
+      value:
+        processingDate: "2025-03-26T09:26:17Z"
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+        filedDateGIR: "2025-01-10"
+        countryGIR: "US"
+        reportingEntityName: "Newco PLC"
+        TIN: "US12345678"
+        issuingCountryTIN: "US"
     errors.TestOrg.NotFound:
       summary: Test organisation not found
       value:
@@ -1188,6 +1334,11 @@ components:
       value:
         code: '014'
         message: No data found
+    errors.Retrieval.NotFound:
+      summary: No data found
+      value:
+        code: 'NOT_FOUND'
+        message: The requested ORN could not be found
 
   securitySchemes:
     userRestricted:

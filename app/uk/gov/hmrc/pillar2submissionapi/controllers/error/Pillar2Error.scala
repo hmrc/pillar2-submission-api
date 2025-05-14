@@ -107,3 +107,8 @@ case object TestEndpointDisabled extends Pillar2Error {
   override val code:    String = "TEST_ENDPOINT_DISABLED"
   override val message: String = "Test endpoints are not available in this environment"
 }
+
+case object ORNNotFoundException extends Pillar2Error {
+  override val code:    String = "NOT_FOUND"
+  override val message: String = "The requested ORN could not be found"
+}

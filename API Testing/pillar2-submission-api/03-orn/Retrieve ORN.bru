@@ -1,0 +1,27 @@
+meta {
+  name: Retrieve ORN
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/overseas-return-notification?accountingPeriodFrom=2024-01-01&accountingPeriodTo=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  accountingPeriodFrom: 2024-01-01
+  accountingPeriodTo: 2024-12-31
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+docs {
+  title: Retrieve ORN
+  description: Retrieves Overseas Return Notification information for the specified accounting period
+}
