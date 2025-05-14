@@ -177,7 +177,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form Bundle found")), Map.empty)))
 
-      intercept[ResourceNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[ORNNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
