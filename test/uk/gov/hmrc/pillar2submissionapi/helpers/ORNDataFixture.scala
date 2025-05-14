@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import play.api.libs.json._
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNSubmission, ORNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNRetrieveSuccessResponse, ORNSubmission, ORNSuccessResponse}
 
 import java.time.LocalDate
 
@@ -34,7 +34,21 @@ trait ORNDataFixture {
   )
   val ornRequestJs: JsValue = Json.toJson(ornRequestFixture)
 
-  val okResponse: ORNSuccessResponse = ORNSuccessResponse("2022-01-31", "123456789012345")
+  val retrieveOrnResponse: ORNRetrieveSuccessResponse = ORNRetrieveSuccessResponse(
+    processingDate = "2022-01-31T09:26:17Z",
+    accountingPeriodFrom = "2024-01-01",
+    accountingPeriodTo = "2024-12-31",
+    filedDateGIR = "2025-01-10",
+    countryGIR = "US",
+    reportingEntityName = "Newco PLC",
+    TIN = "US12345678",
+    issuingCountryTIN = "US"
+  )
+
+  val submitOrnResponse: ORNSuccessResponse = ORNSuccessResponse(
+    processingDate = "2022-01-31T09:26:17Z",
+    formBundleNumber = "123456789012345"
+  )
 
   val invalidRequestJson_data: JsValue = ornRequestJs.as[JsObject] - "filedDateGIR" - "TIN" // Remove fields to make the JSON invalid
   val invalidRequest_Json: JsValue =
@@ -53,5 +67,4 @@ trait ORNDataFixture {
   val invalidLongReportingEntityJson: JsObject = ornRequestJs.as[JsObject] + ("reportingEntityName" -> JsString(longString))
   val longTin:                        String   = "a" * 201
   val invalidLongTinJson:             JsObject = ornRequestJs.as[JsObject] + ("TIN"                 -> JsString(longTin))
-
 }
