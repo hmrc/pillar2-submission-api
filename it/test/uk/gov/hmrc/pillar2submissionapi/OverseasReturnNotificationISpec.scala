@@ -36,6 +36,7 @@ import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
@@ -551,7 +552,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.issuingCountryTIN mustEqual customResponse.issuingCountryTIN
       }
 
-      "return 500 INTERNAL_SERVER_ERROR when ORN doesn't exist" in {
+      "return 404 NOT_FOUND when ORN doesn't exist" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
           OK,
@@ -573,10 +574,10 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
         val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
 
-        result.status mustEqual INTERNAL_SERVER_ERROR
-        val errorResponse = result.json.as[ORNErrorResponse]
-        errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        result.status mustEqual NOT_FOUND
+        val errorResponse = result.json.as[Pillar2ErrorResponse]
+        errorResponse.code mustEqual "RESOURCE_NOT_FOUND"
+        errorResponse.message mustEqual "Not Found"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {

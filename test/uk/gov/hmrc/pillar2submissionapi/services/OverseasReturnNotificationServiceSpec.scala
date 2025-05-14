@@ -173,11 +173,13 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   }
 
   "retrieveORN() 422 response with No Form bundle found" should {
-    "ResourceNotFoundException thrown" in {
+    "throw DownstreamValidationError with correct message" in {
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form bundle found")), Map.empty)))
 
-      intercept[ResourceNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      val exception = intercept[DownstreamValidationError](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      exception.message mustBe "Not Found"
+      exception.code mustBe "005"
     }
   }
 
