@@ -91,8 +91,10 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
           case JsSuccess(errorResponse, _) =>
             logger.info(s"Parsed error response: $errorResponse")
             if (errorResponse.code == "005" && errorResponse.message.toLowerCase.contains("no form bundle found")) {
-              logger.info("Detected 'No Form bundle found' error, converting to DownstreamValidationError with 'Not Found' message")
-              throw DownstreamValidationError("005", "Not Found")
+              logger.info(
+                "Detected 'No Form bundle found' error, converting to DownstreamValidationError with 'The requested resource could not be found' message"
+              )
+              throw DownstreamValidationError("005", "The requested resource could not be found")
             } else {
               logger.warn(s"Unexpected 422 error code: ${errorResponse.code}, message: ${errorResponse.message}")
               throw DownstreamValidationError(errorResponse.code, errorResponse.message)

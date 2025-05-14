@@ -577,7 +577,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual NOT_FOUND
         val errorResponse = result.json.as[Pillar2ErrorResponse]
         errorResponse.code mustEqual "RESOURCE_NOT_FOUND"
-        errorResponse.message mustEqual "Not Found"
+        errorResponse.message mustEqual "The requested resource could not be found"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
