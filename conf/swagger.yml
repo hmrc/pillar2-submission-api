@@ -104,6 +104,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "500":
           description: Internal Server Error
           content:
@@ -202,6 +204,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "500":
           description: Internal Server Error
           content:
@@ -306,6 +310,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "500":
           description: Internal Server Error
           content:
@@ -412,6 +418,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidDateRange"
                 Invalid Date Format:
                   $ref: "#/components/examples/errors.InvalidDateFormat"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "200":
           description: OK Obligations and Submissions retrieved
           content:
@@ -450,6 +458,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "500":
           description: Internal Server Error
           content:
@@ -519,6 +529,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Missing Header:
                   $ref: "#/components/examples/errors.Submission.MissingPillar2Header"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "500":
           description: Internal Server Error
           content:
@@ -578,6 +590,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidDateRange"
                 Invalid Date Format:
                   $ref: "#/components/examples/errors.InvalidDateFormat"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "401":
           description: Unauthorized
           content:
@@ -645,6 +659,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
                 Invalid Date Range:
                   $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
@@ -688,6 +704,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "401":
           description: Unauthorized
           content:
@@ -742,6 +760,8 @@ paths:
                   $ref: "#/components/examples/errors.InvalidJson"
                 Empty Body:
                   $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
                 Invalid Date Range:
                   $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
@@ -776,6 +796,13 @@ paths:
       description: |
         Deletes a test organisation associated with your authed organisation.
       responses:
+        "400":
+          description: Invalid Request
+          content:
+            application/json:
+              examples:
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
         "401":
           description: Unauthorized
           content:
@@ -831,6 +858,8 @@ paths:
                     $ref: "#/components/examples/errors.InvalidJson"
                   Empty Body:
                     $ref: "#/components/examples/errors.EmptyBody"
+                  Incorrect Header Value:
+                    $ref: "#/components/examples/errors.IncorrectHeaderValue"
           "401":
             description: Unauthorized
             content:
@@ -1269,6 +1298,11 @@ components:
       value:
         code: 'MISSING_HEADER'
         message: Please provide the X-Pillar2-Id header
+    errors.IncorrectHeaderValue:
+      summary: Pillar 2 header does not match that in the bearer token
+      value:
+        code: 'INCORRECT_HEADER_VALUE'
+        message: X-Pillar2-Id Header value does not match the bearer token
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
