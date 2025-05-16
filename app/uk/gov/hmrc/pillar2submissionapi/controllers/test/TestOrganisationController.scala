@@ -20,7 +20,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, TestEndpointDisabled}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest
 import uk.gov.hmrc.pillar2submissionapi.services.TestOrganisationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -47,9 +47,12 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              testOrganisationService
-                .createTestOrganisation(request.clientPillar2Id, value)
-                .map(response => Created(Json.toJson(response)))
+              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              else
+                testOrganisationService
+                  .createTestOrganisation(request.clientPillar2Id, value)
+                  .map(response => Created(Json.toJson(response)))
+
             case JsError(_) => Future.failed(InvalidJson)
           }
         case None => Future.failed(EmptyRequestBody)
@@ -71,9 +74,11 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              testOrganisationService
-                .updateTestOrganisation(request.clientPillar2Id, value)
-                .map(response => Ok(Json.toJson(response)))
+              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              else
+                testOrganisationService
+                  .updateTestOrganisation(request.clientPillar2Id, value)
+                  .map(response => Ok(Json.toJson(response)))
             case JsError(_) => Future.failed(InvalidJson)
           }
         case None => Future.failed(EmptyRequestBody)
