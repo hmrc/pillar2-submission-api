@@ -661,6 +661,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Incorrect Header Value:
                   $ref: "#/components/examples/errors.IncorrectHeaderValue"
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
           description: Unauthorized
           content:
@@ -760,6 +762,8 @@ paths:
                   $ref: "#/components/examples/errors.EmptyBody"
                 Incorrect Header Value:
                   $ref: "#/components/examples/errors.IncorrectHeaderValue"
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
         "401":
           description: Unauthorized
           content:
