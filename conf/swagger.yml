@@ -25,7 +25,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account. If you are amending an existing return, please check the request dates fall within the amendment window.</td>
         </tr>
         <tr>
         <td>044 - Tax obligation already fulfilled</td>
