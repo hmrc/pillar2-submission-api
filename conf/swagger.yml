@@ -572,7 +572,23 @@ paths:
     get:
       summary: Retrieve Overseas Return Notification
       description: |
-        Retrieve an Overseas Return Notification
+        Retrieves an Overseas Return Notification for an accounting period.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a Retrieve Overseas Return Notification API request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future./td>
+        </tr>
+        </tbody>
+        </table>
       responses:
         "200":
           description: Overseas Return Notification Retrieved Successfully
