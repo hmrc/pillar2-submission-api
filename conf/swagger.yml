@@ -433,7 +433,8 @@ paths:
       summary: Submit Overseas Return Notification
       description: |
         Submit an Overseas Return Notification
-        The errors listed here return a 422 HTTP code when the Submit Overseas Rreturn Notification request is not processed successfully. 
+        ### Error Codes
+        <p>The errors listed here return a 422 HTTP code when the Submit Overseas Rreturn Notification request is not processed successfully.</p> 
         <table>
         <thead>
         <tr>
@@ -531,7 +532,8 @@ paths:
       summary: Amend Overseas Return Notification
       description: |
         Amend an Overseas Return Notification
-        The errors listed here return a 422 HTTP code when the Amend Overseas Return Notification request is not processed successfully. 
+        ### Error Codes
+        <p>The errors listed here return a 422 HTTP code when the Amend Overseas Return Notification request is not processed successfully.</p> 
         <table>
         <thead>
         <tr>
