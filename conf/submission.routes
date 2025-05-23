@@ -422,14 +422,14 @@ PUT /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.
 #      type: string
 #      example: application/vnd.hmrc.1.0+json
 #    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
-#  - in: path
+#  - in: query
 #    name: accountingPeriodFrom
 #    required: true
 #    schema:
 #      type: string
 #      format: date
 #    description: Period start date
-#  - in: path
+#  - in: query
 #    name: accountingPeriodTo
 #    required: true
 #    schema:
