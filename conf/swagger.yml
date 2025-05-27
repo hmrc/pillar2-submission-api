@@ -433,6 +433,34 @@ paths:
       summary: Submit Overseas Return Notification
       description: |
         Submit an Overseas Return Notification
+        ### Error Codes
+        <p>The errors listed here return a 422 HTTP code when the Submit Overseas Return Notification request is not processed successfully.</p> 
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future.</td>
+        </tr>
+        <tr>
+        <td>044 - Tax Obligation already fulfilled</td>
+        <td>A BTN for the specified period has already been submitted.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>093 - Invalid Return</td>
+        <td>There is an error with the return you’ve submitted in the request.</td>
+        </tr>
+        </tbody>
+        </table>
       requestBody:
         content:
           application/json:
@@ -504,6 +532,30 @@ paths:
       summary: Amend Overseas Return Notification
       description: |
         Amend an Overseas Return Notification
+        ### Error Codes
+        <p>The errors listed here return a 422 HTTP code when the Amend Overseas Return Notification request is not processed successfully.</p> 
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future.</td>
+        </tr>
+        <tr>
+        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>093 - Invalid Return</td>
+        <td>There is an error with the return you’ve submitted in the request.</td>
+        </tr>
+        </tbody>
+        </table>
       requestBody:
         content:
           application/json:
@@ -572,7 +624,23 @@ paths:
     get:
       summary: Retrieve Overseas Return Notification
       description: |
-        Retrieve an Overseas Return Notification
+        Retrieves an Overseas Return Notification for an accounting period.
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a Retrieve Overseas Return Notification API request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account./td>
+        </tr>
+        </tbody>
+        </table>
       responses:
         "200":
           description: Overseas Return Notification Retrieved Successfully
