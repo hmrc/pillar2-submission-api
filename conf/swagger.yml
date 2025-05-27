@@ -434,7 +434,7 @@ paths:
       description: |
         Submit an Overseas Return Notification
         ### Error Codes
-        <p>The errors listed here return a 422 HTTP code when the Submit Overseas Rreturn Notification request is not processed successfully.</p> 
+        <p>The errors listed here return a 422 HTTP code when the Submit Overseas Return Notification request is not processed successfully.</p> 
         <table>
         <thead>
         <tr>
