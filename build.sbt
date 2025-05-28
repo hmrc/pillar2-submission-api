@@ -23,7 +23,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(CodeCoverageSettings.settings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
@@ -42,8 +41,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     testOptions in IntegrationTest += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
     unmanagedResourceDirectories in IntegrationTest := Seq(baseDirectory.value / "test-resources")
   )
-  .settings(resolvers += Resolver.jcenterRepo)
-  .settings(resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven")
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
   .settings(PublishTestOnlyOas.settings *)
