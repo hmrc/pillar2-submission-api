@@ -32,7 +32,7 @@ paths:
         <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
         </tr>
         <tr>
-        <td>063 - Business partner does not have an active Pillar 2 subscription</td>
+        <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
@@ -280,7 +280,7 @@ paths:
         <td>A BTN for the specified period has already been submitted.</td>
         </tr>
         <tr>
-        <td>063 - Business partner does not have an active Pillar 2 subscription</td>
+        <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
@@ -432,7 +432,7 @@ paths:
     post:
       summary: Submit Overseas Return Notification
       description: |
-        Submit an Overseas Return Notification
+        Submits an Overseas Return Notification for an accounting period.
         ### Error Codes
         <p>The errors listed here return a 422 HTTP code when the Submit Overseas Return Notification request is not processed successfully.</p> 
         <table>
@@ -452,7 +452,7 @@ paths:
         <td>A BTN for the specified period has already been submitted.</td>
         </tr>
         <tr>
-        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>063 - Business Partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
@@ -531,7 +531,7 @@ paths:
     put:
       summary: Amend Overseas Return Notification
       description: |
-        Amend an Overseas Return Notification
+        Amends an Overseas Return Notification for an accounting period.
         ### Error Codes
         <p>The errors listed here return a 422 HTTP code when the Amend Overseas Return Notification request is not processed successfully.</p> 
         <table>
@@ -547,7 +547,7 @@ paths:
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future.</td>
         </tr>
         <tr>
-        <td>063 - Business Partner does not have an Active Pillar 2 Subscription</td>
+        <td>063 - Business Partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
