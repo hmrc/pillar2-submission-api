@@ -32,7 +32,7 @@ paths:
         <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
         </tr>
         <tr>
-        <td>063 - Business partner does not have an active Pillar 2 subscription</td>
+        <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
@@ -280,7 +280,7 @@ paths:
         <td>A BTN for the specified period has already been submitted.</td>
         </tr>
         <tr>
-        <td>063 - Business partner does not have an active Pillar 2 subscription</td>
+        <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         </tbody>
