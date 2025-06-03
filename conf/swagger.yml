@@ -445,7 +445,11 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future.</td>
+        <td>The message could not be processed due to locking. 
+        <li>Confirm if there is currently an open enquiry on your tax account.</li>
+        <li>Check the <em>filedDateGIR</em> date is not in the future.</li>
+        <li>The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.</li>
+        </td>
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
@@ -544,7 +548,11 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account, and that the <em>filedDateGIR</em> date is not in the future.</td>
+        <td>The message could not be processed due to locking.
+        <li>Confirm if there is currently an open enquiry on your tax account.</li>
+        <li>Check the <em>filedDateGIR</em> date is not in the future.</li>
+        <li>The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.</li>
+        </td>
         </tr>
         <tr>
         <td>063 - Business Partner does not have an Active Subscription for this Regime</td>
