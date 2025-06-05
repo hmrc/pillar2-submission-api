@@ -14,7 +14,7 @@ paths:
       description: |
         Submits a UK Tax Return for a specified accounting period.
         ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR API request is not processed successfully. Error codes still in development are marked as "awaiting clarification".</p>
+        <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR request is not processed successfully.</p>
         <table>
         <thead>
         <tr>
@@ -28,7 +28,7 @@ paths:
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account. If you are amending an existing return, please check the request dates fall within the amendment window.</td>
         </tr>
         <tr>
-        <td>044 - Tax obligation already fulfilled</td>
+        <td>044 - Tax Obligation already fulfilled</td>
         <td>A UKTR for the specified period has already been submitted. If you are trying to amend a UKTR, please check you are sending the <em>amendUKTR</em> API request.</td>
         </tr>
         <tr>
@@ -36,31 +36,31 @@ paths:
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
         <tr>
-        <td>093 - Invalid return</td>
+        <td>093 - Invalid Return</td>
         <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
-        <td>094 - Invalid DTT election</td>
+        <td>094 - Invalid DTT Election</td>
         <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
         </tr>
         <tr>
-        <td>095 - Invalid UTPR election</td>
+        <td>095 - Invalid UTPR Election</td>
         <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
         </tr>
         <tr>
-        <td>096 - Invalid total liability</td>
+        <td>096 - Invalid Total Liability</td>
         <td>The <em>totalLiability</em> value in the request does not match the combined values of <em>totalLiabilityDTT</em>, <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em>. Please check the sum of these fields matches the <em>totalLiability</em> value and submit the request again.</td>
         </tr>
         <tr>
-        <td>097 - Invalid total liability IIR</td>
+        <td>097 - Invalid Total Liability IIR</td>
         <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. IIR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         <tr>
-        <td>098 - Invalid total liability DTT</td>
+        <td>098 - Invalid Total Liability DTT</td>
         <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
         </tr>
         <tr>
-        <td>099 - Invalid total liability UTPR</td>
+        <td>099 - Invalid Total Liability UTPR</td>
         <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         </tbody>
@@ -262,7 +262,7 @@ paths:
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a SubmitBTN API request is not processed successfully.</p>
+        <p>This table contains a list of 422 error codes returned when a SubmitBTN request is not processed successfully.</p>
         <table>
         <thead>
         <tr>
@@ -276,7 +276,7 @@ paths:
         <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         <tr>
-        <td>044 - Tax obligation already fulfilled</td>
+        <td>044 - Tax Obligation already fulfilled</td>
         <td>A BTN for the specified period has already been submitted.</td>
         </tr>
         <tr>
@@ -356,7 +356,7 @@ paths:
       description: |
         Retrieves the Obligations and Submissions for an accounting period.
         ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a Obligations and Submissions API request is not processed successfully.</p>
+        <p>This table contains a list of 422 error codes returned when a Retrieve Obligations and Submissions request is not processed successfully.</p>
         <table>
         <thead>
         <tr>
@@ -434,7 +434,7 @@ paths:
       description: |
         Submits an Overseas Return Notification for an accounting period.
         ### Error Codes
-        <p>The errors listed here return a 422 HTTP code when the Submit Overseas Return Notification request is not processed successfully.</p> 
+        <p>This table contains a list of 422 error codes returned when a Submit Overseas Return Notification request is not processed successfully.</p> 
         <table>
         <thead>
         <tr>
@@ -445,10 +445,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. 
-        <li>Confirm if there is currently an open enquiry on your tax account.</li>
-        <li>Check the <em>filedDateGIR</em> date is not in the future.</li>
-        <li>The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.</li>
+        <td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.
         </td>
         </tr>
         <tr>
@@ -537,7 +534,7 @@ paths:
       description: |
         Amends an Overseas Return Notification for an accounting period.
         ### Error Codes
-        <p>The errors listed here return a 422 HTTP code when the Amend Overseas Return Notification request is not processed successfully.</p> 
+        <p>This table contains a list of 422 error codes returned when an Amend Overseas Return Notification request is not processed successfully.</p> 
         <table>
         <thead>
         <tr>
@@ -548,10 +545,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking.
-        <li>Confirm if there is currently an open enquiry on your tax account.</li>
-        <li>Check the <em>filedDateGIR</em> date is not in the future.</li>
-        <li>The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.</li>
+        <td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.
         </td>
         </tr>
         <tr>
@@ -634,7 +628,7 @@ paths:
       description: |
         Retrieves an Overseas Return Notification for an accounting period.
         ### Error Codes
-        <p>This table contains a list of 422 error codes returned when a Retrieve Overseas Return Notification API request is not processed successfully.</p>
+        <p>This table contains a list of 422 error codes returned when a Retrieve Overseas Return Notification request is not processed successfully.</p>
         <table>
         <thead>
         <tr>
