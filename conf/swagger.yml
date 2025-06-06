@@ -10,7 +10,7 @@ servers:
 paths:
   /uk-tax-return:
     post:
-      summary: SubmitUKTR
+      summary: Submit UK Tax Return
       description: |
         Submits a UK Tax Return for a specified accounting period.
         ### Error Codes
@@ -159,7 +159,7 @@ paths:
       security:
         - userRestricted: [write:pillar2]
     put:
-      summary: AmendUKTR
+      summary: Amend UK Tax Return
       description: |
         Amends a UK tax return submitted for a specified accounting period.   
         
@@ -258,7 +258,7 @@ paths:
         - userRestricted: [write:pillar2]
   /below-threshold-notification:
     post:
-      summary: SubmitBTN
+      summary: Submit Below-Threshold Notification
       description: |
         Submits a Below-Threshold Notification for a specified accounting period when the group no longer meets the threshold for the Pillar 2 top-up tax.
         ### Error Codes
