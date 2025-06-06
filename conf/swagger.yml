@@ -445,7 +445,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.
+        <td>The message could not be processed due to locking. Please make the following checks. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes. In the organisation’s settings, the <em>accountStatus</em> should have the <em>inactive</em> flag set to “false".
         </td>
         </tr>
         <tr>
@@ -545,7 +545,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.
+        <td>The message could not be processed due to locking. Please make the following checks. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes. In the organisation’s settings, the <em>accountStatus</em> should have the <em>inactive</em> flag set to “false".
         </td>
         </tr>
         <tr>
