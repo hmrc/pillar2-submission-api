@@ -1502,23 +1502,6 @@ components:
         - obligationMTT
         - electionUKGAAP
         - liabilities
-    uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSuccess:
-      properties:
-        processingDate:
-          type: string
-      required:
-        - processingDate
-    uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission:
-      properties:
-        accountingPeriodFrom:
-          type: string
-          format: date
-        accountingPeriodTo:
-          type: string
-          format: date
-      required:
-        - accountingPeriodFrom
-        - accountingPeriodTo
     uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse:
       properties:
         code:
@@ -1584,7 +1567,6 @@ components:
             - ORN_CREATE
             - ORN_AMEND
             - BTN
-            - GIR
         receivedDate:
           type: string
           format: date-time
