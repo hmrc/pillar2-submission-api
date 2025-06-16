@@ -42,9 +42,9 @@ trait ObligationsAndSubmissionsDataFixture {
             UKTR,
             Fulfilled,
             canAmend = false,
-            Seq(Submission(BTN, ZonedDateTime.now(), None))
+            Some(Seq(Submission(BTN, ZonedDateTime.now(), None)))
           ),
-          Obligation(GIR, Open, canAmend = true, Seq.empty)
+          Obligation(GIR, Open, canAmend = true, None)
         )
       )
     )

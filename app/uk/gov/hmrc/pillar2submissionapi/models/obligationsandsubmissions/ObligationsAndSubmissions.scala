@@ -41,7 +41,7 @@ object AccountingPeriodDetails {
   implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
 }
 
-case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Seq[Submission])
+case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Option[Seq[Submission]])
 
 object Obligation {
   implicit val format: OFormat[Obligation] = Json.format[Obligation]
