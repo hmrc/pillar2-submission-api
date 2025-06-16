@@ -1621,7 +1621,6 @@ components:
       - obligationType
       - status
       - canAmend
-      - submissions
     ObligationsAndSubmissionsSuccessResponse:
       properties:
         processingDate:
@@ -1678,15 +1677,6 @@ components:
       summary: Success response
       value:
         processingDate: 2026-06-26T09:26:17Z
-    responses.CreateTestGlobeInformationReturnResponseExample:
-      summary: Success response
-      value:
-        processingDate: 2026-06-26T09:26:17Z
-    requests.CreateTestGlobeInformationReturnRequestExample:
-      summary: Request example
-      value:
-        accountingPeriodFrom: 2024-01-01
-        accountingPeriodTo: 2024-12-31
     requests.UKTRNilReturnMneAndUk:
       summary: Nil Return - MNE and UK
       value:

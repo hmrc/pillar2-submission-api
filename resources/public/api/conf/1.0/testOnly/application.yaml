@@ -1745,7 +1745,6 @@ components:
       - obligationType
       - status
       - canAmend
-      - submissions
     ObligationsAndSubmissionsSuccessResponse:
       properties:
         processingDate:
