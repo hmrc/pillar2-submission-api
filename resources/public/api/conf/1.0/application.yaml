@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.140.0
+  version: 0.142.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1035,7 +1035,7 @@ paths:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-      description: "Submits an Overseas Return Notification for an accounting period.\n### Error Codes\n<p>This table contains a list of 422 error codes returned when a Submit Overseas Return Notification request is not processed successfully.</p> \n<table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.\n</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation already fulfilled</td>\n<td>A BTN for the specified period has already been submitted.</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have an Active Subscription for this Regime</td>\n<td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the return you’ve submitted in the request.</td>\n</tr>\n</tbody>\n</table>\n"
+      description: "Submits an Overseas Return Notification for an accounting period.\n### Error Codes\n<p>This table contains a list of 422 error codes returned when a Submit Overseas Return Notification request is not processed successfully.</p> \n<table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message could not be processed due to locking. Please make the following checks. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes. In the organisation’s settings, the <em>accountStatus</em> should have the <em>inactive</em> flag set to “false\".\n</td>\n</tr>\n<tr>\n<td>044 - Tax Obligation already fulfilled</td>\n<td>A BTN for the specified period has already been submitted.</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have an Active Subscription for this Regime</td>\n<td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the return you’ve submitted in the request.</td>\n</tr>\n</tbody>\n</table>\n"
       security:
         - userRestricted:
             - write:pillar2
@@ -1141,7 +1141,7 @@ paths:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-      description: "Amends an Overseas Return Notification for an accounting period.\n### Error Codes\n<p>This table contains a list of 422 error codes returned when an Amend Overseas Return Notification request is not processed successfully.</p> \n<table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message could not be processed due to locking. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes.\n</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have an Active Subscription for this Regime</td>\n<td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the return you’ve submitted in the request.</td>\n</tr>\n</tbody>\n</table>\n"
+      description: "Amends an Overseas Return Notification for an accounting period.\n### Error Codes\n<p>This table contains a list of 422 error codes returned when an Amend Overseas Return Notification request is not processed successfully.</p> \n<table>\n<thead>\n<tr>\n<th>Error Message</th>\n<th>Next Steps</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>003 - Request could not be processed</td>\n<td>The message could not be processed due to locking. Please make the following checks. Confirm if there is currently an open enquiry on your tax account. Check the <em>filedDateGIR</em> date is not in the future. The <em>countryGIR</em> and <em>issuingCountryTIN</em> fields must conform to the ISO-3166 standard for country codes. In the organisation’s settings, the <em>accountStatus</em> should have the <em>inactive</em> flag set to “false\".\n</td>\n</tr>\n<tr>\n<td>063 - Business Partner does not have an Active Subscription for this Regime</td>\n<td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>\n</tr>\n<tr>\n<td>093 - Invalid Return</td>\n<td>There is an error with the return you’ve submitted in the request.</td>\n</tr>\n</tbody>\n</table>\n"
       security:
         - userRestricted:
             - write:pillar2
@@ -1801,23 +1801,23 @@ components:
           electionUTPRSingleMember: false
           numberSubGroupDTT: 4
           numberSubGroupUTPR: 5
-          totalLiability: 40968.88
-          totalLiabilityDTT: 26567.89
-          totalLiabilityIIR: 5000
-          totalLiabilityUTPR: 9400.99
+          totalLiability: 10000
+          totalLiabilityDTT: 10000
+          totalLiabilityIIR: 0
+          totalLiabilityUTPR: 0
           liableEntities:
             - ukChargeableEntityName: Newco PLC
               idType: CRN
               idValue: xyz
-              amountOwedDTT: 4567
-              amountOwedIIR: 3000
-              amountOwedUTPR: 4000.99
+              amountOwedDTT: 5000
+              amountOwedIIR: 0
+              amountOwedUTPR: 0
             - ukChargeableEntityName: Conew PLC
-              idType: CT-UTR
+              idType: CRN
               idValue: xyz
-              amountOwedDTT: 22000.89
-              amountOwedIIR: 2000
-              amountOwedUTPR: 5400
+              amountOwedDTT: 5000
+              amountOwedIIR: 0
+              amountOwedUTPR: 0
     responses.UKTRSuccessResponseWithCrnExample:
       summary: Liability Success response
       value:
