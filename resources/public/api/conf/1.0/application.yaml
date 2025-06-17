@@ -1567,7 +1567,6 @@ components:
           - ORN_CREATE
           - ORN_AMEND
           - BTN
-          - GIR
         receivedDate:
           type: string
           format: date-time
