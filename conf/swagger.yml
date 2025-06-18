@@ -1259,23 +1259,23 @@ components:
           electionUTPRSingleMember: false
           numberSubGroupDTT: 4
           numberSubGroupUTPR: 5
-          totalLiability: 40968.88
-          totalLiabilityDTT: 26567.89
-          totalLiabilityIIR: 5000
-          totalLiabilityUTPR: 9400.99
+          totalLiability: 10000
+          totalLiabilityDTT: 10000
+          totalLiabilityIIR: 0
+          totalLiabilityUTPR: 0
           liableEntities:
           - ukChargeableEntityName: Newco PLC
             idType: CRN
             idValue: xyz
-            amountOwedDTT: 4567
-            amountOwedIIR: 3000
-            amountOwedUTPR: 4000.99
+            amountOwedDTT: 5000
+            amountOwedIIR: 0
+            amountOwedUTPR: 0
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: CRN
             idValue: xyz
-            amountOwedDTT: 22000.89
-            amountOwedIIR: 2000
-            amountOwedUTPR: 5400
+            amountOwedDTT: 5000
+            amountOwedIIR: 0
+            amountOwedUTPR: 0
 
     responses.UKTRSuccessResponseWithCrnExample:
       summary: Liability Success response
