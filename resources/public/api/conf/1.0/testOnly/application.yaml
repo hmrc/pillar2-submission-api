@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.142.0
+  version: 0.143.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -636,7 +636,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account. If you are amending an existing return, please check the request dates fall within the amendment window.</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account. If you are amending an existing return, please check the request dates fall within the amendment window (12 months after the due date, minus 1 day).</td>
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
@@ -648,7 +648,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and ensure the <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> dates are valid. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
