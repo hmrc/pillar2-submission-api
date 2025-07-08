@@ -902,9 +902,9 @@ paths:
         - userRestricted: [write:pillar2]
   /setup/globe-information-return :
       post:
-        summary: Create A Test Globe Information Return
+        summary: Create A Test GloBE Information Return
         description: |
-          Creates a Globe Information Return for a test organisation.
+          Creates a GloBE Information Return for a test organisation.
         requestBody:
           content:
             application/json:
