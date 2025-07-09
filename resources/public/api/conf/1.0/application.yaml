@@ -388,7 +388,7 @@ paths:
       operationId: createGIR
       tags:
       - setup
-      summary: Create A Test Globe Information Return
+      summary: Create A Test GloBE Information Return
       parameters:
       - in: header
         name: Authorization
@@ -485,7 +485,7 @@ paths:
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       description: |
-        Creates a Globe Information Return for a test organisation.
+        Creates a GloBE Information Return for a test organisation.
       security:
       - userRestricted:
         - write:pillar2
