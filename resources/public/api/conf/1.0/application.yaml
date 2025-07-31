@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.150.0
+  version: 0.151.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -939,6 +939,10 @@ paths:
         <tr>
         <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>100 - Accounting period under enquiry</td>
+        <td>A BTN cannot be submitted for this particular accounting period as it is currently subject to an HMRC enquiry.</td>
         </tr>
         </tbody>
         </table>
