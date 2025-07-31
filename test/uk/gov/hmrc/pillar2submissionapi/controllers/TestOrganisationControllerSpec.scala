@@ -214,7 +214,8 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
       ),
       accountingPeriod = AccountingPeriod(
         startDate = LocalDate.of(2024, 1, 1),
-        endDate = LocalDate.of(2024, 12, 31)
+        endDate = LocalDate.of(2024, 12, 31),
+        None
       ),
       lastUpdated = Instant.parse("2024-01-01T12:00:00Z")
     )
