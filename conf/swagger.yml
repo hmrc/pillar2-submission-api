@@ -283,6 +283,10 @@ paths:
         <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
+        <tr>
+        <td>100 - Accounting period under enquiry</td>
+        <td>A BTN cannot be submitted for this particular accounting period as it is currently subject to an HMRC enquiry.</td>
+        </tr>
         </tbody>
         </table>
       requestBody:
