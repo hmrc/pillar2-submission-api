@@ -881,6 +881,8 @@ paths:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                Accounting Period Under Enquiry:
+                  $ref: "#/components/examples/errors.Submission.AccountingPeriodUnderEnquiry"
         "403":
           description: Forbidden
           content:
@@ -2101,6 +2103,11 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+    errors.Submission.AccountingPeriodUnderEnquiry:
+      summary: Accounting Period Under Enquiry
+      value:
+        code: 100
+        message: Accounting period under enquiry
     errors.Submission.NoDataFound:
       summary: No data found
       value:
