@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.145.0
+  version: 0.151.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -881,6 +881,8 @@ paths:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                Accounting Period Under Enquiry:
+                  $ref: "#/components/examples/errors.Submission.AccountingPeriodUnderEnquiry"
         "403":
           description: Forbidden
           content:
@@ -937,6 +939,10 @@ paths:
         <tr>
         <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
+        </tr>
+        <tr>
+        <td>100 - Accounting period under enquiry</td>
+        <td>A BTN cannot be submitted for this particular accounting period as it is currently subject to an HMRC enquiry.</td>
         </tr>
         </tbody>
         </table>
@@ -1651,6 +1657,9 @@ components:
         endDate:
           type: string
           format: date
+        underEnquiry:
+          type: boolean
+          nullable: true
       required:
       - startDate
       - endDate
@@ -2098,6 +2107,11 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+    errors.Submission.AccountingPeriodUnderEnquiry:
+      summary: Accounting Period Under Enquiry
+      value:
+        code: 100
+        message: Accounting period under enquiry
     errors.Submission.NoDataFound:
       summary: No data found
       value:
