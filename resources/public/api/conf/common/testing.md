@@ -4,9 +4,9 @@ Work through the instructions on the [getting started](https://developer.service
 
 **Important**: The *Pillar 2 ID* must be included in the request header or an error will be returned when the request is sent. 
 
-The next steps are outlined on the Open API Specification (**OAS**) page under "setup". Access to the OAS page is currently restricted, so please use the link in the "Endpoints" section to contact support and join the private trial.
+The next steps are outlined on the Open API Specification (**OAS**) page under "setup". Access to the OAS page is currently restricted, so please use the link in the "Endpoints" section to contact support and submit an access request.
 
-- [Create a test user](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user/1.0) with a Pillar 2 Subscription. 
+- [Create a test user](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user/1.0) with a Pillar 2 subscription. 
 - Create a bearer token for the test user.
 - Set up a test organisation.
 - Run a SubmitUKTR request.
