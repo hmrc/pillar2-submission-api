@@ -648,7 +648,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em>, <em>amountOwedIIR</em>, <em>totalLiabilityUTPR</em> and <em>amountOwedUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
