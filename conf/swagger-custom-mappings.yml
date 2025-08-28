@@ -13,3 +13,10 @@
   specAsParameter:
     - type: string
       format: date
+- type: NonEmptyList
+  specAsModel:
+    - type: array
+      minItems: 1
+  specAsParameter:
+    - type: array
+      minItems: 1
