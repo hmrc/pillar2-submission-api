@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.151.0
+  version: 0.155.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -648,7 +648,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em>, <em>amountOwedIIR</em>, <em>totalLiabilityUTPR</em> and <em>amountOwedUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
@@ -1389,6 +1389,36 @@ paths:
         - read:pillar2
 components:
   schemas:
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
+      properties:
+        ukChargeableEntityName:
+          type: string
+        idType:
+          type: string
+        idValue:
+          type: string
+        amountOwedDTT:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+        amountOwedIIR:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+        amountOwedUTPR:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+      required:
+      - ukChargeableEntityName
+      - idType
+      - idValue
+      - amountOwedDTT
+      - amountOwedIIR
+      - amountOwedUTPR
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNRetrieveSuccessResponse:
       properties:
         processingDate:
@@ -1518,36 +1548,6 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
-    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
-      properties:
-        ukChargeableEntityName:
-          type: string
-        idType:
-          type: string
-        idValue:
-          type: string
-        amountOwedDTT:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
-        amountOwedIIR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
-        amountOwedUTPR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
-      required:
-      - ukChargeableEntityName
-      - idType
-      - idValue
-      - amountOwedDTT
-      - amountOwedIIR
-      - amountOwedUTPR
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
       properties:
         electionDTTSingleMember:
@@ -1582,6 +1582,7 @@ components:
           maximum: 9.99999999999999E12
         liableEntities:
           type: array
+          minItems: 1
           items:
             $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity"
       required:
