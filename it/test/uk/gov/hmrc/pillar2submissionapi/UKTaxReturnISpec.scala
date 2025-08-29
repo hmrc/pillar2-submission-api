@@ -124,6 +124,18 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual BAD_REQUEST
       }
 
+      "return 400 BAD_REQUEST when liabilities.liableEntities is empty" in {
+        getSubscriptionStub
+
+        val liabilitiesWithEmptyEntities: JsObject =
+          (validLiabilityReturn \ "liabilities").as[JsObject] + ("liableEntities" -> Json.arr())
+        val bodyWithEmptyEntities: JsValue = validLiabilityReturn.as[JsObject] + ("liabilities" -> liabilitiesWithEmptyEntities)
+
+        val result = Await.result(requestWithBody(bodyWithEmptyEntities).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+      }
+
       "return 201 CREATED for request with duplicate fields" in {
         getSubscriptionStub
         stubRequest(
@@ -326,6 +338,18 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         result.chargeReference.value mustEqual pillar2Id
         result.formBundleNumber mustEqual formBundleNumber
+      }
+
+      "return 400 BAD_REQUEST when liabilities.liableEntities is empty" in {
+        getSubscriptionStub
+
+        val liabilitiesWithEmptyEntities: JsObject =
+          (validLiabilityReturn \ "liabilities").as[JsObject] + ("liableEntities" -> Json.arr())
+        val bodyWithEmptyEntities: JsValue = validLiabilityReturn.as[JsObject] + ("liabilities" -> liabilitiesWithEmptyEntities)
+
+        val result = Await.result(amendRequest(bodyWithEmptyEntities).execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
       }
 
       "return 500 INTERNAL_SERVER_ERROR when subscription data does not exist" in {
