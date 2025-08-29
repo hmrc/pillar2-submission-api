@@ -124,7 +124,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual BAD_REQUEST
       }
 
-      "return 400 BAD_REQUEST when liabilities.liableEntities is empty" in {
+      "return 400 BAD_REQUEST when liabilities.liableEntities is empty on submit" in {
         getSubscriptionStub
 
         val liabilitiesWithEmptyEntities: JsObject =
@@ -340,7 +340,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.formBundleNumber mustEqual formBundleNumber
       }
 
-      "return 400 BAD_REQUEST when liabilities.liableEntities is empty" in {
+      "return 400 BAD_REQUEST when liabilities.liableEntities is empty on amend" in {
         getSubscriptionStub
 
         val liabilitiesWithEmptyEntities: JsObject =
