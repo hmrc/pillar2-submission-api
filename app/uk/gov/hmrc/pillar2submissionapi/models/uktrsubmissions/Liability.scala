@@ -18,7 +18,8 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 sealed trait Liability
 
-import play.api.libs.json.{Json, OFormat, Reads}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
+import cats.data.NonEmptyList
 
 case class LiabilityData(
   electionDTTSingleMember:  Boolean,
@@ -29,11 +30,19 @@ case class LiabilityData(
   totalLiabilityDTT:        BigDecimal,
   totalLiabilityIIR:        BigDecimal,
   totalLiabilityUTPR:       BigDecimal,
-  liableEntities:           Seq[LiableEntity]
+  liableEntities:           cats.data.NonEmptyList[LiableEntity]
 ) extends Liability
 
 object LiabilityData {
-  implicit val monetaryReads:       Reads[BigDecimal]      = MonetaryReads.monetaryValueReads
+  implicit val monetaryReads: Reads[BigDecimal] = MonetaryReads.monetaryValueReads
+
+  implicit val liableEntitiesReads: Reads[NonEmptyList[LiableEntity]] = Reads.list[LiableEntity].flatMap {
+    case Nil        => Reads.failed("liableEntities must not be empty")
+    case nonNil @ _ => Reads.pure(NonEmptyList.fromListUnsafe(nonNil))
+  }
+
+  implicit val liableEntitiesWrites: Writes[NonEmptyList[LiableEntity]] = Writes.list[LiableEntity].contramap(_.toList)
+
   implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
 }
 

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
+import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
@@ -34,7 +35,7 @@ trait UKTaxReturnDataFixture {
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
   val liableEntity:       LiableEntity       = LiableEntity("entityName", "idType", "idValue", 1.00, 2.00, 3.00)
   val liabilityData: LiabilityData =
-    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.00, 4.00, 5.00, 6.00, Seq(liableEntity))
+    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.00, 4.00, 5.00, 6.00, NonEmptyList.of(liableEntity))
   val validNilSubmission: UKTRSubmissionData =
     UKTRSubmissionData(LocalDate.parse("2024-08-14"), LocalDate.parse("2024-12-14"), obligationMTT = true, electionUKGAAP = true, liabilityData)
   val validLiabilitySubmission: UKTRSubmissionNilReturn =

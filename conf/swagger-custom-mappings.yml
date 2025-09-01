@@ -13,3 +13,9 @@
   specAsParameter:
     - type: string
       format: date
+- type: cats\.data\.NonEmptyList\[uk\.gov\.hmrc\.pillar2submissionapi\.models\.uktrsubmissions\.LiableEntity\]
+  specAsParameter:
+    - type: array
+      minItems: 1
+      items:
+        $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity"
