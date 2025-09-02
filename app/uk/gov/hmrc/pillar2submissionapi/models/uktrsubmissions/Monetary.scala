@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models
 
-import play.api.libs.json.{Format, Json, JsonValidationError, Reads, Writes}
+import play.api.libs.json._
 
 case class Monetary(value: BigDecimal) extends WrappedValue[BigDecimal]
 

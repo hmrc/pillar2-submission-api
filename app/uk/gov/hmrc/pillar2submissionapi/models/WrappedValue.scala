@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models
 
-import play.api.libs.json.{Format, Json, Reads, Writes}
+import play.api.libs.json._
 
 trait WrappedValue[T] {
   def value: T

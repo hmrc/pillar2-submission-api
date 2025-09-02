@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Format, Json, JsonValidationError, Reads, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 case class EntityName(value: String) extends WrappedValue[String]
@@ -25,7 +25,8 @@ object EntityName {
   private val minLength = 1
   private val maxLength = 160
 
-  private val reads: Reads[EntityName] = Reads.of[String]
+  private val reads: Reads[EntityName] = Reads
+    .of[String]
     .map(EntityName.apply)
     .filter(JsonValidationError(s"EntityName must be between $minLength and $maxLength characters")) { entityName =>
       val length = entityName.value.length
@@ -36,4 +37,3 @@ object EntityName {
 
   implicit val format: Format[EntityName] = Format(reads, writes)
 }
-

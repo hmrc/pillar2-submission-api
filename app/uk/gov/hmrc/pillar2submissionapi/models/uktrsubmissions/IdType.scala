@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Format, Json, JsonValidationError, Reads, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 case class IdType(value: String) extends WrappedValue[String]
@@ -25,7 +25,8 @@ object IdType {
   private val minLength = 1
   private val maxLength = 4
 
-  private val reads: Reads[IdType] = Reads.of[String]
+  private val reads: Reads[IdType] = Reads
+    .of[String]
     .map(IdType.apply)
     .filter(JsonValidationError(s"IdType must be between $minLength and $maxLength characters")) { idType =>
       val length = idType.value.length
@@ -36,4 +37,3 @@ object IdType {
 
   implicit val format: Format[IdType] = Format(reads, writes)
 }
-

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Format, Json, JsonValidationError, Reads, Writes}
+import play.api.libs.json._
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 case class IdValue(value: String) extends WrappedValue[String]
@@ -25,7 +25,8 @@ object IdValue {
   private val minLength = 1
   private val maxLength = 15
 
-  private val reads: Reads[IdValue] = Reads.of[String]
+  private val reads: Reads[IdValue] = Reads
+    .of[String]
     .map(IdValue.apply)
     .filter(JsonValidationError(s"IdValue must be between $minLength and $maxLength characters")) { idValue =>
       val length = idValue.value.length
@@ -36,4 +37,3 @@ object IdValue {
 
   implicit val format: Format[IdValue] = Format(reads, writes)
 }
-
