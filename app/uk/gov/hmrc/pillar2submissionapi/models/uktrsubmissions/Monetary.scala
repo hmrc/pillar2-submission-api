@@ -24,7 +24,8 @@ object Monetary {
   private val lBound = BigDecimal("0")
   private val uBound = BigDecimal("9999999.99")
 
-  private val reads: Reads[Monetary] = Reads.of[BigDecimal]
+  private val reads: Reads[Monetary] = Reads
+    .of[BigDecimal]
     .map(Monetary.apply)
     .filter(JsonValidationError("Monetary field invalid")) { monetary =>
       val bd = monetary.value
@@ -35,4 +36,3 @@ object Monetary {
 
   implicit val format: Format[Monetary] = Format(reads, writes)
 }
-
