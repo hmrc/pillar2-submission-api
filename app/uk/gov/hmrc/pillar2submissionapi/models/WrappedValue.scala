@@ -29,4 +29,3 @@ object WrappedValueFormat {
       Writes(wrapped => Json.toJson(wrapped.value))
     )
 }
-

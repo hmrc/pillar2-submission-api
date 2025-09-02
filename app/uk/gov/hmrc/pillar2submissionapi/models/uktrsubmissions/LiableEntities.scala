@@ -32,4 +32,3 @@ object LiableEntities {
 
   implicit val format: Format[LiableEntities] = Format(reads, writes)
 }
-
