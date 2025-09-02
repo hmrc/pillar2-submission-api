@@ -95,7 +95,7 @@ class MonetarySpec extends AnyWordSpec with Matchers {
     }
 
     "reject values above maximum bound" in {
-      val json   = Json.parse("10000000")
+      val json   = Json.parse("10000000000000")
       val result = Json.fromJson[Monetary](json)
       result.isError shouldBe true
     }
