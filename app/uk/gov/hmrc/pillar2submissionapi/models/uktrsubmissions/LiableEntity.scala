@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json.{Json, OFormat, Reads}
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 
 case class LiableEntity(
   ukChargeableEntityName: String,
   idType:                 String,
   idValue:                String,
-  amountOwedDTT:          BigDecimal,
-  amountOwedIIR:          BigDecimal,
-  amountOwedUTPR:         BigDecimal
+  amountOwedDTT:          Monetary,
+  amountOwedIIR:          Monetary,
+  amountOwedUTPR:         Monetary
 )
 
 object LiableEntity {
-  implicit val monetaryReads: Reads[BigDecimal]     = MonetaryReads.monetaryValueReads
-  implicit val format:        OFormat[LiableEntity] = Json.format[LiableEntity]
+  implicit val format: OFormat[LiableEntity] = Json.format[LiableEntity]
 }

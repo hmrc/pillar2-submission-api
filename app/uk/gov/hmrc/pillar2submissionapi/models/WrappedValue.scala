@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
+package uk.gov.hmrc.pillar2submissionapi.models
 
-import play.api.libs.json.{JsonValidationError, Reads}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
-object MonetaryReads {
-  private val lBound = BigDecimal("0")
-  private val uBound = BigDecimal("9999999999999.99")
-
-  val monetaryValueReads: Reads[BigDecimal] = implicitly[Reads[BigDecimal]].filter(
-    JsonValidationError("Number field invalid length")
-  )(bd => bd >= lBound && bd <= uBound && bd.scale <= 2)
+trait WrappedValue[T] {
+  def value: T
 }
+
+object WrappedValueFormat {
+  def apply[T: Format, U <: WrappedValue[T]](construct: T => U): Format[U] =
+    Format(
+      Reads.of[T].map(construct),
+      Writes(wrapped => Json.toJson(wrapped.value))
+    )
+}
+

@@ -21,6 +21,9 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.Monetary
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
+import scala.math.BigDecimal
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
@@ -33,9 +36,20 @@ trait UKTaxReturnDataFixture {
     UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
 
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
-  val liableEntity:       LiableEntity       = LiableEntity("entityName", "idType", "idValue", 1.00, 2.00, 3.00)
+  val liableEntity: LiableEntity =
+    LiableEntity("entityName", "idType", "idValue", Monetary(BigDecimal("1.00")), Monetary(BigDecimal("2.00")), Monetary(BigDecimal("3.00")))
   val liabilityData: LiabilityData =
-    LiabilityData(electionDTTSingleMember = true, electionUTPRSingleMember = false, 1, 2, 3.00, 4.00, 5.00, 6.00, NonEmptyList.of(liableEntity))
+    LiabilityData(
+      electionDTTSingleMember = true,
+      electionUTPRSingleMember = false,
+      1,
+      2,
+      Monetary(BigDecimal("3.00")),
+      Monetary(BigDecimal("4.00")),
+      Monetary(BigDecimal("5.00")),
+      Monetary(BigDecimal("6.00")),
+      LiableEntities(NonEmptyList.of(liableEntity))
+    )
   val validNilSubmission: UKTRSubmissionData =
     UKTRSubmissionData(LocalDate.parse("2024-08-14"), LocalDate.parse("2024-12-14"), obligationMTT = true, electionUKGAAP = true, liabilityData)
   val validLiabilitySubmission: UKTRSubmissionNilReturn =
