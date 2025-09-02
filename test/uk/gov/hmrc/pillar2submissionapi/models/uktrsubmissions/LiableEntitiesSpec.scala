@@ -22,12 +22,13 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
+
 import scala.math.BigDecimal
 
 class LiableEntitiesSpec extends AnyWordSpec with Matchers {
 
   // Helper to create a test LiableEntity
-  def createTestEntity(name: String = "Test Entity") = LiableEntity(
+  def createTestEntity(name: String = "Test Entity"): LiableEntity = LiableEntity(
     ukChargeableEntityName = EntityName(name),
     idType = IdType("CRN"),
     idValue = IdValue("12345678"),

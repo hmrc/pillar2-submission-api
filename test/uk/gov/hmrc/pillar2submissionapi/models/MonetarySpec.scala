@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.models
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
+
 import scala.math.BigDecimal
 
 class MonetarySpec extends AnyWordSpec with Matchers {
