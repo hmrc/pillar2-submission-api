@@ -20,8 +20,8 @@ import cats.data.NonEmptyList
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 
 import scala.math.BigDecimal
 

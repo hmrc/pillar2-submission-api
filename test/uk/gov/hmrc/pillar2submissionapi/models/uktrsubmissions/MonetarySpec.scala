@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
+import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 import scala.math.BigDecimal
 
@@ -56,9 +57,9 @@ class MonetarySpec extends AnyWordSpec with Matchers {
     }
 
     "handle maximum valid values" in {
-      val json     = Json.parse("9999999.99")
+      val json     = Json.parse("9999999999999.99")
       val monetary = Json.fromJson[Monetary](json).get
-      monetary.value shouldBe BigDecimal("9999999.99")
+      monetary.value shouldBe BigDecimal("9999999999999.99")
     }
 
     "handle values with 2 decimal places" in {
@@ -113,14 +114,14 @@ class MonetarySpec extends AnyWordSpec with Matchers {
 
     "accept boundary values" in {
       val minValue = Json.parse("0")
-      val maxValue = Json.parse("9999999.99")
+      val maxValue = Json.parse("9999999999999.99")
 
       Json.fromJson[Monetary](minValue).isSuccess shouldBe true
       Json.fromJson[Monetary](maxValue).isSuccess shouldBe true
     }
 
     "accept values with exactly 2 decimal places" in {
-      val json   = Json.parse("9999999.99")
+      val json   = Json.parse("9999999999999.99")
       val result = Json.fromJson[Monetary](json)
       result.isSuccess shouldBe true
     }
@@ -134,9 +135,9 @@ class MonetarySpec extends AnyWordSpec with Matchers {
     }
 
     "handle large values with 2 decimal places" in {
-      val json     = Json.parse("9999999.98")
+      val json     = Json.parse("9999999999999.98")
       val monetary = Json.fromJson[Monetary](json).get
-      monetary.value shouldBe BigDecimal("9999999.98")
+      monetary.value shouldBe BigDecimal("9999999999999.98")
     }
 
     "reject invalid JSON types" in {

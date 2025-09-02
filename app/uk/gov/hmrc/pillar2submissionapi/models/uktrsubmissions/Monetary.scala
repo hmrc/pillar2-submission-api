@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models
+package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json._
+import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 case class Monetary(value: BigDecimal) extends WrappedValue[BigDecimal]
 
 object Monetary {
   private val lBound = BigDecimal("0")
-  private val uBound = BigDecimal("9999999.99")
+  private val uBound = BigDecimal("9999999999999.99")
 
   private val reads: Reads[Monetary] = Reads
     .of[BigDecimal]

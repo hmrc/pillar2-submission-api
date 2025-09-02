@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 
 sealed trait Liability
 

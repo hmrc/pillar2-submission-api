@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.pillar2submissionapi.models.Monetary
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 
 case class LiableEntity(
   ukChargeableEntityName: EntityName,
