@@ -20,3 +20,18 @@
       minItems: 1
       items:
         $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity"
+- type: uk\.gov\.hmrc\.pillar2submissionapi\.models\.uktrsubmissions\.IdType
+  specAsParameter:
+    - type: string
+      minLength: 1
+      maxLength: 4
+- type: uk\.gov\.hmrc\.pillar2submissionapi\.models\.uktrsubmissions\.IdValue
+  specAsParameter:
+    - type: string
+      minLength: 1
+      maxLength: 15
+- type: uk\.gov\.hmrc\.pillar2submissionapi\.models\.uktrsubmissions\.EntityName
+  specAsParameter:
+    - type: string
+      minLength: 1
+      maxLength: 160

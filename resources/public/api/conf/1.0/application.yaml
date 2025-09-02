@@ -1393,10 +1393,16 @@ components:
       properties:
         ukChargeableEntityName:
           type: string
+          minLength: 1
+          maxLength: 160
         idType:
           type: string
+          minLength: 1
+          maxLength: 4
         idValue:
           type: string
+          minLength: 1
+          maxLength: 15
         amountOwedDTT:
           type: number
           format: double

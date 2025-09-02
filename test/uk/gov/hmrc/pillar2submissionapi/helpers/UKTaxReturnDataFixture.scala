@@ -23,6 +23,9 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdType
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdValue
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.EntityName
 import scala.math.BigDecimal
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
@@ -37,7 +40,14 @@ trait UKTaxReturnDataFixture {
 
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
   val liableEntity: LiableEntity =
-    LiableEntity("entityName", "idType", "idValue", Monetary(BigDecimal("1.00")), Monetary(BigDecimal("2.00")), Monetary(BigDecimal("3.00")))
+    LiableEntity(
+      EntityName("entityName"),
+      IdType("CRN"),
+      IdValue("12345678"),
+      Monetary(BigDecimal("1.00")),
+      Monetary(BigDecimal("2.00")),
+      Monetary(BigDecimal("3.00"))
+    )
   val liabilityData: LiabilityData =
     LiabilityData(
       electionDTTSingleMember = true,

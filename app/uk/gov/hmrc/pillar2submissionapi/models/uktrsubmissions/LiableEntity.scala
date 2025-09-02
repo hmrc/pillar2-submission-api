@@ -20,9 +20,9 @@ import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.pillar2submissionapi.models.Monetary
 
 case class LiableEntity(
-  ukChargeableEntityName: String,
-  idType:                 String,
-  idValue:                String,
+  ukChargeableEntityName: EntityName,
+  idType:                 IdType,
+  idValue:                IdValue,
   amountOwedDTT:          Monetary,
   amountOwedIIR:          Monetary,
   amountOwedUTPR:         Monetary
