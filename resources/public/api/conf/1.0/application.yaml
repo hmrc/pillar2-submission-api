@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.155.0
+  version: 0.157.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1393,25 +1393,22 @@ components:
       properties:
         ukChargeableEntityName:
           type: string
+          minLength: 1
+          maxLength: 160
         idType:
           type: string
+          minLength: 1
+          maxLength: 4
         idValue:
           type: string
+          minLength: 1
+          maxLength: 15
         amountOwedDTT:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         amountOwedIIR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         amountOwedUTPR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
       required:
       - ukChargeableEntityName
       - idType
@@ -1548,6 +1545,13 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary:
+      properties:
+        value:
+          type: number
+          format: double
+      required:
+      - value
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
       properties:
         electionDTTSingleMember:
@@ -1561,25 +1565,13 @@ components:
           type: integer
           format: int32
         totalLiability:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         totalLiabilityDTT:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         totalLiabilityIIR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         totalLiabilityUTPR:
-          type: number
-          format: double
-          minimum: 0
-          maximum: 9.99999999999999E12
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
         liableEntities:
           type: array
           minItems: 1
@@ -1895,7 +1887,7 @@ components:
             amountOwedIIR: 3000
             amountOwedUTPR: 4000.99
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 22000.89
             amountOwedIIR: 2000
@@ -1918,7 +1910,7 @@ components:
           totalLiabilityUTPR: 5000.99
           liableEntities:
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 26567.89
             amountOwedIIR: 3400
