@@ -1221,7 +1221,7 @@ components:
             amountOwedIIR: 3000
             amountOwedUTPR: 4000.99
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 22000.89
             amountOwedIIR: 2000
@@ -1246,7 +1246,7 @@ components:
           totalLiabilityUTPR: 5000.99
           liableEntities:
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 26567.89
             amountOwedIIR: 3400
