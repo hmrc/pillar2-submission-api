@@ -3,7 +3,7 @@
   specAsParameter:
     - type: string
       format: date-time
-- type: uk\.gov\.hmrc\.pillar2submissionapi\.models\.Monetary
+- type: uk\.gov\.hmrc\.pillar2submissionapi\.models\.uktrsubmissions\.Monetary
   specAsParameter:
     - type: number
       format: double
