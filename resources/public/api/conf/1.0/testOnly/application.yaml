@@ -1404,11 +1404,23 @@ components:
           minLength: 1
           maxLength: 15
         amountOwedDTT:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         amountOwedIIR:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         amountOwedUTPR:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
       required:
       - ukChargeableEntityName
       - idType
@@ -1545,13 +1557,6 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
-    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary:
-      properties:
-        value:
-          type: number
-          format: double
-      required:
-      - value
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
       properties:
         electionDTTSingleMember:
@@ -1565,13 +1570,29 @@ components:
           type: integer
           format: int32
         totalLiability:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         totalLiabilityDTT:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         totalLiabilityIIR:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         totalLiabilityUTPR:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary"
+          type: number
+          format: double
+          minimum: 0
+          maximum: 9.99999999999999E12
+          multipleOf: 0.01
         liableEntities:
           type: array
           minItems: 1
