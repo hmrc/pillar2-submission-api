@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.145.0
+  version: 0.150.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1504,13 +1504,13 @@ components:
           type: boolean
         electionUKGAAP:
           type: boolean
+          nullable: true
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn"
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
       - obligationMTT
-      - electionUKGAAP
       - liabilities
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
       properties:
@@ -1600,13 +1600,13 @@ components:
           type: boolean
         electionUKGAAP:
           type: boolean
+          nullable: true
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData"
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
       - obligationMTT
-      - electionUKGAAP
       - liabilities
     uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSuccess:
       properties:
