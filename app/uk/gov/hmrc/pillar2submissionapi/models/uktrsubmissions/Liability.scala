@@ -16,24 +16,26 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
+
 sealed trait Liability
 
-import play.api.libs.json.{Json, OFormat, Reads}
+import play.api.libs.json.{Json, OFormat}
 
 case class LiabilityData(
   electionDTTSingleMember:  Boolean,
   electionUTPRSingleMember: Boolean,
   numberSubGroupDTT:        Int,
   numberSubGroupUTPR:       Int,
-  totalLiability:           BigDecimal,
-  totalLiabilityDTT:        BigDecimal,
-  totalLiabilityIIR:        BigDecimal,
-  totalLiabilityUTPR:       BigDecimal,
-  liableEntities:           Seq[LiableEntity]
+  totalLiability:           Monetary,
+  totalLiabilityDTT:        Monetary,
+  totalLiabilityIIR:        Monetary,
+  totalLiabilityUTPR:       Monetary,
+  liableEntities:           LiableEntities
 ) extends Liability
 
 object LiabilityData {
-  implicit val monetaryReads:       Reads[BigDecimal]      = MonetaryReads.monetaryValueReads
   implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
 }
 

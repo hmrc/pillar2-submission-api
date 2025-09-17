@@ -37,7 +37,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em> and <em>totalLiabilityUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em>, <em>amountOwedIIR</em>, <em>totalLiabilityUTPR</em> and <em>amountOwedUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
@@ -283,6 +283,10 @@ paths:
         <td>063 - Business partner does not have an Active Subscription for this Regime</td>
         <td>The Pillar 2 ID in the request header is not listed as active by HMRC for this regime. Please contact the central support team.</td>
         </tr>
+        <tr>
+        <td>100 - Accounting period under enquiry</td>
+        <td>A BTN cannot be submitted for this particular accounting period as it is currently subject to an HMRC enquiry.</td>
+        </tr>
         </tbody>
         </table>
       requestBody:
@@ -339,6 +343,8 @@ paths:
                   $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
                 No Active Subscription:
                   $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                Accounting Period Under Enquiry:
+                  $ref: "#/components/examples/errors.Submission.AccountingPeriodUnderEnquiry"
         "401":
           description: Unauthorized
           content:
@@ -1215,7 +1221,7 @@ components:
             amountOwedIIR: 3000
             amountOwedUTPR: 4000.99
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 22000.89
             amountOwedIIR: 2000
@@ -1240,7 +1246,7 @@ components:
           totalLiabilityUTPR: 5000.99
           liableEntities:
           - ukChargeableEntityName: Conew PLC
-            idType: CT-UTR
+            idType: UTR
             idValue: xyz
             amountOwedDTT: 26567.89
             amountOwedIIR: 3400
@@ -1433,6 +1439,11 @@ components:
       value:
         code: '098'
         message: Invalid Total Liability DTT
+    errors.Submission.AccountingPeriodUnderEnquiry:
+      summary: Accounting Period Under Enquiry
+      value:
+        code: '100'
+        message: Accounting period under enquiry
     errors.Submission.NoDataFound:
       summary: No data found
       value:

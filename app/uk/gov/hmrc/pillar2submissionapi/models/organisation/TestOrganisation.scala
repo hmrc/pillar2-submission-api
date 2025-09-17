@@ -31,8 +31,9 @@ object OrgDetails {
 }
 
 case class AccountingPeriod(
-  startDate: LocalDate,
-  endDate:   LocalDate
+  startDate:    LocalDate,
+  endDate:      LocalDate,
+  underEnquiry: Option[Boolean]
 )
 
 object AccountingPeriod {
