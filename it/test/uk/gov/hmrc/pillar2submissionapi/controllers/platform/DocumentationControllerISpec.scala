@@ -56,7 +56,7 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
 
     "return API documentation" when {
       "testOnlyOasEnabled is false" in {
-        val url            = s"$baseUrl${routes.DocumentationController.specification("1.0", "public/api/conf/1.0/application.yaml").url}"
+        val url            = s"$baseUrl${routes.DocumentationController.specification("1.0", "application.yaml").url}"
         val apiDoc         = Await.result(client.get(URI.create(url).toURL).execute[HttpResponse], 5.seconds)
         val apiDocStr      = apiDoc.body
         val expectedAPIDoc = Source.fromResource("public/api/conf/1.0/application.yaml").mkString
@@ -70,7 +70,7 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
           .configure("features.testOnlyOasEnabled" -> true)
           .build()
 
-        val request = FakeRequest(GET, routes.DocumentationController.specification("1.0", "public/api/conf/1.0/application.yaml").url)
+        val request = FakeRequest(GET, routes.DocumentationController.specification("1.0", "application.yaml").url)
         val result  = route(app, request).get
 
         val apiDocStr      = contentAsString(result)
