@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.157.0
+  version: 0.161.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -105,7 +105,7 @@ paths:
                 code: 500
                 message: Failed to create organisation due to database error
       description: |
-        Creates a test organisation associated with your authed organisation.
+        Creates a test organisation associated with your authorised organisation.
       security:
       - userRestricted:
         - write:pillar2
@@ -196,7 +196,7 @@ paths:
                 Incorrect Header Value:
                   $ref: "#/components/examples/errors.IncorrectHeaderValue"
       description: |
-        Gets a test organisation associated with your authed organisation.
+        Gets a test organisation associated with your authorised organisation.
       security:
       - userRestricted:
         - read:pillar2
@@ -299,7 +299,7 @@ paths:
                 code: 500
                 message: Failed to update organisation due to database error
       description: |
-        Updates a test organisation associated with your authed organisation.
+        Updates a test organisation associated with your authorised organisation.
       security:
       - userRestricted:
         - write:pillar2
@@ -379,7 +379,7 @@ paths:
                 Incorrect Header Value:
                   $ref: "#/components/examples/errors.IncorrectHeaderValue"
       description: |
-        Deletes a test organisation associated with your authed organisation.
+        Deletes a test organisation associated with your authorised organisation.
       security:
       - userRestricted:
         - write:pillar2
@@ -1380,7 +1380,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account./td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         </tbody>
         </table>
