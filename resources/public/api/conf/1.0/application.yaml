@@ -1549,13 +1549,13 @@ components:
           type: boolean
         electionUKGAAP:
           type: boolean
-          nullable: true
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn"
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
       - obligationMTT
+      - electionUKGAAP
       - liabilities
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
       properties:
@@ -1620,13 +1620,13 @@ components:
           type: boolean
         electionUKGAAP:
           type: boolean
-          nullable: true
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData"
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
       - obligationMTT
+      - electionUKGAAP
       - liabilities
     uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSuccess:
       properties:
