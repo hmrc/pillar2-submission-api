@@ -645,7 +645,7 @@ paths:
         <tbody>
         <tr>
         <td>003 - Request could not be processed</td>
-        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account./td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
         </tr>
         </tbody>
         </table>
@@ -711,7 +711,7 @@ paths:
     post:
       summary: Create Test Organisation
       description: |
-        Creates a test organisation associated with your authed organisation.
+        Creates a test organisation associated with your authorised organisation.
       requestBody:
         content:
           application/json:
@@ -762,7 +762,7 @@ paths:
     get:
       summary: Get Test Organisation
       description: |
-        Gets a test organisation associated with your authed organisation.
+        Gets a test organisation associated with your authorised organisation.
       responses:
         "200":
           description: Test Organisation Found
@@ -812,7 +812,7 @@ paths:
     put:
       summary: Update Test Organisation
       description: |
-        Updates a test organisation associated with your authed organisation.
+        Updates a test organisation associated with your authorised organisation.
       requestBody:
         content:
           application/json:
@@ -870,7 +870,7 @@ paths:
     delete:
       summary: Delete Test Organisation
       description: |
-        Deletes a test organisation associated with your authed organisation.
+        Deletes a test organisation associated with your authorised organisation.
       responses:
         "400":
           description: Invalid Request
