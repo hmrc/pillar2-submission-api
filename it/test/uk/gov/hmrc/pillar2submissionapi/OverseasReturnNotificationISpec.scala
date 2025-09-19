@@ -507,7 +507,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
     }
 
-    "retrieveORN as an organization" must {
+    "retrieveORN as an organisation" must {
       "return 200 OK when given valid period parameters" in {
         stubGet(
           "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
@@ -689,6 +689,24 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "Internal Server Error"
+      }
+      "return 400 BAD_REQUEST when missing parameters" in {
+        stubGet(
+          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          OK,
+          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
+        )
+
+        val retrieveRequest = client
+          .get(URI.create(s"http://localhost:$port/overseas-return-notification?accountingPeriodFrom=2024-01-01").toURL)
+          .setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
+
+        val result = Await.result(retrieveRequest.execute[HttpResponse], 5.seconds)
+
+        result.status mustEqual BAD_REQUEST
+        val errorResponse = result.json.as[ORNErrorResponse]
+        errorResponse.code mustEqual "BAD_REQUEST"
+        errorResponse.message mustEqual "Invalid request"
       }
     }
 
