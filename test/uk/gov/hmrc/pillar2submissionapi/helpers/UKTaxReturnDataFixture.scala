@@ -18,11 +18,17 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.EntityName
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdType
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdValue
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
+import scala.math.BigDecimal
 
 trait UKTaxReturnDataFixture {
 
@@ -55,13 +61,13 @@ trait UKTaxReturnDataFixture {
       LiableEntities(NonEmptyList.of(liableEntity))
     )
   val validNilSubmission: UKTRSubmissionData =
-    UKTRSubmissionData(LocalDate.parse("2024-08-14"), LocalDate.parse("2024-12-14"), obligationMTT = true, electionUKGAAP = Some(true), liabilityData)
+    UKTRSubmissionData(LocalDate.parse("2024-08-14"), LocalDate.parse("2024-12-14"), obligationMTT = true, electionUKGAAP = true, liabilityData)
   val validLiabilitySubmission: UKTRSubmissionNilReturn =
     UKTRSubmissionNilReturn(
       LocalDate.parse("2024-08-14"),
       LocalDate.parse("2024-12-14"),
       obligationMTT = true,
-      electionUKGAAP = Some(true),
+      electionUKGAAP = true,
       liabilityNilReturn
     )
 
