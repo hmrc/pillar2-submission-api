@@ -30,7 +30,7 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     val errorResponse = statusCode match {
-      case 400 => Pillar2ErrorResponse("BAD_REQUEST", message)
+      case 400 => Pillar2ErrorResponse("BAD_REQUEST", "Invalid request")
       case 408 => Pillar2ErrorResponse("REQUEST_TIMEOUT", message)
       case 413 => Pillar2ErrorResponse("PAYLOAD_TOO_LARGE", message)
       case 415 => Pillar2ErrorResponse("UNSUPPORTED_MEDIA_TYPE", message)
