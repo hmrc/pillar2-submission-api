@@ -37,14 +37,14 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implic
       case 201 =>
         response.json.validate[SubmitBTNSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_) =>
+          case JsError(_)            =>
             logger.error("Failed to parse success response")
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[SubmitBTNErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_) =>
+          case JsError(_)             =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
         }

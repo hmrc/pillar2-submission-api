@@ -30,7 +30,7 @@ class TestOrganisationService @Inject() (
 ) extends Logging {
 
   def createTestOrganisation(pillar2Id: String, request: TestOrganisationRequest)(implicit
-    hc:                                 HeaderCarrier
+    hc: HeaderCarrier
   ): Future[TestOrganisationWithId] = {
     val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod)
     testOrganisationConnector.createTestOrganisation(pillar2Id, organisationDetails)
@@ -40,7 +40,7 @@ class TestOrganisationService @Inject() (
     testOrganisationConnector.getTestOrganisation(pillar2Id)
 
   def updateTestOrganisation(pillar2Id: String, request: TestOrganisationRequest)(implicit
-    hc:                                 HeaderCarrier
+    hc: HeaderCarrier
   ): Future[TestOrganisationWithId] = {
     val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod)
     testOrganisationConnector.updateTestOrganisation(pillar2Id, organisationDetails)

@@ -39,7 +39,7 @@ class OverseasReturnNotificationController @Inject() (
   pillar2Action:   Pillar2IdHeaderAction,
   getSubscription: SubscriptionDataRetrievalAction,
   ornService:      OverseasReturnNotificationService
-)(implicit ec:     ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
   def submitORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
@@ -81,7 +81,7 @@ class OverseasReturnNotificationController @Inject() (
           ObligationsAndSubmissions(fromDate = LocalDate.parse(accountingPeriodFrom), toDate = LocalDate.parse(accountingPeriodTo))
         if (accountingPeriod.validDateRange) {
           ornService
-            .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
+            .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(using hc)
             .map(response => Ok(Json.toJson(response)))
         } else { Future.failed(InvalidDateRange) }
       }.getOrElse(Future.failed(InvalidDateFormat))

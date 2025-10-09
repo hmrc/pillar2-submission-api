@@ -42,16 +42,16 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
   private def convertToSubmitResult(response: HttpResponse): ORNSuccessResponse =
     response.status match {
       case 201 | 200 =>
-        response.json.validate[ORNSuccessResponse](ORNSuccessResponse.reads) match {
+        response.json.validate[ORNSuccessResponse](using ORNSuccessResponse.reads) match {
           case JsSuccess(success, _) => success
-          case JsError(errors) =>
+          case JsError(errors)       =>
             logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_) =>
+          case JsError(_)             =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
         }
@@ -64,7 +64,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
     response.status match {
       case 200 =>
         logger.info(s"Received response body: ${response.body}")
-        response.json.validate[ORNRetrieveSuccessResponse](ORNRetrieveSuccessResponse.reads) match {
+        response.json.validate[ORNRetrieveSuccessResponse](using ORNRetrieveSuccessResponse.reads) match {
           case JsSuccess(success, _) =>
             logger.info(s"Successfully parsed response: $success")
             success

@@ -28,7 +28,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionImpl @Inject() (
-  val subscriptionConnector:     SubscriptionConnector
+  val subscriptionConnector: SubscriptionConnector
 )(implicit val executionContext: ExecutionContext)
     extends SubscriptionDataRetrievalAction
     with Logging {
@@ -37,7 +37,7 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
-      case Left(_) => Future.failed(NoSubscriptionData(request.clientPillar2Id))
+      case Left(_)                 => Future.failed(NoSubscriptionData(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
           SubscriptionDataRequest(

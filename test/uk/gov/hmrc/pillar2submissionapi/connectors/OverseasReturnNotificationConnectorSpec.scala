@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
@@ -29,8 +29,8 @@ import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 
 class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixture {
 
-  lazy val ornConnector: OverseasReturnNotificationConnector = app.injector.instanceOf[OverseasReturnNotificationConnector]
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+  lazy val ornConnector:          OverseasReturnNotificationConnector = app.injector.instanceOf[OverseasReturnNotificationConnector]
+  override def fakeApplication(): Application                         = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
@@ -54,7 +54,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 201 CREATED for valid request" in {
         stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(using hc))
 
         result.status should be(CREATED)
       }
@@ -62,7 +62,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(using hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -70,7 +70,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(ornConnector.submitORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.submitORN(ornRequestFixture)(using hc))
 
         result.status should be(NOT_FOUND)
       }
@@ -94,7 +94,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 200 CREATED for valid request" in {
         stubRequest("PUT", amendUrl, OK, JsObject.empty)
 
-        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.amendORN(ornRequestFixture)(using hc))
 
         result.status should be(OK)
       }
@@ -102,7 +102,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("PUT", amendUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.amendORN(ornRequestFixture)(using hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -110,7 +110,7 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(ornConnector.amendORN(ornRequestFixture)(hc))
+        val result = await(ornConnector.amendORN(ornRequestFixture)(using hc))
 
         result.status should be(NOT_FOUND)
       }

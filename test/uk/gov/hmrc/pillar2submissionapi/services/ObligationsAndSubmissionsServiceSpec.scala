@@ -37,7 +37,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
   "obligationsAndSubmissionsService" when {
     "handleData() called with a request" should {
       "return 200 OK response" in {
-        when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(obligationsAndSubmissionsSuccessResponse), Map.empty)))
 
         val result = await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo))
@@ -49,7 +49,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
 
   "handleData() unexpected 200 response back" should {
     "Runtime exception thrown" in {
-      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
@@ -58,7 +58,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
 
   "handleData() valid 422 response back" should {
     "Runtime exception thrown" in {
-      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(
           Future.successful(HttpResponse.apply(422, Json.toJson(ObligationsAndSubmissionsErrorResponse("003", "Invalid request")), Map.empty))
         )
@@ -69,7 +69,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
 
   "handleData() unexpected 422 response back" should {
     "Runtime exception thrown" in {
-      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
@@ -78,7 +78,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
 
   "handleData() 500 response back" should {
     "Runtime exception thrown " in {
-      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(any[HeaderCarrier], any[ExecutionContext]))
+      when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))

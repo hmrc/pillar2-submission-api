@@ -36,7 +36,7 @@ class BTNSubmissionController @Inject() (
   getSubscription:  SubscriptionDataRetrievalAction,
   pillar2IdAction:  Pillar2IdHeaderExistsAction,
   submitBTNService: SubmitBTNService
-)(implicit ec:      ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
   def submitBTN: Action[AnyContent] = (pillar2IdAction andThen identify andThen getSubscription).async { request =>

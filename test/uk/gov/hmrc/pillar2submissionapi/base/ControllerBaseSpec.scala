@@ -20,7 +20,7 @@ import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldEqual
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration

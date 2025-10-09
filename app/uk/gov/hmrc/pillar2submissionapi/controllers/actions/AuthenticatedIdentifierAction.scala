@@ -33,8 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
-  override val authConnector:    AuthConnector,
-  val config:                    AppConfig
+  override val authConnector: AuthConnector,
+  val config:                 AppConfig
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions

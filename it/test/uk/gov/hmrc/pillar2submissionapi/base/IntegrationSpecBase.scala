@@ -73,7 +73,7 @@ trait IntegrationSpecBase
   )
 
   val requiredGatewayPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
-  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
+  val requiredAgentPredicate:   Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
     Enrolment(HMRC_PILLAR2_ORG_KEY)
       .withIdentifier(ENROLMENT_IDENTIFIER, plrReference)
       .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
@@ -92,7 +92,10 @@ trait IntegrationSpecBase
 
   override def beforeEach(): Unit = {
     when(
-      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(using
+        any[HeaderCarrier](),
+        any[ExecutionContext]()
+      )
     )
       .thenReturn(
         Future.successful(

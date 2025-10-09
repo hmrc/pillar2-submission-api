@@ -30,7 +30,7 @@ class DefinitionSpec extends UnitTestBaseSpec {
 
   "API Definition" should {
     "conform to api-publisher schema" in {
-      val source = Source.fromURL(schemaUrl)
+      val source     = Source.fromURL(schemaUrl)
       val schemaJson =
         try source.mkString
         finally source.close()

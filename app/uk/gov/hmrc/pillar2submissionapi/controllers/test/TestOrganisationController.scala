@@ -35,7 +35,7 @@ class TestOrganisationController @Inject() (
   pillar2IdAction:         Pillar2IdHeaderExistsAction,
   testOrganisationService: TestOrganisationService,
   config:                  AppConfig
-)(implicit ec:             ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =

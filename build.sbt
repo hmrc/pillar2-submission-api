@@ -3,11 +3,11 @@ import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.7.3"
 ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
-  semanticdbEnabled := true, // enable SemanticDB
+  semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision
 )
 
@@ -31,7 +31,6 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .configs(IntegrationTest)
   .settings(integrationTestSettings(): _*)
   .settings(
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
     unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
     unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
   )
@@ -58,3 +57,5 @@ lazy val it = project
   .settings(DefaultBuildSettings.itSettings())
   .settings(DefaultBuildSettings.itSettings(), tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
   .settings(libraryDependencies ++= AppDependencies.it)
+
+scalacOptions := scalacOptions.value.distinct

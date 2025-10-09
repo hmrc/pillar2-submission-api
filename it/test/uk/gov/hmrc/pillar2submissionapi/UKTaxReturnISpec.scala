@@ -216,7 +216,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
       "return 201 CREATED for valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -226,7 +226,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -417,7 +417,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
       "return 200 OK for valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -427,7 +427,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )

@@ -36,6 +36,7 @@ import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
@@ -52,8 +53,8 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
   lazy val amendRequest: RequestBuilder =
     client.put(URI.create(amendStr).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
-  private val submitUrl = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
-  private val amendUrl  = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
+  private val submitUrl                             = "/report-pillar2-top-up-taxes/overseas-return-notification/submit"
+  private val amendUrl                              = "/report-pillar2-top-up-taxes/overseas-return-notification/amend"
   private def retrieveUrl(from: String, to: String) =
     s"/report-pillar2-top-up-taxes/overseas-return-notification/$from/$to"
 
@@ -713,7 +714,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "submitORN as an agent" must {
       "return 201 CREATED when given valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -723,7 +724,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -757,7 +758,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "amendORN as an agent" must {
       "return 200 OK when given valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -767,7 +768,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -798,7 +799,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "retrieveORN as an agent" must {
       "return 200 OK when given valid period parameters" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -808,7 +809,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )

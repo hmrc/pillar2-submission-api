@@ -23,7 +23,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.error.MissingHeader.MissingP
 import scala.concurrent.{ExecutionContext, Future}
 
 case class Pillar2IdHeaderExistsAction @Inject() (
-  parser:                        BodyParsers.Default
+  parser: BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends Pillar2IdHeaderAction {
 

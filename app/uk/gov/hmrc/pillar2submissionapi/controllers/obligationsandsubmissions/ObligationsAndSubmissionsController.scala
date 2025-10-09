@@ -36,7 +36,7 @@ class ObligationsAndSubmissionsController @Inject() (
   identify:                        IdentifierAction,
   pillar2IdAction:                 Pillar2IdHeaderExistsAction,
   obligationAndSubmissionsService: ObligationsAndSubmissionsService
-)(implicit ec:                     ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends BackendController(cc) {
 
   def retrieveData(fromDate: String, toDate: String): Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>

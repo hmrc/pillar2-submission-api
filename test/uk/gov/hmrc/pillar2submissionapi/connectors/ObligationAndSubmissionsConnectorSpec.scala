@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
@@ -30,7 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFix
 class ObligationAndSubmissionsConnectorSpec extends UnitTestBaseSpec with ObligationsAndSubmissionsDataFixture {
 
   lazy val obligationAndSubmissionsConnector: ObligationAndSubmissionsConnector = app.injector.instanceOf[ObligationAndSubmissionsConnector]
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+  override def fakeApplication():             Application                       = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 

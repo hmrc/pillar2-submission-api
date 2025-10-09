@@ -51,11 +51,11 @@ object ORNSubmission {
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
       (JsPath \ "accountingPeriodTo").read[LocalDate] and
       (JsPath \ "filedDateGIR").read[LocalDate] and
-      (JsPath \ "countryGIR").read(countryGIRReads) and
-      (JsPath \ "reportingEntityName").read(reportingEntityNameReads) and
-      (JsPath \ "TIN").read(tinReads) and
-      (JsPath \ "issuingCountryTIN").read(issuingCountryTINReads)
-  )(ORNSubmission.apply _)
+      (JsPath \ "countryGIR").read(using countryGIRReads) and
+      (JsPath \ "reportingEntityName").read(using reportingEntityNameReads) and
+      (JsPath \ "TIN").read(using tinReads) and
+      (JsPath \ "issuingCountryTIN").read(using issuingCountryTINReads)
+  )(ORNSubmission.apply)
 
   implicit val format: OFormat[ORNSubmission] = OFormat(reads, Json.writes[ORNSubmission])
 }

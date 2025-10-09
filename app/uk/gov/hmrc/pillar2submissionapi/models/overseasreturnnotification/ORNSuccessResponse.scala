@@ -36,9 +36,9 @@ object ORNRetrieveSuccessResponse {
   implicit val reads: Reads[ORNRetrieveSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNRetrieveSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[ORNRetrieveSuccessResponse] => success
+      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNRetrieveSuccessResponse]]
       case _ =>
-        (json \ "success").validate[ORNRetrieveSuccessResponse](standardReads)
+        (json \ "success").validate[ORNRetrieveSuccessResponse](using standardReads)
     }
   }
 
@@ -51,9 +51,9 @@ object ORNSuccessResponse {
   implicit val reads: Reads[ORNSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[ORNSuccessResponse] => success
+      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNSuccessResponse]]
       case _ =>
-        (json \ "success").validate[ORNSuccessResponse](standardReads)
+        (json \ "success").validate[ORNSuccessResponse](using standardReads)
     }
   }
 

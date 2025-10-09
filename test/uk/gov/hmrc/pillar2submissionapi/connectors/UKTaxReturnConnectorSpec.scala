@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
@@ -28,8 +28,8 @@ import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
 class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
-  lazy val ukTaxReturnConnector: UKTaxReturnConnector = app.injector.instanceOf[UKTaxReturnConnector]
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+  lazy val ukTaxReturnConnector:  UKTaxReturnConnector = app.injector.instanceOf[UKTaxReturnConnector]
+  override def fakeApplication(): Application          = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
@@ -53,7 +53,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED for valid request" in {
         stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(CREATED)
       }
@@ -61,7 +61,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -69,7 +69,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(NOT_FOUND)
       }
@@ -91,7 +91,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 200 OK for valid request" in {
         stubRequest("PUT", amendUrl, OK, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(OK)
       }
@@ -99,7 +99,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("PUT", amendUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -107,7 +107,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(hc))
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(NOT_FOUND)
       }

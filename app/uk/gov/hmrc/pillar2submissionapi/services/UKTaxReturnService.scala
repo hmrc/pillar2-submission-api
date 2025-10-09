@@ -42,14 +42,14 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
       case CREATED | OK =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_) =>
+          case JsError(_)            =>
             logger.error(s"Error while parsing the backend response")
             throw UnexpectedResponse
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_) =>
+          case JsError(_)             =>
             logger.error(s"Error while unprocessable entity response")
             throw UnexpectedResponse
         }

@@ -35,7 +35,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
 
   def readSubscription(
     plrReference: String
-  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     val request = http
