@@ -21,6 +21,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions := scalacOptions.value.distinct,
     scalafixSettings
   )
   .settings(CodeCoverageSettings.settings *)
@@ -57,5 +58,3 @@ lazy val it = project
   .settings(DefaultBuildSettings.itSettings())
   .settings(DefaultBuildSettings.itSettings(), tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
   .settings(libraryDependencies ++= AppDependencies.it)
-
-scalacOptions := scalacOptions.value.distinct
