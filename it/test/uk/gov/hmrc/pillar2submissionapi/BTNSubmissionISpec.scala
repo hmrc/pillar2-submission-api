@@ -195,8 +195,8 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "submitBTN as an agent" must {
       "return 201 CREATED when given valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            using any[HeaderCarrier](),
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
             any[ExecutionContext]()
           )
         )
@@ -205,8 +205,8 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            using any[HeaderCarrier](),
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
             any[ExecutionContext]()
           )
         )
