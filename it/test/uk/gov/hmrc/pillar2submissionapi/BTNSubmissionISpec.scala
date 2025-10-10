@@ -37,6 +37,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{Submi
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
@@ -195,7 +196,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       "return 201 CREATED when given valid submission data" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
+            using any[HeaderCarrier](),
             any[ExecutionContext]()
           )
         )
@@ -205,7 +206,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
-            any[HeaderCarrier](),
+            using any[HeaderCarrier](),
             any[ExecutionContext]()
           )
         )

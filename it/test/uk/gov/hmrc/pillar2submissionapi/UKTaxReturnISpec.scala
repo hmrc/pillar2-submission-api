@@ -38,6 +38,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
