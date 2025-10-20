@@ -44,7 +44,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
   "GIRConnector" when {
     "createGIR" must {
       "forward the X-Pillar2-Id header" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
 
         val result = await(girConnector.createGIR(validGIRSubmission))

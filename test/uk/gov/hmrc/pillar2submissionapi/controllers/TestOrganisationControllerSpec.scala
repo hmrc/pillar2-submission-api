@@ -30,6 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationControl
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 
 import java.time.{Instant, LocalDate}
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 
 class TestOrganisationControllerSpec extends ControllerBaseSpec {
@@ -38,7 +39,10 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
   def controller(testEndpointsEnabled: Boolean = true): TestOrganisationController = {
     when(mockAppConfig.testOrganisationEnabled).thenReturn(testEndpointsEnabled)
-    new TestOrganisationController(cc, identifierAction, pillar2IdAction, mockTestOrganisationService, mockAppConfig)
+    new TestOrganisationController(cc, identifierAction, pillar2IdAction, mockTestOrganisationService, mockAppConfig)(using
+      any[ExecutionContext],
+      any[HeaderCarrier]
+    )
   }
 
   "TestOrganisationController" when {

@@ -39,11 +39,11 @@ class OverseasReturnNotificationController @Inject() (
   pillar2Action:   Pillar2IdHeaderAction,
   getSubscription: SubscriptionDataRetrievalAction,
   ornService:      OverseasReturnNotificationService
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends BackendController(cc) {
 
   def submitORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[ORNSubmission] match {
@@ -58,7 +58,7 @@ class OverseasReturnNotificationController @Inject() (
   }
 
   def amendORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[ORNSubmission] match {
@@ -73,7 +73,7 @@ class OverseasReturnNotificationController @Inject() (
   }
 
   def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String): Action[AnyContent] =
-    (pillar2Action andThen identify andThen getSubscription).async { implicit request =>
+    (pillar2Action andThen identify andThen getSubscription).async { request =>
       val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
 
       Try {

@@ -36,11 +36,11 @@ class ObligationsAndSubmissionsController @Inject() (
   identify:                        IdentifierAction,
   pillar2IdAction:                 Pillar2IdHeaderExistsAction,
   obligationAndSubmissionsService: ObligationsAndSubmissionsService
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends BackendController(cc) {
 
   def retrieveData(fromDate: String, toDate: String): Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     Try {
       val accountingPeriod = ObligationsAndSubmissions(fromDate = LocalDate.parse(fromDate), toDate = LocalDate.parse(toDate))
 

@@ -407,7 +407,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
   }
 
   class FakeFailingAuthConnector @Inject() extends AuthConnector {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(using hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
       Future.failed(new MissingBearerToken)
   }
 

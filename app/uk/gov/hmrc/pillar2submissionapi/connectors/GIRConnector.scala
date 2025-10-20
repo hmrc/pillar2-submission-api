@@ -33,10 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class GIRConnector @Inject() (
   val config: AppConfig,
   val http:   HttpClientV2
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
-  def createGIR(request: GIRSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def createGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
     logger.info(s"Calling $url to create GIR submission")
 

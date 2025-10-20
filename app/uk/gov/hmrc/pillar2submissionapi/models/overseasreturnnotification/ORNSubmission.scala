@@ -47,7 +47,7 @@ object ORNSubmission {
   private val issuingCountryTINReads: Reads[String] =
     implicitly[Reads[String]].filter(JsonValidationError("issuingCountryTIN must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
 
-  implicit val reads: Reads[ORNSubmission] = (
+  given reads: Reads[ORNSubmission] = (
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
       (JsPath \ "accountingPeriodTo").read[LocalDate] and
       (JsPath \ "filedDateGIR").read[LocalDate] and
@@ -57,5 +57,5 @@ object ORNSubmission {
       (JsPath \ "issuingCountryTIN").read(using issuingCountryTINReads)
   )(ORNSubmission.apply)
 
-  implicit val format: OFormat[ORNSubmission] = OFormat(reads, Json.writes[ORNSubmission])
+  given format: OFormat[ORNSubmission] = OFormat(reads, Json.writes[ORNSubmission])
 }

@@ -34,10 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class TestOrganisationConnector @Inject() (
   val config: AppConfig,
   val http:   HttpClientV2
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
-  def createTestOrganisation(pillar2Id: String, request: TestOrganisation)(implicit hc: HeaderCarrier): Future[TestOrganisationWithId] = {
+  def createTestOrganisation(pillar2Id: String, request: TestOrganisation)(using hc: HeaderCarrier): Future[TestOrganisationWithId] = {
     val url = s"${config.stubBaseUrl}/pillar2/test/organisation/$pillar2Id"
     logger.info(s"Calling $url to create test organisation")
 
@@ -57,7 +57,7 @@ class TestOrganisationConnector @Inject() (
       }
   }
 
-  def getTestOrganisation(pillar2Id: String)(implicit hc: HeaderCarrier): Future[TestOrganisationWithId] = {
+  def getTestOrganisation(pillar2Id: String)(using hc: HeaderCarrier): Future[TestOrganisationWithId] = {
     val url = s"${config.stubBaseUrl}/pillar2/test/organisation/$pillar2Id"
     logger.info(s"Calling $url to get test organisation")
 
@@ -75,7 +75,7 @@ class TestOrganisationConnector @Inject() (
       }
   }
 
-  def updateTestOrganisation(pillar2Id: String, request: TestOrganisation)(implicit hc: HeaderCarrier): Future[TestOrganisationWithId] = {
+  def updateTestOrganisation(pillar2Id: String, request: TestOrganisation)(using hc: HeaderCarrier): Future[TestOrganisationWithId] = {
     val url = s"${config.stubBaseUrl}/pillar2/test/organisation/$pillar2Id"
     logger.info(s"Calling $url to update test organisation")
 
@@ -95,7 +95,7 @@ class TestOrganisationConnector @Inject() (
       }
   }
 
-  def deleteTestOrganisation(pillar2Id: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+  def deleteTestOrganisation(pillar2Id: String)(using hc: HeaderCarrier): Future[Unit] = {
     val url = s"${config.stubBaseUrl}/pillar2/test/organisation/$pillar2Id"
     logger.info(s"Calling $url to delete test organisation")
 

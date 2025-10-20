@@ -32,7 +32,7 @@ import scala.concurrent.Future
 @Singleton
 class GIRService @Inject() (
   girConnector: GIRConnector
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
   def createGIR(submission: GIRSubmission)(implicit

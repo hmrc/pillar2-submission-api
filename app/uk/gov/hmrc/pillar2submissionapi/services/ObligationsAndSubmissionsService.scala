@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsService @Inject() (
   obligationAndSubmissionsConnector: ObligationAndSubmissionsConnector
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
-  def handleData(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccessResponse] =
+  def handleData(fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccessResponse] =
     obligationAndSubmissionsConnector.getData(fromDate, toDate).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): ObligationsAndSubmissionsSuccessResponse =

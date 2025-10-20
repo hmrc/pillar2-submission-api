@@ -28,18 +28,16 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
-  .settings(scalaSettings: _*)
+  .settings(scalaSettings *)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(DefaultBuildSettings.itSettings() *)
   .settings(
     unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
     unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
   )
   .settings(
     unmanagedSourceDirectories in IntegrationTest :=
-      (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value,
-    testOptions in IntegrationTest += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
-    unmanagedResourceDirectories in IntegrationTest := Seq(baseDirectory.value / "test-resources")
+      (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value
   )
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
@@ -55,6 +53,10 @@ addCommandAlias("publishTestOnlyOas", ";createOpenAPISpec; publishOas")
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-  .settings(DefaultBuildSettings.itSettings())
-  .settings(DefaultBuildSettings.itSettings(), tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
-  .settings(libraryDependencies ++= AppDependencies.it)
+  .settings(
+    DefaultBuildSettings.itSettings(),
+    libraryDependencies ++= AppDependencies.it,
+    scalacOptions := (scalacOptions in ThisBuild).value.distinct
+  )
+  .disablePlugins(TpolecatPlugin)
+

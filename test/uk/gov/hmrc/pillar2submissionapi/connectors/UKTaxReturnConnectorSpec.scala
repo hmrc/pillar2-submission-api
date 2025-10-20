@@ -39,7 +39,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
   "UKTaxReturnConnector" when {
     "submitUKTR" must {
       "forward the X-Pillar2-Id header" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission))
@@ -77,7 +77,7 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
     "amendUKTR" must {
       "forward the X-Pillar2-Id header" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("PUT", amendUrl, OK, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission))

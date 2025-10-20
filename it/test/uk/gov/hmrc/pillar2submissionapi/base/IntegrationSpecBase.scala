@@ -54,10 +54,10 @@ trait IntegrationSpecBase
     with UKTaxReturnDataFixture
     with BeforeAndAfterEach {
 
-  implicit lazy val system:       ActorSystem      = ActorSystem()
-  implicit lazy val materializer: Materializer     = Materializer(system)
-  implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
+  given system:       ActorSystem      = ActorSystem()
+  given materializer: Materializer     = Materializer(system)
+  given ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  given hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 

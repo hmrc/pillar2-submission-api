@@ -18,6 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.test
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
@@ -35,13 +36,13 @@ class TestOrganisationController @Inject() (
   pillar2IdAction:         Pillar2IdHeaderExistsAction,
   testOrganisationService: TestOrganisationService,
   config:                  AppConfig
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext, hc: HeaderCarrier)
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
     if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
 
-  def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
+  def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     checkTestEndpointsEnabled {
       request.body.asJson match {
         case Some(json) =>
@@ -60,7 +61,7 @@ class TestOrganisationController @Inject() (
     }
   }
 
-  def getTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
+  def getTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     checkTestEndpointsEnabled {
       testOrganisationService
         .getTestOrganisation(request.clientPillar2Id)
@@ -68,7 +69,7 @@ class TestOrganisationController @Inject() (
     }
   }
 
-  def updateTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
+  def updateTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     checkTestEndpointsEnabled {
       request.body.asJson match {
         case Some(json) =>
@@ -86,7 +87,7 @@ class TestOrganisationController @Inject() (
     }
   }
 
-  def deleteTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
+  def deleteTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     checkTestEndpointsEnabled {
       testOrganisationService
         .deleteTestOrganisation(request.clientPillar2Id)

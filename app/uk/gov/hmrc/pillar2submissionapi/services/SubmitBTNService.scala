@@ -27,9 +27,9 @@ import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSu
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(implicit val ec: ExecutionContext) extends Logging {
+class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(using ec: ExecutionContext) extends Logging {
 
-  def submitBTN(request: BTNSubmission)(implicit hc: HeaderCarrier): Future[SubmitBTNSuccessResponse] =
+  def submitBTN(request: BTNSubmission)(using hc: HeaderCarrier): Future[SubmitBTNSuccessResponse] =
     submitBTNConnector.submitBTN(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): SubmitBTNSuccessResponse =

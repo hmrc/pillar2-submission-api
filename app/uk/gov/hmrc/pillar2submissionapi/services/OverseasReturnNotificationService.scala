@@ -27,16 +27,15 @@ import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNotificationConnector)(implicit val ec: ExecutionContext)
-    extends Logging {
+class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNotificationConnector)(using ec: ExecutionContext) extends Logging {
 
-  def submitORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
+  def submitORN(request: ORNSubmission)(using hc: HeaderCarrier): Future[ORNSuccessResponse] =
     connector.submitORN(request).map(convertToSubmitResult)
 
-  def amendORN(request: ORNSubmission)(implicit hc: HeaderCarrier): Future[ORNSuccessResponse] =
+  def amendORN(request: ORNSubmission)(using hc: HeaderCarrier): Future[ORNSuccessResponse] =
     connector.amendORN(request).map(convertToSubmitResult)
 
-  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] =
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(using hc: HeaderCarrier): Future[ORNRetrieveSuccessResponse] =
     connector.retrieveORN(accountingPeriodFrom, accountingPeriodTo).map(convertToRetrieveResult)
 
   private def convertToSubmitResult(response: HttpResponse): ORNSuccessResponse =

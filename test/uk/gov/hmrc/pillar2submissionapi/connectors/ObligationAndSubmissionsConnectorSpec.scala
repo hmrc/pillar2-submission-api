@@ -39,7 +39,7 @@ class ObligationAndSubmissionsConnectorSpec extends UnitTestBaseSpec with Obliga
   "ObligationAndSubmissionsConnector" when {
     "getData" must {
       "forward the X-Pillar2-Id header" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("GET", getUrl, OK, JsObject.empty)
 
         val result = await(obligationAndSubmissionsConnector.getData(localDateFrom, localDateTo))

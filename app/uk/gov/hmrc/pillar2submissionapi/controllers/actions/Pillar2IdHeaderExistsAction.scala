@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class Pillar2IdHeaderExistsAction @Inject() (
   parser: BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends Pillar2IdHeaderAction {
 
   override protected def transform[A](request: Request[A]): Future[RequestWithPillar2Id[A]] =
