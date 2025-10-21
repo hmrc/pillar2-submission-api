@@ -39,10 +39,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
 
   def controller(testEndpointsEnabled: Boolean = true): TestOrganisationController = {
     when(mockAppConfig.testOrganisationEnabled).thenReturn(testEndpointsEnabled)
-    new TestOrganisationController(cc, identifierAction, pillar2IdAction, mockTestOrganisationService, mockAppConfig)(using
-      any[ExecutionContext],
-      any[HeaderCarrier]
-    )
+    new TestOrganisationController(cc, identifierAction, pillar2IdAction, mockTestOrganisationService, mockAppConfig)(using ExecutionContext.global)
   }
 
   "TestOrganisationController" when {
