@@ -54,9 +54,7 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it,
-    scalacOptions := (scalacOptions in ThisBuild).value.distinct
+    libraryDependencies ++= AppDependencies.it
   )
-  .disablePlugins(TpolecatPlugin)
 
 scalacOptions := scalacOptions.value.distinct
