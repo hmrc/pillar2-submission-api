@@ -54,7 +54,8 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it
+    libraryDependencies ++= AppDependencies.it,
+    scalacOptions := (scalacOptions in ThisBuild).value.distinct
   )
 
 scalacOptions := scalacOptions.value.distinct
