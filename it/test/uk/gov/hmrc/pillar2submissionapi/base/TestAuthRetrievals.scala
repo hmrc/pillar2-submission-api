@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.base
 import uk.gov.hmrc.auth.core.retrieve.~
 
 object TestAuthRetrievals {
-  given class Ops[A](a: A) {
+  extension [A](a: A) {
     def ~[B](b: B): A ~ B = new ~(a, b)
   }
 }
