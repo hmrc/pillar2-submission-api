@@ -45,7 +45,7 @@ trait UnitTestBaseSpec
     with HttpClientSupport {
 
   given cc:           ControllerComponents = stubControllerComponents()
-  given ec:           ExecutionContext     = ExecutionContext.Implicits.global
+  given ec:           ExecutionContext     = ExecutionContext.global
   given hc:           HeaderCarrier        = HeaderCarrier()
   given system:       ActorSystem          = ActorSystem()
   given materializer: Materializer         = Materializer(system)
