@@ -36,7 +36,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientSupport
-import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture, WireMockServerHandler}
 
 import java.util.UUID
