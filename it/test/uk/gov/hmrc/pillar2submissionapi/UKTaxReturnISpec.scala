@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse

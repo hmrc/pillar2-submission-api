@@ -31,7 +31,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse

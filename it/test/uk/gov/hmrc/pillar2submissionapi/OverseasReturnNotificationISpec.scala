@@ -32,7 +32,7 @@ import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
-import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
