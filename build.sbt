@@ -34,12 +34,15 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.itSettings() *)
   .settings(
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
   .settings(
     IntegrationTest / unmanagedSourceDirectories :=
-      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value
+      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value,
+    IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
+    IntegrationTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
