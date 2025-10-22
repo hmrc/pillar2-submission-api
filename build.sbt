@@ -17,10 +17,13 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     majorVersion := 0,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-    Compile / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard),
+    Compile / tpolecatExcludeOptions ++= Set(
+      ScalacOptions.warnNonUnitStatement,
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.warnUnusedImports
+    ),
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
   .settings(CodeCoverageSettings.settings *)
@@ -54,8 +57,19 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it,
-    scalacOptions := (ThisBuild / scalacOptions).value.distinct
+    libraryDependencies ++= AppDependencies.it
+  )
+  .settings(
+    DefaultBuildSettings.itSettings(),
+    tpolecatExcludeOptions ++= Set(
+      ScalacOptions.warnNonUnitStatement,
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.warnUnusedImports
+    )
   )
 
-scalacOptions := scalacOptions.value.distinct
+Compile / scalacOptions ++= Seq(
+  "-Wconf:src=routes/.*:s",
+  "-Wconf:msg=Flag.*set repeatedly:s",
+  "-Wconf:msg=Setting -Wunused set to all redundantly:s"
+)
