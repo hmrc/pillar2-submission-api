@@ -71,7 +71,7 @@ lazy val it = project
     )
   )
 
-Compile / scalacOptions ++= Seq(
+ThisBuild / scalacOptions ++= Seq(
   "-Wconf:src=routes/.*:s",
   "-Wconf:msg=Flag.*set repeatedly:s",
   "-Wconf:msg=Setting -Wunused set to all redundantly:s"
