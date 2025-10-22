@@ -1,3 +1,4 @@
+import org.typelevel.scalacoptions.ScalacOptions
 import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
@@ -16,6 +17,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     majorVersion := 0,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
+    Compile / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard),
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     scalacOptions += "-Wconf:src=routes/.*:s",
@@ -29,12 +31,12 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.itSettings() *)
   .settings(
-    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
-    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
+    unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
+    unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
   )
   .settings(
-    IntegrationTest / unmanagedSourceDirectories :=
-      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value
+    unmanagedSourceDirectories in IntegrationTest :=
+      (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value
   )
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
@@ -53,7 +55,7 @@ lazy val it = project
   .settings(
     DefaultBuildSettings.itSettings(),
     libraryDependencies ++= AppDependencies.it,
-    scalacOptions := (ThisBuild / scalacOptions).value.distinct
+    scalacOptions := (scalacOptions in ThisBuild).value.distinct
   )
 
 scalacOptions := scalacOptions.value.distinct
