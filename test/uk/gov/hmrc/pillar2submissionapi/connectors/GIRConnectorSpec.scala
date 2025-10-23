@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import org.scalatest.matchers.should.Matchers.should
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
@@ -34,8 +34,8 @@ import java.time.temporal.ChronoUnit
 
 class GIRConnectorSpec extends UnitTestBaseSpec {
 
-  lazy val girConnector:          GIRConnector = app.injector.instanceOf[GIRConnector]
-  override def fakeApplication(): Application  = new GuiceApplicationBuilder()
+  lazy val girConnector: GIRConnector = app.injector.instanceOf[GIRConnector]
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.stub.port" -> server.port()))
     .build()
 
@@ -44,7 +44,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
   "GIRConnector" when {
     "createGIR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
 
         val result = await(girConnector.createGIR(validGIRSubmission))
@@ -58,7 +58,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED for valid request" in {
         stubRequest("POST", submitUrl, CREATED, JsObject.empty)
 
-        val result = await(girConnector.createGIR(validGIRSubmission)(using hc))
+        val result = await(girConnector.createGIR(validGIRSubmission)(hc))
 
         result.status should be(CREATED)
       }
@@ -66,7 +66,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("POST", submitUrl, BAD_REQUEST, JsObject.empty)
 
-        val result = await(girConnector.createGIR(validGIRSubmission)(using hc))
+        val result = await(girConnector.createGIR(validGIRSubmission)(hc))
 
         result.status should be(BAD_REQUEST)
       }
@@ -74,7 +74,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("POST", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
 
-        val result = await(girConnector.createGIR(validGIRSubmission)(using hc))
+        val result = await(girConnector.createGIR(validGIRSubmission)(hc))
 
         result.status should be(NOT_FOUND)
       }

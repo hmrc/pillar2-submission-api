@@ -37,14 +37,14 @@ class GIRController @Inject() (
   pillar2IdAction: Pillar2IdHeaderExistsAction,
   girService:      GIRService,
   config:          AppConfig
-)(using ec: ExecutionContext)
+)(implicit ec:     ExecutionContext)
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
     if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
 
-  def createGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
-    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+  def createGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { implicit request =>
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     checkTestEndpointsEnabled {
       request.body.asJson match {
         case Some(json) =>

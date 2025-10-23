@@ -26,13 +26,11 @@ import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import java.time.{Instant, LocalDate}
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
 class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]

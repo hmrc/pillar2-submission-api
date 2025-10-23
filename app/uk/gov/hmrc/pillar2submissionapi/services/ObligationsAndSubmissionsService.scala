@@ -30,10 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsService @Inject() (
   obligationAndSubmissionsConnector: ObligationAndSubmissionsConnector
-)(using ec: ExecutionContext)
+)(implicit ec:                       ExecutionContext)
     extends Logging {
 
-  def handleData(fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccessResponse] =
+  def handleData(fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccessResponse] =
     obligationAndSubmissionsConnector.getData(fromDate, toDate).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): ObligationsAndSubmissionsSuccessResponse =
@@ -41,14 +41,14 @@ class ObligationsAndSubmissionsService @Inject() (
       case 200 =>
         response.json.validate[ObligationsAndSubmissionsSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_)            =>
+          case JsError(_) =>
             logger.error("Failed to parse success response")
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[ObligationsAndSubmissionsErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_)             =>
+          case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
         }

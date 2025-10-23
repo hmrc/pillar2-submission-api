@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import org.scalatest.matchers.should.Matchers.shouldBe
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.http.Status._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, Json}
@@ -43,7 +43,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return 201 CREATED for valid request" in {
         stubRequest("POST", url(pillar2Id), CREATED, validResponseJson)
 
-        val result = await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        val result = await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
 
         result.pillar2Id                                shouldBe pillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
@@ -57,7 +57,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("POST", url(pillar2Id), CONFLICT, errorResponse)
 
         intercept[OrganisationAlreadyExists] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }
       }
 
@@ -69,7 +69,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("POST", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }.operation shouldBe "create"
       }
 
@@ -77,7 +77,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("POST", url(pillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponse.type] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }
       }
     }
@@ -86,7 +86,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return organisation details for valid request" in {
         stubRequest("GET", url(pillar2Id), OK, validResponseJson)
 
-        val result = await(connector.getTestOrganisation(pillar2Id)(using hc))
+        val result = await(connector.getTestOrganisation(pillar2Id)(hc))
 
         result.pillar2Id                                shouldBe pillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
@@ -100,7 +100,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("GET", url(pillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFound] {
-          await(connector.getTestOrganisation(pillar2Id)(using hc))
+          await(connector.getTestOrganisation(pillar2Id)(hc))
         }
       }
 
@@ -108,7 +108,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("GET", url(pillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponse.type] {
-          await(connector.getTestOrganisation(pillar2Id)(using hc))
+          await(connector.getTestOrganisation(pillar2Id)(hc))
         }
       }
     }
@@ -117,7 +117,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return updated organisation details for valid request" in {
         stubRequest("PUT", url(pillar2Id), OK, validResponseJson)
 
-        val result = await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        val result = await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
 
         result.pillar2Id                                shouldBe pillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
@@ -131,7 +131,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("PUT", url(pillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFound] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }
       }
 
@@ -143,7 +143,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("PUT", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }.operation shouldBe "update"
       }
 
@@ -151,7 +151,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("PUT", url(pillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponse.type] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(hc))
         }
       }
     }
@@ -160,7 +160,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return 204 NO_CONTENT for valid request" in {
         stubRequest("DELETE", url(pillar2Id), NO_CONTENT, JsObject.empty)
 
-        val result = await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+        val result = await(connector.deleteTestOrganisation(pillar2Id)(hc))
 
         result shouldBe (())
       }
@@ -173,7 +173,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("DELETE", url(pillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFound] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(pillar2Id)(hc))
         }
       }
 
@@ -185,7 +185,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("DELETE", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(pillar2Id)(hc))
         }.operation shouldBe "Failed to delete organisation and submission data"
       }
 
@@ -193,7 +193,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         stubRequest("DELETE", url(pillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponse.type] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(pillar2Id)(hc))
         }
       }
     }
@@ -214,7 +214,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
   )
 
   val validResponseJson: JsObject = Json.obj(
-    "pillar2Id"    -> pillar2Id,
+    "pillar2Id" -> pillar2Id,
     "organisation" -> Json.obj(
       "orgDetails" -> Json.obj(
         "domesticOnly"     -> true,

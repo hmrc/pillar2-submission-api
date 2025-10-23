@@ -35,5 +35,5 @@ object EntityName {
 
   private val writes: Writes[EntityName] = Writes(wrapped => Json.toJson(wrapped.value))
 
-  given format: Format[EntityName] = Format(reads, writes)
+  implicit val format: Format[EntityName] = Format(reads, writes)
 }

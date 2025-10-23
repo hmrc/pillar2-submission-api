@@ -33,9 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
-  override val authConnector: AuthConnector,
-  val config:                 AppConfig
-)(using val executionContext: ExecutionContext)
+  override val authConnector:    AuthConnector,
+  val config:                    AppConfig
+)(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
@@ -74,7 +74,7 @@ class AuthenticatedIdentifierAction @Inject() (
   }
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
-    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
     if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentials
     else {
       val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
@@ -101,7 +101,7 @@ class AuthenticatedIdentifierAction @Inject() (
     }
   }
 
-  private def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(using hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
+  private def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(implicit hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
