@@ -18,11 +18,6 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.EntityName
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdType
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdValue
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
