@@ -17,7 +17,6 @@
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import play.api.libs.json.{Json, OFormat}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 
 case class LiableEntity(
   ukChargeableEntityName: EntityName,
@@ -29,5 +28,5 @@ case class LiableEntity(
 )
 
 object LiableEntity {
-  implicit val format: OFormat[LiableEntity] = Json.format[LiableEntity]
+  given format: OFormat[LiableEntity] = Json.format[LiableEntity]
 }

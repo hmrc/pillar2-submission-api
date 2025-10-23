@@ -49,13 +49,13 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
     emptyAppConfig
-  )(ec)
+  )(using ec)
 
   "IdentifierAction - different types of user" when {
     "a user is a registered organisation" must {
       "user is successfully authorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -84,9 +84,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
           allowTestUsers
-        )(ec)
+        )(using ec)
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -106,9 +106,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
           allowTestUsers
-        )(ec)
+        )(using ec)
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -118,7 +118,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -140,7 +140,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "pass if agent is a delegated entity of an org" in {
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -150,7 +150,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -172,7 +172,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "fail due to user being unauthorised" when {
         "Authorization is invalid" in {
           when(
-            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
               any[HeaderCarrier](),
               any[ExecutionContext]()
             )
@@ -182,7 +182,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
 
           when(
-            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+            mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
               any[HeaderCarrier](),
               any[ExecutionContext]()
             )
@@ -219,7 +219,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "a user is a registered Individual" should {
       "fail as user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -241,7 +241,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "internalId missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -261,7 +261,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "groupId missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -279,7 +279,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "affinityGroup missing" should {
       "user is unauthorized" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -301,9 +301,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
           allowTestUsers
-        )(ec)
+        )(using ec)
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -328,9 +328,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
           disallowTestUsers
-        )(ec)
+        )(using ec)
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -350,7 +350,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
     "pillar2Id is missing or does not match the request's header" should {
       "pillar2Id is missing" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -368,7 +368,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
       "pillar2Id does not match the request's header" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -392,7 +392,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           new FakeFailingAuthConnector,
           emptyAppConfig
-        )(ec)
+        )(using ec)
 
         val result = intercept[InvalidCredentials.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
@@ -407,7 +407,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
   }
 
   class FakeFailingAuthConnector @Inject() extends AuthConnector {
-    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(using hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
       Future.failed(new MissingBearerToken)
   }
 
@@ -431,7 +431,7 @@ object AuthenticatedIdentifierActionSpec {
   val enrolmentKey   = "HMRC-PILLAR2-ORG"
   val identifierName = "PLRID"
 
-  val requiredOrgPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
+  val requiredOrgPredicate:   Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
   val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
     Enrolment(HMRC_PILLAR2_ORG_KEY)
       .withIdentifier(ENROLMENT_IDENTIFIER, pillar2Id)

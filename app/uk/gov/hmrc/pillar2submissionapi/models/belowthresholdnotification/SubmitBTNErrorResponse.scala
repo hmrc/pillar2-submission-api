@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class SubmitBTNErrorResponse(code: String, message: String)
 
 case object SubmitBTNErrorResponse {
-  implicit val errorFormat: OFormat[SubmitBTNErrorResponse] = Json.format[SubmitBTNErrorResponse]
+  given errorFormat: OFormat[SubmitBTNErrorResponse] = Json.format[SubmitBTNErrorResponse]
 }

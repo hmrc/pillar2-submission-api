@@ -21,7 +21,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 
 import scala.math.BigDecimal
 
@@ -47,7 +46,7 @@ class LiableEntitiesSpec extends AnyWordSpec with Matchers {
     "extend WrappedValue trait" in {
       val entity   = createTestEntity()
       val entities = LiableEntities(NonEmptyList.of(entity))
-      entities shouldBe a[WrappedValue[_]]
+      entities shouldBe a[WrappedValue[?]]
     }
   }
 

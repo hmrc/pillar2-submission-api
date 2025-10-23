@@ -29,10 +29,10 @@ import scala.io.Source
 class DocumentationController @Inject() (assets: Assets, cc: ControllerComponents, appConfig: AppConfig) extends BackendController(cc) {
 
   def definition(): Action[AnyContent] = Action {
-    val json = Json.parse(Source.fromResource("public/api/definition.json").mkString)
+    val json    = Json.parse(Source.fromResource("public/api/definition.json").mkString)
     val optimus = (__ \ "api" \ "versions").json.update(
       Reads
-        .list(
+        .list(using
           (__ \ "status").json.update(Reads.of[JsString].map(_ => JsString(appConfig.apiPlatformStatus)))
             andThen
               (__ \ "endpointsEnabled").json

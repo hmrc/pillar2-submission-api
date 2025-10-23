@@ -22,7 +22,7 @@ import play.api.libs.json.{JsValue, Json, OFormat}
 case class Pillar2ErrorResponse(code: String, message: String)
 
 object Pillar2ErrorResponse {
-  implicit val format: OFormat[Pillar2ErrorResponse] = Json.format[Pillar2ErrorResponse]
+  given format: OFormat[Pillar2ErrorResponse] = Json.format[Pillar2ErrorResponse]
 
-  implicit val writable: Writeable[Pillar2ErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
+  given writable: Writeable[Pillar2ErrorResponse] = implicitly[Writeable[JsValue]].map(r => Json.toJson(r))
 }

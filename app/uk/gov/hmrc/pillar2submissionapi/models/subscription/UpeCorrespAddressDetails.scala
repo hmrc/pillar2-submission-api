@@ -28,5 +28,5 @@ final case class UpeCorrespAddressDetails(
 )
 
 object UpeCorrespAddressDetails {
-  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
+  given format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }

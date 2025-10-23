@@ -40,7 +40,7 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
 
   "retrieveData" should {
     "return OK with obligations data when valid dates are provided and service call is successful" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+      when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse))
 
       val result = request(fromDate, toDate)
@@ -52,27 +52,27 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
   "return InvalidDateFormat when date format is invalid" in {
     val result = request("invalid-date", toDate)
 
-    result shouldFailWith InvalidDateFormat
+    result.shouldFailWith(InvalidDateFormat)
   }
 
   "return MissingHeader when X-Pillar2-Id header not provided" in {
     val result = obligationsAndSubmissionsController.retrieveData(fromDate, toDate)(FakeRequest())
 
-    result shouldFailWith MissingHeader.MissingPillar2Id
+    result.shouldFailWith(MissingHeader.MissingPillar2Id)
   }
 
   "return InvalidDateRange when date range is invalid" in {
     val result = request(toDate, fromDate)
 
-    result shouldFailWith InvalidDateRange
+    result.shouldFailWith(InvalidDateRange)
   }
 
   "return InternalServerError when service call fails" in {
-    when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+    when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
       .thenReturn(Future.failed(UnexpectedResponse))
 
     val result = request(fromDate, toDate)
 
-    result shouldFailWith UnexpectedResponse
+    result.shouldFailWith(UnexpectedResponse)
   }
 }

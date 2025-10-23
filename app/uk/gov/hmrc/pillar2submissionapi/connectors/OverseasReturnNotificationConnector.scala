@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -30,14 +31,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
 
   private val ORNSubmitUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/submit"
   private val ORNAmendUrl:  String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/amend"
   private def ORNRetrieveUrl(accountingPeriodFrom: String, accountingPeriodTo: String): String =
     s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/overseas-return-notification/$accountingPeriodFrom/$accountingPeriodTo"
 
-  def submitORN(ORNSubmission: ORNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitORN(ORNSubmission: ORNSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling $ORNSubmitUrl to submit a ORN")
     http
       .post(URI.create(ORNSubmitUrl).toURL)
@@ -45,7 +46,7 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .execute[HttpResponse]
   }
 
-  def amendORN(ORNSubmission: ORNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def amendORN(ORNSubmission: ORNSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling $ORNAmendUrl to amend a ORN")
     http
       .put(URI.create(ORNAmendUrl).toURL)
@@ -53,7 +54,7 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .execute[HttpResponse]
   }
 
-  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(using hc: HeaderCarrier): Future[HttpResponse] = {
     val url = ORNRetrieveUrl(accountingPeriodFrom, accountingPeriodTo)
     logger.info(s"Calling $url to retrieve a ORN")
     http

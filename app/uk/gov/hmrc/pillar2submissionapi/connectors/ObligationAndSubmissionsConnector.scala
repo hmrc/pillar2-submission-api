@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationAndSubmissionsConnector @Inject() (val config: AppConfig, val http: HttpClientV2) extends Logging {
 
-  def getData(dateFrom: LocalDate, dateTo: LocalDate)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
+  def getData(dateFrom: LocalDate, dateTo: LocalDate)(using hc: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     val url =
       s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions/$dateFrom/$dateTo"
     logger.info(s"Calling the Obligations and Submissions with url: $url")
