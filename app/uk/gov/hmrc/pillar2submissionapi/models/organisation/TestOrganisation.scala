@@ -27,7 +27,7 @@ case class OrgDetails(
 )
 
 object OrgDetails {
-  given format: Format[OrgDetails] = Json.format[OrgDetails]
+  implicit val format: Format[OrgDetails] = Json.format[OrgDetails]
 }
 
 case class AccountingPeriod(
@@ -37,7 +37,7 @@ case class AccountingPeriod(
 )
 
 object AccountingPeriod {
-  given format: Format[AccountingPeriod] = Json.format[AccountingPeriod]
+  implicit val format: Format[AccountingPeriod] = Json.format[AccountingPeriod]
 }
 
 case class TestOrganisationRequest(
@@ -46,7 +46,7 @@ case class TestOrganisationRequest(
 )
 
 object TestOrganisationRequest {
-  given format: Format[TestOrganisationRequest] = Json.format[TestOrganisationRequest]
+  implicit val format: Format[TestOrganisationRequest] = Json.format[TestOrganisationRequest]
 }
 
 case class TestOrganisation(
@@ -56,7 +56,7 @@ case class TestOrganisation(
 )
 
 object TestOrganisation {
-  given format: Format[TestOrganisation] = Json.format[TestOrganisation]
+  implicit val format: Format[TestOrganisation] = Json.format[TestOrganisation]
 }
 
 case class TestOrganisationWithId(
@@ -65,5 +65,5 @@ case class TestOrganisationWithId(
 )
 
 object TestOrganisationWithId {
-  given format: Format[TestOrganisationWithId] = Json.format[TestOrganisationWithId]
+  implicit val format: Format[TestOrganisationWithId] = Json.format[TestOrganisationWithId]
 }

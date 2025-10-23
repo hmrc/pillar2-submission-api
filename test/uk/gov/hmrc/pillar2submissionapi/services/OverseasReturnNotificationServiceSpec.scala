@@ -37,7 +37,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
     "submitORN() called with a valid tax return" should {
       "return 201 CREATED response" in {
 
-        when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
+        when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(submitOrnResponse), Map.empty)))
 
         val result = await(ornService.submitORN(ornRequestFixture))
@@ -50,7 +50,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "submitORN() unexpected 201 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
@@ -60,7 +60,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "submitORN() valid 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[DownstreamValidationError](await(ornService.submitORN(ornRequestFixture)))
@@ -70,7 +70,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "submitORN() unexpected 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
@@ -80,7 +80,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "submitORN() 500 response back" should {
     "Runtime exception thrown " in {
 
-      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
@@ -91,7 +91,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
     "amendORN() called with a valid tax return" should {
       "return 200 OK response" in {
 
-        when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
+        when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(submitOrnResponse), Map.empty)))
 
         val result = await(ornService.amendORN(ornRequestFixture))
@@ -104,7 +104,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "amendORN() unexpected 200 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
@@ -114,7 +114,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "amendORN() valid 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[DownstreamValidationError](await(ornService.amendORN(ornRequestFixture)))
@@ -124,7 +124,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "amendORN() unexpected 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
@@ -134,7 +134,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "amendORN() 500 response back" should {
     "Runtime exception thrown " in {
 
-      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
@@ -144,7 +144,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
   "retrieveORNService" when {
     "retrieveORN() called with valid accounting periods" should {
       "return 200 OK response" in {
-        when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+        when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(retrieveOrnResponse), Map.empty)))
 
         val result = await(ornService.retrieveORN("2024-01-01", "2024-12-31"))
@@ -156,7 +156,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() unexpected 200 response back" should {
     "Runtime exception thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
@@ -165,7 +165,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() 404 response back" should {
     "UnexpectedResponse thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(404, Json.toJson("Not Found"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
@@ -174,7 +174,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() 422 response with No Form bundle found" should {
     "ResourceNotFoundException thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form Bundle found")), Map.empty)))
 
       intercept[ORNNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
@@ -183,7 +183,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() valid 422 response back" should {
     "DownstreamValidationError thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[DownstreamValidationError](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
@@ -192,7 +192,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() unexpected 422 response back" should {
     "UnexpectedResponse thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
@@ -201,7 +201,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
 
   "retrieveORN() 500 response back" should {
     "UnexpectedResponse thrown" in {
-      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
+      when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))

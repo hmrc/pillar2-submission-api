@@ -25,5 +25,5 @@ final case class ContactDetailsType(
 )
 
 object ContactDetailsType {
-  given format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
+  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
 }

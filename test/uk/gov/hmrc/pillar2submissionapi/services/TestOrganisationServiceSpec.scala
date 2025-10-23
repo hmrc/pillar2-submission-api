@@ -33,7 +33,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
   "TestOrganisationService" when {
     "createTestOrganisation" must {
       "return organisation details for valid request" in {
-        when(mockTestOrganisationConnector.createTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.createTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
         val result = await(service.createTestOrganisation(pillar2Id, validOrganisationDetailsRequest))
@@ -44,7 +44,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "getTestOrganisation" must {
       "return organisation details" in {
-        when(mockTestOrganisationConnector.getTestOrganisation(eqTo(pillar2Id))(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.getTestOrganisation(eqTo(pillar2Id))(any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
         val result = await(service.getTestOrganisation(pillar2Id))
@@ -55,7 +55,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "updateTestOrganisation" must {
       "return updated organisation details" in {
-        when(mockTestOrganisationConnector.updateTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.updateTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
         val result = await(service.updateTestOrganisation(pillar2Id, validOrganisationDetailsRequest))
@@ -66,7 +66,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "deleteTestOrganisation" must {
       "return unit when successful" in {
-        when(mockTestOrganisationConnector.deleteTestOrganisation(eqTo(pillar2Id))(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.deleteTestOrganisation(eqTo(pillar2Id))(any[HeaderCarrier]))
           .thenReturn(Future.successful(()))
 
         val result = await(service.deleteTestOrganisation(pillar2Id))

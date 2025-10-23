@@ -26,5 +26,5 @@ case class BTNSubmission(
 )
 
 object BTNSubmission {
-  given OFormat[BTNSubmission] = Json.format[BTNSubmission]
+  implicit val BTNSubmission: OFormat[BTNSubmission] = Json.format[BTNSubmission]
 }

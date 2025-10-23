@@ -36,11 +36,11 @@ case class LiabilityData(
 ) extends Liability
 
 object LiabilityData {
-  given liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
+  implicit val liabilityDataFormat: OFormat[LiabilityData] = Json.format[LiabilityData]
 }
 
 case class LiabilityNilReturn(returnType: ReturnType) extends Liability
 
 object LiabilityNilReturn {
-  given liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
+  implicit val liabilityNilReturnFormat: OFormat[LiabilityNilReturn] = Json.format[LiabilityNilReturn]
 }

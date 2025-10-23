@@ -3,11 +3,11 @@ import play.sbt.PlayImport.PlayKeys.playDefaultPort
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.DefaultBuildSettings.*
 
-ThisBuild / scalaVersion := "3.7.3"
+ThisBuild / scalaVersion := "2.13.16"
 ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(
-  semanticdbEnabled := true,
+  semanticdbEnabled := true, // enable SemanticDB
   semanticdbVersion := scalafixSemanticdb.revision
 )
 
@@ -17,32 +17,29 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     majorVersion := 0,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-    Compile / tpolecatExcludeOptions ++= Set(
-      ScalacOptions.warnNonUnitStatement,
-      ScalacOptions.warnValueDiscard,
-      ScalacOptions.warnUnusedImports
-    ),
+    Compile / tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard),
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    scalacOptions += "-Wconf:src=routes/.*:s",
     scalafixSettings
   )
   .settings(CodeCoverageSettings.settings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
-  .settings(scalaSettings *)
+  .settings(scalaSettings: _*)
   .configs(IntegrationTest)
-  .settings(DefaultBuildSettings.itSettings() *)
+  .settings(integrationTestSettings(): _*)
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
-    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
+    unmanagedSourceDirectories in Test := (baseDirectory in Test)(base => Seq(base / "test", base / "test-common")).value,
+    unmanagedResourceDirectories in Test := Seq(baseDirectory.value / "test-resources")
   )
   .settings(
-    IntegrationTest / unmanagedSourceDirectories :=
-      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value,
-    IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
-    IntegrationTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
+    unmanagedSourceDirectories in IntegrationTest :=
+      (baseDirectory in IntegrationTest)(base => Seq(base / "it", base / "test-common")).value,
+    testOptions in IntegrationTest += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
+    unmanagedResourceDirectories in IntegrationTest := Seq(baseDirectory.value / "test-resources")
   )
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
@@ -58,21 +55,6 @@ addCommandAlias("publishTestOnlyOas", ";createOpenAPISpec; publishOas")
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-  .settings(
-    DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it
-  )
-  .settings(
-    DefaultBuildSettings.itSettings(),
-    tpolecatExcludeOptions ++= Set(
-      ScalacOptions.warnNonUnitStatement,
-      ScalacOptions.warnValueDiscard,
-      ScalacOptions.warnUnusedImports
-    )
-  )
-
-ThisBuild / scalacOptions ++= Seq(
-  "-Wconf:src=routes/.*:s",
-  "-Wconf:msg=Flag.*set repeatedly:s",
-  "-Wconf:msg=Setting -Wunused set to all redundantly:s"
-)
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(DefaultBuildSettings.itSettings(), tpolecatExcludeOptions ++= Set(ScalacOptions.warnNonUnitStatement, ScalacOptions.warnValueDiscard))
+  .settings(libraryDependencies ++= AppDependencies.it)

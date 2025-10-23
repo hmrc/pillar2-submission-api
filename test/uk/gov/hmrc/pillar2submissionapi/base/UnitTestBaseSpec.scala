@@ -44,11 +44,11 @@ trait UnitTestBaseSpec
     with UKTaxReturnDataFixture
     with HttpClientSupport {
 
-  given cc:           ControllerComponents = stubControllerComponents()
-  given ec:           ExecutionContext     = ExecutionContext.global
-  given hc:           HeaderCarrier        = HeaderCarrier()
-  given system:       ActorSystem          = ActorSystem()
-  given materializer: Materializer         = Materializer(system)
+  implicit val cc:                ControllerComponents = stubControllerComponents()
+  implicit val ec:                ExecutionContext     = ExecutionContext.Implicits.global
+  implicit val hc:                HeaderCarrier        = HeaderCarrier()
+  implicit lazy val system:       ActorSystem          = ActorSystem()
+  implicit lazy val materializer: Materializer         = Materializer(system)
 
   protected val mockConfiguration:                       Configuration                       = mock[Configuration]
   protected val mockServicesConfig:                      ServicesConfig                      = mock[ServicesConfig]

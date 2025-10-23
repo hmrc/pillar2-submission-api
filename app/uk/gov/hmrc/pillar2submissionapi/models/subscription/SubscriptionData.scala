@@ -31,12 +31,12 @@ final case class SubscriptionData(
 
 object SubscriptionData {
 
-  given format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
+  implicit val format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
 }
 
 final case class SubscriptionSuccess(success: SubscriptionData)
 
 object SubscriptionSuccess {
 
-  given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+  implicit val format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
 }
