@@ -28,16 +28,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionImpl @Inject() (
-  val subscriptionConnector:     SubscriptionConnector
-)(implicit val executionContext: ExecutionContext)
+  val subscriptionConnector: SubscriptionConnector
+)(using val executionContext: ExecutionContext)
     extends SubscriptionDataRetrievalAction
     with Logging {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
-      case Left(_) => Future.failed(NoSubscriptionData(request.clientPillar2Id))
+      case Left(_)                 => Future.failed(NoSubscriptionData(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
           SubscriptionDataRequest(

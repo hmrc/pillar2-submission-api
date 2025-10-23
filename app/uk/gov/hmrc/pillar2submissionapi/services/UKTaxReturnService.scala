@@ -29,12 +29,12 @@ import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSub
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(implicit val ec: ExecutionContext) extends Logging {
+class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(using ec: ExecutionContext) extends Logging {
 
-  def submitUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
+  def submitUKTR(request: UKTRSubmission)(using hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     ukTaxReturnConnector.submitUKTR(request).map(convertToResult)
 
-  def amendUKTR(request: UKTRSubmission)(implicit hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
+  def amendUKTR(request: UKTRSubmission)(using hc: HeaderCarrier): Future[UKTRSubmitSuccessResponse] =
     ukTaxReturnConnector.amendUKTR(request).map(convertToResult)
 
   private def convertToResult(response: HttpResponse): UKTRSubmitSuccessResponse =
@@ -42,14 +42,14 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
       case CREATED | OK =>
         response.json.validate[UKTRSubmitSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_) =>
+          case JsError(_)            =>
             logger.error(s"Error while parsing the backend response")
             throw UnexpectedResponse
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_) =>
+          case JsError(_)             =>
             logger.error(s"Error while unprocessable entity response")
             throw UnexpectedResponse
         }

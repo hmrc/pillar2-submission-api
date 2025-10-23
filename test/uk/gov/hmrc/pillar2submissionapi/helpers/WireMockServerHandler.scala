@@ -93,7 +93,7 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
     expectedUrl:    String,
     expectedStatus: Int,
     body:           JsValue
-  )(implicit hc:    HeaderCarrier): StubMapping = {
+  )(using hc: HeaderCarrier): StubMapping = {
     val pillar2IdHeader = hc.extraHeaders.find(_._1 == "X-Pillar2-Id").getOrElse(throw new IllegalArgumentException("X-Pillar2-Id header not found"))
     stubRequest(method, expectedUrl, expectedStatus, body, Map(pillar2IdHeader))
   }

@@ -31,7 +31,7 @@ class IdValueSpec extends AnyWordSpec with Matchers {
 
     "extend WrappedValue trait" in {
       val idValue = IdValue("ABCD1234")
-      idValue shouldBe a[WrappedValue[_]]
+      idValue shouldBe a[WrappedValue[?]]
     }
   }
 

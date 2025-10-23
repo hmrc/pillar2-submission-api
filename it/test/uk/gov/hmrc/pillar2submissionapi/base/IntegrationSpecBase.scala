@@ -36,7 +36,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientSupport
-import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.Ops
+import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture, WireMockServerHandler}
 
 import java.util.UUID
@@ -54,10 +54,10 @@ trait IntegrationSpecBase
     with UKTaxReturnDataFixture
     with BeforeAndAfterEach {
 
-  implicit lazy val system:       ActorSystem      = ActorSystem()
-  implicit lazy val materializer: Materializer     = Materializer(system)
-  implicit lazy val ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val hc:           HeaderCarrier    = new HeaderCarrier
+  given system:       ActorSystem      = ActorSystem()
+  given materializer: Materializer     = Materializer(system)
+  given ec:           ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  given hc:           HeaderCarrier    = new HeaderCarrier
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -73,7 +73,7 @@ trait IntegrationSpecBase
   )
 
   val requiredGatewayPredicate: Predicate = AuthProviders(GovernmentGateway) and ConfidenceLevel.L50
-  val requiredAgentPredicate: Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
+  val requiredAgentPredicate:   Predicate = AuthProviders(GovernmentGateway) and AffinityGroup.Agent and
     Enrolment(HMRC_PILLAR2_ORG_KEY)
       .withIdentifier(ENROLMENT_IDENTIFIER, plrReference)
       .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
@@ -92,7 +92,10 @@ trait IntegrationSpecBase
 
   override def beforeEach(): Unit = {
     when(
-      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(using
+        any[HeaderCarrier](),
+        any[ExecutionContext]()
+      )
     )
       .thenReturn(
         Future.successful(

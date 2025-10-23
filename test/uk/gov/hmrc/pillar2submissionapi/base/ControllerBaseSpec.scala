@@ -20,7 +20,7 @@ import org.apache.pekko.actor.ActorSystem
 import org.apache.pekko.stream.Materializer
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldEqual
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
@@ -40,12 +40,12 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture with UKTaxReturnDataFixture {
 
-  implicit lazy val ec:           ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val system:       ActorSystem           = ActorSystem()
-  implicit lazy val materializer: Materializer          = Materializer(system)
-  implicit val cc:                ControllerComponents  = stubControllerComponents()
-  val mockAuthConnector:          AuthConnector         = mock[AuthConnector]
-  val mockSubscriptionConnector:  SubscriptionConnector = mock[SubscriptionConnector]
+  given ec:                      ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
+  given system:                  ActorSystem           = ActorSystem()
+  given materializer:            Materializer          = Materializer(system)
+  given cc:                      ControllerComponents  = stubControllerComponents()
+  val mockAuthConnector:         AuthConnector         = mock[AuthConnector]
+  val mockSubscriptionConnector: SubscriptionConnector = mock[SubscriptionConnector]
 
   val mockUkTaxReturnService:                UKTaxReturnService                = mock[UKTaxReturnService]
   val mockSubmitBTNService:                  SubmitBTNService                  = mock[SubmitBTNService]
@@ -71,14 +71,14 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
     override protected def executionContext: ExecutionContext = ec
   }
 
-  implicit class AwaitFuture(fut: Future[Result]) {
+  extension (fut: Future[Result]) {
     def shouldFailWith(expected: Throwable): Assertion = {
       val err = Await.result(fut.failed, 5.seconds)
       err shouldEqual expected
     }
   }
 
-  implicit val subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
+  given subscriptionAction: SubscriptionDataRetrievalAction = new SubscriptionDataRetrievalAction {
     override protected def transform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] =
       Future.successful(SubscriptionDataRequest(request, "internalId", "pillar2Id", subscriptionData))
 

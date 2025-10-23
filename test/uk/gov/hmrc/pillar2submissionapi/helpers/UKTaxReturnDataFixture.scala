@@ -18,11 +18,6 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.EntityName
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdType
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.IdValue
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntities
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.Monetary
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
@@ -34,12 +29,12 @@ trait UKTaxReturnDataFixture {
 
   val pillar2Id        = "XTC01234123412"
   val formBundleNumber = "119000004320"
-  val processingDate: ZonedDateTime = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+  val processingDate:                ZonedDateTime             = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
   val uktrSubmissionSuccessResponse: UKTRSubmitSuccessResponse =
     UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
 
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
-  val liableEntity: LiableEntity =
+  val liableEntity:       LiableEntity       =
     LiableEntity(
       EntityName("entityName"),
       IdType("CRN"),

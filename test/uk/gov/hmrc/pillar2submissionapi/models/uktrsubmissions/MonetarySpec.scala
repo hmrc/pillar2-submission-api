@@ -33,7 +33,7 @@ class MonetarySpec extends AnyWordSpec with Matchers {
 
     "extend WrappedValue trait" in {
       val monetary = Monetary(BigDecimal("50.00"))
-      monetary shouldBe a[WrappedValue[_]]
+      monetary shouldBe a[WrappedValue[?]]
     }
   }
 

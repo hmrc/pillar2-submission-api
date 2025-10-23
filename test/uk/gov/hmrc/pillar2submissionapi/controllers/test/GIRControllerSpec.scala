@@ -42,8 +42,8 @@ class GIRControllerSpec extends ControllerBaseSpec {
     new GIRController(cc, identifierAction, pillar2IdAction, mockGIRService, mockAppConfig)
   }
 
-  val validSubmission: GIRSubmission = GIRSubmission(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"))
-  val validRequestJson: JsValue = Json.obj(
+  val validSubmission:  GIRSubmission = GIRSubmission(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"))
+  val validRequestJson: JsValue       = Json.obj(
     "accountingPeriodFrom" -> "2024-01-01",
     "accountingPeriodTo"   -> "2024-12-31"
   )
@@ -54,7 +54,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
     "test endpoints are enabled" when {
       "createGIR" must {
         "return 201 CREATED for valid request" in {
-          when(mockGIRService.createGIR(eqTo(validSubmission))(any[HeaderCarrier]))
+          when(mockGIRService.createGIR(eqTo(validSubmission))(using any[HeaderCarrier]))
             .thenReturn(Future.successful(validResponse))
 
           val result = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson))
@@ -65,11 +65,11 @@ class GIRControllerSpec extends ControllerBaseSpec {
         "return InvalidJson for invalid request" in {
           val invalidJson = Json.obj("badField" -> "badValue")
           val result      = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidJson))
-          result shouldFailWith InvalidJson
+          result.shouldFailWith(InvalidJson)
         }
         "return EmptyRequestBody for missing body" in {
           val result = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
-          result shouldFailWith EmptyRequestBody
+          result.shouldFailWith(EmptyRequestBody)
         }
       }
     }
@@ -79,7 +79,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
           val result = controller(testEndpointsEnabled = false).createGIR(
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
-          result shouldFailWith TestEndpointDisabled
+          result.shouldFailWith(TestEndpointDisabled)
         }
       }
     }

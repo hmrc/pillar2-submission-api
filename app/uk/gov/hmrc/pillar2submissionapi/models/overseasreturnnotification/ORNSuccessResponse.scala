@@ -33,31 +33,31 @@ case class ORNSuccessResponse(processingDate: String, formBundleNumber: String)
 
 object ORNRetrieveSuccessResponse {
 
-  implicit val reads: Reads[ORNRetrieveSuccessResponse] = (json: JsValue) => {
+  given reads: Reads[ORNRetrieveSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNRetrieveSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[ORNRetrieveSuccessResponse] => success
+      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNRetrieveSuccessResponse]]
       case _ =>
-        (json \ "success").validate[ORNRetrieveSuccessResponse](standardReads)
+        (json \ "success").validate[ORNRetrieveSuccessResponse](using standardReads)
     }
   }
 
-  implicit val writes: OWrites[ORNRetrieveSuccessResponse] = Json.writes[ORNRetrieveSuccessResponse]
+  given writes: OWrites[ORNRetrieveSuccessResponse] = Json.writes[ORNRetrieveSuccessResponse]
 
-  implicit val successFormat: OFormat[ORNRetrieveSuccessResponse] = OFormat(reads, writes)
+  given successFormat: OFormat[ORNRetrieveSuccessResponse] = OFormat(reads, writes)
 }
 
 object ORNSuccessResponse {
-  implicit val reads: Reads[ORNSuccessResponse] = (json: JsValue) => {
+  given reads: Reads[ORNSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[ORNSuccessResponse] => success
+      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNSuccessResponse]]
       case _ =>
-        (json \ "success").validate[ORNSuccessResponse](standardReads)
+        (json \ "success").validate[ORNSuccessResponse](using standardReads)
     }
   }
 
-  implicit val writes: OWrites[ORNSuccessResponse] = Json.writes[ORNSuccessResponse]
+  given writes: OWrites[ORNSuccessResponse] = Json.writes[ORNSuccessResponse]
 
-  implicit val submitSuccessFormat: OFormat[ORNSuccessResponse] = OFormat(reads, writes)
+  given submitSuccessFormat: OFormat[ORNSuccessResponse] = OFormat(reads, writes)
 }

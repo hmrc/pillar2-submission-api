@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class SubmitBTNSuccessResponse(processingDate: String)
 
 case object SubmitBTNSuccessResponse {
-  implicit val successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]
+  given successFormat: OFormat[SubmitBTNSuccessResponse] = Json.format[SubmitBTNSuccessResponse]
 }

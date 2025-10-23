@@ -38,11 +38,11 @@ class UKTaxReturnController @Inject() (
   pillar2IdAction:          Pillar2IdHeaderExistsAction,
   verifySubscriptionExists: SubscriptionDataRetrievalAction,
   ukTaxReturnService:       UKTaxReturnService
-)(implicit ec:              ExecutionContext)
+)(using ec: ExecutionContext)
     extends BackendController(cc) {
 
   def submitUKTR: Action[AnyContent] = (pillar2IdAction andThen identify andThen verifySubscriptionExists).async { request =>
-    implicit val hc: HeaderCarrier =
+    given hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)
         .withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
@@ -60,7 +60,7 @@ class UKTaxReturnController @Inject() (
   }
 
   def amendUKTR: Action[AnyContent] = (pillar2IdAction andThen identify andThen verifySubscriptionExists).async { request =>
-    implicit val hc: HeaderCarrier =
+    given hc: HeaderCarrier =
       HeaderCarrierConverter
         .fromRequest(request)
         .withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
