@@ -27,5 +27,5 @@ case class AccountingPeriod(
 )
 
 object AccountingPeriod {
-  implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
+  given format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }

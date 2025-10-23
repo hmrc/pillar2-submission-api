@@ -34,12 +34,12 @@ trait UKTaxReturnDataFixture {
 
   val pillar2Id        = "XTC01234123412"
   val formBundleNumber = "119000004320"
-  val processingDate: ZonedDateTime = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+  val processingDate:                ZonedDateTime             = ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
   val uktrSubmissionSuccessResponse: UKTRSubmitSuccessResponse =
     UKTRSubmitSuccessResponse(processingDate, formBundleNumber, Some(pillar2Id))
 
   val liabilityNilReturn: LiabilityNilReturn = LiabilityNilReturn(NIL_RETURN)
-  val liableEntity: LiableEntity =
+  val liableEntity:       LiableEntity       =
     LiableEntity(
       EntityName("entityName"),
       IdType("CRN"),

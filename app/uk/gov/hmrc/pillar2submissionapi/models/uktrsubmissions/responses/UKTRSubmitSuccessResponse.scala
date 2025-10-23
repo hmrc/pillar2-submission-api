@@ -23,5 +23,5 @@ import java.time.ZonedDateTime
 case class UKTRSubmitSuccessResponse(processingDate: ZonedDateTime, formBundleNumber: String, chargeReference: Option[String])
 
 case object UKTRSubmitSuccessResponse {
-  implicit val successFormat: OFormat[UKTRSubmitSuccessResponse] = Json.format[UKTRSubmitSuccessResponse]
+  given successFormat: OFormat[UKTRSubmitSuccessResponse] = Json.format[UKTRSubmitSuccessResponse]
 }

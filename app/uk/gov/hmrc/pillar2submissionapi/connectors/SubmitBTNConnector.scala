@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -30,11 +31,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
 
   private val BTNSubmissionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
-  def submitBTN(BTNSubmission: BTNSubmission)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
+  def submitBTN(BTNSubmission: BTNSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling $BTNSubmissionUrl to submit a BTN")
     http
       .post(URI.create(BTNSubmissionUrl).toURL)

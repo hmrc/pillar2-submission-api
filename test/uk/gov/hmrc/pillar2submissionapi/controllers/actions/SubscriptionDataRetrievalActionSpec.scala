@@ -32,7 +32,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixture {
 
-  class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(ec) {
+  class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(using ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)
   }
 
@@ -40,8 +40,10 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
     "build a SubscriptionData object and add it to the request" in {
 
-      when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
-        Right(subscriptionData)
+      when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(
+        Future(
+          Right(subscriptionData)
+        )
       )
       val action = new Harness(mockSubscriptionConnector)
 
@@ -54,8 +56,10 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
     "return a BadRequest when an error occurs while retrieving SubscriptionData which results in a RuntimeException being thrown" in {
 
-      when(mockSubscriptionConnector.readSubscription(any[String]())(any[HeaderCarrier](), any[ExecutionContext]())) thenReturn Future(
-        Left(BadRequest)
+      when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(
+        Future(
+          Left(BadRequest)
+        )
       )
       val action = new Harness(mockSubscriptionConnector)
 

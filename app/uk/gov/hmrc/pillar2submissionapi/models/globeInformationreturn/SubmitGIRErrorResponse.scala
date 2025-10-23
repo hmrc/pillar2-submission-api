@@ -21,11 +21,11 @@ import play.api.libs.json.{Json, OFormat}
 case class SubmitGIRErrorResponse(errors: GIRError)
 
 object SubmitGIRErrorResponse {
-  implicit val format: OFormat[SubmitGIRErrorResponse] = Json.format[SubmitGIRErrorResponse]
+  given format: OFormat[SubmitGIRErrorResponse] = Json.format[SubmitGIRErrorResponse]
 }
 
 case class GIRError(code: String, text: String)
 
 object GIRError {
-  implicit val format: OFormat[GIRError] = Json.format[GIRError]
+  given format: OFormat[GIRError] = Json.format[GIRError]
 }

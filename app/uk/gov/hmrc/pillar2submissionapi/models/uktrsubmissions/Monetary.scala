@@ -35,5 +35,5 @@ object Monetary {
 
   private val writes: Writes[Monetary] = Writes(wrapped => Json.toJson(wrapped.value))
 
-  implicit val format: Format[Monetary] = Format(reads, writes)
+  given format: Format[Monetary] = Format(reads, writes)
 }

@@ -31,7 +31,7 @@ class IdTypeSpec extends AnyWordSpec with Matchers {
 
     "extend WrappedValue trait" in {
       val idType = IdType("UTR")
-      idType shouldBe a[WrappedValue[_]]
+      idType shouldBe a[WrappedValue[?]]
     }
   }
 

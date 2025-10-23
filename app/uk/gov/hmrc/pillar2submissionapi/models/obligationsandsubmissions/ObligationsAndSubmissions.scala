@@ -26,7 +26,7 @@ case class ObligationsAndSubmissions(fromDate: LocalDate, toDate: LocalDate) {
 }
 
 object ObligationsAndSubmissions {
-  implicit val format: OFormat[ObligationsAndSubmissions] = Json.format[ObligationsAndSubmissions]
+  given format: OFormat[ObligationsAndSubmissions] = Json.format[ObligationsAndSubmissions]
 }
 
 case class AccountingPeriodDetails(
@@ -38,13 +38,13 @@ case class AccountingPeriodDetails(
 )
 
 object AccountingPeriodDetails {
-  implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
+  given format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
 }
 
 case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Seq[Submission])
 
 object Obligation {
-  implicit val format: OFormat[Obligation] = Json.format[Obligation]
+  given format: OFormat[Obligation] = Json.format[Obligation]
 }
 
 sealed trait ObligationStatus extends EnumEntry
@@ -66,7 +66,7 @@ object ObligationType extends Enum[ObligationType] with PlayJsonEnum[ObligationT
 case class Submission(submissionType: SubmissionType, receivedDate: ZonedDateTime, country: Option[String])
 
 object Submission {
-  implicit val format: OFormat[Submission] = Json.format[Submission]
+  given format: OFormat[Submission] = Json.format[Submission]
 }
 
 sealed trait SubmissionType extends EnumEntry

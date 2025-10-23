@@ -1,4 +1,4 @@
-import com.iheart.sbtPlaySwagger.SwaggerPlugin.autoImport._
+import com.iheart.sbtPlaySwagger.SwaggerPlugin.autoImport.*
 import sbt.Def
 
 object PlaySwagger {

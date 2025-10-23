@@ -29,5 +29,5 @@ case class LiableEntity(
 )
 
 object LiableEntity {
-  implicit val format: OFormat[LiableEntity] = Json.format[LiableEntity]
+  given format: OFormat[LiableEntity] = Json.format[LiableEntity]
 }
