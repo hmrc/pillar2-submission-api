@@ -32,13 +32,12 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
+import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.Ops
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
@@ -217,7 +216,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
       "return 201 CREATED for valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -227,7 +226,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -418,7 +417,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
       "return 200 OK for valid submission data" in {
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredGatewayPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )
@@ -428,7 +427,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
           )
 
         when(
-          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(
             any[HeaderCarrier](),
             any[ExecutionContext]()
           )

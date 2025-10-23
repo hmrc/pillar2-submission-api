@@ -30,5 +30,5 @@ object LiableEntities {
 
   private val writes: Writes[LiableEntities] = Writes.list[LiableEntity].contramap(_.value.toList)
 
-  given format: Format[LiableEntities] = Format(reads, writes)
+  implicit val format: Format[LiableEntities] = Format(reads, writes)
 }

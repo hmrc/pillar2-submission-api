@@ -23,5 +23,5 @@ import java.time.ZonedDateTime
 case class ObligationsAndSubmissionsSuccessResponse(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
 
 object ObligationsAndSubmissionsSuccessResponse {
-  given format: OFormat[ObligationsAndSubmissionsSuccessResponse] = Json.format[ObligationsAndSubmissionsSuccessResponse]
+  implicit val format: OFormat[ObligationsAndSubmissionsSuccessResponse] = Json.format[ObligationsAndSubmissionsSuccessResponse]
 }

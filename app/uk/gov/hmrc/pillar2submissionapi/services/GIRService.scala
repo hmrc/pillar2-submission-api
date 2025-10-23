@@ -32,11 +32,11 @@ import scala.concurrent.Future
 @Singleton
 class GIRService @Inject() (
   girConnector: GIRConnector
-)(using ec: ExecutionContext)
+)(implicit ec:  ExecutionContext)
     extends Logging {
 
   def createGIR(submission: GIRSubmission)(implicit
-    hc: HeaderCarrier
+    hc:                     HeaderCarrier
   ): Future[SubmitGIRSuccessResponse] =
     girConnector.createGIR(submission).map(convertToResult)
 
@@ -45,14 +45,14 @@ class GIRService @Inject() (
       case 201 =>
         response.json.validate[SubmitGIRSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(e)            =>
+          case JsError(e) =>
             logger.error(s"Error while parsing the backend response" + response.body + e)
             throw UnexpectedResponse
         }
       case 422 =>
         response.json.validate[SubmitGIRErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.errors.code, response.errors.text)
-          case JsError(e)             =>
+          case JsError(e) =>
             logger.error(s"Error while unprocessable entity response" + response.body + e)
             throw UnexpectedResponse
         }

@@ -35,5 +35,5 @@ object IdType {
 
   private val writes: Writes[IdType] = Writes(wrapped => Json.toJson(wrapped.value))
 
-  given format: Format[IdType] = Format(reads, writes)
+  implicit val format: Format[IdType] = Format(reads, writes)
 }

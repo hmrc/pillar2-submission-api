@@ -35,7 +35,7 @@ import scala.concurrent.Future
 class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
   val uktrSubmissionController: UKTaxReturnController =
-    new UKTaxReturnController(cc, identifierAction, pillar2IdAction, subscriptionAction, mockUkTaxReturnService)(using ec)
+    new UKTaxReturnController(cc, identifierAction, pillar2IdAction, subscriptionAction, mockUkTaxReturnService)(ec)
 
   def callWithBody(request: JsValue): Future[Result] =
     uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(request))
@@ -45,7 +45,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
   "UktrSubmissionController" when {
     "submitUKTR() called with a valid request" should {
       "return 201 CREATED response" in {
-        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callWithBody(validLiabilityReturn)) mustEqual CREATED
@@ -53,7 +53,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
       "forward the X-Pillar2-Id header" in {
         val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(using captor.capture()))
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callWithBody(validLiabilityReturn)) mustEqual CREATED
@@ -63,7 +63,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "submitUKTR() called with a valid nil return request" should {
       "return 201 CREATED response" in {
-        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callWithBody(validNilReturn)) mustEqual CREATED
@@ -71,7 +71,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
       "forward the X-Pillar2-Id header" in {
         val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(using captor.capture()))
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callWithBody(validNilReturn)) mustEqual CREATED
@@ -80,45 +80,54 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "submitUKTR() called with an invalid request" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(liabilityReturnInvalidLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callWithBody(liabilityReturnInvalidLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with an invalid nil return request" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(nilReturnInvalidReturnType).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+
+        callWithBody(nilReturnInvalidReturnType) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with an invalid json request" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(invalidBody).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callWithBody(invalidBody) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with request that only contains a valid return type" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(invalidRequest_nilReturn_onlyContainsLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+
+        callWithBody(invalidRequest_nilReturn_onlyContainsLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with request that only contains an invalid return type" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callWithBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with request that is missing liabilities" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(invalidRequest_noLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callWithBody(invalidRequest_noLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with an empty json object" should {
-      "return 400 BAD_REQUEST response" in
-        callWithBody(emptyBody).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callWithBody(emptyBody) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withTextBody(stringBody))
 
-        result.shouldFailWith(EmptyRequestBody)
+        result shouldFailWith EmptyRequestBody
       }
     }
 
@@ -126,7 +135,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.submitUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-        result.shouldFailWith(EmptyRequestBody)
+        result shouldFailWith EmptyRequestBody
       }
     }
 
@@ -134,7 +143,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
       "return MissingHeader response" in {
         val result = uktrSubmissionController.submitUKTR()(FakeRequest())
 
-        result.shouldFailWith(MissingHeader.MissingPillar2Id)
+        result shouldFailWith MissingHeader.MissingPillar2Id
       }
     }
 
@@ -157,33 +166,38 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "submitUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callWithBody(liabilityReturnMonetaryExceedsLimit).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callWithBody(liabilityReturnMonetaryDecimalPrecision).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callWithBody(liabilityReturnEntityMonetaryExceedsLimit).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with a negative monetary value" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callWithBody(liabilityReturnNegativeValue).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callWithBody(liabilityReturnNegativeValue) shouldFailWith InvalidJson
+      }
     }
 
     "submitUKTR() called with a monetary value at the minimum limit (0)" should {
       "return 201 CREATED response" in {
-        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.submitUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual CREATED
@@ -192,7 +206,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with a valid request" should {
       "return 200 OK response" in {
-        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callAmendWithBody(validLiabilityReturn)) mustEqual OK
@@ -200,7 +214,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
       "forward the X-Pillar2-Id header" in {
         val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(using captor.capture()))
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callAmendWithBody(validLiabilityReturn)) mustEqual OK
@@ -210,7 +224,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
     "amendUKTR() called with a valid nil return request" should {
       "return 200 OK response" in {
-        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callAmendWithBody(validNilReturn)) mustEqual OK
@@ -218,7 +232,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
 
       "forward the X-Pillar2-Id header" in {
         val captor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(using captor.capture()))
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(captor.capture()))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callAmendWithBody(validNilReturn)) mustEqual OK
@@ -227,45 +241,52 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "amendUKTR() called with an invalid request" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(liabilityReturnInvalidLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(liabilityReturnInvalidLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with an invalid nil return request" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(nilReturnInvalidReturnType).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(nilReturnInvalidReturnType) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with an invalid json request" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(invalidBody).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidBody) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with request that only contains a valid return type" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(invalidRequest_nilReturn_onlyContainsLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_nilReturn_onlyContainsLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with request that only contains an invalid return type" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_nilReturn_onlyLiabilitiesButInvalidReturnType) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with request that is missing liabilities" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(invalidRequest_noLiabilities).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(invalidRequest_noLiabilities) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with an empty json object" should {
-      "return 400 BAD_REQUEST response" in
-        callAmendWithBody(emptyBody).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response" in {
+        callAmendWithBody(emptyBody) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with an non-json request" should {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.amendUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withTextBody(stringBody))
 
-        result.shouldFailWith(EmptyRequestBody)
+        result shouldFailWith EmptyRequestBody
       }
     }
 
@@ -273,7 +294,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
       "return 400 BAD_REQUEST response" in {
         val result = uktrSubmissionController.amendUKTR()(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-        result.shouldFailWith(EmptyRequestBody)
+        result shouldFailWith EmptyRequestBody
       }
     }
 
@@ -281,7 +302,7 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
       "return MissingHeader response" in {
         val result = uktrSubmissionController.amendUKTR()(FakeRequest())
 
-        result.shouldFailWith(MissingHeader.MissingPillar2Id)
+        result shouldFailWith MissingHeader.MissingPillar2Id
       }
     }
 
@@ -304,28 +325,32 @@ class UKTaxReturnControllerSpec extends ControllerBaseSpec {
     }
 
     "amendUKTR() called with a monetary value exceeding the maximum allowed" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callAmendWithBody(liabilityReturnMonetaryExceedsLimit).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnMonetaryExceedsLimit) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with a monetary value having too many decimal places" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnMonetaryDecimalPrecision) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with an invalid monetary value in liableEntity amountOwedDTT" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryExceedsLimit) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with a monetary value with too many decimal places in liableEntity amountOwedIIR" should {
-      "return 400 BAD_REQUEST response with InvalidJson" in
-        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision).shouldFailWith(InvalidJson)
+      "return 400 BAD_REQUEST response with InvalidJson" in {
+        callAmendWithBody(liabilityReturnEntityMonetaryDecimalPrecision) shouldFailWith InvalidJson
+      }
     }
 
     "amendUKTR() called with a negative monetary value at the minimum limit" should {
       "return 200 OK response" in {
-        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(using any[HeaderCarrier]))
+        when(mockUkTaxReturnService.amendUKTR(any[UKTRSubmissionData])(any[HeaderCarrier]))
           .thenReturn(Future.successful(uktrSubmissionSuccessResponse))
 
         status(of = callAmendWithBody(liabilityReturnMonetaryMinimumLimit)) mustEqual OK

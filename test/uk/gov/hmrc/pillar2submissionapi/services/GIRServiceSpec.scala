@@ -41,7 +41,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
   "GIRService" when {
     "createGIR() called with a valid submission" should {
       "return 201 CREATED response" in {
-        when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+        when(mockGIRConnector.createGIR(any[GIRSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
 
         val result = await(service.createGIR(validSubmission))
@@ -50,7 +50,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
     }
     "createGIR() valid 422 response back" should {
       "throw DownstreamValidationError" in {
-        when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+        when(mockGIRConnector.createGIR(any[GIRSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(errorResponse), Map.empty)))
 
         intercept[DownstreamValidationError](await(service.createGIR(validSubmission)))
@@ -58,7 +58,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
     }
     "createGIR() unexpected 201 response back" should {
       "throw UnexpectedResponse" in {
-        when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+        when(mockGIRConnector.createGIR(any[GIRSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
         intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
@@ -66,7 +66,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
     }
     "createGIR() unexpected 422 response back" should {
       "throw UnexpectedResponse" in {
-        when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+        when(mockGIRConnector.createGIR(any[GIRSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
         intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
@@ -74,7 +74,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
     }
     "createGIR() 500 response back" should {
       "throw UnexpectedResponse" in {
-        when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+        when(mockGIRConnector.createGIR(any[GIRSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
 
         intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))

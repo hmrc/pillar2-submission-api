@@ -26,5 +26,5 @@ case class GIRSubmission(
 )
 
 object GIRSubmission {
-  given format: Format[GIRSubmission] = Json.format[GIRSubmission]
+  implicit val format: Format[GIRSubmission] = Json.format[GIRSubmission]
 }

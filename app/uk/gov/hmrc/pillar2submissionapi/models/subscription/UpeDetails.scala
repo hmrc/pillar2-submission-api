@@ -31,5 +31,5 @@ final case class UpeDetails(
 )
 
 object UpeDetails {
-  given format: OFormat[UpeDetails] = Json.format[UpeDetails]
+  implicit val format: OFormat[UpeDetails] = Json.format[UpeDetails]
 }

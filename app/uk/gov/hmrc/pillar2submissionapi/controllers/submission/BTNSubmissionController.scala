@@ -36,11 +36,11 @@ class BTNSubmissionController @Inject() (
   getSubscription:  SubscriptionDataRetrievalAction,
   pillar2IdAction:  Pillar2IdHeaderExistsAction,
   submitBTNService: SubmitBTNService
-)(using ec: ExecutionContext)
+)(implicit ec:      ExecutionContext)
     extends BackendController(cc) {
 
   def submitBTN: Action[AnyContent] = (pillar2IdAction andThen identify andThen getSubscription).async { request =>
-    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[BTNSubmission] match {

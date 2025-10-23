@@ -39,11 +39,11 @@ class OverseasReturnNotificationController @Inject() (
   pillar2Action:   Pillar2IdHeaderAction,
   getSubscription: SubscriptionDataRetrievalAction,
   ornService:      OverseasReturnNotificationService
-)(using ec: ExecutionContext)
+)(implicit ec:     ExecutionContext)
     extends BackendController(cc) {
 
   def submitORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
-    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[ORNSubmission] match {
@@ -58,7 +58,7 @@ class OverseasReturnNotificationController @Inject() (
   }
 
   def amendORN: Action[AnyContent] = (pillar2Action andThen identify andThen getSubscription).async { request =>
-    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
     request.body.asJson match {
       case Some(request) =>
         request.validate[ORNSubmission] match {
@@ -73,7 +73,7 @@ class OverseasReturnNotificationController @Inject() (
   }
 
   def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String): Action[AnyContent] =
-    (pillar2Action andThen identify andThen getSubscription).async { request =>
+    (pillar2Action andThen identify andThen getSubscription).async { implicit request =>
       val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
 
       Try {
@@ -81,7 +81,7 @@ class OverseasReturnNotificationController @Inject() (
           ObligationsAndSubmissions(fromDate = LocalDate.parse(accountingPeriodFrom), toDate = LocalDate.parse(accountingPeriodTo))
         if (accountingPeriod.validDateRange) {
           ornService
-            .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(using hc)
+            .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(hc)
             .map(response => Ok(Json.toJson(response)))
         } else { Future.failed(InvalidDateRange) }
       }.getOrElse(Future.failed(InvalidDateFormat))

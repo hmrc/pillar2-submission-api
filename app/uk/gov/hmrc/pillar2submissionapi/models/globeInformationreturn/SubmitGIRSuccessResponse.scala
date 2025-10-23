@@ -21,11 +21,11 @@ import play.api.libs.json.{Json, OFormat}
 case class SubmitGIRSuccessResponse(success: GIRSuccess)
 
 object SubmitGIRSuccessResponse {
-  given format: OFormat[SubmitGIRSuccessResponse] = Json.format[SubmitGIRSuccessResponse]
+  implicit val format: OFormat[SubmitGIRSuccessResponse] = Json.format[SubmitGIRSuccessResponse]
 }
 
 case class GIRSuccess(processingDate: String)
 
 object GIRSuccess {
-  given format: OFormat[GIRSuccess] = Json.format[GIRSuccess]
+  implicit val format: OFormat[GIRSuccess] = Json.format[GIRSuccess]
 }

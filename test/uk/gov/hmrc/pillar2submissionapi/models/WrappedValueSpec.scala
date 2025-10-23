@@ -26,7 +26,7 @@ class WrappedValueSpec extends AnyWordSpec with Matchers {
   case class TestValue(value: String) extends WrappedValue[String]
 
   object TestValue {
-    given format: Format[TestValue] = WrappedValueFormat[String, TestValue](TestValue.apply)
+    implicit val format: Format[TestValue] = WrappedValueFormat[String, TestValue](TestValue.apply)
   }
 
   "WrappedValue" should {
@@ -60,7 +60,7 @@ class WrappedValueSpec extends AnyWordSpec with Matchers {
     "work with different underlying types" in {
       case class IntValue(value: Int) extends WrappedValue[Int]
       object IntValue {
-        given format: Format[IntValue] = WrappedValueFormat[Int, IntValue](IntValue.apply)
+        implicit val format: Format[IntValue] = WrappedValueFormat[Int, IntValue](IntValue.apply)
       }
 
       val intValue = IntValue(42)

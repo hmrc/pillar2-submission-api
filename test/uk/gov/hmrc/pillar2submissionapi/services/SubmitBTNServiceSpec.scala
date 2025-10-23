@@ -39,7 +39,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "submitBTN() called with a valid tax return" should {
       "return 201 CREATED response" in {
 
-        when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+        when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
 
         val result = await(submitBTNService.submitBTN(validBTNSubmission))
@@ -52,7 +52,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
   "submitBTN() unexpected 201 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
@@ -62,7 +62,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
   "submitBTN() valid 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return")), Map.empty)))
 
       intercept[DownstreamValidationError](await(submitBTNService.submitBTN(validBTNSubmission)))
@@ -72,7 +72,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
   "submitBTN() unexpected 422 response back" should {
     "Runtime exception thrown" in {
 
-      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
@@ -82,7 +82,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
   "submitBTN() 500 response back" should {
     "Runtime exception thrown " in {
 
-      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))

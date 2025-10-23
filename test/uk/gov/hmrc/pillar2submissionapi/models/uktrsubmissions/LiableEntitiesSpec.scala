@@ -47,7 +47,7 @@ class LiableEntitiesSpec extends AnyWordSpec with Matchers {
     "extend WrappedValue trait" in {
       val entity   = createTestEntity()
       val entities = LiableEntities(NonEmptyList.of(entity))
-      entities shouldBe a[WrappedValue[?]]
+      entities shouldBe a[WrappedValue[_]]
     }
   }
 
