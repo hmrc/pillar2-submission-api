@@ -24,7 +24,7 @@
 #   content:
 #     application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest'
 # responses:
 #   201:
 #      description: Test Organisation Created
@@ -156,7 +156,7 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #   content:
 #     application/json:
 #         schema:
-#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation'
+#           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest'
 # responses:
 #   200:
 #      description: Test Organisation Updated
