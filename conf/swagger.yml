@@ -1092,7 +1092,6 @@ components:
         accountingPeriod:
           startDate: "2024-01-01"
           endDate: "2024-12-31"
-        lastUpdated: "2024-01-01T12:00:00Z"
     responses.TestOrganisationResponseExample:
       summary: Response example
       value:
