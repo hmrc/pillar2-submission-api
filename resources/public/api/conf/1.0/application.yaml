@@ -1933,17 +1933,17 @@ components:
           electionUTPRSingleMember: false
           numberSubGroupDTT: 4
           numberSubGroupUTPR: 5
-          totalLiability: 34968.98
+          totalLiability: 26567.89
           totalLiabilityDTT: 26567.89
-          totalLiabilityIIR: 3400
-          totalLiabilityUTPR: 5000.99
+          totalLiabilityIIR: 0
+          totalLiabilityUTPR: 0
           liableEntities:
           - ukChargeableEntityName: Conew PLC
             idType: UTR
             idValue: xyz
             amountOwedDTT: 26567.89
-            amountOwedIIR: 3400
-            amountOwedUTPR: 5000.99
+            amountOwedIIR: 0
+            amountOwedUTPR: 0
     requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
       summary: Liability Return - Domestic Only with 2 Entities
       value:
