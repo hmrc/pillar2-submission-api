@@ -10,7 +10,8 @@ object PublishTestOnlyOas {
       val targetDir  = baseDirectory.value / "resources/public/api/conf/1.0/testOnly"
       val targetFile = targetDir / "application.yaml"
 
-      if !sourceFile.exists then {
+      // scalafmt: { rewrite.scala3.newSyntax.control = false }
+      if (!sourceFile.exists) {
         sys.error(s"Source file not found: ${sourceFile.getAbsolutePath}")
       }
 
