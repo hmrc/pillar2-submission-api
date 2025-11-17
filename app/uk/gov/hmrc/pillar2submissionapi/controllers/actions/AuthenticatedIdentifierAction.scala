@@ -18,9 +18,9 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
