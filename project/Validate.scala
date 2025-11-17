@@ -12,7 +12,7 @@ object Validate {
       val parser          = new OpenAPIV3Parser()
       val result          = parser.readLocation(openApiFilePath.toString, null, null)
 
-      if (!result.getMessages.isEmpty) sys.error(s"Validation failed:\n${result.getMessages.asScala.mkString("\n")}")
+      if !result.getMessages.isEmpty then sys.error(s"Validation failed:\n${result.getMessages.asScala.mkString("\n")}")
 
     }
   )
