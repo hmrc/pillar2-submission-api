@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 case class EntityName(value: String) extends WrappedValue[String]

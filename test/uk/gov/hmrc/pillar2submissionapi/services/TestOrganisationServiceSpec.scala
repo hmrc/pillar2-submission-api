@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.pillar2submissionapi.services
 
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.models.organisation._
+import uk.gov.hmrc.pillar2submissionapi.models.organisation.*
 
 import java.time.{Instant, LocalDate}
 import scala.concurrent.Future

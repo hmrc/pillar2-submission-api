@@ -17,11 +17,11 @@
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
-import play.api.http.HttpVerbs._
+import play.api.http.HttpVerbs.*
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 

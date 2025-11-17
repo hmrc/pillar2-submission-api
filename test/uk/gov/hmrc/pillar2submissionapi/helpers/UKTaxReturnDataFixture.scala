@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 import cats.data.NonEmptyList
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.ReturnType.NIL_RETURN
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.*
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
 import java.time.{LocalDate, ZoneId, ZonedDateTime}

@@ -20,12 +20,12 @@ import junit.framework.TestCase.assertEquals
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.libs.json.Json
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
-import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.*
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}

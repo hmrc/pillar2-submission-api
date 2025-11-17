@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.helpers
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.SubmissionType.BTN
-import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.*
 
 import java.time.{LocalDate, ZonedDateTime}
 
