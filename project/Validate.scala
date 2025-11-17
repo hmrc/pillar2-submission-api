@@ -1,12 +1,12 @@
 import _root_.io.swagger.v3.parser.OpenAPIV3Parser
-import sbt.Keys._
-import sbt._
+import sbt.Keys.*
+import sbt.*
 
 import scala.jdk.CollectionConverters.asScalaBufferConverter
 
 object Validate {
   val validateOas = taskKey[Unit]("Validate OpenAPI specification")
-  def settings: Seq[Setting[_]] = Seq(
+  def settings: Seq[Setting[?]] = Seq(
     validateOas := {
       val openApiFilePath = baseDirectory.value / "target/swagger/application.yaml"
       val parser          = new OpenAPIV3Parser()
