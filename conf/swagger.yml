@@ -82,7 +82,7 @@ paths:
               LiabilityReturnDomesticOneEntityUkGaap:
                 $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap"
               LiabilityReturnDomesticTwoEntities:
-                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"       
+                $ref: "#/components/examples/requests.UKTRLiabilityReturnDomesticOnlyTwoEntities"
       responses:
         "201":
           description: UK Tax Return Submission Created
@@ -162,7 +162,7 @@ paths:
       summary: Amend UK Tax Return
       description: |
         Amends a UK tax return submitted for a specified accounting period.   
-        
+
         ### Error Codes
         <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>
       requestBody:
@@ -628,7 +628,7 @@ paths:
                 Invalid Credentials:
                   $ref: "#/components/examples/errors.InvalidCredentials"
       security:
-        - userRestricted: [ write:pillar2 ]
+        - userRestricted: [write:pillar2]
     get:
       summary: Retrieve Overseas Return Notification
       description: |
@@ -906,114 +906,217 @@ paths:
                   $ref: "#/components/examples/errors.TestOrg.NotFound"
       security:
         - userRestricted: [write:pillar2]
-  /setup/globe-information-return :
-      post:
-        summary: Create A Test GloBE Information Return
-        description: |
-          Creates a GloBE Information Return for a test organisation.
-        requestBody:
+  /setup/globe-information-return:
+    post:
+      summary: Create A Test GloBE Information Return
+      description: |
+        Creates a GloBE Information Return for a test organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              CreateTestGlobeInformationReturnRequestExample:
+                $ref: "#/components/examples/requests.CreateTestGlobeInformationReturnRequestExample"
+      responses:
+        "201":
+          description: Globe Information Return Created
           content:
             application/json:
               examples:
-                CreateTestGlobeInformationReturnRequestExample:
-                  $ref: "#/components/examples/requests.CreateTestGlobeInformationReturnRequestExample"
-        responses:
-          "201":
-            description: Globe Information Return Created
-            content:
-              application/json:
-                examples:
-                  CreateTestGlobeInformationReturnResponseExample:
-                    $ref: "#/components/examples/responses.CreateTestGlobeInformationReturnResponseExample"
-          "400":
-            description: Bad Request
-            content:
-              application/json:
-                examples:
-                  Invalid JSON:
-                    $ref: "#/components/examples/errors.InvalidJson"
-                  Empty Body:
-                    $ref: "#/components/examples/errors.EmptyBody"
-                  Incorrect Header Value:
-                    $ref: "#/components/examples/errors.IncorrectHeaderValue"
-          "401":
-            description: Unauthorized
-            content:
-              application/json:
-                examples:
-                  Missing Credentials:
-                    $ref: "#/components/examples/errors.MissingCredentials"
-                  Invalid Credentials:
-                    $ref: "#/components/examples/errors.InvalidCredentials"
-          "403":
-            description: Forbidden
-            content:
-              application/json:
-                examples:
-                  Invalid Scope:
-                    $ref: "#/components/examples/errors.InvalidScope"
-          "422":
-            description: Unprocessable Entity
-            content:
-              application/json:
-                examples:
-                  Invalid Request:
-                    $ref: "#/components/examples/errors.Submission.InvalidRequest"
-                  No Active Subscription Found:
-                    $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
-                  Tax Obligation Fulfilled:
-                    $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
-          "500":
-            description: Internal Server Error
-            content:
-              application/json:
-                examples:
-                  Generic Server Error:
-                    $ref: "#/components/examples/errors.Submission.GenericServerError"
-                  No Subscription Data:
-                    $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-        security:
-          - userRestricted: [write:pillar2]
-
+                CreateTestGlobeInformationReturnResponseExample:
+                  $ref: "#/components/examples/responses.CreateTestGlobeInformationReturnResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Active Subscription Found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+                Tax Obligation Fulfilled:
+                  $ref: "#/components/examples/errors.Submission.TaxObligationFulfilled"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+      security:
+        - userRestricted: [write:pillar2]
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
       properties:
+        accountingPeriodFrom:
+          description: The calendar date upon which a business' accounting period begins.
+        accountingPeriodTo:
+          description: The calendar date upon which a business' accounting period ends.
+        filedDateGIR:
+          description: The date upon which the GloBE Information Return (GIR) was filed or submitted.
         countryGIR:
           type: string
           minLength: 1
           maxLength: 2
+          description: The country in which the GloBE Information Return (GIR) was submitted.
         reportingEntityName:
           type: string
           minLength: 1
           maxLength: 200
+          description: The name of the company that submitted the Overseas Return Notification (ORN).
         TIN:
           type: string
           minLength: 1
           maxLength: 200
+          description: The Tax Identification Number of the entity submitting the Overseas Return Notification.
         issuingCountryTIN:
           type: string
           minLength: 1
           maxLength: 2
+          description: The country in which the Tax Identification Number was issued.
       required:
-      - accountingPeriodFrom
-      - accountingPeriodTo
-      - filedDateGIR
-      - countryGIR
-      - reportingEntityName
-      - TIN
-      - issuingCountryTIN
+        - accountingPeriodFrom
+        - accountingPeriodTo
+        - filedDateGIR
+        - countryGIR
+        - reportingEntityName
+        - TIN
+        - issuingCountryTIN
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSuccessResponse:
+      properties:
+        processingDate:
+          description: The date and time that an event took place.
+        formBundleNumber:
+          description: A unique identifier for the request, to be noted and retained in case amendments need to be filed against the return.
+    uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNRetrieveSuccessResponse:
+      properties:
+        processingDate:
+          description: The date and time that an event took place.
+        accountingPeriodFrom:
+          description: The calendar date upon which a business' accounting period begins.
+        accountingPeriodTo:
+          description: The calendar date upon which a business' accounting period ends.
+        filedDateGIR:
+          description: The date upon which the GloBE Information Return (GIR) was filed or submitted.
+        countryGIR:
+          description: The country in which the GloBE Information Return (GIR) was submitted.
+        reportingEntityName:
+          description: The name of the company that submitted the Overseas Return Notification (ORN).
+        TIN:
+          description: The Tax Identification Number of the entity that submitted the Overseas Return Notification.
+        issuingCountryTIN:
+          description: The country in which the Tax Identification Number was issued.
+    uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission:
+      properties:
+        accountingPeriodFrom:
+          description: The calendar date upon which a business' accounting period begins.
+        accountingPeriodTo:
+          description: The calendar date upon which a business' accounting period ends.
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse:
+      properties:
+        processingDate:
+          description: The date and time that an event took place.
+        formBundleNumber:
+          description: A unique identifier for the request, to be noted and retained in case amendments need to be filed against the return.
+        chargeReference:
+          description: Identifier for any liabilities specified in the return. Nil returns do not return a charge reference.
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData:
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
+      properties:
+        accountingPeriodFrom:
+          description: The calendar date upon which a business' accounting period begins.
+        accountingPeriodTo:
+          description: The calendar date upon which a business' accounting period ends.
+        obligationMTT:
+          description: Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`.
+        electionUKGAAP:
+          description: A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`.
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn:
+      properties:
+        accountingPeriodFrom:
+          description: The calendar date upon which a business' accounting period begins.
+        accountingPeriodTo:
+          description: The calendar date upon which a business' accounting period ends.
+        obligationMTT:
+          description: Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`.
+        electionUKGAAP:
+          description: A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`.
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn:
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
+    uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData:
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId:
+      properties:
+        pillar2Id:
+          description: A unique identifier for Pillar 2. Each company will have a different ID, allocated by HMRC.
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
+      description: The period in which a group would be submitting their Pillar 2 returns to HMRC. This period of time varies amongst different businesses. It is effectively their "business year", and is expected to be the same as their accounting period with Pillar 2.
+      properties:
+        startDate:
+          description: The start date of the accounting period.
+        endDate:
+          description: The end date of the accounting period.
+        underEnquiry:
+          description: Specifies whether an HMRC enquiry into the group is underway. The group will have been notified before the enquiry begins. If a group is under enquiry, then the value will be `true`. In this time period, amendments to a UKTR and submission of a BTN may not be processed depending on the outcome of the enquiry.
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails:
+      description: Contains information about an organisation that is registered to Pillar 2.
+      properties:
+        domesticOnly:
+          description: Specifies whether a group only operates in the UK, or whether it has any companies within it which operate abroad. For a company that is registered in the UK but has offices which are based abroad, the value will be `false`.
+        organisationName:
+          description: The full name of a company registered on Pillar 2.
+        registrationDate:
+          description: The date that a group successfully registers and subscribes to Pillar 2 with HMRC.
     Submission:
       properties:
         submissionType:
           type: string
           enum:
-          - UKTR_CREATE
-          - UKTR_AMEND
-          - ORN_CREATE
-          - ORN_AMEND
-          - BTN
-          - GIR
+            - UKTR_CREATE
+            - UKTR_AMEND
+            - ORN_CREATE
+            - ORN_AMEND
+            - BTN
+            - GIR
         receivedDate:
           type: string
           format: date-time
@@ -1021,9 +1124,10 @@ components:
           type: string
           nullable: true
       required:
-      - submissionType
-      - receivedDate
+        - submissionType
+        - receivedDate
     AccountingPeriodDetails:
+      description: Contains the details of an accounting period. This includes when the period starts and ends, alongside any obligations and submissions.
       properties:
         startDate:
           type: string
@@ -1041,23 +1145,23 @@ components:
           items:
             $ref: "#/components/schemas/Obligation"
       required:
-      - startDate
-      - endDate
-      - dueDate
-      - underEnquiry
-      - obligations
+        - startDate
+        - endDate
+        - dueDate
+        - underEnquiry
+        - obligations
     Obligation:
       properties:
         obligationType:
           type: string
           enum:
-          - UKTR
-          - GIR
+            - UKTR
+            - GIR
         status:
           type: string
           enum:
-          - Open
-          - Fulfilled
+            - Open
+            - Fulfilled
         canAmend:
           type: boolean
         submissions:
@@ -1065,10 +1169,10 @@ components:
           items:
             $ref: "#/components/schemas/Submission"
       required:
-      - obligationType
-      - status
-      - canAmend
-      - submissions
+        - obligationType
+        - status
+        - canAmend
+        - submissions
     ObligationsAndSubmissionsSuccessResponse:
       properties:
         processingDate:
@@ -1079,8 +1183,8 @@ components:
           items:
             $ref: "#/components/schemas/AccountingPeriodDetails"
       required:
-      - processingDate
-      - accountingPeriodDetails
+        - processingDate
+        - accountingPeriodDetails
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example
@@ -1120,7 +1224,6 @@ components:
         reportingEntityName: Newco PLC
         TIN: US12345678
         issuingCountryTIN: US
-
     responses.BTNSuccessResponseExample:
       summary: "Success response"
       value:
@@ -1129,7 +1232,6 @@ components:
       summary: "Success response"
       value:
         processingDate: "2026-06-26T09:26:17Z"
-
     requests.CreateTestGlobeInformationReturnRequestExample:
       summary: "Request example"
       value:
@@ -1145,8 +1247,6 @@ components:
         electionUKGAAP: false
         liabilities:
           returnType: NIL_RETURN
-
-
     #nil return - domestic only w/ uk gaap
     requests.UKTRNilReturnDomesticOnlyWithUkGaap:
       summary: "Nil Return - Domestic Only with UK GAAP"
@@ -1157,7 +1257,6 @@ components:
         electionUKGAAP: true
         liabilities:
           returnType: NIL_RETURN
-
     #nil return - domestic only w/o uk gaap
     requests.UKTRNilReturnDomesticOnlyWithoutUkGaap:
       summary: "Nil Return - Domestic Only without UK GAAP"
@@ -1168,7 +1267,6 @@ components:
         electionUKGAAP: false
         liabilities:
           returnType: NIL_RETURN
-
     #liability return - mne and uk w/ 1 entity
     requests.UKTRLiabilityReturnMneAndUkWithOneEntity:
       summary: "Liability Return - MNE and UK with 1 Entity"
@@ -1187,14 +1285,12 @@ components:
           totalLiabilityIIR: 3400
           totalLiabilityUTPR: 6000.5
           liableEntities:
-          - ukChargeableEntityName: Newco PLC
-            idType: CRN
-            idValue: xyz
-            amountOwedDTT: 5000.99
-            amountOwedIIR: 3400
-            amountOwedUTPR: 6000.5
-
-
+            - ukChargeableEntityName: Newco PLC
+              idType: CRN
+              idValue: xyz
+              amountOwedDTT: 5000.99
+              amountOwedIIR: 3400
+              amountOwedUTPR: 6000.5
     #liability return - mne and uk w/ 2 entities
     requests.UKTRLiabilityReturnMneAndUkWithTwoEntities:
       summary: "Liability Return - MNE and UK with 2 Entities"
@@ -1213,19 +1309,18 @@ components:
           totalLiabilityIIR: 5000
           totalLiabilityUTPR: 9400.99
           liableEntities:
-          - ukChargeableEntityName: Newco PLC
-            idType: CRN
-            idValue: xyz
-            amountOwedDTT: 4567
-            amountOwedIIR: 3000
-            amountOwedUTPR: 4000.99
-          - ukChargeableEntityName: Conew PLC
-            idType: UTR
-            idValue: xyz
-            amountOwedDTT: 22000.89
-            amountOwedIIR: 2000
-            amountOwedUTPR: 5400
-
+            - ukChargeableEntityName: Newco PLC
+              idType: CRN
+              idValue: xyz
+              amountOwedDTT: 4567
+              amountOwedIIR: 3000
+              amountOwedUTPR: 4000.99
+            - ukChargeableEntityName: Conew PLC
+              idType: UTR
+              idValue: xyz
+              amountOwedDTT: 22000.89
+              amountOwedIIR: 2000
+              amountOwedUTPR: 5400
     #liability return - uk only - domestic flag, 1 entity and uk gaap
     requests.UKTRLiabilityReturnDomesticOnlyOneEntityAndUkGaap:
       summary: "Liability Return - Domestic Only with 1 Entity and UK GAAP"
@@ -1244,13 +1339,12 @@ components:
           totalLiabilityIIR: 0
           totalLiabilityUTPR: 0
           liableEntities:
-          - ukChargeableEntityName: Conew PLC
-            idType: UTR
-            idValue: xyz
-            amountOwedDTT: 26567.89
-            amountOwedIIR: 0
-            amountOwedUTPR: 0
-
+            - ukChargeableEntityName: Conew PLC
+              idType: UTR
+              idValue: xyz
+              amountOwedDTT: 26567.89
+              amountOwedIIR: 0
+              amountOwedUTPR: 0
     #liability return - uk only - domestic flag, 2 entities
     requests.UKTRLiabilityReturnDomesticOnlyTwoEntities:
       summary: "Liability Return - Domestic Only with 2 Entities"
@@ -1269,19 +1363,18 @@ components:
           totalLiabilityIIR: 0
           totalLiabilityUTPR: 0
           liableEntities:
-          - ukChargeableEntityName: Newco PLC
-            idType: CRN
-            idValue: xyz
-            amountOwedDTT: 5000
-            amountOwedIIR: 0
-            amountOwedUTPR: 0
-          - ukChargeableEntityName: Conew PLC
-            idType: CRN
-            idValue: xyz
-            amountOwedDTT: 5000
-            amountOwedIIR: 0
-            amountOwedUTPR: 0
-
+            - ukChargeableEntityName: Newco PLC
+              idType: CRN
+              idValue: xyz
+              amountOwedDTT: 5000
+              amountOwedIIR: 0
+              amountOwedUTPR: 0
+            - ukChargeableEntityName: Conew PLC
+              idType: CRN
+              idValue: xyz
+              amountOwedDTT: 5000
+              amountOwedIIR: 0
+              amountOwedUTPR: 0
     responses.UKTRSuccessResponseWithCrnExample:
       summary: Liability Success response
       value:
@@ -1341,42 +1434,42 @@ components:
     errors.InvalidDateRange:
       summary: Invalid date range
       value:
-        code: 'INVALID_DATE_RANGE'
+        code: "INVALID_DATE_RANGE"
         message: Invalid date range
     errors.InvalidDateFormat:
       summary: Invalid date format
       value:
-        code: 'INVALID_DATE_FORMAT'
+        code: "INVALID_DATE_FORMAT"
         message: Invalid date format
     errors.InvalidJson:
       summary: Invalid JSON payload
       value:
-        code: 'INVALID_JSON'
+        code: "INVALID_JSON"
         message: Invalid JSON payload
     errors.EmptyBody:
       summary: Empty request body
       value:
-        code: 'EMPTY_REQUEST_BODY'
+        code: "EMPTY_REQUEST_BODY"
         message: Empty request body
     errors.Submission.InvalidRequest:
       summary: Invalid request
       value:
-        code: '003'
+        code: "003"
         message: Request could not be processed
     errors.Submission.NoSubscriptionData:
       summary: No subscription data
       value:
-        code: '004'
+        code: "004"
         message: No Pillar2 subscription found for -pillar2Id
     errors.Submission.MissingPillar2Header:
       summary: Missing Pillar 2 header
       value:
-        code: 'MISSING_HEADER'
+        code: "MISSING_HEADER"
         message: Please provide the X-Pillar2-Id header
     errors.IncorrectHeaderValue:
       summary: Pillar 2 header does not match that in the bearer token
       value:
-        code: 'INCORRECT_HEADER_VALUE'
+        code: "INCORRECT_HEADER_VALUE"
         message: X-Pillar2-Id Header value does not match the bearer token
     errors.Submission.GenericServerError:
       summary: Generic server error
@@ -1386,74 +1479,73 @@ components:
     errors.InvalidScope:
       summary: Invalid scope
       value:
-        code: 'INVALID_SCOPE'
+        code: "INVALID_SCOPE"
         message: Can not access the required resource. Ensure this token has all the required scopes.
     errors.Submission.InvalidReturn:
       summary: Invalid return
       value:
-        code: '093'
+        code: "093"
         message: Invalid Return
     errors.Submission.TaxObligationFulfilled:
       summary: Tax obligation fulfilled
       value:
-        code: '044'
+        code: "044"
         message: Tax Obligation already fulfilled
     errors.Submission.NoActiveSubscription:
       summary: No active subscription
       value:
-        code: '063'
+        code: "063"
         message: Business Partner does not have an Active Subscription for this Regime
     errors.Submission.DuplicateSubmission:
       summary: Duplicate submission
       value:
-        code: '004'
+        code: "004"
         message: Duplicate submission
     errors.Submission.InvalidUTPR:
       summary: Invalid UTPR Election
       value:
-        code: '095'
+        code: "095"
         message: Invalid UTPR Election
     errors.Submission.InvalidTotalLiabilityIIR:
       summary: Invalid Total Liability IIR
       value:
-        code: '097'
+        code: "097"
         message: Invalid Total Liability IIR
     errors.Submission.InvalidDTT:
       summary: Invalid DTT Election
       value:
-        code: '094'
+        code: "094"
         message: Invalid DTT Election
     errors.Submission.InvalidTotalLiabilityUTPR:
       summary: Invalid Total Liability UTPR
       value:
-        code: '099'
+        code: "099"
         message: Invalid Total Liability UTPR
     errors.Submission.InvalidTotalLiability:
       summary: Invalid Total Liability
       value:
-        code: '096'
+        code: "096"
         message: Invalid Total Liability
     errors.Submission.InvalidTotalLiabilityDTT:
       summary: Invalid Total Liability DTT
       value:
-        code: '098'
+        code: "098"
         message: Invalid Total Liability DTT
     errors.Submission.AccountingPeriodUnderEnquiry:
       summary: Accounting Period Under Enquiry
       value:
-        code: '100'
+        code: "100"
         message: Accounting period under enquiry
     errors.Submission.NoDataFound:
       summary: No data found
       value:
-        code: '014'
+        code: "014"
         message: No data found
     errors.Retrieval.NotFound:
       summary: No data found
       value:
-        code: 'NOT_FOUND'
+        code: "NOT_FOUND"
         message: The requested ORN could not be found
-
   securitySchemes:
     userRestricted:
       type: oauth2

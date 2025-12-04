@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.166.0
+  version: 0.168.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1432,20 +1432,28 @@ components:
       properties:
         processingDate:
           type: string
+          description: The date and time that an event took place.
         accountingPeriodFrom:
           type: string
+          description: The calendar date upon which a business' accounting period begins.
         accountingPeriodTo:
           type: string
+          description: The calendar date upon which a business' accounting period ends.
         filedDateGIR:
           type: string
+          description: The date upon which the GloBE Information Return (GIR) was filed or submitted.
         countryGIR:
           type: string
+          description: The country in which the GloBE Information Return (GIR) was submitted.
         reportingEntityName:
           type: string
+          description: The name of the company that submitted the Overseas Return Notification (ORN).
         TIN:
           type: string
+          description: The Tax Identification Number of the entity that submitted the Overseas Return Notification.
         issuingCountryTIN:
           type: string
+          description: The country in which the Tax Identification Number was issued.
       required:
       - processingDate
       - accountingPeriodFrom
@@ -1459,8 +1467,10 @@ components:
       properties:
         processingDate:
           type: string
+          description: The date and time that an event took place.
         formBundleNumber:
           type: string
+          description: "A unique identifier for the request, to be noted and retained in case amendments need to be filed against the return."
       required:
       - processingDate
       - formBundleNumber
@@ -1469,28 +1479,35 @@ components:
         accountingPeriodFrom:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period begins.
         accountingPeriodTo:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period ends.
         filedDateGIR:
           type: string
           format: date
+          description: The date upon which the GloBE Information Return (GIR) was filed or submitted.
         countryGIR:
           type: string
           minLength: 1
           maxLength: 2
+          description: The country in which the GloBE Information Return (GIR) was submitted.
         reportingEntityName:
           type: string
           minLength: 1
           maxLength: 200
+          description: The name of the company that submitted the Overseas Return Notification (ORN).
         TIN:
           type: string
           minLength: 1
           maxLength: 200
+          description: The Tax Identification Number of the entity submitting the Overseas Return Notification.
         issuingCountryTIN:
           type: string
           minLength: 1
           maxLength: 2
+          description: The country in which the Tax Identification Number was issued.
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
@@ -1510,9 +1527,11 @@ components:
         accountingPeriodFrom:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period begins.
         accountingPeriodTo:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period ends.
       required:
       - accountingPeriodFrom
       - accountingPeriodTo
@@ -1521,11 +1540,14 @@ components:
         processingDate:
           type: string
           format: date-time
+          description: The date and time that an event took place.
         formBundleNumber:
           type: string
+          description: "A unique identifier for the request, to be noted and retained in case amendments need to be filed against the return."
         chargeReference:
           type: string
           nullable: true
+          description: Identifier for any liabilities specified in the return. Nil returns do not return a charge reference.
       required:
       - processingDate
       - formBundleNumber
@@ -1537,18 +1559,26 @@ components:
           - NIL_RETURN
       required:
       - returnType
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn:
       properties:
         accountingPeriodFrom:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period begins.
         accountingPeriodTo:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period ends.
         obligationMTT:
           type: boolean
+          description: "Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`."
         electionUKGAAP:
           type: boolean
+          description: "A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`."
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn"
       required:
@@ -1608,18 +1638,26 @@ components:
       - totalLiabilityIIR
       - totalLiabilityUTPR
       - liableEntities
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionData:
       properties:
         accountingPeriodFrom:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period begins.
         accountingPeriodTo:
           type: string
           format: date
+          description: The calendar date upon which a business' accounting period ends.
         obligationMTT:
           type: boolean
+          description: "Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`."
         electionUKGAAP:
           type: boolean
+          description: "A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`."
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData"
       required:
@@ -1628,6 +1666,10 @@ components:
       - obligationMTT
       - electionUKGAAP
       - liabilities
+      description: |
+        A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
+        For the groups which do not need to submit a liability return, the value will be nil.
+        For the groups which do need to submit an annual liability return, then the information found in the array will need to be populated.
     uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSuccess:
       properties:
         processingDate:
@@ -1671,6 +1713,7 @@ components:
       properties:
         pillar2Id:
           type: string
+          description: "A unique identifier for Pillar 2. Each company will have a different ID, allocated by HMRC."
         organisation:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation"
       required:
@@ -1681,28 +1724,36 @@ components:
         startDate:
           type: string
           format: date
+          description: The start date of the accounting period.
         endDate:
           type: string
           format: date
+          description: The end date of the accounting period.
         underEnquiry:
           type: boolean
           nullable: true
+          description: "Specifies whether an HMRC enquiry into the group is underway. The group will have been notified before the enquiry begins. If a group is under enquiry, then the value will be `true`. In this time period, amendments to a UKTR and submission of a BTN may not be processed depending on the outcome of the enquiry."
       required:
       - startDate
       - endDate
+      description: "The period in which a group would be submitting their Pillar 2 returns to HMRC. This period of time varies amongst different businesses. It is effectively their \"business year\", and is expected to be the same as their accounting period with Pillar 2."
     uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails:
       properties:
         domesticOnly:
           type: boolean
+          description: "Specifies whether a group only operates in the UK, or whether it has any companies within it which operate abroad. For a company that is registered in the UK but has offices which are based abroad, the value will be `false`."
         organisationName:
           type: string
+          description: The full name of a company registered on Pillar 2.
         registrationDate:
           type: string
           format: date
+          description: The date that a group successfully registers and subscribes to Pillar 2 with HMRC.
       required:
       - domesticOnly
       - organisationName
       - registrationDate
+      description: Contains information about an organisation that is registered to Pillar 2.
     uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest:
       properties:
         orgDetails:
@@ -1733,6 +1784,7 @@ components:
       - submissionType
       - receivedDate
     AccountingPeriodDetails:
+      description: "Contains the details of an accounting period. This includes when the period starts and ends, alongside any obligations and submissions."
       properties:
         startDate:
           type: string
