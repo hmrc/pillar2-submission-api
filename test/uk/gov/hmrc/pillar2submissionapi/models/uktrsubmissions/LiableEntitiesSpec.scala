@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 import cats.data.NonEmptyList
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 import scala.math.BigDecimal

@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import play.api.Logging
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
