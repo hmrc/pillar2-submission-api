@@ -1,90 +1,131 @@
+
 # pillar2-submission-api
-Backend microservice for Pillar 2  project. Pillar 2 refers to the Global Minimum Tax being introduced by the Organisation for Economic Cooperation and Development (OECD).
 
-The Pillar 2 Tax will ensure that global Multinational Enterprises (MNEs) with a turnover of >€750m are subject to a minimum Effective Tax Rate of 15%, i.e. a top-up tax for Medium to Large MNEs.
+Backend microservice for the Pillar 2 project. Pillar 2 refers to the Global Minimum Tax being introduced by the Organisation for Economic Cooperation and Development (OECD).
 
-This microservice provides APIs for third-party applications to manage Pillar2 tax on behalf of corporations
-## Running the service locally
+The Pillar 2 Tax ensures that global Multinational Enterprises (MNEs) with a turnover of >€750m are subject to a minimum Effective Tax Rate of 15% (i.e., a top-up tax for Medium to Large MNEs).
 
-```shell
+This microservice provides APIs for third-party applications to manage Pillar 2 tax obligations and submissions on behalf of corporations.
+
+## Running the Service
+
+The service runs on port `10054` by default.
+
+### Local
+
+To run the application locally:
+
+```bash
 sbt run
 ```
 
-Test-only route:
+### Service Manager
 
-```shell
-sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes'
-```
+You can use [Service Manager](https://github.com/hmrc/service-manager) to run this service along with its dependencies:
 
-To run locally:
-
-***Not sure if this works!!!!***
-
-Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
-
-
-## Redirect URL:
-    http://localhost:10050/report-pillar2-top-up-taxes
-
-## Affinity Group:
-    Organisation
-
-### To check test coverage:
-
-```shell
-sbt scalafmt test:scalafmt it:test::scalafmt coverage test it/test coverageReport`
-```
-
-### Integration and unit tests
-
-To run unit tests:
-```shell
-sbt test
-```
-To run Integration tests:
-```shell
-sbt it/test
-```
-
-### Using Service Manager
-
-You can use service manage to run all dependent microservices using the command below
-```shell
+```bash
 sm2 --start PILLAR2_ALL
 ```
-To stop services:
-```shell
+
+To stop the services:
+
+```bash
 sm2 --stop PILLAR2_ALL
 ```
 
-## Testing in Development
+## Testing
 
-Follow the guide to [Test the Beta API in Development](https://docs.tax.service.gov.uk/mdtp-handbook/documentation/create-and-manage-a-developer-hub-api/test-the-beta-api-in-dev.html). This API is a user-restricted resource. You will also need the following:
+### Unit Tests
 
-    <context>  : organisations/pillar-two
-    <resource> : RESTAdapter/plr/<endpoint>
-    <endpoint> : the endpoint being tested
+Run unit tests:
 
-## Generation, Validation and Publishing
-To ensure API documentation alignment with code, we generate the OpenAPI specification (OAS) directly from the route definitions using an SBT task, reducing risk and manual effort.
-
-### Generation
-To generate the YAML OAS, run:
-```shell
-sbt routesToYamlOas
+```bash
+sbt test
 ```
-The generated OAS will include definitions based on the application's routes. The output folder is 'target/swagger' by default.
 
-### Validation
-To run basic validation on the generated OAS, run: 
-```shell
+### Integration Tests
+
+Run integration tests:
+
+```bash
+sbt it/test
+```
+
+### Test Coverage
+
+Generate a test coverage report:
+
+```bash
+sbt 'coverage; test; it/test; coverageReport'
+```
+
+## Code Style & Linting
+
+This project uses `scalafmt` and `scalafix` to ensure code consistency.
+
+To run linting checks:
+
+```bash
+sbt lint
+```
+
+To run pre-PR checks (includes formatting checks):
+
+```bash
+sbt prePrChecks
+```
+
+## API Documentation
+
+The API is documented using encryption-agnostic standard OpenAPI 3.0 specification.
+
+- **Source**: Route definitions and manual overrides in `conf/swagger.yml`.
+- **Generated Spec**: `resources/public/api/conf/1.0/application.yaml`.
+
+### Generating the Spec
+
+To generate the OpenAPI Specification (OAS) from the code:
+
+```bash
+sbt createOpenAPISpec
+```
+
+This command runs `routesToYamlOas` and validates the result. The spec is generated into the **`target/swagger`** directory.
+
+You will need to manually copy the generated file to replace the relevant configuration file in `resources/public/api/conf/1.0`.
+
+### Spec Versions
+
+The service maintains two versions of the OpenAPI specification:
+
+1. **Test Only Spec**: 
+   - **Path**: `resources/public/api/conf/1.0/testOnly/application.yaml`
+   - **Target**: QA Developer Hub (Development and QA environments)
+   - Contains new endpoints or changes under development that are not yet ready for the public Production Developer Hub.
+
+2. **Production Spec**: 
+   - **Path**: `resources/public/api/conf/1.0/application.yaml`
+   - **Target**: Production Developer Hub (Sandbox and Production environments)
+   - Contains the public-facing API definition.
+
+### Validating the Spec
+
+To validate the generated OAS against OpenAPI standards (this is also run as part of `createOpenAPISpec`):
+
+```bash
 sbt validateOas
 ```
-This validates the generated specification (from `sbt routesToYamlOas`) against OpenAPI standards to ensure compliance and detect any structural errors. It is, however, the API Platform team's advice that the OAS is also validated using [Swagged Editor](https://editor.swagger.io/) before publishing.
 
 ### Publishing
-Generating the OAS does not automatically publish it. If the new changes warrant publication e.g. endpoints introduced/deprecated, the validated OAS needs to replace the application.yaml file in 'resources/public/api/conf/1.0'. The API Platform will detect the new changes and process the file for publication on Developer Hub.
 
-### License
+If you have made changes to the API that need to be published to the Developer Hub, ensure the generated `application.yaml` is moved from the target directory to the appropriate location (Test Only or Production path above), reviewed, and merged into the main branch. The API Platform will adhere to its own release cycle to pick up changes.
 
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+## Bruno API Testing
+
+The `API Testing` directory contains [Bruno](https://www.usebruno.com/) collections to test the ecosystem.
+
+For detailed instructions on setup, authentication, and OAuth flows for all environments (Local, Dev, QA, etc.), please read the **[API Testing README](API%20Testing/README.md)**.
+
+## License
+
+This code is open source software licensed under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0.html).
