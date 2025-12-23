@@ -1,0 +1,21 @@
+meta {
+  name: Retrieve Account Activity
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{pillar2Url}}/account-activity?dateFrom=2024-01-01&dateTo=2025-01-01
+  body: json
+  auth: none
+}
+
+params:query {
+  dateFrom: 2024-01-01
+  dateTo: 2025-01-01
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
