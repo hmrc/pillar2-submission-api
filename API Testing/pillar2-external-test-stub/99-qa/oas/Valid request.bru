@@ -29,11 +29,47 @@ tests {
     expect(res.getStatus()).to.equal(200);
   });
   
-  test("should contain response body", function() {
-    expect(res.body).to.not.be.undefined;
-    // Response structure: { success: { processingDate, accountingPeriodDetails } }
-    const data = res.body.success || res.body;
-    expect(data.processingDate).to.not.be.undefined;
-    expect(data.accountingPeriodDetails).to.be.an('array');
+  test("should contain processingDate", function() {
+    expect(res.body.success.processingDate).to.not.be.undefined;
+  });
+  
+  test("should contain accountingPeriodDetails array", function() {
+    expect(res.body.success.accountingPeriodDetails).to.be.an('array');
+    expect(res.body.success.accountingPeriodDetails.length).to.be.greaterThan(0);
+  });
+  
+  test("accountingPeriodDetails should have required fields", function() {
+    const period = res.body.success.accountingPeriodDetails[0];
+    expect(period.startDate).to.not.be.undefined;
+    expect(period.endDate).to.not.be.undefined;
+    expect(period.dueDate).to.not.be.undefined;
+    expect(period.underEnquiry).to.not.be.undefined;
+    expect(period.obligations).to.be.an('array');
+  });
+  
+  test("obligations should have required fields", function() {
+    const period = res.body.success.accountingPeriodDetails[0];
+    expect(period.obligations.length).to.be.greaterThan(0);
+    const obligation = period.obligations[0];
+    expect(obligation.obligationType).to.not.be.undefined;
+    expect(obligation.status).to.not.be.undefined;
+    expect(obligation.canAmend).to.not.be.undefined;
+  });
+  
+  test("UKTR obligation should be Fulfilled with submissions", function() {
+    const period = res.body.success.accountingPeriodDetails[0];
+    const uktrObligation = period.obligations.find(o => o.obligationType === 'UKTR');
+    expect(uktrObligation).to.not.be.undefined;
+    expect(uktrObligation.status).to.equal('Fulfilled');
+    expect(uktrObligation.submissions).to.be.an('array');
+    expect(uktrObligation.submissions.length).to.be.greaterThan(0);
+  });
+  
+  test("submissions should have required fields", function() {
+    const period = res.body.success.accountingPeriodDetails[0];
+    const uktrObligation = period.obligations.find(o => o.obligationType === 'UKTR');
+    const submission = uktrObligation.submissions[0];
+    expect(submission.submissionType).to.not.be.undefined;
+    expect(submission.receivedDate).to.not.be.undefined;
   });
 }
