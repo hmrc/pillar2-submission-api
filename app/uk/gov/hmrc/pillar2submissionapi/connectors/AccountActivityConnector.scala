@@ -28,14 +28,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class AccountActivityConnector @Inject() (config: AppConfig, httpClient: HttpClientV2)(using ExecutionContext) {
 
   def getAccountActivity(activityFromDate: LocalDate, activityToDate: LocalDate)(using HeaderCarrier): Future[HttpResponse] = {
-    val queryParams = Map(
-      "dateFrom" -> activityFromDate.toString,
-      "dateTo"   -> activityToDate.toString
-    )
+    val url = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?dateFrom=$activityFromDate&dateTo=$activityToDate"
 
-    httpClient
-      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity$queryParams")
-      .execute[HttpResponse]
+    httpClient.get(url).execute[HttpResponse]
   }
 
 }

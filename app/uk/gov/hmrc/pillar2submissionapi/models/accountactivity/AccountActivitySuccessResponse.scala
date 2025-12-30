@@ -16,4 +16,56 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.accountactivity
 
-case class AccountActivitySuccessResponse()
+import play.api.libs.functional.syntax.given
+import play.api.libs.json.{Format, Json, __}
+
+import java.time.{LocalDate, LocalDateTime}
+
+case class AccountActivitySuccessResponse(processingDate: LocalDateTime, transactions: Seq[AccountActivityTransaction])
+
+case class AccountActivityTransaction(
+  transactionType:   String,
+  transactionDesc:   String,
+  startDate:         Option[LocalDate],
+  endDate:           Option[LocalDate],
+  accruedInterest:   Option[BigDecimal],
+  chargeRefNo:       Option[String],
+  transactionDate:   LocalDate,
+  dueDate:           Option[LocalDate],
+  originalAmount:    BigDecimal,
+  outstandingAmount: Option[BigDecimal],
+  clearedAmount:     Option[BigDecimal],
+  standOverAmount:   Option[BigDecimal],
+  appealFlag:        Option[Boolean],
+  clearingDetails:   Option[Seq[AccountActivityClearance]]
+)
+
+case class AccountActivityClearance(
+  transactionDesc: String,
+  chargeRefNo:     Option[String],
+  dueDate:         Option[LocalDate],
+  amount:          BigDecimal,
+  clearingDate:    LocalDate,
+  clearingReason:  Option[String]
+)
+
+object AccountActivitySuccessResponse {
+  given Format[AccountActivitySuccessResponse] = Format(
+    (
+      (__ \ "processingDate").read[LocalDateTime] and
+        (__ \ "transactionDetails").read[Seq[AccountActivityTransaction]]
+    )(AccountActivitySuccessResponse.apply),
+    (
+      (__ \ "processingDate").write[LocalDateTime] and
+        (__ \ "transactionDetails").write[Seq[AccountActivityTransaction]]
+    )(s => (s.processingDate, s.transactions))
+  )
+}
+
+object AccountActivityTransaction {
+  given Format[AccountActivityTransaction] = Json.format
+}
+
+object AccountActivityClearance {
+  given Format[AccountActivityClearance] = Json.format
+}

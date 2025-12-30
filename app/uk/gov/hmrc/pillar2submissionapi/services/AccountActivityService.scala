@@ -20,11 +20,11 @@ import cats.data.EitherT
 import cats.syntax.either.given
 import play.api.Logging
 import play.api.http.Status._
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
+import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.AccountActivityConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivity, AccountActivityErrorResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivityErrorResponse, AccountActivitySuccessResponse}
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -35,35 +35,40 @@ class AccountActivityService @Inject() (accountActivityConnector: AccountActivit
 
   def retrieveAccountActivity(activityFromDate: LocalDate, activityToDate: LocalDate)(using
     HeaderCarrier
-  ): EitherT[Future, Pillar2Error, AccountActivity] = EitherT {
+  ): EitherT[Future, Pillar2Error, AccountActivitySuccessResponse] = EitherT {
     accountActivityConnector
       .getAccountActivity(activityFromDate = activityFromDate, activityToDate = activityToDate)
       .map(handleResponse)
   }
 
-  private def handleResponse(response: HttpResponse): Either[Pillar2Error, AccountActivity] = response.status match {
+  private def handleResponse(response: HttpResponse): Either[Pillar2Error, AccountActivitySuccessResponse] = response.status match {
     case OK =>
-      Try(response.json).fold(
+      Try(response.json.validate[AccountActivitySuccessResponse]).fold(
         error =>
-          logger.error(s"Failed to parse json body from 200: $error")
+          logger.error(s"Exception reading json body from 200: $error")
           UnexpectedResponse.asLeft
         ,
-        parseSuccess(_)
+        {
+          case JsError(errors) =>
+            logger.error(s"Failed to parse json in 200: $errors")
+            UnexpectedResponse.asLeft
+          case JsSuccess(parsed, _) => parsed.asRight
+        }
       )
 
     case BAD_REQUEST | UNAUTHORIZED | INTERNAL_SERVER_ERROR =>
-      logger.warn(s"Expected error status ${response.status}, but mapping to 500.")
+      logger.warn(s"Hit error status ${response.status}, but mapping to 500.")
       UnexpectedResponse.asLeft
 
     case NOT_FOUND => AccountActivityNotFound.asLeft
 
     case UNPROCESSABLE_ENTITY =>
-      Try(response.json).fold(
+      Try(response.json.validate[AccountActivityErrorResponse]).fold(
         error =>
           logger.error(s"Failed to parse unprocessable entity body from 422: $error")
           UnexpectedResponse.asLeft
         ,
-        _.validate[AccountActivityErrorResponse] match {
+        {
           case JsSuccess(response, _) => DownstreamValidationError(code = response.code, message = response.message).asLeft
           case JsError(errors)        =>
             logger.error(s"Failed to parse unprocessable entity body from 422: $errors")
@@ -75,7 +80,4 @@ class AccountActivityService @Inject() (accountActivityConnector: AccountActivit
       logger.error(s"Unexpected status $unexpectedStatus from account activity")
       UnexpectedResponse.asLeft
   }
-
-  private def parseSuccess(body: JsValue): Either[Pillar2Error, AccountActivity] = ???
-
 }
