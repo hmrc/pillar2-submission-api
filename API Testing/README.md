@@ -116,6 +116,8 @@ The `create-bearer-token` script uses `auth-login-stub` to generate a token and 
 
 > **Note**: Only run individual requests against deployed environments to avoid rate limiting. Do not run full test suites.
 
+> **Also Note**: To test deployed environments, you must have valid Developer Hub credentials and a registered application on that environment.
+
 For deployed environments, you need to perform the full OAuth flow:
 
 #### Step 1: Create or Obtain a User
