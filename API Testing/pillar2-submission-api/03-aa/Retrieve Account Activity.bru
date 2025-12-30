@@ -1,0 +1,22 @@
+meta {
+  name: Retrieve Account Activity
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/account-activity?activityFromDate=01-01-2026&activityToDate=31-12-2026
+  body: none
+  auth: none
+}
+
+params:query {
+  activityFromDate: 01-01-2026
+  activityToDate: 31-12-2026
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+}
