@@ -11,21 +11,21 @@ post {
 }
 
 headers {
+  X-Pillar2-Id: {{testPlrId}}
   Authorization: valid bearerToken
   X-Receipt-Date: 2025-05-01T19:50:48Z
   correlationid: 6e6e8428-6682-482c-a691-ae16cf3df183
   X-Originating-System: MDTP
   X-Transmitting-System: HIP
-  X-Pillar2-Id: {{testPlrId}}
 }
 
 body:json {
   {
-    "accountingPeriodFrom": "01-01-2024",
-    "accountingPeriodTo": "31-12-2024",
+    "accountingPeriodFrom": "2024-001-01",
+    "accountingPeriodTo": "2024-12-31",
     "filedDateGIR": "2025-01-10",
     "countryGIR": "US",
-    "reportingEntityName": "Test Entity",
+    "reportingEntityName": "Newco PLC",
     "TIN": "US12345678",
     "issuingCountryTIN": "US"
   }
@@ -37,6 +37,8 @@ tests {
   });
   
   test("should contain error response", function() {
-    expect(res.body).to.not.be.undefined;
+    expect(res.body.origin).to.equal("HIP");
+    expect(res.body.response.failures).to.be.an('array');
+    expect(res.body.response.failures[0].reason).to.equal("json error");
   });
 }

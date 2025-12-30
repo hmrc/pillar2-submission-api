@@ -1,7 +1,7 @@
 meta {
-  name: total liabilityUTPR invalid decimals
+  name: invalid DTT election
   type: http
-  seq: 8
+  seq: 5
 }
 
 post {
@@ -28,12 +28,12 @@ body:json {
     "liabilities": {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
-      "numberSubGroupDTT": 1,
-      "numberSubGroupUTPR": 1,
+      "numberSubGroupDTT": 5,
+      "numberSubGroupUTPR": 0,
       "totalLiability": 5000,
       "totalLiabilityDTT": 5000,
       "totalLiabilityIIR": 0,
-      "totalLiabilityUTPR": 0.999,
+      "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
           "ukChargeableEntityName": "Newco PLC",
@@ -49,11 +49,16 @@ body:json {
 }
 
 tests {
-  test("Status code is 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("Status code is 422", function() {
+    expect(res.getStatus()).to.equal(422);
   });
   
-  test("Response contains error", function() {
-    expect(res.body).to.not.be.undefined;
+  test("Response contains error code 094", function() {
+    expect(res.body.errors.code).to.equal("094");
+  });
+  
+  test("Response contains error message", function() {
+    expect(res.body.errors.text).to.equal("Invalid DTT Election");
   });
 }
+

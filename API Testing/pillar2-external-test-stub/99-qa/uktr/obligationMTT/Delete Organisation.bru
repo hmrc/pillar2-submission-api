@@ -1,7 +1,7 @@
 meta {
-  name: Delete Test Organisation
+  name: Delete Organisation
   type: http
-  seq: 7
+  seq: 99
 }
 
 delete {
@@ -13,3 +13,10 @@ delete {
 headers {
   Authorization: valid bearerToken
 }
+
+tests {
+  test("Status code is 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}
+

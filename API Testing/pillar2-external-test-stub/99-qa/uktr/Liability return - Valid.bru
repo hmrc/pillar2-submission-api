@@ -1,7 +1,7 @@
 meta {
   name: Liability return - Valid
   type: http
-  seq: 3
+  seq: 2
 }
 
 post {
@@ -29,7 +29,7 @@ body:json {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
-      "numberSubGroupUTPR": 1,
+      "numberSubGroupUTPR": 0,
       "totalLiability": 5000,
       "totalLiabilityDTT": 5000,
       "totalLiabilityIIR": 0,
@@ -49,12 +49,19 @@ body:json {
 }
 
 tests {
-  // Note: Returns 422 when org/accounting period not set up correctly
-  test("Status code is 422", function() {
-    expect(res.getStatus()).to.equal(422);
+  test("Response status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
   });
   
-  test("Response contains error details", function() {
-    expect(res.body).to.not.be.undefined;
+  test("Response contains form bundle number", function() {
+    expect(res.body.success.formBundleNumber).to.not.be.undefined;
+  });
+  
+  test("Response contains processing date", function() {
+    expect(res.body.success.processingDate).to.not.be.undefined;
+  });
+  
+  test("Response contains charge reference", function() {
+    expect(res.body.success.chargeReference).to.not.be.undefined;
   });
 }

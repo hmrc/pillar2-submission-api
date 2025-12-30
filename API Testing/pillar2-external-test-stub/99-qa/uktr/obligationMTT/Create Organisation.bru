@@ -1,5 +1,5 @@
 meta {
-  name: Create Organisation (Domestic)
+  name: Create Organisation
   type: http
   seq: 1
 }
@@ -13,7 +13,7 @@ post {
 body:json {
   {
     "orgDetails": {
-      "domesticOnly": true,
+      "domesticOnly": false,
       "organisationName": "Test Organisation Ltd",
       "registrationDate": "2024-01-01"
     },
@@ -23,3 +23,11 @@ body:json {
     }
   }
 }
+
+tests {
+  test("Status code is 201 or 409", function() {
+    const status = res.getStatus();
+    expect(status === 201 || status === 409).to.be.true;
+  });
+}
+

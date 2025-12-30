@@ -30,8 +30,15 @@ body:json {
 }
 
 tests {
-  // Note: Returns 409 if organisation already exists
-  test("Status code is 409 (already exists)", function() {
-    expect(res.getStatus()).to.equal(409);
+  test("Status code is 201 or 409", function() {
+    const status = res.getStatus();
+    expect(status === 201 || status === 409).to.be.true;
+  });
+  
+  test("Response structure is valid", function() {
+    if (res.getStatus() === 201) {
+      expect(res.body.organisation.orgDetails.organisationName).to.equal("Domestic Test Organisation Ltd");
+      expect(res.body.organisation.orgDetails.domesticOnly).to.be.true;
+    }
   });
 }

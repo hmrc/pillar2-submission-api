@@ -32,7 +32,8 @@ tests {
   });
   
   test("should contain error response", function() {
-    // Error structure varies - just check for presence
-    expect(res.body).to.not.be.undefined;
+    expect(res.body.origin).to.equal("HIP");
+    expect(res.body.response.failures).to.be.an('array');
+    expect(res.body.response.failures[0].reason).to.equal("json error");
   });
 }

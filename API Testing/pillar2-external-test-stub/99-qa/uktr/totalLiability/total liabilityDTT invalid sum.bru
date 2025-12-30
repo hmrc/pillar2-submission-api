@@ -1,7 +1,7 @@
 meta {
-  name: total liabilityIIR invalid decimals
+  name: total liabilityDTT invalid sum
   type: http
-  seq: 6
+  seq: 3
 }
 
 post {
@@ -29,10 +29,10 @@ body:json {
       "electionDTTSingleMember": false,
       "electionUTPRSingleMember": false,
       "numberSubGroupDTT": 1,
-      "numberSubGroupUTPR": 1,
-      "totalLiability": 5000,
-      "totalLiabilityDTT": 5000,
-      "totalLiabilityIIR": 0.999,
+      "numberSubGroupUTPR": 0,
+      "totalLiability": 9000,
+      "totalLiabilityDTT": 9000,
+      "totalLiabilityIIR": 0,
       "totalLiabilityUTPR": 0,
       "liableEntities": [
         {
@@ -49,11 +49,16 @@ body:json {
 }
 
 tests {
-  test("Status code is 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("Status code is 422", function() {
+    expect(res.getStatus()).to.equal(422);
   });
   
-  test("Response contains error", function() {
-    expect(res.body).to.not.be.undefined;
+  test("Response contains error code 098", function() {
+    expect(res.body.errors.code).to.equal("098");
+  });
+  
+  test("Response contains error message", function() {
+    expect(res.body.errors.text).to.equal("Invalid Total Liability DTT");
   });
 }
+
