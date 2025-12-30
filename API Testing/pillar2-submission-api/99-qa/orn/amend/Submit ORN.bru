@@ -1,7 +1,7 @@
 meta {
-  name: Unauthorized (missing credentials)
+  name: Submit ORN
   type: http
-  seq: 7
+  seq: 2
 }
 
 post {
@@ -11,6 +11,7 @@ post {
 }
 
 headers {
+  Authorization: {{bearer_token}}
   X-Pillar2-Id: {{testPlrId}}
   Accept: application/vnd.hmrc.1.0+json
 }
@@ -21,19 +22,18 @@ body:json {
     "accountingPeriodTo": "2024-12-31",
     "filedDateGIR": "2025-01-10",
     "countryGIR": "US",
-    "reportingEntityName": "Newco PLC",
+    "reportingEntityName": "Test Entity",
     "TIN": "US12345678",
     "issuingCountryTIN": "US"
   }
 }
 
 tests {
-  test("should return 401 Unauthorized", function() {
-    expect(res.getStatus()).to.equal(401);
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
   });
   
-  test("should contain correct error message", function() {
-    expect(res.body.code).to.equal("MISSING_CREDENTIALS");
-    expect(res.body.message).to.equal("Authentication information is not provided");
+  test("Response contains processing date", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
   });
 }

@@ -1,7 +1,7 @@
 meta {
-  name: Valid request
+  name: Submit ORN
   type: http
-  seq: 8
+  seq: 2
 }
 
 post {
@@ -22,18 +22,18 @@ body:json {
     "accountingPeriodTo": "2024-12-31",
     "filedDateGIR": "2025-01-10",
     "countryGIR": "US",
-    "reportingEntityName": "Newco PLC",
+    "reportingEntityName": "Test Entity",
     "TIN": "US12345678",
     "issuingCountryTIN": "US"
   }
 }
 
 tests {
-  test("should return 201 Created", function() {
+  test("Status code is 201", function() {
     expect(res.getStatus()).to.equal(201);
   });
   
-  test("should contain all required fields", function() {
+  test("Response contains processing date", function() {
     expect(res.body.processingDate).to.not.be.undefined;
   });
 }

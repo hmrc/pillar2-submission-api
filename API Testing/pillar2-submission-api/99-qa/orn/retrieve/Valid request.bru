@@ -1,0 +1,33 @@
+meta {
+  name: Valid request
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{apiUrl}}/overseas-return-notification?accountingPeriodFrom=2024-01-01&accountingPeriodTo=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  accountingPeriodFrom: 2024-01-01
+  accountingPeriodTo: 2024-12-31
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should contain ORN details", function() {
+    expect(res.body.filedDateGIR).to.not.be.undefined;
+    expect(res.body.countryGIR).to.not.be.undefined;
+  });
+}

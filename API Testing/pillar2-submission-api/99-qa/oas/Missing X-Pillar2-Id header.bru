@@ -1,24 +1,23 @@
 meta {
-  name: Empty body
+  name: Missing X-Pillar2-Id header
   type: http
-  seq: 4
+  seq: 3
 }
 
-post {
-  url: {{apiUrl}}/overseas-return-notification
-  body: json
+get {
+  url: {{apiUrl}}/obligations-and-submissions?fromDate=2024-01-01&toDate=2024-12-31
+  body: none
   auth: none
+}
+
+params:query {
+  fromDate: 2024-01-01
+  toDate: 2024-12-31
 }
 
 headers {
   Authorization: {{bearer_token}}
-  X-Pillar2-Id: {{testPlrId}}
   Accept: application/vnd.hmrc.1.0+json
-}
-
-body:json {
-  {
-  }
 }
 
 tests {
@@ -27,7 +26,7 @@ tests {
   });
   
   test("should contain correct error message", function() {
-    expect(res.body.code).to.equal("INVALID_JSON");
-    expect(res.body.message).to.equal("Invalid JSON payload");
+    expect(res.body.code).to.equal("MISSING_HEADER");
   });
 }
+

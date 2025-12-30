@@ -1,24 +1,25 @@
 meta {
-  name: Invalid body
+  name: Invalid date format
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
-  url: {{apiUrl}}/overseas-return-notification
+  url: {{apiUrl}}/below-threshold-notification
   body: json
   auth: none
 }
 
 headers {
   Authorization: {{bearer_token}}
-  X-Pillar2-Id: {{testPlrId}}
   Accept: application/vnd.hmrc.1.0+json
+  X-Pillar2-Id: {{testPlrId}}
 }
 
 body:json {
   {
-    "badRequest": ""
+    "accountingPeriodFrom": "01-01-2024",
+    "accountingPeriodTo": "31-12-2024"
   }
 }
 
@@ -28,7 +29,7 @@ tests {
   });
   
   test("should contain correct error message", function() {
-    expect(res.body.code).to.equal("INVALID_JSON");
     expect(res.body.message).to.equal("Invalid JSON payload");
   });
 }
+

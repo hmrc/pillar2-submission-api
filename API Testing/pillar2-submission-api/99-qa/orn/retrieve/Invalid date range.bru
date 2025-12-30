@@ -1,0 +1,34 @@
+meta {
+  name: Invalid date range
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{apiUrl}}/overseas-return-notification?accountingPeriodFrom=2024-12-31&accountingPeriodTo=2024-01-01
+  body: none
+  auth: none
+}
+
+params:query {
+  accountingPeriodFrom: 2024-12-31
+  accountingPeriodTo: 2024-01-01
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("INVALID_DATE_RANGE");
+    expect(res.body.message).to.equal("Invalid date range");
+  });
+}
+
