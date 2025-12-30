@@ -56,6 +56,8 @@ Alternatively, you can use the Bruno CLI:
 
 The `-r` flag runs tests recursively through all subfolders.
 
+Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they target deployed environment URLs. This is expected.
+
 ### Prerequisites for Local Testing
 
 Ensure the following services are running locally:
@@ -99,36 +101,6 @@ The `environments/local.bru` file defines:
 | `testPlrId` | `XEPLR0000000000` | Test Pillar 2 ID |
 | `bearer_token` | (set by auth script) | Authentication token |
 
-## Test Collections
-
-### pillar2-submission-api
-
-Example calls and tests for the main submission API service:
-
-- **`01-auth/`**: Authentication scripts
-  - `local/`: Local auth via stub (sets `bearer_token` automatically)
-  - `envs/`: OAuth flow for deployed environments
-- **`99-qa/`**: QA test scenarios
-  - `uktr/submit/`: UKTR submission tests
-  - `uktr/amend/`: UKTR amendment tests
-  - `orn/`: Overseas Return Notification tests
-  - `oas/`: Obligation Accounting Statement tests
-  - `btn/`: Below Threshold Notification tests
-
-### pillar2
-
-Example calls and tests for the upstream Pillar 2 backend service:
-
-- **`01-setup/`**: Organisation setup
-- **`99-qa/`**: Validation and error handling tests
-
-### pillar2-external-test-stub
-
-Example calls and tests for the external test stub service:
-
-- **`01-setup/`**: Organisation management
-- **`99-qa/`**: API response tests
-
 ## Authentication Workflows
 
 ### Local Environment
@@ -170,15 +142,3 @@ For deployed environments, you need to perform the full OAuth flow:
 #### Step 4: Refresh Token (when expired)
 
 Run `01-auth/envs/Create Refresh Token` to generate a new `bearer_token` using the saved `refresh_token`.
-
-## Expected Local Test Results
-
-When all local services are running:
-
-| Collection | Requests | Tests |
-|------------|----------|-------|
-| pillar2-submission-api | 107+ passed | 147+ passed |
-| pillar2 | 68 passed | 82 passed |
-| pillar2-external-test-stub | 75 passed | 97 passed |
-
-Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they target deployed environment URLs. This is expected.
