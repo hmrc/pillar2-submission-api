@@ -5,13 +5,14 @@ meta {
 }
 
 delete {
-  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  url: {{apiUrl}}/setup/organisation
   body: none
   auth: none
 }
 
 headers {
-  Authorization: validBearerToken
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
 }
 
 tests {

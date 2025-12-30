@@ -5,13 +5,14 @@ meta {
 }
 
 post {
-  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  url: {{apiUrl}}/setup/organisation
   body: json
   auth: none
 }
 
 headers {
-  Authorization: validBearerToken
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
 }
 
 body:json {
@@ -24,8 +25,7 @@ body:json {
     "accountingPeriod": {
       "startDate": "2024-01-01",
       "endDate": "2024-12-31"
-    },
-    "lastUpdated": "2024-01-01T09:00:00Z"
+    }
   }
 }
 
@@ -38,4 +38,3 @@ tests {
     expect(res.body.organisation.orgDetails.organisationName).to.equal("Test Org ORN Submit");
   });
 }
-
