@@ -1185,6 +1185,21 @@ components:
       required:
         - processingDate
         - accountingPeriodDetails
+    uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse:
+      properties:
+        processingDate:
+          description: The date and time that an event took place.
+        transactionDetails:
+          description: List of transactions from the selected time period.
+          type: array
+          items:
+            $ref: "#/components/schemas/AccountActivityTransaction"
+      required:
+        - processingDate
+        - transactionDetails
+    # Fill out under PIL-2694
+    AccountActivityTransaction:
+      properties: {}
   examples:
     requests.TestOrganisationRequestExample:
       summary: Request example
