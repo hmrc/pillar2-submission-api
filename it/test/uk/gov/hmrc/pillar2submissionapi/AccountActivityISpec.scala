@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
-import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
@@ -42,7 +42,8 @@ class AccountActivityISpec
     with AccountActivityDataFixture
     with WireMockServerHandler
     with ScalaCheckDrivenPropertyChecks
-    with ScalaFutures {
+    with ScalaFutures
+    with IntegrationPatience {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
