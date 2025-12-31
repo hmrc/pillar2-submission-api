@@ -1196,26 +1196,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityTransaction"
-      required:
-        - processingDate
-        - transactionDetails
     uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityTransaction:
       description: Represents a record of a change to a Pillar ID's circumstances.
       properties:
         transactionType:
             description: The form of transaction that took place. Examples include 'Credit' 'Debit' and 'Payment'.
-            type: string
         transactionDesc:
           description: Description of a transaction that took place.
-          type: string
         startDate:
           description: Start date of the relevant accounting period.
-          type: string
-          format: date
         endDate:
           description: End date of the relevant accounting period.
-          type: string
-          format: date
         accruedInterest:
           description: Interest accrued by delayed payment of this transaction, in GBP.
           type: number
@@ -1224,15 +1215,10 @@ components:
           multipleOf: 0.01
         chargeRefNo:
           description: Reference for the relevant charge kind.
-          type: string
         transactionDate:
           description: Date of the transaction.
-          type: string
-          format: date
         dueDate:
           description: Date the transaction must be settled by.
-          type: string
-          format: date
         originalAmount:
           description: The original monetary value of the transaction, in GBP.
           type: number
@@ -1259,30 +1245,17 @@ components:
           multipleOf: 0.01
         appealFlag:
           description: Indicates that the transaction is currently under appeal when present and true.
-          type: boolean
         clearingDetails:
           description: Information on how other transactions are allocated against this one.
-          type: array
-          items:
-            $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityClearance"
-      required:
-        - transactionType
-        - transactionDesc
-        - transactionDate
-        - originalAmount
     uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityClearance:
       description: Information on how another transaction is allocated against the parent transaction.
       properties:
         transactionDesc:
           description: Description of the child transaction that took place.
-          type: string
         chargeRefNo:
           description: Reference for the child transaction's relevant charge kind.
-          type: string
         dueDate:
           description: Date the child transaction must be settled by.
-          type: string
-          format: date
         amount:
           description: Portion of the child transaction which is allocated against the parent.
           type: number
@@ -1291,15 +1264,8 @@ components:
           multipleOf: 0.01
         clearingDate:
           description: Date the child transaction cleared against the parent.
-          type: string
-          format: date
         clearingReason:
           description: Reason the child transaction cleared against the parent.
-          type: string
-      required:
-        - transactionDesc
-        - amount
-        - clearingDate
 
   examples:
     requests.TestOrganisationRequestExample:
