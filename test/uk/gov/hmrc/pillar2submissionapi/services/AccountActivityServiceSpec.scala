@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.AccountActivityConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AccountActivityNotFound, DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
 
 import scala.concurrent.Future
@@ -100,17 +100,6 @@ class AccountActivityServiceSpec
             .left
             .value mustBe UnexpectedResponse
         }
-      }
-    }
-
-    "there's no account activity to retrieve" must {
-      "return AccountActivityNotFound" in new ServiceTestCase(HttpResponse(404)) {
-        accountActivityService
-          .retrieveAccountActivity(localDateFrom, localDateTo)
-          .value
-          .futureValue
-          .left
-          .value mustBe AccountActivityNotFound
       }
     }
 

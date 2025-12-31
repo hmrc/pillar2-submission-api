@@ -21,14 +21,14 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
+import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.routes
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AccountActivityNotFound, InvalidDateFormat, InvalidDateRange, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{InvalidDateFormat, InvalidDateRange, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{AccountActivityDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
@@ -123,24 +123,6 @@ class AccountActivityISpec
 
       result.status mustBe INTERNAL_SERVER_ERROR
       result.json mustBe Json.toJson(Pillar2ErrorResponse(UnexpectedResponse.code, UnexpectedResponse.message))
-
-      server.verify(
-        getRequestedFor(urlEqualTo(backendEndpoint(fromDate, toDate))).withHeader("X-Pillar2-Id", equalTo(plrReference))
-      )
-    }
-
-    "return 404 when account activity can't be found" in {
-      stubRequest(
-        method = "GET",
-        expectedUrl = backendEndpoint(fromDate, toDate),
-        expectedStatus = NOT_FOUND,
-        body = Json.obj()
-      )
-
-      val result = request(fromDate, toDate).execute[HttpResponse].futureValue
-
-      result.status mustBe NOT_FOUND
-      result.json mustBe Json.toJson(Pillar2ErrorResponse(AccountActivityNotFound.code, AccountActivityNotFound.message))
 
       server.verify(
         getRequestedFor(urlEqualTo(backendEndpoint(fromDate, toDate))).withHeader("X-Pillar2-Id", equalTo(plrReference))

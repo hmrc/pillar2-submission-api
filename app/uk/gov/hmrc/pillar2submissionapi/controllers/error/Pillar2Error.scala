@@ -112,8 +112,3 @@ case object ORNNotFoundException extends Pillar2Error {
   override val code:    String = "NOT_FOUND"
   override val message: String = "The requested ORN could not be found"
 }
-
-case object AccountActivityNotFound extends Pillar2Error {
-  override val code:    String = "NOT_FOUND"
-  override val message: String = "Account activity could not be found for the provided pillar ID"
-}

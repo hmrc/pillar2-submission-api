@@ -60,8 +60,6 @@ class AccountActivityService @Inject() (accountActivityConnector: AccountActivit
       logger.warn(s"Hit error status ${response.status}, but mapping to 500.")
       UnexpectedResponse.asLeft
 
-    case NOT_FOUND => AccountActivityNotFound.asLeft
-
     case UNPROCESSABLE_ENTITY =>
       Try(response.json.validate[AccountActivityErrorResponse]).fold(
         error =>
