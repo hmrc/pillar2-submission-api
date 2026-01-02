@@ -11,7 +11,8 @@ object PlaySwagger {
       "uk.gov.hmrc.pillar2submissionapi.models.response.StubErrorResponse",
       "uk.gov.hmrc.pillar2submissionapi.models.organisation",
       "uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification",
-      "uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn"
+      "uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn",
+      "uk.gov.hmrc.pillar2submissionapi.models.accountactivity"
     ),
     swaggerRoutesFile := "public.routes",
     swaggerV3 := true,
