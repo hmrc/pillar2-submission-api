@@ -1,0 +1,56 @@
+meta {
+  name: Missing X-Pillar2-Id header
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": true,
+    "electionUKGAAP": false,
+    "liabilities": {
+      "electionDTTSingleMember": false,
+      "electionUTPRSingleMember": false,
+      "numberSubGroupDTT": 1,
+      "numberSubGroupUTPR": 1,
+      "totalLiability": 10000.99,
+      "totalLiabilityDTT": 5000.99,
+      "totalLiabilityIIR": 4000,
+      "totalLiabilityUTPR": 1000,
+      "liableEntities": [
+        {
+          "ukChargeableEntityName": "Test Entity",
+          "idType": "UTR",
+          "idValue": "1234567890",
+          "amountOwedDTT": 5000.99,
+          "amountOwedIIR": 4000,
+          "amountOwedUTPR": 1000
+        }
+      ]
+    }
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("MISSING_HEADER");
+  });
+}
+

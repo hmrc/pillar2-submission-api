@@ -1,0 +1,33 @@
+meta {
+  name: Missing query param (accountingPeriodFrom)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{apiUrl}}/overseas-return-notification?accountingPeriodTo=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  accountingPeriodTo: 2024-12-31
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("BAD_REQUEST");
+    expect(res.body.message).to.equal("Invalid request");
+  });
+}
+

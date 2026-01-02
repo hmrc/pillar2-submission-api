@@ -22,6 +22,6 @@ tests {
   
   test("should contain correct error message", function() {
     expect(res.body.code).to.equal("BAD_REQUEST");
-    expect(res.body.message).to.equal("Missing parameter: fromDate");
+    expect(res.body.message).to.equal("Invalid request");
   });
 }

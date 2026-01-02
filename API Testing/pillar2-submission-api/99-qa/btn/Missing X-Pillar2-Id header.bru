@@ -1,0 +1,34 @@
+meta {
+  name: Missing X-Pillar2-Id header
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/below-threshold-notification
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31"
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("MISSING_HEADER");
+  });
+}
+

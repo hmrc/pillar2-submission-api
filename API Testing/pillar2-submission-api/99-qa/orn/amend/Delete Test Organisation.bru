@@ -1,0 +1,22 @@
+meta {
+  name: Delete Test Organisation
+  type: http
+  seq: 99
+}
+
+delete {
+  url: {{apiUrl}}/setup/organisation
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+tests {
+  test("Status code is 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

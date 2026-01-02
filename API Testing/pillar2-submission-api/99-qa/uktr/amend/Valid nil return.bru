@@ -1,0 +1,41 @@
+meta {
+  name: Valid nil return
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{apiUrl}}/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  Accept: application/vnd.hmrc.1.0+json
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": true,
+    "electionUKGAAP": false,
+    "liabilities": {
+      "returnType": "NIL_RETURN"
+    }
+  }
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should contain required fields", function() {
+    expect(res.body.processingDate).to.not.be.undefined;
+    expect(res.body.formBundleNumber).to.not.be.undefined;
+    // chargeReference is optional for nil returns
+  });
+}

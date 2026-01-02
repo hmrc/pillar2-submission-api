@@ -1,10 +1,10 @@
 meta {
-  name: Nil return - Valid
+  name: Amend to Nil return - Valid
   type: http
-  seq: 6
+  seq: 3
 }
 
-post {
+put {
   url: {{externalTestStubUrl}}/RESTAdapter/plr/uk-tax-return
   body: json
   auth: none
@@ -32,15 +32,15 @@ body:json {
 }
 
 tests {
+  test("Response status code is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
   test("Response contains form bundle number", function() {
     expect(res.body.success.formBundleNumber).to.not.be.undefined;
   });
   
   test("Response contains processing date", function() {
     expect(res.body.success.processingDate).to.not.be.undefined;
-  });
-  
-  test("Response contains correct status code", function() {
-    expect(res.status).to.equal(201);
   });
 }

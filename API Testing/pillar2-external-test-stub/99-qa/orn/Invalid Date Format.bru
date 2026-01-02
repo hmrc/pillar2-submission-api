@@ -33,13 +33,12 @@ body:json {
 
 tests {
   test("should return 400 for invalid date format", function() {
-    expect(res.status).to.equal(400);
+    expect(res.getStatus()).to.equal(400);
   });
   
-  test("should contain error about invalid date format", function() {
-    expect(res.body.error).to.not.be.undefined;
-    expect(res.body.error.code).to.equal("400");
-    expect(res.body.error.message).to.equal("Bad request");
-    expect(res.body.error.logID).to.equal("C0000000000000000000000000000400");
+  test("should contain error response", function() {
+    expect(res.body.origin).to.equal("HIP");
+    expect(res.body.response.failures).to.be.an('array');
+    expect(res.body.response.failures[0].reason).to.equal("json error");
   });
 }
