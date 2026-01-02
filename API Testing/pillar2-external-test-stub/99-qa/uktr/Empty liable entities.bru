@@ -1,7 +1,7 @@
 meta {
   name: Empty liable entities
   type: http
-  seq: 2
+  seq: 11
 }
 
 post {
@@ -51,7 +51,7 @@ tests {
   });
   
   test("Status code is 422", function() {
-    expect(res.status).to.equal(422);
+    expect(res.getStatus()).to.equal(422);
   });
   
   

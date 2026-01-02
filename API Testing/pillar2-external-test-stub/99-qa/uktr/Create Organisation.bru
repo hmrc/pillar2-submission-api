@@ -1,7 +1,14 @@
 meta {
   name: Create Organisation
   type: http
-  seq: 5
+  seq: 1
+}
+
+tests {
+  test("Status code is 201 or 409", function() {
+    const status = res.getStatus();
+    expect(status === 201 || status === 409).to.be.true;
+  });
 }
 
 post {

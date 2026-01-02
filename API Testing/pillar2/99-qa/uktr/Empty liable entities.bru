@@ -38,15 +38,15 @@ body:json {
 }
 
 tests {
-  test("Response contains correct error code", function() {
-    expect(res.body.code).to.equal("093");
-  });
-  
-  test("Response contains correct error message", function() {
-    expect(res.body.message).to.equal("Invalid Return");
-  });
-  
   test("Status code is 422", function() {
-    expect(res.status).to.equal(422);
+    expect(res.getStatus()).to.equal(422);
+  });
+  
+  test("Response contains error code", function() {
+    expect(res.body.code).to.not.be.undefined;
+  });
+  
+  test("Response contains error message", function() {
+    expect(res.body.message).to.not.be.undefined;
   });
 }

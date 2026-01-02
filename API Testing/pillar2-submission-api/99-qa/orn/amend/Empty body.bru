@@ -1,0 +1,32 @@
+meta {
+  name: Empty body
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{apiUrl}}/overseas-return-notification
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: {{bearer_token}}
+  X-Pillar2-Id: {{testPlrId}}
+  Accept: application/vnd.hmrc.1.0+json
+}
+
+body:json {
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("should contain correct error message", function() {
+    expect(res.body.code).to.equal("EMPTY_REQUEST_BODY");
+    expect(res.body.message).to.equal("Empty request body");
+  });
+}
+
