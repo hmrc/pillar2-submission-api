@@ -20,7 +20,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderAction, SubscriptionDataRetrievalAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions.ObligationsAndSubmissions
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.OverseasReturnNotificationService
@@ -79,7 +79,7 @@ class OverseasReturnNotificationController @Inject() (
       Try {
         val accountingPeriod =
           ObligationsAndSubmissions(fromDate = LocalDate.parse(accountingPeriodFrom), toDate = LocalDate.parse(accountingPeriodTo))
-        if (accountingPeriod.validDateRange) {
+        if accountingPeriod.validDateRange then {
           ornService
             .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(using hc)
             .map(response => Ok(Json.toJson(response)))

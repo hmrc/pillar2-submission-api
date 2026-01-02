@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
 
 trait IdentifierAction extends ActionTransformer[RequestWithPillar2Id, IdentifierRequest]
