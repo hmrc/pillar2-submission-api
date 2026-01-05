@@ -974,6 +974,10 @@ paths:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       security:
         - userRestricted: [write:pillar2]
+  /account-activity:
+    get:
+      security:
+        - userRestricted: [read:pillar2]
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:

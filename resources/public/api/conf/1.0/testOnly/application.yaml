@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.173.0
+  version: 0.177.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1464,6 +1464,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+      security:
+      - userRestricted:
+        - read:pillar2
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
