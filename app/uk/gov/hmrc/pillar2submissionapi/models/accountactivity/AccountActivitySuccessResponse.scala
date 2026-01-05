@@ -15,13 +15,11 @@
  */
 
 package uk.gov.hmrc.pillar2submissionapi.models.accountactivity
-
-import play.api.libs.functional.syntax.given
-import play.api.libs.json.{Format, Json, __}
+import play.api.libs.json.{Format, Json}
 
 import java.time.{LocalDate, LocalDateTime}
 
-case class AccountActivitySuccessResponse(processingDate: LocalDateTime, transactions: Seq[AccountActivityTransaction])
+case class AccountActivitySuccessResponse(processingDate: LocalDateTime, transactionDetails: Seq[AccountActivityTransaction])
 
 case class AccountActivityTransaction(
   transactionType:   String,
@@ -50,16 +48,7 @@ case class AccountActivityClearance(
 )
 
 object AccountActivitySuccessResponse {
-  given Format[AccountActivitySuccessResponse] = Format(
-    (
-      (__ \ "processingDate").read[LocalDateTime] and
-        (__ \ "transactionDetails").read[Seq[AccountActivityTransaction]]
-    )(AccountActivitySuccessResponse.apply),
-    (
-      (__ \ "processingDate").write[LocalDateTime] and
-        (__ \ "transactionDetails").write[Seq[AccountActivityTransaction]]
-    )(s => (s.processingDate, s.transactions))
-  )
+  given Format[AccountActivitySuccessResponse] = Json.format
 }
 
 object AccountActivityTransaction {

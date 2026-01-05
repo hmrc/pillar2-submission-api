@@ -80,6 +80,7 @@ sbt prePrChecks
 The API is documented using encryption-agnostic standard OpenAPI 3.0 specification.
 
 - **Source**: Route definitions and manual overrides in `conf/swagger.yml`.
+- **Models**: Code generation will only read from packages listed in `project/PlaySwagger.scala`.
 - **Generated Spec**: `resources/public/api/conf/1.0/application.yaml`.
 
 ### Generating the Spec
