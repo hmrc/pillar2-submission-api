@@ -34,6 +34,9 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.itSettings() *)
   .settings(
+    publishArtifact := true
+  )
+  .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
