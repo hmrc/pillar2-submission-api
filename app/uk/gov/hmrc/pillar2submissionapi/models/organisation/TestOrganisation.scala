@@ -40,9 +40,18 @@ object AccountingPeriod {
   given format: Format[AccountingPeriod] = Json.format[AccountingPeriod]
 }
 
+case class TestData(
+  accountActivityScenario: Option[String] = None
+)
+
+object TestData {
+  given format: Format[TestData] = Json.format[TestData]
+}
+
 case class TestOrganisationRequest(
   orgDetails:       OrgDetails,
-  accountingPeriod: AccountingPeriod
+  accountingPeriod: AccountingPeriod,
+  testData:         Option[TestData] = None
 )
 
 object TestOrganisationRequest {
@@ -52,6 +61,7 @@ object TestOrganisationRequest {
 case class TestOrganisation(
   orgDetails:       OrgDetails,
   accountingPeriod: AccountingPeriod,
+  testData:         Option[TestData] = None,
   lastUpdated:      Instant = Instant.now()
 )
 

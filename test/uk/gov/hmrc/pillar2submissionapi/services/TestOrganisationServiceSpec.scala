@@ -89,6 +89,20 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
     )
   )
 
+  val validOrganisationDetailsRequestWithTestData: TestOrganisationRequest = TestOrganisationRequest(
+    orgDetails = OrgDetails(
+      domesticOnly = true,
+      organisationName = "Test Organisation Ltd",
+      registrationDate = LocalDate.of(2024, 1, 1)
+    ),
+    accountingPeriod = AccountingPeriod(
+      startDate = LocalDate.of(2024, 1, 1),
+      endDate = LocalDate.of(2024, 12, 31),
+      None
+    ),
+    testData = Some(TestData(Some("DTT_CHARGE")))
+  )
+
   val validOrganisationDetails: TestOrganisation = TestOrganisation(
     orgDetails = validOrganisationDetailsRequest.orgDetails,
     accountingPeriod = validOrganisationDetailsRequest.accountingPeriod,
