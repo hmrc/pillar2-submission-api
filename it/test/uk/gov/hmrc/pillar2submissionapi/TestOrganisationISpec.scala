@@ -244,6 +244,21 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
     )
   )
 
+  val validRequestWithTestDataJson: JsValue = Json.obj(
+    "orgDetails" -> Json.obj(
+      "domesticOnly"     -> true,
+      "organisationName" -> "Test Organisation Ltd",
+      "registrationDate" -> "2024-01-01"
+    ),
+    "accountingPeriod" -> Json.obj(
+      "startDate" -> "2024-01-01",
+      "endDate"   -> "2024-12-31"
+    ),
+    "testData" -> Json.obj(
+      "accountActivityScenario" -> "DTT_CHARGE"
+    )
+  )
+
   val invalidRequestJson: JsValue = Json.obj(
     "invalidField" -> "invalidValue"
   )

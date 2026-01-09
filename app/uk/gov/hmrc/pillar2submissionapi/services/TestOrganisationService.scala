@@ -32,7 +32,7 @@ class TestOrganisationService @Inject() (
   def createTestOrganisation(pillar2Id: String, request: TestOrganisationRequest)(implicit
     hc: HeaderCarrier
   ): Future[TestOrganisationWithId] = {
-    val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod)
+    val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod, request.testData)
     testOrganisationConnector.createTestOrganisation(pillar2Id, organisationDetails)
   }
 
@@ -42,7 +42,7 @@ class TestOrganisationService @Inject() (
   def updateTestOrganisation(pillar2Id: String, request: TestOrganisationRequest)(implicit
     hc: HeaderCarrier
   ): Future[TestOrganisationWithId] = {
-    val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod)
+    val organisationDetails = TestOrganisation(request.orgDetails, request.accountingPeriod, request.testData)
     testOrganisationConnector.updateTestOrganisation(pillar2Id, organisationDetails)
   }
 

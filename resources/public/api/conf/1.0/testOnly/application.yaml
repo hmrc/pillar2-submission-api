@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.177.0
+  version: 0.181.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1916,6 +1916,9 @@ components:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
         accountingPeriod:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        testData:
+          nullable: true
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
         lastUpdated:
           type: string
           format: date-time
@@ -1933,6 +1936,11 @@ components:
       required:
       - pillar2Id
       - organisation
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
+      properties:
+        accountActivityScenario:
+          type: string
+          nullable: true
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
       properties:
         startDate:
@@ -1974,6 +1982,9 @@ components:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
         accountingPeriod:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        testData:
+          nullable: true
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
       required:
       - orgDetails
       - accountingPeriod
@@ -2067,6 +2078,8 @@ components:
         accountingPeriod:
           startDate: 2024-01-01
           endDate: 2024-12-31
+        testData:
+          accountActivityScenario: DTT_CHARGE
     responses.TestOrganisationResponseExample:
       summary: Response example
       value:
@@ -2079,6 +2092,8 @@ components:
           accountingPeriod:
             startDate: 2024-01-01
             endDate: 2024-12-31
+          testData:
+            accountActivityScenario: DTT_CHARGE
           lastUpdated: 2024-01-01T12:00:00Z
     requests.BTNRequestExample:
       summary: Request example

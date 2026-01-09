@@ -1204,7 +1204,7 @@ components:
       description: Represents a record of a change to a Pillar ID's circumstances.
       properties:
         transactionType:
-            description: The form of transaction that took place. Examples include 'Credit' 'Debit' and 'Payment'.
+          description: The form of transaction that took place. Examples include 'Credit' 'Debit' and 'Payment'.
         transactionDesc:
           description: Description of a transaction that took place.
         startDate:
@@ -1282,6 +1282,8 @@ components:
         accountingPeriod:
           startDate: "2024-01-01"
           endDate: "2024-12-31"
+        testData:
+          accountActivityScenario: "DTT_CHARGE"
     responses.TestOrganisationResponseExample:
       summary: Response example
       value:
@@ -1294,6 +1296,8 @@ components:
           accountingPeriod:
             startDate: "2024-01-01"
             endDate: "2024-12-31"
+          testData:
+            accountActivityScenario: "DTT_CHARGE"
           lastUpdated: "2024-01-01T12:00:00Z"
     requests.BTNRequestExample:
       summary: "Request example"

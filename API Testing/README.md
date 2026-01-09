@@ -101,6 +101,32 @@ The `environments/local.bru` file defines:
 | `testPlrId` | `XEPLR0000000000` | Test Pillar 2 ID |
 | `bearer_token` | (set by auth script) | Authentication token |
 
+## Test Data Configuration
+
+When creating or updating test organisations, you can optionally include a `testData` object to configure test scenarios:
+
+```json
+{
+  "orgDetails": { ... },
+  "accountingPeriod": { ... },
+  "testData": {
+    "accountActivityScenario": "DTT_CHARGE"
+  }
+}
+```
+
+### Account Activity Scenarios
+
+The `accountActivityScenario` field controls what financial data is returned by the Account Activity endpoint. Available scenarios are defined in the [pillar2-external-test-stub documentation](https://github.com/hmrc/pillar2-external-test-stub?tab=readme-ov-file#8-account-activity).
+
+| Scenario | Description |
+|----------|-------------|
+| `DTT_CHARGE` | Simulates a DTT charge transaction |
+| `PAYMENT_ON_ACCOUNT` | Simulates a payment on account |
+| `REPAYMENT` | Simulates a repayment transaction |
+
+> **Note**: The `testData` field is optional. If omitted, the organisation will be created without a linked activity scenario.
+
 ## Authentication Workflows
 
 ### Local Environment
