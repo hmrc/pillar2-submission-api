@@ -20,7 +20,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivityClearance, AccountActivitySuccessResponse, AccountActivityTransaction}
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 
 trait AccountActivityDataFixture {
   val fromDate:      String    = "2024-01-01"
@@ -31,7 +31,7 @@ trait AccountActivityDataFixture {
   val accountActivityJsonResponse: JsValue = Json.parse(getClass.getResourceAsStream("/sample-data/account-activity-response.json"))
 
   def accountActivityJsonParsed: AccountActivitySuccessResponse = AccountActivitySuccessResponse(
-    processingDate = LocalDateTime.of(2001, 12, 17, 9, 30, 47, 0),
+    processingDate = ZonedDateTime.of(2001, 12, 17, 9, 30, 47, 0, ZoneOffset.UTC),
     Seq(
       AccountActivityTransaction(
         transactionType = "Payment",

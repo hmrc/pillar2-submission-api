@@ -32,7 +32,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   )
   .settings(scalaSettings *)
   .configs(IntegrationTest)
-  .settings(DefaultBuildSettings.itSettings() *)
+  .settings(inConfig(IntegrationTest)(DefaultBuildSettings.itSettings()))
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
