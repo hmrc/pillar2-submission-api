@@ -44,7 +44,7 @@ class ObligationsAndSubmissionsController @Inject() (
     Try {
       val accountingPeriod = ObligationsAndSubmissions(fromDate = LocalDate.parse(fromDate), toDate = LocalDate.parse(toDate))
 
-      if (accountingPeriod.validDateRange) {
+      if accountingPeriod.validDateRange then {
         obligationAndSubmissionsService
           .handleData(accountingPeriod.fromDate, accountingPeriod.toDate)
           .map(response => Ok(Json.toJson(response)))

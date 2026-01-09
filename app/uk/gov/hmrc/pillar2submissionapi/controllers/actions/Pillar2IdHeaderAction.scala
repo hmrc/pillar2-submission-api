@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
-import play.api.mvc._
+import play.api.mvc.*
 
 trait Pillar2IdHeaderAction
     extends ActionTransformer[Request, RequestWithPillar2Id]
