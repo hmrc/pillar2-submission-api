@@ -20,14 +20,14 @@ import junit.framework.TestCase.assertEquals
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.*
 
 import scala.concurrent.Future
 

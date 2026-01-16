@@ -24,15 +24,15 @@ import org.scalatest.matchers.should.Matchers.shouldEqual
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.actions._
+import uk.gov.hmrc.pillar2submissionapi.controllers.actions.*
 import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
-import uk.gov.hmrc.pillar2submissionapi.services._
+import uk.gov.hmrc.pillar2submissionapi.services.*
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.duration.DurationInt

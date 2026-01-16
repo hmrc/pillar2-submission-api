@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
+import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec.*
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{EmptyRequestBody, InvalidJson, MissingHeader}
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.BTNSubmissionController
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}

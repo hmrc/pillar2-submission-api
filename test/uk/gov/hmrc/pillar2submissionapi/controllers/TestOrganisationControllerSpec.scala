@@ -16,18 +16,18 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers
 
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController
-import uk.gov.hmrc.pillar2submissionapi.models.organisation._
+import uk.gov.hmrc.pillar2submissionapi.models.organisation.*
 
 import java.time.{Instant, LocalDate}
 import scala.concurrent.Future
