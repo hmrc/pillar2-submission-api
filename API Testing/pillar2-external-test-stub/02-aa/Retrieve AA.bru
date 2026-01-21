@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{externalTestStubUrl}}/RESTAdapter/plr/account-activity?activityFromDate=2025-01-01&activityToDate=2025-12-31
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/account-activity?fromDate=2025-01-01&toDate=2025-12-31
   body: json
   auth: none
 }
 
 params:query {
-  activityFromDate: 2025-01-01
-  activityToDate: 2025-12-31
+  fromDate: 2025-01-01
+  toDate: 2025-12-31
 }
 
 headers {
