@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{apiUrl}}/account-activity?activityFromDate=2026-01-01&activityToDate=2026-12-31
+  url: {{apiUrl}}/account-activity?fromDate=2026-01-01&toDate=2026-12-31
   body: none
   auth: none
 }
 
 params:query {
-  activityFromDate: 2026-01-01
-  activityToDate: 2026-12-31
+  fromDate: 2026-01-01
+  toDate: 2026-12-31
 }
 
 headers {

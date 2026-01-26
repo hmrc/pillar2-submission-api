@@ -48,7 +48,7 @@ class AccountActivityISpec
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
 
-  private val backendEndpoint = (from: String, to: String) => s"/report-pillar2-top-up-taxes/account-activity?dateFrom=$from&dateTo=$to"
+  private val backendEndpoint = (from: String, to: String) => s"/report-pillar2-top-up-taxes/account-activity?fromDate=$from&toDate=$to"
 
   private def request(from: String, to: String): RequestBuilder = {
     val url = s"http://localhost:$port${routes.AccountActivityController.retrieveAccountActivity(from, to).url}"

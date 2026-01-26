@@ -32,7 +32,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
     .build()
   lazy val accountActivityConnector: AccountActivityConnector = app.injector.instanceOf[AccountActivityConnector]
 
-  private val getUrl = s"/report-pillar2-top-up-taxes/account-activity?dateFrom=$fromDate&dateTo=$toDate"
+  private val getUrl = s"/report-pillar2-top-up-taxes/account-activity?fromDate=$fromDate&toDate=$toDate"
 
   "AccountActivityConnector" when {
     "retrieving account activity" must {

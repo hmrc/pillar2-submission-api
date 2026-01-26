@@ -39,19 +39,19 @@ class AccountActivityController @Inject() (
     extends BackendController(cc)
     with Logging {
 
-  def retrieveAccountActivity(activityFromDate: String, activityToDate: String): Action[AnyContent] =
+  def retrieveAccountActivity(fromDate: String, toDate: String): Action[AnyContent] =
     (pillar2IdAction andThen identify).async { request =>
       given HeaderCarrier = hc(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
 
-      Try(LocalDate.parse(activityFromDate))
-        .flatMap(from => Try(LocalDate.parse(activityToDate)).map(to => (from, to)))
+      Try(LocalDate.parse(fromDate))
+        .flatMap(from => Try(LocalDate.parse(toDate)).map(to => (from, to)))
         .fold(
           _ => Future.failed(InvalidDateFormat),
           (from, to) =>
             if from.isAfter(to) then Future.failed(InvalidDateRange)
             else {
               accountActivityService
-                .retrieveAccountActivity(activityFromDate = from, activityToDate = to)
+                .retrieveAccountActivity(fromDate = from, toDate = to)
                 .value
                 .flatMap {
                   case Left(error) =>

@@ -33,11 +33,11 @@ import scala.util.Try
 
 class AccountActivityService @Inject() (accountActivityConnector: AccountActivityConnector)(using ExecutionContext) extends Logging {
 
-  def retrieveAccountActivity(activityFromDate: LocalDate, activityToDate: LocalDate)(using
+  def retrieveAccountActivity(fromDate: LocalDate, toDate: LocalDate)(using
     HeaderCarrier
   ): EitherT[Future, Pillar2Error, AccountActivitySuccessResponse] = EitherT {
     accountActivityConnector
-      .getAccountActivity(activityFromDate = activityFromDate, activityToDate = activityToDate)
+      .getAccountActivity(fromDate = fromDate, toDate = toDate)
       .map(handleResponse)
   }
 

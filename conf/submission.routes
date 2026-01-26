@@ -505,14 +505,14 @@ GET  /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers
 #      example: application/vnd.hmrc.1.0+json
 #    description: Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json.
 #  - in: query
-#    name: activityFromDate
+#    name: fromDate
 #    required: true
 #    schema:
 #      type: string
 #      format: date
 #    description: Start of period to retrieve activity from.
 #  - in: query
-#    name: activityToDate
+#    name: toDate
 #    required: true
 #    schema:
 #      type: string
@@ -556,4 +556,4 @@ GET  /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 ###
-GET  /account-activity  uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.AccountActivityController.retrieveAccountActivity(activityFromDate: String, activityToDate: String)
+GET  /account-activity  uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.AccountActivityController.retrieveAccountActivity(fromDate: String, toDate: String)
