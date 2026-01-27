@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.organisation
 
-import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
 
 enum AccountActivityScenario:
   case DTT_CHARGE
@@ -44,7 +44,8 @@ object AccountActivityScenario:
       json.validate[String].flatMap { value =>
         AccountActivityScenario.values.find(_.toString == value) match
           case Some(scenario) => JsSuccess(scenario)
-          case None           => JsError(s"Invalid accountActivityScenario: '$value'. Valid values are: ${AccountActivityScenario.values.map(_.toString).mkString(", ")}")
+          case None           =>
+            JsError(s"Invalid accountActivityScenario: '$value'. Valid values are: ${AccountActivityScenario.values.map(_.toString).mkString(", ")}")
       }
 
     def writes(scenario: AccountActivityScenario): JsValue =

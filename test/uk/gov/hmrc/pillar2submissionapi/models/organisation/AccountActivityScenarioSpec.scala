@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.organisation
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
+import play.api.libs.json._
 
 class AccountActivityScenarioSpec extends AnyWordSpec with Matchers {
 
@@ -53,28 +53,26 @@ class AccountActivityScenarioSpec extends AnyWordSpec with Matchers {
   "TestData" when {
     "parsing JSON with accountActivityScenario" must {
       "successfully parse valid scenario" in {
-        val json = Json.obj("accountActivityScenario" -> "DTT_CHARGE")
+        val json   = Json.obj("accountActivityScenario" -> "DTT_CHARGE")
         val result = json.validate[TestData]
         result mustBe a[JsSuccess[TestData]]
-        result.get.accountActivityScenario mustBe Some(AccountActivityScenario.DTT_CHARGE)
+        result.get.accountActivityScenario mustBe AccountActivityScenario.DTT_CHARGE
       }
 
-      "successfully parse null scenario" in {
-        val json = Json.obj("accountActivityScenario" -> null)
+      "return JsError for null scenario" in {
+        val json   = Json.obj("accountActivityScenario" -> JsNull)
         val result = json.validate[TestData]
-        result mustBe a[JsSuccess[TestData]]
-        result.get.accountActivityScenario mustBe None
+        result mustBe a[JsError]
       }
 
-      "successfully parse missing scenario" in {
-        val json = Json.obj()
+      "return JsError for missing scenario" in {
+        val json   = Json.obj()
         val result = json.validate[TestData]
-        result mustBe a[JsSuccess[TestData]]
-        result.get.accountActivityScenario mustBe None
+        result mustBe a[JsError]
       }
 
       "return JsError for invalid scenario" in {
-        val json = Json.obj("accountActivityScenario" -> "INVALID_SCENARIO")
+        val json   = Json.obj("accountActivityScenario" -> "INVALID_SCENARIO")
         val result = json.validate[TestData]
         result mustBe a[JsError]
       }

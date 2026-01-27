@@ -1394,64 +1394,94 @@ paths:
       - submission
       summary: Retrieve Account Activity
       parameters:
-      - in: query
-        name: fromDate
-        required: true
-        schema:
-          type: string
-          format: date
-        description: Start of period to retrieve activity from.
-      - in: query
-        name: toDate
-        required: true
-        schema:
-          type: string
-          format: date
-        description: End of period to retrieve activity from.
-      - in: header
-        name: Authorization
-        required: true
-        schema:
-          type: string
-        description: Bearer token for authentication
-      - in: header
-        name: X-Pillar2-Id
-        required: true
-        schema:
-          type: string
-        description: Pillar2 ID to retrieve activity for.
-      - in: header
-        name: Accept
+      - name: fromDate
+        in: query
+        description: Filter results from this date (YYYY-MM-DD)
         required: false
         schema:
           type: string
-          example: application/vnd.hmrc.1.0+json
-        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+          format: date
+      - name: toDate
+        in: query
+        description: Filter results to this date (YYYY-MM-DD)
+        required: false
+        schema:
+          type: string
+          format: date
       responses:
         "200":
-          description: Account Activity Retrieved Successfully
+          description: Account Activity retrieved successfully
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+                properties:
+                  success:
+                    $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+              examples:
+                DttCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.DttCharge"
+                FullyPaidCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidCharge"
+                FullyPaidChargeWithSplitPayments:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidChargeWithSplitPayments"
+                RepaymentInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentInterest"
+                DttDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttDetermination"
+                DttIirUtpr:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtpr"
+                AccruedInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.AccruedInterest"
+                DttIirUtprInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprInterest"
+                DttIirUtprDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDetermination"
+                DttIirUtprDiscovery:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDiscovery"
+                DttIirUtprOverpaidClaim:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprOverpaidClaim"
+                UktrDttLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.UktrDttLateFilingPenalty"
+                OrnGirLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.OrnGirLateFilingPenalty"
+                PotentialLostRevenuePenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.PotentialLostRevenuePenalty"
+                Schedule36Penalty:
+                  $ref: "#/components/examples/responses.AccountActivity.Schedule36Penalty"
+                RecordKeepingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.RecordKeepingPenalty"
+                RepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentCredit"
+                InterestRepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.InterestRepaymentCredit"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
         "422":
           description: Business Validation Failure
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
         "403":
           description: Forbidden
           content:
@@ -1464,6 +1494,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
       security:
       - userRestricted:
         - read:pillar2
@@ -1941,8 +1974,9 @@ components:
     uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
       properties:
         accountActivityScenario:
-          nullable: true
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario"
+      required:
+      - accountActivityScenario
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
       properties:
         startDate:
