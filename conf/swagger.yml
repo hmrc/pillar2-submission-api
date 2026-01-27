@@ -978,24 +978,9 @@ paths:
     get:
       security:
         - userRestricted: [read:pillar2]
-      parameters:
-        - name: fromDate
-          in: query
-          description: Filter results from this date (YYYY-MM-DD)
-          required: false
-          schema:
-            type: string
-            format: date
-        - name: toDate
-          in: query
-          description: Filter results to this date (YYYY-MM-DD)
-          required: false
-          schema:
-            type: string
-            format: date
       responses:
         "200":
-          description: Account Activity retrieved successfully
+          description: Account Activity Retrieved Successfully
           content:
             application/json:
               schema:
@@ -1247,7 +1232,6 @@ components:
         lastUpdated:
           type: string
           format: date-time
-          nullable: true
       required:
         - orgDetails
         - accountingPeriod

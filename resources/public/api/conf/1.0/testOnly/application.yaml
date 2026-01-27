@@ -1394,23 +1394,42 @@ paths:
       - submission
       summary: Retrieve Account Activity
       parameters:
-      - name: fromDate
-        in: query
-        description: Filter results from this date (YYYY-MM-DD)
-        required: false
+      - in: query
+        name: fromDate
+        required: true
         schema:
           type: string
           format: date
-      - name: toDate
-        in: query
-        description: Filter results to this date (YYYY-MM-DD)
-        required: false
+        description: Start of period to retrieve activity from.
+      - in: query
+        name: toDate
+        required: true
         schema:
           type: string
           format: date
+        description: End of period to retrieve activity from.
+      - in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        description: Bearer token for authentication
+      - in: header
+        name: X-Pillar2-Id
+        required: true
+        schema:
+          type: string
+        description: Pillar2 ID to retrieve activity for.
+      - in: header
+        name: Accept
+        required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
       responses:
         "200":
-          description: Account Activity retrieved successfully
+          description: Account Activity Retrieved Successfully
           content:
             application/json:
               schema:
@@ -1958,7 +1977,6 @@ components:
         lastUpdated:
           type: string
           format: date-time
-          nullable: true
       required:
       - orgDetails
       - accountingPeriod
