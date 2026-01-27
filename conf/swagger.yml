@@ -1053,6 +1053,13 @@ paths:
               examples:
                 Missing Credentials:
                   $ref: "#/components/examples/errors.MissingCredentials"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
         "500":
           description: Internal Server Error
           content:
