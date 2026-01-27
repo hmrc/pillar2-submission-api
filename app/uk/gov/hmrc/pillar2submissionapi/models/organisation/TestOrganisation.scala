@@ -41,7 +41,7 @@ object AccountingPeriod {
 }
 
 case class TestData(
-  accountActivityScenario: Option[String] = None
+  accountActivityScenario: Option[AccountActivityScenario] = None
 )
 
 object TestData {

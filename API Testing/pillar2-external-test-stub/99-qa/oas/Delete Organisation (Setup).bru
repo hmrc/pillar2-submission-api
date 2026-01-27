@@ -1,0 +1,25 @@
+meta {
+  name: Delete Organisation (Setup)
+  type: http
+  seq: 0
+}
+
+delete {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: valid bearerToken
+}
+
+tests {
+  test("Status code is 204 or 404", function() {
+    const status = res.getStatus();
+    expect(status === 204 || status === 404).to.be.true;
+  });
+}
+
+
+
