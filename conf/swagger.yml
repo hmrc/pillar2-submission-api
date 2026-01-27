@@ -978,6 +978,95 @@ paths:
     get:
       security:
         - userRestricted: [read:pillar2]
+      parameters:
+        - name: fromDate
+          in: query
+          description: Filter results from this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          description: Filter results to this date (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Account Activity retrieved successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+              examples:
+                DttCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.DttCharge"
+                FullyPaidCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidCharge"
+                FullyPaidChargeWithSplitPayments:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidChargeWithSplitPayments"
+                RepaymentInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentInterest"
+                DttDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttDetermination"
+                DttIirUtpr:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtpr"
+                AccruedInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.AccruedInterest"
+                DttIirUtprInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprInterest"
+                DttIirUtprDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDetermination"
+                DttIirUtprDiscovery:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDiscovery"
+                DttIirUtprOverpaidClaim:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprOverpaidClaim"
+                UktrDttLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.UktrDttLateFilingPenalty"
+                OrnGirLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.OrnGirLateFilingPenalty"
+                PotentialLostRevenuePenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.PotentialLostRevenuePenalty"
+                Schedule36Penalty:
+                  $ref: "#/components/examples/responses.AccountActivity.Schedule36Penalty"
+                RecordKeepingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.RecordKeepingPenalty"
+                RepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentCredit"
+                InterestRepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.InterestRepaymentCredit"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              examples:
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:
@@ -1299,8 +1388,6 @@ components:
           testData:
             accountActivityScenario: "DTT_CHARGE"
           lastUpdated: "2024-01-01T12:00:00Z"
-    # Account Activity Response Examples - use with GET /account-activity endpoint
-    # Set the scenario on the test organisation, then call GET /account-activity to see these responses
     responses.AccountActivity.DttCharge:
       summary: "DTT_CHARGE - Standard outstanding DTT debit charge"
       value:
