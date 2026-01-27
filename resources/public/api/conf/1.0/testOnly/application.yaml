@@ -1980,6 +1980,7 @@ components:
       required:
       - orgDetails
       - accountingPeriod
+      - lastUpdated
     uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationWithId:
       properties:
         pillar2Id:

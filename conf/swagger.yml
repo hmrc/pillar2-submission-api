@@ -1220,21 +1220,6 @@ components:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario"
       required:
         - accountActivityScenario
-    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation:
-      properties:
-        orgDetails:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
-        accountingPeriod:
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
-        testData:
-          nullable: true
-          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
-        lastUpdated:
-          type: string
-          format: date-time
-      required:
-        - orgDetails
-        - accountingPeriod
     Submission:
       properties:
         submissionType:
