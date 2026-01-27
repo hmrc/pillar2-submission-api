@@ -1188,6 +1188,8 @@ components:
       properties:
         pillar2Id:
           description: A unique identifier for Pillar 2. Each company will have a different ID, allocated by HMRC.
+        organisation:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation"
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
       description: The period in which a group would be submitting their Pillar 2 returns to HMRC. This period of time varies amongst different businesses. It is effectively their "business year", and is expected to be the same as their accounting period with Pillar 2.
       properties:
@@ -1206,6 +1208,49 @@ components:
           description: The full name of a company registered on Pillar 2.
         registrationDate:
           description: The date that a group successfully registers and subscribes to Pillar 2 with HMRC.
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario:
+      type: string
+      enum:
+        - DTT_CHARGE
+        - FULLY_PAID_CHARGE
+        - FULLY_PAID_CHARGE_WITH_SPLIT_PAYMENTS
+        - REPAYMENT_INTEREST
+        - DTT_DETERMINATION
+        - DTT_IIR_UTPR
+        - ACCRUED_INTEREST
+        - DTT_IIR_UTPR_INTEREST
+        - DTT_IIR_UTPR_DETERMINATION
+        - DTT_IIR_UTPR_DISCOVERY
+        - DTT_IIR_UTPR_OVERPAID_CLAIM
+        - UKTR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+        - ORN_GIR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+        - POTENTIAL_LOST_REVENUE_PENALTY
+        - SCHEDULE_36_PENALTY
+        - RECORD_KEEPING_PENALTY
+        - REPAYMENT_CREDIT
+        - INTEREST_REPAYMENT_CREDIT
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
+      properties:
+        accountActivityScenario:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario"
+      required:
+        - accountActivityScenario
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisation:
+      properties:
+        orgDetails:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
+        accountingPeriod:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        testData:
+          nullable: true
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
+        lastUpdated:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - orgDetails
+        - accountingPeriod
     Submission:
       properties:
         submissionType:
