@@ -78,6 +78,20 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual BAD_REQUEST
       }
 
+      "return 400 BAD_REQUEST for invalid accountActivityScenario" in {
+        val result = Await.result(
+          client
+            .post(URI.create(baseUrl).toURL)
+            .withBody(invalidAccountActivityScenarioJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual BAD_REQUEST
+      }
+
       "return 409 CONFLICT when organisation already exists" in {
         stubRequest(
           "POST",
@@ -261,6 +275,21 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
 
   val invalidRequestJson: JsValue = Json.obj(
     "invalidField" -> "invalidValue"
+  )
+
+  val invalidAccountActivityScenarioJson: JsValue = Json.obj(
+    "orgDetails" -> Json.obj(
+      "domesticOnly"     -> true,
+      "organisationName" -> "Test Organisation Ltd",
+      "registrationDate" -> "2024-01-01"
+    ),
+    "accountingPeriod" -> Json.obj(
+      "startDate" -> "2024-01-01",
+      "endDate"   -> "2024-12-31"
+    ),
+    "testData" -> Json.obj(
+      "accountActivityScenario" -> "INVALID_SCENARIO"
+    )
   )
 
   val validOrganisation = TestOrganisation(

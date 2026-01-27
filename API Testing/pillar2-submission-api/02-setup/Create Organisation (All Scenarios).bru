@@ -1,0 +1,62 @@
+meta {
+  name: Create Organisation (All Scenarios)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{apiUrl}}/setup/organisation
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": false,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    },
+    "testData": {
+      "accountActivityScenario": "{{scenario}}"
+    }
+  }
+}
+
+vars:pre-request {
+  scenario: DTT_CHARGE
+}
+
+docs {
+  # Valid Account Activity Scenarios
+  
+  Change the `scenario` variable to test different scenarios:
+  
+  - DTT_CHARGE
+  - FULLY_PAID_CHARGE
+  - FULLY_PAID_CHARGE_WITH_SPLIT_PAYMENTS
+  - REPAYMENT_INTEREST
+  - DTT_DETERMINATION
+  - DTT_IIR_UTPR
+  - ACCRUED_INTEREST
+  - DTT_IIR_UTPR_INTEREST
+  - DTT_IIR_UTPR_DETERMINATION
+  - DTT_IIR_UTPR_DISCOVERY
+  - DTT_IIR_UTPR_OVERPAID_CLAIM
+  - UKTR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+  - ORN_GIR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+  - POTENTIAL_LOST_REVENUE_PENALTY
+  - SCHEDULE_36_PENALTY
+  - RECORD_KEEPING_PENALTY
+  - REPAYMENT_CREDIT
+  - INTEREST_REPAYMENT_CREDIT
+}
