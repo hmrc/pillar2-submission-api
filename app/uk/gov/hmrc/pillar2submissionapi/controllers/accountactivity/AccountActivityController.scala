@@ -20,8 +20,9 @@ import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{InvalidDateFormat, InvalidDateRange}
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AccountActivityNotAvailable, InvalidDateFormat, InvalidDateRange}
 import uk.gov.hmrc.pillar2submissionapi.services.AccountActivityService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -34,32 +35,38 @@ class AccountActivityController @Inject() (
   accountActivityService: AccountActivityService,
   identify:               IdentifierAction,
   pillar2IdAction:        Pillar2IdHeaderExistsAction,
-  cc:                     ControllerComponents
+  cc:                     ControllerComponents,
+  config:                 AppConfig
 )(using ExecutionContext)
     extends BackendController(cc)
     with Logging {
+
+  private def checkAccountActivityEnabled[A](block: => Future[A]): Future[A] =
+    if (config.accountActivityEnabled) block else Future.failed(AccountActivityNotAvailable)
 
   def retrieveAccountActivity(fromDate: String, toDate: String): Action[AnyContent] =
     (pillar2IdAction andThen identify).async { request =>
       given HeaderCarrier = hc(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
 
-      Try(LocalDate.parse(fromDate))
-        .flatMap(from => Try(LocalDate.parse(toDate)).map(to => (from, to)))
-        .fold(
-          _ => Future.failed(InvalidDateFormat),
-          (from, to) =>
-            if from.isAfter(to) then Future.failed(InvalidDateRange)
-            else {
-              accountActivityService
-                .retrieveAccountActivity(fromDate = from, toDate = to)
-                .value
-                .flatMap {
-                  case Left(error) =>
-                    logger.warn(s"Encountered $error while fetching account activity.")
-                    Future.failed(error)
-                  case Right(accountActivity) => Future.successful(Ok(Json.toJson(accountActivity)))
-                }
-            }
-        )
+      checkAccountActivityEnabled {
+        Try(LocalDate.parse(fromDate))
+          .flatMap(from => Try(LocalDate.parse(toDate)).map(to => (from, to)))
+          .fold(
+            _ => Future.failed(InvalidDateFormat),
+            (from, to) =>
+              if from.isAfter(to) then Future.failed(InvalidDateRange)
+              else {
+                accountActivityService
+                  .retrieveAccountActivity(fromDate = from, toDate = to)
+                  .value
+                  .flatMap {
+                    case Left(error) =>
+                      logger.warn(s"Encountered $error while fetching account activity.")
+                      Future.failed(error)
+                    case Right(accountActivity) => Future.successful(Ok(Json.toJson(accountActivity)))
+                  }
+              }
+          )
+      }
     }
 }

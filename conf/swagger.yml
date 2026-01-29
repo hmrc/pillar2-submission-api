@@ -976,6 +976,57 @@ paths:
         - userRestricted: [write:pillar2]
   /account-activity:
     get:
+      summary: Retrieve Account Activity
+      description: |
+        Retrieves account activity for a specified date range.
+      responses:
+        "200":
+          description: Account Activity Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid Date Range:
+                  $ref: "#/components/examples/errors.InvalidDateRange"
+                Invalid Date Format:
+                  $ref: "#/components/examples/errors.InvalidDateFormat"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "501":
+          description: Not Implemented
+          content:
+            application/json:
+              examples:
+                Account Activity Not Available:
+                  $ref: "#/components/examples/errors.AccountActivityNotAvailable"
       security:
         - userRestricted: [read:pillar2]
       responses:
@@ -2286,6 +2337,11 @@ components:
       value:
         code: "NOT_FOUND"
         message: The requested ORN could not be found
+    errors.AccountActivityNotAvailable:
+      summary: Account Activity Not Available - returned when the endpoint is not yet enabled in the current environment
+      value:
+        code: "NOT_IMPLEMENTED"
+        message: Account activity is not available in this environment
   securitySchemes:
     userRestricted:
       type: oauth2

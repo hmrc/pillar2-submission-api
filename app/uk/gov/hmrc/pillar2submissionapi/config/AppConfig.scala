@@ -32,4 +32,6 @@ case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
     servicesConfig.getBoolean("features.allow-test-users")
 
   lazy val testOrganisationEnabled: Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
+
+  lazy val accountActivityEnabled: Boolean = servicesConfig.getBoolean("features.accountActivityEnabled")
 }

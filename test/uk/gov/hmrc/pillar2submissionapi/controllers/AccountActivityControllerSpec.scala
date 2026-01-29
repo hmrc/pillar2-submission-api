@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, status, given}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.AccountActivityController
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
@@ -37,7 +38,11 @@ import scala.concurrent.Future
 
 class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActivityDataFixture {
 
-  trait TestCase(result: Either[Pillar2Error, AccountActivitySuccessResponse]) {
+  val mockAppConfig: AppConfig = mock[AppConfig]
+
+  trait TestCase(result: Either[Pillar2Error, AccountActivitySuccessResponse], accountActivityEnabled: Boolean = true) {
+    when(mockAppConfig.accountActivityEnabled).thenReturn(accountActivityEnabled)
+
     val mockAccountActivityService: AccountActivityService = {
       val aaService = mock[AccountActivityService]
       when(aaService.retrieveAccountActivity(eqTo(localDateFrom), eqTo(localDateTo))(using any[HeaderCarrier]))
@@ -45,51 +50,62 @@ class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActiv
       aaService
     }
 
-    val controller: AccountActivityController = AccountActivityController(mockAccountActivityService, identifierAction, pillar2IdAction, cc)
+    val controllerUnderTest: AccountActivityController =
+      AccountActivityController(mockAccountActivityService, identifierAction, pillar2IdAction, cc, mockAppConfig)
 
     val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
   }
 
-  "retrieveAccountActivity" must {
-    "return OK with the expected response on the happy path" in new TestCase(accountActivityJsonParsed.asRight) {
-      val result: Future[Result] = controller.retrieveAccountActivity(fromDate, toDate)(request)
-      status(result) mustBe OK
-      contentAsJson(result) mustBe accountActivityJsonResponse
+  "retrieveAccountActivity" when {
+    "account activity is enabled" must {
+      "return OK with the expected response on the happy path" in new TestCase(accountActivityJsonParsed.asRight) {
+        val result: Future[Result] = controllerUnderTest.retrieveAccountActivity(fromDate, toDate)(request)
+        status(result) mustBe OK
+        contentAsJson(result) mustBe accountActivityJsonResponse
+      }
+
+      "fail with InvalidDateFormat when either of the query parameters can't be parsed" in new TestCase(accountActivityJsonParsed.asRight) {
+        val badFirstDate:  Future[Result] = controllerUnderTest.retrieveAccountActivity("not-a-date", toDate)(request)
+        val badSecondDate: Future[Result] = controllerUnderTest.retrieveAccountActivity(fromDate, "not-a-date")(request)
+
+        badFirstDate.shouldFailWith(InvalidDateFormat)
+        badSecondDate.shouldFailWith(InvalidDateFormat)
+      }
+
+      "fail with InvalidDateRange when from is after to" in new TestCase(accountActivityJsonParsed.asRight) {
+        controllerUnderTest
+          .retrieveAccountActivity(localDateFrom.toString, localDateFrom.minusDays(1).toString)(request)
+          .shouldFailWith(InvalidDateRange)
+      }
+
+      "return MissingHeader when X-Pillar2-Id header not provided" in new TestCase(accountActivityJsonParsed.asRight) {
+        controllerUnderTest
+          .retrieveAccountActivity(fromDate, toDate)(FakeRequest())
+          .shouldFailWith(MissingHeader.MissingPillar2Id)
+      }
+
+      "return the cause when an upstream layer fails in the Future's error channel" in new TestCase(accountActivityJsonParsed.asRight) {
+        when(mockAccountActivityService.retrieveAccountActivity(eqTo(localDateFrom), eqTo(localDateTo))(using any[HeaderCarrier]))
+          .thenReturn(EitherT.liftF(Future.failed(UnexpectedResponse)))
+
+        controllerUnderTest
+          .retrieveAccountActivity(fromDate, toDate)(request)
+          .shouldFailWith(UnexpectedResponse)
+      }
+
+      "return the cause when an upstream layer fails in the Either error channel" in new TestCase(UnexpectedResponse.asLeft) {
+        controllerUnderTest
+          .retrieveAccountActivity(fromDate, toDate)(request)
+          .shouldFailWith(UnexpectedResponse)
+      }
     }
 
-    "fail with InvalidDateFormat when either of the query parameters can't be parsed" in new TestCase(accountActivityJsonParsed.asRight) {
-      val badFirstDate:  Future[Result] = controller.retrieveAccountActivity("not-a-date", toDate)(request)
-      val badSecondDate: Future[Result] = controller.retrieveAccountActivity(fromDate, "not-a-date")(request)
-
-      badFirstDate.shouldFailWith(InvalidDateFormat)
-      badSecondDate.shouldFailWith(InvalidDateFormat)
-    }
-
-    "fail with InvalidDateRange when from is after to" in new TestCase(accountActivityJsonParsed.asRight) {
-      controller
-        .retrieveAccountActivity(localDateFrom.toString, localDateFrom.minusDays(1).toString)(request)
-        .shouldFailWith(InvalidDateRange)
-    }
-
-    "return MissingHeader when X-Pillar2-Id header not provided" in new TestCase(accountActivityJsonParsed.asRight) {
-      controller
-        .retrieveAccountActivity(fromDate, toDate)(FakeRequest())
-        .shouldFailWith(MissingHeader.MissingPillar2Id)
-    }
-
-    "return the cause when an upstream layer fails in the Future's error channel" in new TestCase(accountActivityJsonParsed.asRight) {
-      when(mockAccountActivityService.retrieveAccountActivity(eqTo(localDateFrom), eqTo(localDateTo))(using any[HeaderCarrier]))
-        .thenReturn(EitherT.liftF(Future.failed(UnexpectedResponse)))
-
-      controller
-        .retrieveAccountActivity(fromDate, toDate)(request)
-        .shouldFailWith(UnexpectedResponse)
-    }
-
-    "return the cause when an upstream layer fails in the Either error channel" in new TestCase(UnexpectedResponse.asLeft) {
-      controller
-        .retrieveAccountActivity(fromDate, toDate)(request)
-        .shouldFailWith(UnexpectedResponse)
+    "account activity is disabled" must {
+      "return AccountActivityNotAvailable (501 Not Implemented)" in new TestCase(accountActivityJsonParsed.asRight, accountActivityEnabled = false) {
+        controllerUnderTest
+          .retrieveAccountActivity(fromDate, toDate)(request)
+          .shouldFailWith(AccountActivityNotAvailable)
+      }
     }
   }
 }

@@ -49,6 +49,7 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
           case OrganisationNotFound(_) | ORNNotFoundException                => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
           case OrganisationAlreadyExists(_)                                  => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
           case DownstreamValidationError(_, _)                               => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case AccountActivityNotAvailable                                   => Results.NotImplemented(Pillar2ErrorResponse(e.code, e.message))
           case DatabaseError(_) | UnexpectedResponse | NoSubscriptionData(_) =>
             Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
