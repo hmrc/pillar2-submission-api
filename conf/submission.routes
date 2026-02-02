@@ -483,7 +483,7 @@ PUT /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.
 GET  /overseas-return-notification  uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController.retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)
 
 ###
-# summary: Retrieve activity for the given Pillar2 ID
+# summary: Retrieve Account Activity
 # parameters:
 #  - in: header
 #    name: Authorization

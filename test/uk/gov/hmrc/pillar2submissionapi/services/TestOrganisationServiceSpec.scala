@@ -100,7 +100,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
       endDate = LocalDate.of(2024, 12, 31),
       None
     ),
-    testData = Some(TestData(Some("DTT_CHARGE")))
+    testData = Some(TestData(AccountActivityScenario.DTT_CHARGE))
   )
 
   val validOrganisationDetails: TestOrganisation = TestOrganisation(

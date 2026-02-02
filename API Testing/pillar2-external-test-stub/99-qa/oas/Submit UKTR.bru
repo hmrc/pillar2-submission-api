@@ -1,0 +1,45 @@
+meta {
+  name: Submit UKTR
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{externalTestStubUrl}}/RESTAdapter/plr/uk-tax-return
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: valid bearerToken
+  X-Receipt-Date: 2025-05-01T19:50:48Z
+  correlationid: 6e6e8428-6682-482c-a691-ae16cf3df183
+  X-Originating-System: MDTP
+  X-Transmitting-System: HIP
+}
+
+body:json {
+  {
+    "accountingPeriodFrom": "2024-01-01",
+    "accountingPeriodTo": "2024-12-31",
+    "obligationMTT": false,
+    "electionUKGAAP": true,
+    "liabilities": {
+      "returnType": "NIL_RETURN"
+    }
+  }
+}
+
+tests {
+  test("Status code is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response contains form bundle number", function() {
+    expect(res.body.success.formBundleNumber).to.not.be.undefined;
+  });
+}
+
+
+

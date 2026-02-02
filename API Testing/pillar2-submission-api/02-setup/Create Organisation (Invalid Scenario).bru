@@ -1,0 +1,44 @@
+meta {
+  name: Create Organisation (Invalid Scenario)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{apiUrl}}/setup/organisation
+  body: json
+  auth: none
+}
+
+headers {
+  X-Pillar2-Id: {{testPlrId}}
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "orgDetails": {
+      "domesticOnly": false,
+      "organisationName": "Test Organisation Ltd",
+      "registrationDate": "2024-01-01"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31"
+    },
+    "testData": {
+      "accountActivityScenario": "INVALID_SCENARIO"
+    }
+  }
+}
+
+tests {
+  test("should return 400 Bad Request for invalid accountActivityScenario", function() {
+    expect(res.status).to.equal(400);
+  });
+  
+  test("response should contain INVALID_JSON error", function() {
+    var jsonData = res.getBody();
+    expect(jsonData.code).to.equal("INVALID_JSON");
+  });
+}
