@@ -1110,6 +1110,15 @@ paths:
               examples:
                 No Data Found:
                   $ref: "#/components/examples/errors.Submission.NoDataFound"
+        "501":
+          description: Not Implemented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Account Activity Not Available:
+                  $ref: "#/components/examples/errors.AccountActivityNotAvailable"
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission:

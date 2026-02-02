@@ -1525,6 +1525,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Account Activity Not Available:
+                  $ref: "#/components/examples/errors.AccountActivityNotAvailable"
       description: |
         Retrieves account activity for a specified date range.
       security:
