@@ -1451,7 +1451,6 @@ components:
               transactionDate: "2026-01-27"
               dueDate: "2027-06-30"
               originalAmount: 10000
-              outstandingAmount: 0
               clearedAmount: 10000
               clearingDetails:
                 - transactionDesc: "On Account Pillar 2 (Payment on Account)"

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.191.0
+  version: 0.192.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -2213,16 +2213,15 @@ components:
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: 10000
-            outstandingAmount: 0
             clearedAmount: 10000
             clearingDetails:
-            - transactionDesc: Pillar 2 (Payment on Account)
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
               dueDate: 2027-06-30
               amount: 10000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Payment
-            transactionDesc: Pillar 2 (Payment on Account)
+            transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: -10000
@@ -2250,18 +2249,18 @@ components:
             originalAmount: 10000
             clearedAmount: 10000
             clearingDetails:
-            - transactionDesc: Pillar 2 (Payment on Account)
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
               dueDate: 2027-06-30
               amount: 5000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
-            - transactionDesc: Pillar 2 (Payment on Account)
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
               dueDate: 2027-06-30
               amount: 5000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Payment
-            transactionDesc: Pillar 2 (Payment on Account)
+            transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: -5000
@@ -2274,7 +2273,7 @@ components:
               clearingDate: 2026-01-27
               clearingReason: Allocated to Charge
           - transactionType: Payment
-            transactionDesc: Pillar 2 (Payment on Account)
+            transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: -5000
@@ -2705,7 +2704,7 @@ components:
           processingDate: 2026-01-27T12:06:29.774264Z
           transactionDetails:
           - transactionType: Payment
-            transactionDesc: Pillar 2 (Payment on Account)
+            transactionDesc: On Account Pillar 2 (Payment on Account)
             chargeRefNo: XR23456789014
             transactionDate: 2026-01-27
             originalAmount: 500
@@ -2727,8 +2726,8 @@ components:
             chargeRefNo: XR23456789000
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
-            originalAmount: -100
-            outstandingAmount: -100
+            originalAmount: 100
+            outstandingAmount: 100
     requests.BTNRequestExample:
       summary: Request example
       value:

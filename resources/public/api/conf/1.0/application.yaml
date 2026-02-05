@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.188.0
+  version: 0.192.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -2191,7 +2191,7 @@ components:
           processingDate: 2026-01-27T12:06:28.342412Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            transactionDesc: UKTR - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: X123456789012
@@ -2206,14 +2206,13 @@ components:
           processingDate: 2026-01-27T12:06:28.427623Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            transactionDesc: UKTR - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: X123456789012
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: 10000
-            outstandingAmount: 10000
             clearedAmount: 10000
             clearingDetails:
             - transactionDesc: On Account Pillar 2 (Payment on Account)
@@ -2225,10 +2224,10 @@ components:
             transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
-            originalAmount: 10000
-            clearedAmount: 10000
+            originalAmount: -10000
+            clearedAmount: -10000
             clearingDetails:
-            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            - transactionDesc: UKTR - DTT
               chargeRefNo: X123456789012
               dueDate: 2027-06-30
               amount: 10000
@@ -2241,7 +2240,7 @@ components:
           processingDate: 2026-01-27T12:06:28.526651Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            transactionDesc: UKTR - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: X123456789012
@@ -2264,10 +2263,10 @@ components:
             transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
-            originalAmount: 5000
-            clearedAmount: 5000
+            originalAmount: -5000
+            clearedAmount: -5000
             clearingDetails:
-            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            - transactionDesc: UKTR - DTT
               chargeRefNo: X123456789012
               dueDate: 2027-06-30
               amount: 10000
@@ -2277,10 +2276,10 @@ components:
             transactionDesc: On Account Pillar 2 (Payment on Account)
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
-            originalAmount: 5000
-            clearedAmount: 5000
+            originalAmount: -5000
+            clearedAmount: -5000
             clearingDetails:
-            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            - transactionDesc: UKTR - DTT
               chargeRefNo: X123456789012
               dueDate: 2027-06-30
               amount: 10000
@@ -2293,14 +2292,14 @@ components:
           processingDate: 2026-01-27T12:06:28.63985Z
           transactionDetails:
           - transactionType: Credit
-            transactionDesc: Pillar 2 UKTR RPI Pillar 2 OECD RPI
+            transactionDesc: Repayment interest - UKTR
             chargeRefNo: XR23456789012
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
             originalAmount: -100
             clearedAmount: -100
             clearingDetails:
-            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            - transactionDesc: UKTR - DTT
               chargeRefNo: X123456789012
               dueDate: 2027-06-30
               amount: 100
@@ -2313,7 +2312,7 @@ components:
           processingDate: 2026-01-27T12:06:28.722149Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Determination Pillar 2 DTT
+            transactionDesc: Determination - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3456789698
@@ -2328,7 +2327,7 @@ components:
           processingDate: 2026-01-27T12:06:28.80795Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR DTT
+            transactionDesc: UKTR - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3456789012
@@ -2337,13 +2336,13 @@ components:
             originalAmount: 3100
             clearedAmount: 3100
             clearingDetails:
-            - transactionDesc: Pillar 2 UKTR Pillar 2 UKTR DTT
+            - transactionDesc: UKTR - DTT
               dueDate: 2027-06-30
               amount: 3100
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR IIR
+            transactionDesc: UKTR - MTT (IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3456789012
@@ -2353,13 +2352,13 @@ components:
             outstandingAmount: 50
             clearedAmount: 50
             clearingDetails:
-            - transactionDesc: Pillar 2 UKTR Pillar 2 UKTR IIR
+            - transactionDesc: UKTR - MTT (IIR)
               dueDate: 2027-06-30
               amount: 50
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR UTPR
+            transactionDesc: UKTR - MTT (UTPR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3456789012
@@ -2374,7 +2373,7 @@ components:
           processingDate: 2026-01-27T12:06:28.931166Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+            transactionDesc: Determination - MTT (IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             accruedInterest: 35
@@ -2390,7 +2389,7 @@ components:
           processingDate: 2026-01-27T12:06:29.019924Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Interest UKTR DTT interest
+            transactionDesc: Late UKTR pay int - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789642
@@ -2400,13 +2399,13 @@ components:
             outstandingAmount: 150
             clearedAmount: 200
             clearingDetails:
-            - transactionDesc: Pillar 2 UKTR Interest UKTR DTT interest
+            - transactionDesc: Late UKTR pay int - DTT
               dueDate: 2027-06-30
               amount: 200
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Interest UKTR IIR interest
+            transactionDesc: Late UKTR pay int - MTT(IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789642
@@ -2415,13 +2414,13 @@ components:
             originalAmount: 150
             clearedAmount: 150
             clearingDetails:
-            - transactionDesc: Pillar 2 UKTR Interest UKTR IIR interest
+            - transactionDesc: Late UKTR pay int - MTT(IIR)
               dueDate: 2027-06-30
               amount: 150
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR Interest UKTR UTPR interest
+            transactionDesc: Late UKTR pay int - MTT(UTPR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3556789642
@@ -2436,7 +2435,7 @@ components:
           processingDate: 2026-01-27T12:06:29.099202Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Determination Pillar 2 Determination DTT
+            transactionDesc: Determination - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3556789012
@@ -2445,13 +2444,13 @@ components:
             originalAmount: 310000
             clearedAmount: 310000
             clearingDetails:
-            - transactionDesc: Pillar 2 Determination Pillar 2 Determination DTT
+            - transactionDesc: Determination - DTT
               dueDate: 2027-06-30
               amount: 310000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+            transactionDesc: Determination - MTT (IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3556789012
@@ -2461,13 +2460,13 @@ components:
             outstandingAmount: 10000
             clearedAmount: 11250
             clearingDetails:
-            - transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+            - transactionDesc: Determination - MTT (IIR)
               dueDate: 2027-06-30
               amount: 11250
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 Determination Pillar 2 Determination UTPR
+            transactionDesc: Determination - MTT (UTPR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XDT3456789012
@@ -2477,7 +2476,7 @@ components:
             outstandingAmount: 1000
             clearedAmount: 125
             clearingDetails:
-            - transactionDesc: Pillar 2 Determination Pillar 2 Determination UTPR
+            - transactionDesc: Determination - MTT (UTPR)
               dueDate: 2027-06-30
               amount: 125
               clearingDate: 2026-01-27
@@ -2489,7 +2488,7 @@ components:
           processingDate: 2026-01-27T12:06:29.243214Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt DTT
+            transactionDesc: Discovery Assessment - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XD23456789779
@@ -2498,13 +2497,13 @@ components:
             originalAmount: 350000
             clearedAmount: 350000
             clearingDetails:
-            - transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt DTT
+            - transactionDesc: Discovery Assessment - DTT
               dueDate: 2027-06-30
               amount: 350000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt IIR
+            transactionDesc: Discovery Assessment-MTT(IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XD23456789779
@@ -2514,13 +2513,13 @@ components:
             outstandingAmount: 2000
             clearedAmount: 1000
             clearingDetails:
-            - transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt IIR
+            - transactionDesc: Discovery Assessment-MTT(IIR)
               dueDate: 2027-06-30
               amount: 1000
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt UTPR
+            transactionDesc: Discovery Assessment-MTT(UTPR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XD23456789779
@@ -2535,7 +2534,7 @@ components:
           processingDate: 2026-01-27T12:06:29.374836Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt DTT
+            transactionDesc: Overpaid claim assmnt - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XOC3456789456
@@ -2546,7 +2545,7 @@ components:
             standOverAmount: 6100
             appealFlag: true
           - transactionType: Debit
-            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt IIR
+            transactionDesc: O/paid claim assmnt-MTT (IIR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XOC3456789456
@@ -2556,13 +2555,13 @@ components:
             outstandingAmount: 2500
             clearedAmount: 2500
             clearingDetails:
-            - transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt IIR
+            - transactionDesc: O/paid claim assmnt-MTT (IIR)
               dueDate: 2027-06-30
               amount: 2500
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt UTPR
+            transactionDesc: O/paid claim assmnt-MTT (UTPR)
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XOC3456789456
@@ -2577,7 +2576,7 @@ components:
           processingDate: 2026-01-27T12:06:29.445579Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR DTT LFP Pillar 2 UKTR DTT LFP
+            transactionDesc: Late UKTR sub pen - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             transactionDate: 2026-01-27
@@ -2585,13 +2584,13 @@ components:
             originalAmount: 100
             clearedAmount: 100
             clearingDetails:
-            - transactionDesc: Pillar 2 UKTR DTT LFP Pillar 2 UKTR DTT LFP
+            - transactionDesc: Late UKTR sub pen - DTT
               dueDate: 2027-06-30
               amount: 100
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 UKTR MTT LFP Pillar 2 UKTR MTT LFP
+            transactionDesc: Late UKTR sub pen - MTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             transactionDate: 2026-01-27
@@ -2605,7 +2604,7 @@ components:
           processingDate: 2026-01-27T12:06:29.514485Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 ORN/GIR DTT LFP Pillar 2 ORN/GIR DTT LFP
+            transactionDesc: Late ORN/GIR sub pen - DTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             transactionDate: 2026-01-27
@@ -2613,13 +2612,13 @@ components:
             originalAmount: 100
             clearedAmount: 100
             clearingDetails:
-            - transactionDesc: Pillar 2 ORN/GIR DTT LFP Pillar 2 ORN/GIR DTT LFP
+            - transactionDesc: Late ORN/GIR sub pen - DTT
               dueDate: 2027-06-30
               amount: 100
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
           - transactionType: Debit
-            transactionDesc: Pillar 2 ORN/GIR MTT LFP Pillar 2 ORN/GIR MTT LFP
+            transactionDesc: Late ORN/GIR sub pen - MTT
             startDate: 2026-01-01
             endDate: 2026-12-31
             transactionDate: 2026-01-27
@@ -2628,7 +2627,7 @@ components:
             outstandingAmount: 50
             clearedAmount: 50
             clearingDetails:
-            - transactionDesc: Pillar 2 ORN/GIR MTT LFP Pillar 2 ORN/GIR MTT LFP
+            - transactionDesc: Late ORN/GIR sub pen - MTT
               dueDate: 2027-06-30
               amount: 50
               clearingDate: 2026-01-27
@@ -2640,7 +2639,7 @@ components:
           processingDate: 2026-01-27T12:06:29.577765Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Potential Lost Rev Pen
+            transactionDesc: Potential lost revenue penalty
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789011
@@ -2650,7 +2649,7 @@ components:
             outstandingAmount: 15000
             clearedAmount: 30000
             clearingDetails:
-            - transactionDesc: Pillar 2 Potential Lost Rev Pen
+            - transactionDesc: Potential lost revenue penalty
               dueDate: 2027-06-30
               amount: 30000
               clearingDate: 2026-01-27
@@ -2662,7 +2661,7 @@ components:
           processingDate: 2026-01-27T12:06:29.649088Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Sch 36 penalty
+            transactionDesc: Schedule 36 information notice
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789444
@@ -2672,7 +2671,7 @@ components:
             outstandingAmount: 500
             clearedAmount: 3000
             clearingDetails:
-            - transactionDesc: Sch 36 penalty
+            - transactionDesc: Schedule 36 information notice
               dueDate: 2027-06-30
               amount: 3000
               clearingDate: 2026-01-27
@@ -2684,7 +2683,7 @@ components:
           processingDate: 2026-01-27T12:06:29.711542Z
           transactionDetails:
           - transactionType: Debit
-            transactionDesc: Pillar 2 Record Keeping Pen Pillar 2 Record Keeping Pen
+            transactionDesc: Accurate records failure pen
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789898
@@ -2693,24 +2692,29 @@ components:
             originalAmount: 3500
             clearedAmount: 3500
             clearingDetails:
-            - transactionDesc: Pillar 2 Record Keeping Pen Pillar 2 Record Keeping Pen
+            - transactionDesc: Accurate records failure pen
               dueDate: 2027-06-30
               amount: 3500
               clearingDate: 2026-01-27
               clearingReason: Cleared by Payment
     responses.AccountActivity.RepaymentCredit:
-      summary: REPAYMENT_CREDIT - Credit from UKTR submission
+      summary: REPAYMENT_CREDIT - Payment on Account cleared by Repayment to taxpayer
       value:
         success:
           processingDate: 2026-01-27T12:06:29.774264Z
           transactionDetails:
-          - transactionType: Credit
-            transactionDesc: Pillar 2 UKTR Repayment Pillar 2 UKTR Repayment
+          - transactionType: Payment
+            transactionDesc: On Account Pillar 2 (Payment on Account)
             chargeRefNo: XR23456789014
             transactionDate: 2026-01-27
-            dueDate: 2027-06-30
-            originalAmount: -10000
-            outstandingAmount: -10000
+            originalAmount: 500
+            clearedAmount: 500
+            clearingDetails:
+            - transactionDesc: Repayment
+              dueDate: 2027-06-30
+              amount: 500
+              clearingDate: 2026-01-27
+              clearingReason: Outgoing payment - Paid
     responses.AccountActivity.InterestRepaymentCredit:
       summary: INTEREST_REPAYMENT_CREDIT - Interest repayment credit
       value:
@@ -2718,12 +2722,12 @@ components:
           processingDate: 2026-01-27T12:06:29.837042Z
           transactionDetails:
           - transactionType: Credit
-            transactionDesc: Pillar 2 UKTR RPI Pillar 2 UKTR RPI
+            transactionDesc: Repayment interest - UKTR
             chargeRefNo: XR23456789000
             transactionDate: 2026-01-27
             dueDate: 2027-06-30
-            originalAmount: -100
-            outstandingAmount: -100
+            originalAmount: 100
+            outstandingAmount: 100
     requests.BTNRequestExample:
       summary: Request example
       value:
