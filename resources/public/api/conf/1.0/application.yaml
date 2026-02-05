@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.168.0
+  version: 0.188.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -1387,6 +1387,152 @@ paths:
       security:
       - userRestricted:
         - read:pillar2
+  /organisations/pillar-two/account-activity:
+    get:
+      operationId: retrieveAccountActivity
+      tags:
+      - submission
+      summary: Retrieve Account Activity
+      parameters:
+      - in: query
+        name: fromDate
+        required: true
+        schema:
+          type: string
+          format: date
+        description: Start of period to retrieve activity from.
+      - in: query
+        name: toDate
+        required: true
+        schema:
+          type: string
+          format: date
+        description: End of period to retrieve activity from.
+      - in: header
+        name: Authorization
+        required: true
+        schema:
+          type: string
+        description: Bearer token for authentication
+      - in: header
+        name: X-Pillar2-Id
+        required: true
+        schema:
+          type: string
+        description: Pillar2 ID to retrieve activity for.
+      - in: header
+        name: Accept
+        required: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.1.0+json
+        description: "Specifies the expected response format as versioned JSON from the HMRC API (v1.0). If not provided, it will default to application/vnd.hmrc.1.0+json."
+      responses:
+        "200":
+          description: Account Activity Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+                properties:
+                  success:
+                    $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse"
+              examples:
+                DttCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.DttCharge"
+                FullyPaidCharge:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidCharge"
+                FullyPaidChargeWithSplitPayments:
+                  $ref: "#/components/examples/responses.AccountActivity.FullyPaidChargeWithSplitPayments"
+                RepaymentInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentInterest"
+                DttDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttDetermination"
+                DttIirUtpr:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtpr"
+                AccruedInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.AccruedInterest"
+                DttIirUtprInterest:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprInterest"
+                DttIirUtprDetermination:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDetermination"
+                DttIirUtprDiscovery:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprDiscovery"
+                DttIirUtprOverpaidClaim:
+                  $ref: "#/components/examples/responses.AccountActivity.DttIirUtprOverpaidClaim"
+                UktrDttLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.UktrDttLateFilingPenalty"
+                OrnGirLateFilingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.OrnGirLateFilingPenalty"
+                PotentialLostRevenuePenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.PotentialLostRevenuePenalty"
+                Schedule36Penalty:
+                  $ref: "#/components/examples/responses.AccountActivity.Schedule36Penalty"
+                RecordKeepingPenalty:
+                  $ref: "#/components/examples/responses.AccountActivity.RecordKeepingPenalty"
+                RepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.RepaymentCredit"
+                InterestRepaymentCredit:
+                  $ref: "#/components/examples/responses.AccountActivity.InterestRepaymentCredit"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+        "422":
+          description: Business Validation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                No Data Found:
+                  $ref: "#/components/examples/errors.Submission.NoDataFound"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Json:
+                  $ref: "#/components/examples/errors.InvalidJson"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+        "501":
+          description: Not Implemented
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse"
+              examples:
+                Account Activity Not Available:
+                  $ref: "#/components/examples/errors.AccountActivityNotAvailable"
+      description: |
+        Retrieves account activity for a specified date range.
+      security:
+      - userRestricted:
+        - read:pillar2
 components:
   schemas:
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiableEntity:
@@ -1428,6 +1574,140 @@ components:
       - amountOwedDTT
       - amountOwedIIR
       - amountOwedUTPR
+    uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityClearance:
+      properties:
+        transactionDesc:
+          type: string
+          description: Description of the child transaction that took place.
+        chargeRefNo:
+          type: string
+          nullable: true
+          description: Reference for the child transaction's relevant charge kind.
+        dueDate:
+          nullable: true
+          type: string
+          format: date
+          description: Date the child transaction must be settled by.
+        amount:
+          type: number
+          format: double
+          description: Portion of the child transaction which is allocated against the parent.
+          minimum: -9.999999999999E10
+          maximum: 9.999999999999E10
+          multipleOf: 0.01
+        clearingDate:
+          type: string
+          format: date
+          description: Date the child transaction cleared against the parent.
+        clearingReason:
+          type: string
+          nullable: true
+          description: Reason the child transaction cleared against the parent.
+      required:
+      - transactionDesc
+      - amount
+      - clearingDate
+      description: Information on how another transaction is allocated against the parent transaction.
+    uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityTransaction:
+      properties:
+        transactionType:
+          type: string
+          description: The form of transaction that took place. Examples include 'Credit' 'Debit' and 'Payment'.
+        transactionDesc:
+          type: string
+          description: Description of a transaction that took place.
+        startDate:
+          nullable: true
+          type: string
+          format: date
+          description: Start date of the relevant accounting period.
+        endDate:
+          nullable: true
+          type: string
+          format: date
+          description: End date of the relevant accounting period.
+        accruedInterest:
+          type: number
+          format: double
+          nullable: true
+          description: "Interest accrued by delayed payment of this transaction, in GBP."
+          minimum: 0
+          maximum: 9.999999999999E10
+          multipleOf: 0.01
+        chargeRefNo:
+          type: string
+          nullable: true
+          description: Reference for the relevant charge kind.
+        transactionDate:
+          type: string
+          format: date
+          description: Date of the transaction.
+        dueDate:
+          nullable: true
+          type: string
+          format: date
+          description: Date the transaction must be settled by.
+        originalAmount:
+          type: number
+          format: double
+          description: "The original monetary value of the transaction, in GBP."
+          minimum: -9.999999999999E10
+          maximum: 9.999999999999E10
+          multipleOf: 0.01
+        outstandingAmount:
+          type: number
+          format: double
+          nullable: true
+          description: "The unresolved monetary value of the transaction, in GBP."
+          minimum: -9.999999999999E10
+          maximum: 9.999999999999E10
+          multipleOf: 0.01
+        clearedAmount:
+          type: number
+          format: double
+          nullable: true
+          description: "The resolved monetary value of the transaction, in GBP."
+          minimum: -9.9999999999E8
+          maximum: 9.9999999999E8
+          multipleOf: 0.01
+        standOverAmount:
+          type: number
+          format: double
+          nullable: true
+          description: The portion of the transaction's monetary value (in GBP) for which collection is postponed.
+          minimum: -9.9999999999E8
+          maximum: 9.9999999999E8
+          multipleOf: 0.01
+        appealFlag:
+          type: boolean
+          nullable: true
+          description: Indicates that the transaction is currently under appeal when present and true.
+        clearingDetails:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityClearance"
+          description: Information on how other transactions are allocated against this one.
+      required:
+      - transactionType
+      - transactionDesc
+      - transactionDate
+      - originalAmount
+      description: Represents a record of a change to a Pillar ID's circumstances.
+    uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse:
+      properties:
+        processingDate:
+          type: string
+          format: date-time
+          description: The date and time that an event took place.
+        transactionDetails:
+          type: array
+          items:
+            $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityTransaction"
+          description: Records of a change to a Pillar ID's circumstances from the chosen time period.
+      required:
+      - processingDate
+      - transactionDetails
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNRetrieveSuccessResponse:
       properties:
         processingDate:
@@ -1702,6 +1982,9 @@ components:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
         accountingPeriod:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        testData:
+          nullable: true
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
         lastUpdated:
           type: string
           format: date-time
@@ -1719,6 +2002,34 @@ components:
       required:
       - pillar2Id
       - organisation
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario:
+      properties: {}
+      type: string
+      enum:
+      - DTT_CHARGE
+      - FULLY_PAID_CHARGE
+      - FULLY_PAID_CHARGE_WITH_SPLIT_PAYMENTS
+      - REPAYMENT_INTEREST
+      - DTT_DETERMINATION
+      - DTT_IIR_UTPR
+      - ACCRUED_INTEREST
+      - DTT_IIR_UTPR_INTEREST
+      - DTT_IIR_UTPR_DETERMINATION
+      - DTT_IIR_UTPR_DISCOVERY
+      - DTT_IIR_UTPR_OVERPAID_CLAIM
+      - UKTR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+      - ORN_GIR_DTT_UKTR_MTT_LATE_FILING_PENALTY
+      - POTENTIAL_LOST_REVENUE_PENALTY
+      - SCHEDULE_36_PENALTY
+      - RECORD_KEEPING_PENALTY
+      - REPAYMENT_CREDIT
+      - INTEREST_REPAYMENT_CREDIT
+    uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
+      properties:
+        accountActivityScenario:
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountActivityScenario"
+      required:
+      - accountActivityScenario
     uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod:
       properties:
         startDate:
@@ -1760,6 +2071,9 @@ components:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.OrgDetails"
         accountingPeriod:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.AccountingPeriod"
+        testData:
+          nullable: true
+          $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData"
       required:
       - orgDetails
       - accountingPeriod
@@ -1853,6 +2167,8 @@ components:
         accountingPeriod:
           startDate: 2024-01-01
           endDate: 2024-12-31
+        testData:
+          accountActivityScenario: DTT_CHARGE
     responses.TestOrganisationResponseExample:
       summary: Response example
       value:
@@ -1865,7 +2181,549 @@ components:
           accountingPeriod:
             startDate: 2024-01-01
             endDate: 2024-12-31
+          testData:
+            accountActivityScenario: DTT_CHARGE
           lastUpdated: 2024-01-01T12:00:00Z
+    responses.AccountActivity.DttCharge:
+      summary: DTT_CHARGE - Standard outstanding DTT debit charge
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.342412Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: X123456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 10000
+            outstandingAmount: 10000
+    responses.AccountActivity.FullyPaidCharge:
+      summary: FULLY_PAID_CHARGE - Charge fully cleared by one payment
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.427623Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: X123456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 10000
+            outstandingAmount: 10000
+            clearedAmount: 10000
+            clearingDetails:
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
+              dueDate: 2027-06-30
+              amount: 10000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Payment
+            transactionDesc: On Account Pillar 2 (Payment on Account)
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 10000
+            clearedAmount: 10000
+            clearingDetails:
+            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+              chargeRefNo: X123456789012
+              dueDate: 2027-06-30
+              amount: 10000
+              clearingDate: 2026-01-27
+              clearingReason: Allocated to Charge
+    responses.AccountActivity.FullyPaidChargeWithSplitPayments:
+      summary: FULLY_PAID_CHARGE_WITH_SPLIT_PAYMENTS - Charge cleared by two payments
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.526651Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: X123456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 10000
+            clearedAmount: 10000
+            clearingDetails:
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
+              dueDate: 2027-06-30
+              amount: 5000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+            - transactionDesc: On Account Pillar 2 (Payment on Account)
+              dueDate: 2027-06-30
+              amount: 5000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Payment
+            transactionDesc: On Account Pillar 2 (Payment on Account)
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 5000
+            clearedAmount: 5000
+            clearingDetails:
+            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+              chargeRefNo: X123456789012
+              dueDate: 2027-06-30
+              amount: 10000
+              clearingDate: 2026-01-27
+              clearingReason: Allocated to Charge
+          - transactionType: Payment
+            transactionDesc: On Account Pillar 2 (Payment on Account)
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 5000
+            clearedAmount: 5000
+            clearingDetails:
+            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+              chargeRefNo: X123456789012
+              dueDate: 2027-06-30
+              amount: 10000
+              clearingDate: 2026-01-27
+              clearingReason: Allocated to Charge
+    responses.AccountActivity.RepaymentInterest:
+      summary: REPAYMENT_INTEREST - Credit for repayment interest
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.63985Z
+          transactionDetails:
+          - transactionType: Credit
+            transactionDesc: Pillar 2 UKTR RPI Pillar 2 OECD RPI
+            chargeRefNo: XR23456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: -100
+            clearedAmount: -100
+            clearingDetails:
+            - transactionDesc: Pillar 2 UK Tax Return Pillar 2 DTT
+              chargeRefNo: X123456789012
+              dueDate: 2027-06-30
+              amount: 100
+              clearingDate: 2026-01-27
+              clearingReason: Allocated to Charge
+    responses.AccountActivity.DttDetermination:
+      summary: DTT_DETERMINATION - Pillar 2 DTT Determination debit
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.722149Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Determination Pillar 2 DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3456789698
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 10000
+            outstandingAmount: 10000
+    responses.AccountActivity.DttIirUtpr:
+      summary: DTT_IIR_UTPR - Three debit kinds with partial payment
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.80795Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3100
+            clearedAmount: 3100
+            clearingDetails:
+            - transactionDesc: Pillar 2 UKTR Pillar 2 UKTR DTT
+              dueDate: 2027-06-30
+              amount: 3100
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR IIR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            outstandingAmount: 50
+            clearedAmount: 50
+            clearingDetails:
+            - transactionDesc: Pillar 2 UKTR Pillar 2 UKTR IIR
+              dueDate: 2027-06-30
+              amount: 50
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Pillar 2 UKTR UTPR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            outstandingAmount: 100
+    responses.AccountActivity.AccruedInterest:
+      summary: ACCRUED_INTEREST - Unpaid debit accruing interest
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:28.931166Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            accruedInterest: 35
+            chargeRefNo: XDT3456789055
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3100
+            outstandingAmount: 3100
+    responses.AccountActivity.DttIirUtprInterest:
+      summary: DTT_IIR_UTPR_INTEREST - Three interest debit kinds
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.019924Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Interest UKTR DTT interest
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3456789642
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 350
+            outstandingAmount: 150
+            clearedAmount: 200
+            clearingDetails:
+            - transactionDesc: Pillar 2 UKTR Interest UKTR DTT interest
+              dueDate: 2027-06-30
+              amount: 200
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Interest UKTR IIR interest
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3456789642
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 150
+            clearedAmount: 150
+            clearingDetails:
+            - transactionDesc: Pillar 2 UKTR Interest UKTR IIR interest
+              dueDate: 2027-06-30
+              amount: 150
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR Interest UKTR UTPR interest
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3556789642
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 35
+            outstandingAmount: 35
+    responses.AccountActivity.DttIirUtprDetermination:
+      summary: DTT_IIR_UTPR_DETERMINATION - Three determination debits
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.099202Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Determination Pillar 2 Determination DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3556789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 310000
+            clearedAmount: 310000
+            clearingDetails:
+            - transactionDesc: Pillar 2 Determination Pillar 2 Determination DTT
+              dueDate: 2027-06-30
+              amount: 310000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3556789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 21250
+            outstandingAmount: 10000
+            clearedAmount: 11250
+            clearingDetails:
+            - transactionDesc: Pillar 2 Determination Pillar 2 Determination IIR
+              dueDate: 2027-06-30
+              amount: 11250
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Determination Pillar 2 Determination UTPR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XDT3456789012
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 1125
+            outstandingAmount: 1000
+            clearedAmount: 125
+            clearingDetails:
+            - transactionDesc: Pillar 2 Determination Pillar 2 Determination UTPR
+              dueDate: 2027-06-30
+              amount: 125
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+    responses.AccountActivity.DttIirUtprDiscovery:
+      summary: DTT_IIR_UTPR_DISCOVERY - Three discovery debits
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.243214Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XD23456789779
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 350000
+            clearedAmount: 350000
+            clearingDetails:
+            - transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt DTT
+              dueDate: 2027-06-30
+              amount: 350000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt IIR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XD23456789779
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3000
+            outstandingAmount: 2000
+            clearedAmount: 1000
+            clearingDetails:
+            - transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt IIR
+              dueDate: 2027-06-30
+              amount: 1000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Discovery Assessment Pillar 2 Discovery Assmt UTPR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XD23456789779
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3000
+            outstandingAmount: 2000
+    responses.AccountActivity.DttIirUtprOverpaidClaim:
+      summary: DTT_IIR_UTPR_OVERPAID_CLAIM - Three debits for appeals
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.374836Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt DTT
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XOC3456789456
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 6100
+            outstandingAmount: 6100
+            standOverAmount: 6100
+            appealFlag: true
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt IIR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XOC3456789456
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 5000
+            outstandingAmount: 2500
+            clearedAmount: 2500
+            clearingDetails:
+            - transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt IIR
+              dueDate: 2027-06-30
+              amount: 2500
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Overpaid Claim Assmt Pillar2 Overpaid Cl Assmt UTPR
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XOC3456789456
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 4000
+            outstandingAmount: 4000
+    responses.AccountActivity.UktrDttLateFilingPenalty:
+      summary: UKTR_DTT_UKTR_MTT_LATE_FILING_PENALTY - Late UKTR penalties
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.445579Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR DTT LFP Pillar 2 UKTR DTT LFP
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            clearedAmount: 100
+            clearingDetails:
+            - transactionDesc: Pillar 2 UKTR DTT LFP Pillar 2 UKTR DTT LFP
+              dueDate: 2027-06-30
+              amount: 100
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 UKTR MTT LFP Pillar 2 UKTR MTT LFP
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            outstandingAmount: 100
+    responses.AccountActivity.OrnGirLateFilingPenalty:
+      summary: ORN_GIR_DTT_UKTR_MTT_LATE_FILING_PENALTY - Late ORN/GIR penalties
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.514485Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 ORN/GIR DTT LFP Pillar 2 ORN/GIR DTT LFP
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            clearedAmount: 100
+            clearingDetails:
+            - transactionDesc: Pillar 2 ORN/GIR DTT LFP Pillar 2 ORN/GIR DTT LFP
+              dueDate: 2027-06-30
+              amount: 100
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+          - transactionType: Debit
+            transactionDesc: Pillar 2 ORN/GIR MTT LFP Pillar 2 ORN/GIR MTT LFP
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 100
+            outstandingAmount: 50
+            clearedAmount: 50
+            clearingDetails:
+            - transactionDesc: Pillar 2 ORN/GIR MTT LFP Pillar 2 ORN/GIR MTT LFP
+              dueDate: 2027-06-30
+              amount: 50
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+    responses.AccountActivity.PotentialLostRevenuePenalty:
+      summary: POTENTIAL_LOST_REVENUE_PENALTY - Lost revenue penalty
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.577765Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Potential Lost Rev Pen
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3456789011
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 45000
+            outstandingAmount: 15000
+            clearedAmount: 30000
+            clearingDetails:
+            - transactionDesc: Pillar 2 Potential Lost Rev Pen
+              dueDate: 2027-06-30
+              amount: 30000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+    responses.AccountActivity.Schedule36Penalty:
+      summary: SCHEDULE_36_PENALTY - Schedule 36 penalty
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.649088Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Sch 36 penalty
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3456789444
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3500
+            outstandingAmount: 500
+            clearedAmount: 3000
+            clearingDetails:
+            - transactionDesc: Sch 36 penalty
+              dueDate: 2027-06-30
+              amount: 3000
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+    responses.AccountActivity.RecordKeepingPenalty:
+      summary: RECORD_KEEPING_PENALTY - Record keeping penalty
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.711542Z
+          transactionDetails:
+          - transactionType: Debit
+            transactionDesc: Pillar 2 Record Keeping Pen Pillar 2 Record Keeping Pen
+            startDate: 2026-01-01
+            endDate: 2026-12-31
+            chargeRefNo: XIN3456789898
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: 3500
+            clearedAmount: 3500
+            clearingDetails:
+            - transactionDesc: Pillar 2 Record Keeping Pen Pillar 2 Record Keeping Pen
+              dueDate: 2027-06-30
+              amount: 3500
+              clearingDate: 2026-01-27
+              clearingReason: Cleared by Payment
+    responses.AccountActivity.RepaymentCredit:
+      summary: REPAYMENT_CREDIT - Credit from UKTR submission
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.774264Z
+          transactionDetails:
+          - transactionType: Credit
+            transactionDesc: Pillar 2 UKTR Repayment Pillar 2 UKTR Repayment
+            chargeRefNo: XR23456789014
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: -10000
+            outstandingAmount: -10000
+    responses.AccountActivity.InterestRepaymentCredit:
+      summary: INTEREST_REPAYMENT_CREDIT - Interest repayment credit
+      value:
+        success:
+          processingDate: 2026-01-27T12:06:29.837042Z
+          transactionDetails:
+          - transactionType: Credit
+            transactionDesc: Pillar 2 UKTR RPI Pillar 2 UKTR RPI
+            chargeRefNo: XR23456789000
+            transactionDate: 2026-01-27
+            dueDate: 2027-06-30
+            originalAmount: -100
+            outstandingAmount: -100
     requests.BTNRequestExample:
       summary: Request example
       value:
@@ -2196,6 +3054,11 @@ components:
       value:
         code: NOT_FOUND
         message: The requested ORN could not be found
+    errors.AccountActivityNotAvailable:
+      summary: Account Activity Not Available - returned when the endpoint is not yet enabled in the current environment
+      value:
+        code: NOT_IMPLEMENTED
+        message: Account activity is not available in this environment
   securitySchemes:
     userRestricted:
       type: oauth2
