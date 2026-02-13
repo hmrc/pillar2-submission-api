@@ -20,10 +20,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions.ObligationsAndSubmissionsController
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
 

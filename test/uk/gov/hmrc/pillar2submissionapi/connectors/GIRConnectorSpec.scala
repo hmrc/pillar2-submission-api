@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import org.scalatest.matchers.should.Matchers.should
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.libs.json.Json

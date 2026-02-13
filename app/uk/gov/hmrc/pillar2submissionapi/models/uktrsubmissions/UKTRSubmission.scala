@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
@@ -54,7 +54,7 @@ object UKTRSubmissionNilReturn {
 
 object UKTRSubmission {
   given uktrSubmissionReads: Reads[UKTRSubmission] = (json: JsValue) =>
-    if ((json \ "liabilities" \ "returnType").isEmpty) {
+    if (json \ "liabilities" \ "returnType").isEmpty then {
       json.validate[UKTRSubmissionData]
     } else {
       json.validate[UKTRSubmissionNilReturn]

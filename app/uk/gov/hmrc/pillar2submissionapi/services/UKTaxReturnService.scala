@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.services
 import com.google.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.http.Status.{CREATED, OK, UNPROCESSABLE_ENTITY}
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}

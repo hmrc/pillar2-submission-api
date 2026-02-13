@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class ORNRetrieveSuccessResponse(
   processingDate:       String,
@@ -36,7 +36,7 @@ object ORNRetrieveSuccessResponse {
   given reads: Reads[ORNRetrieveSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNRetrieveSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNRetrieveSuccessResponse]]
+      case success: JsSuccess[?] => success.asInstanceOf[JsSuccess[ORNRetrieveSuccessResponse]]
       case _ =>
         (json \ "success").validate[ORNRetrieveSuccessResponse](using standardReads)
     }
@@ -51,7 +51,7 @@ object ORNSuccessResponse {
   given reads: Reads[ORNSuccessResponse] = (json: JsValue) => {
     val standardReads = Json.reads[ORNSuccessResponse]
     standardReads.reads(json) match {
-      case success: JsSuccess[_] => success.asInstanceOf[JsSuccess[ORNSuccessResponse]]
+      case success: JsSuccess[?] => success.asInstanceOf[JsSuccess[ORNSuccessResponse]]
       case _ =>
         (json \ "success").validate[ORNSuccessResponse](using standardReads)
     }

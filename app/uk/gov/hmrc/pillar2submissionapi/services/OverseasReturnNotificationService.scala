@@ -22,7 +22,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.OverseasReturnNotificationConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, ORNNotFoundException, UnexpectedResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification._
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -75,7 +75,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) =>
-            if (response.code == "005" && response.message.contains("No Form Bundle found")) {
+            if response.code == "005" && response.message.contains("No Form Bundle found") then {
               throw ORNNotFoundException
             } else {
               throw DownstreamValidationError(response.code, response.message)

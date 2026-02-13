@@ -23,7 +23,7 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {

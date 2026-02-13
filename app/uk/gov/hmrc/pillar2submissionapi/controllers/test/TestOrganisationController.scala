@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
 import uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest
 import uk.gov.hmrc.pillar2submissionapi.services.TestOrganisationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -41,7 +41,7 @@ class TestOrganisationController @Inject() (
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
-    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
+    if config.testOrganisationEnabled then block else Future.failed(TestEndpointDisabled)
 
   def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
@@ -50,7 +50,7 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              if !value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate) then Future.failed(InvalidDateRange)
               else
                 testOrganisationService
                   .createTestOrganisation(request.clientPillar2Id, value)
@@ -79,7 +79,7 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              if !value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate) then Future.failed(InvalidDateRange)
               else
                 testOrganisationService
                   .updateTestOrganisation(request.clientPillar2Id, value)

@@ -22,8 +22,8 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction, SubscriptionDataRetrievalAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions._
+import uk.gov.hmrc.pillar2submissionapi.controllers.error.*
+import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.*
 import uk.gov.hmrc.pillar2submissionapi.services.UKTaxReturnService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
