@@ -88,6 +88,15 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
+
+  "submitBTN() 400 response back" should {
+    "Runtime exception thrown (masked as UnexpectedResponse)" in {
+      when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
+        .thenReturn(Future.successful(HttpResponse.apply(400, Json.obj("code" -> "INVALID", "message" -> "Bad Request"), Map.empty)))
+
+      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
+    }
+  }
 }
 
 object SubmitBTNServiceSpec {
