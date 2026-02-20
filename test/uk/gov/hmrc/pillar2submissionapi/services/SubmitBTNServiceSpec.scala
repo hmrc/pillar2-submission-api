@@ -29,8 +29,8 @@ import uk.gov.hmrc.pillar2submissionapi.models.btn.{BTNSuccess, BTNSuccessRespon
 import uk.gov.hmrc.pillar2submissionapi.models.hip.{ApiFailure, ApiFailureResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNServiceSpec._
 
-import java.time.{LocalDate, ZonedDateTime}
 import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class SubmitBTNServiceSpec extends UnitTestBaseSpec {
@@ -108,6 +108,6 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
 object SubmitBTNServiceSpec {
   val validBTNSubmission = new BTNSubmission(LocalDate.now(), LocalDate.now().plus(365, ChronoUnit.DAYS))
 
-  val etmpDate = ZonedDateTime.parse("2022-01-31T00:00:00Z")
+  val etmpDate:   ZonedDateTime            = ZonedDateTime.parse("2022-01-31T00:00:00Z")
   val okResponse: SubmitBTNSuccessResponse = SubmitBTNSuccessResponse(etmpDate.toString)
 }
