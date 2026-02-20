@@ -40,7 +40,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       "return 201 CREATED response" in {
 
         when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(201, Json.obj("success" -> Json.toJson(okResponse)), Map.empty)))
 
         val result = await(submitBTNService.submitBTN(validBTNSubmission))
 
@@ -53,7 +53,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(201, Json.obj("success" -> "unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
@@ -63,7 +63,9 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return")), Map.empty)))
+        .thenReturn(
+          Future.successful(HttpResponse.apply(422, Json.obj("errors" -> Json.obj("code" -> "093", "text" -> "Invalid Return")), Map.empty))
+        )
 
       intercept[DownstreamValidationError](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
@@ -73,7 +75,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.obj("errors" -> "unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }

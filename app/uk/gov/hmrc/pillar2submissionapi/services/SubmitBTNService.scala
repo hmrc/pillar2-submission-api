@@ -22,7 +22,7 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,16 +35,16 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(using 
   private def convertToResult(response: HttpResponse): SubmitBTNSuccessResponse =
     response.status match {
       case 201 =>
-        response.json.validate[SubmitBTNSuccessResponse] match {
-          case JsSuccess(success, _) => success
+        response.json.validate[EtmpBtnSuccessWrapper] match {
+          case JsSuccess(wrapper, _) => SubmitBTNSuccessResponse(wrapper.success.processingDate)
           case JsError(_)            =>
             logger.error("Failed to parse success response")
             throw UnexpectedResponse
         }
       case 422 =>
-        response.json.validate[SubmitBTNErrorResponse] match {
-          case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_)             =>
+        response.json.validate[EtmpBtnErrorWrapper] match {
+          case JsSuccess(wrapper, _) => throw DownstreamValidationError(wrapper.errors.code, wrapper.errors.text)
+          case JsError(_)            =>
             logger.error("Failed to parse unprocessible entity response")
             throw UnexpectedResponse
         }
