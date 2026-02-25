@@ -2329,18 +2329,6 @@ components:
                   amount: 500
                   clearingDate: "2026-01-27"
                   clearingReason: "Outgoing payment - Paid"
-            - transactionType: DEBIT
-              transactionDesc: "Repayment"
-              chargeRefNo: "XR23456789014"
-              transactionDate: "2026-01-27"
-              originalAmount: 500
-              clearedAmount: 500
-              clearingDetails:
-                - transactionDesc: "Pillar 2 Payment on Account"
-                  dueDate: "2027-06-30"
-                  amount: 500
-                  clearingDate: "2026-01-27"
-                  clearingReason: "Allocated to Charge"
     responses.AccountActivity.InterestRepaymentCredit:
       summary: "INTEREST_REPAYMENT_CREDIT - Interest repayment credit"
       value:
