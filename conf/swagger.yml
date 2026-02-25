@@ -978,7 +978,224 @@ paths:
     get:
       summary: Retrieve Account Activity
       description: |
-        Retrieves account activity for a specified date range.
+        Retrieve Account Activity for a specified period. Currently the only way to distinguish between different charges and payments is via the transaction descriptions. It is essential that API consumers match against these transaction description strings exactly, as they are the primary mechanism for identifying the nature of each charge or payment on the account.
+
+        Consumers can use these transaction descriptions in addition to the examples that have been provided to complete their implementation.
+
+        ### Example Scenarios
+        <p>This table contains a list of transaction examples that are included in the request made to this endpoint.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Transaction Description</th>
+        <th>Explanation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>UKTR - DTT</td>
+        <td>Amount of Domestic Top-Up Tax payable as reported on the UK Pillar 2 Tax Return, applied to an account marked as domestic only.</td>
+        </tr>
+        <tr>
+        <td>UKTR - MTT (IIR)</td>
+        <td>Amount of Multinational Top-Up Tax due under the Income Inclusion Rule as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
+        </tr>
+        <tr>
+        <td>UKTR - MTT (UTPR)</td>
+        <td>Amount of Multinational Top-Up Tax due under the Undertaxed Profits Rule as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR pay int - DTT</td>
+        <td>Interest charged on late payment of Domestic Top-Up Tax shown on the UK Pillar 2 Tax Return. These charges will only show after the main debit is settled. In order for interest to have accrued, a group must have cleared their debt after the due date.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR pay int - MTT(IIR)</td>
+        <td>Interest charged on late payment of Multinational Top-Up Tax under the Income Inclusion Rule. This charge is applied to an account marked as non-domestic.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR pay int - MTT(UTPR)</td>
+        <td>Interest charged on late payment of Multinational Top-Up Tax under the Undertaxed Profits Rule. This charge is applied to an account marked as non-domestic.</td>
+        </tr>
+        <tr>
+        <td>Repayment interest - UKTR</td>
+        <td>Interest paid by HMRC on amounts overpaid by a company under the UK Pillar 2 Tax Return. This is completed via a credit transaction.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - DTT</td>
+        <td>Penalty for late submission of the UK Pillar 2 Tax Return relating to Domestic Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - DTT 3mnth</td>
+        <td>Additional penalty where the UKTR for Domestic Top-Up Tax is more than 3 months late.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - DTT 6mnth</td>
+        <td>Additional penalty where the UKTR for Domestic Top-Up Tax is more than 6 months late.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - DTT 12mnth</td>
+        <td>Additional penalty where the UKTR for Domestic Top-Up Tax is more than 12 months late.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - MTT</td>
+        <td>Penalty for late submission of the UKTR relating to Multinational Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - MTT 3mnth</td>
+        <td>Additional penalty where the UKTR for Multinational Top-Up Tax is more than 3 months late.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - MTT 6mnth</td>
+        <td>Additional penalty where the UKTR for Multinational Top-Up Tax is more than 6 months late.</td>
+        </tr>
+        <tr>
+        <td>Late UKTR sub pen - MTT 12mnth</td>
+        <td>Additional penalty where the UKTR for Multinational Top-Up Tax is more than 12 months late.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen - DTT</td>
+        <td>Penalty for late submission of the Overseas Return Notification or GloBE Information Return relating to Domestic Top-Up Tax. When the group is multinational, DTT and MTT penalties will apply. When the group is domestic-only, DTT penalties will apply.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen -DTT3mnth</td>
+        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 3 months late.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen -DTT6mnth</td>
+        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 6 months late.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen - MTT</td>
+        <td>Penalty for late submission of the ORN/GIR relating to Multinational Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen-MTT 3mnth</td>
+        <td>Additional penalty where the ORN/GIR for Multinational Top-Up Tax is more than 3 months late.</td>
+        </tr>
+        <tr>
+        <td>Late ORN/GIR sub pen-MTT 6mnth</td>
+        <td>Additional penalty where the ORN/GIR for Multinational Top-Up Tax is more than 6 months late.</td>
+        </tr>
+        <tr>
+        <td>Schedule 24 inaccurate return</td>
+        <td>Penalty for inaccuracies in a Pillar 2 return filed by a customer, that results in lost tax revenue.</td>
+        </tr>
+        <tr>
+        <td>Schedule 36 information notice</td>
+        <td>Penalty for failure to comply with an information or document request issued under Schedule 36. This has been extended to include information notices required to establish Pillar 2 liabilities. Failure to not comply with a notice can lead to a penalty.</td>
+        </tr>
+        <tr>
+        <td>Accurate records failure pen</td>
+        <td>Penalty for failing to maintain records required to support Pillar 2 tax calculations.</td>
+        </tr>
+        <tr>
+        <td>General Anti Abuse Rule pen</td>
+        <td>Penalty for tax avoidance which falls within the General Anti Abuse Rule. When successful, 60% of the tax will be charged.</td>
+        </tr>
+        <tr>
+        <td>Determination - DTT</td>
+        <td>Tax amount determined by HMRC for Domestic Top-Up Tax where no valid return was submitted.</td>
+        </tr>
+        <tr>
+        <td>Determination - MTT (IIR)</td>
+        <td>Tax amount determined by HMRC for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        </tr>
+        <tr>
+        <td>Determination - MTT (UTPR)</td>
+        <td>Tax amount determined by HMRC for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        </tr>
+        <tr>
+        <td>Determination interest - DTT</td>
+        <td>Interest charged on a Determination for Domestic Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>Determination int- MTT (IIR)</td>
+        <td>Interest charged on a Determination for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        </tr>
+        <tr>
+        <td>Determination int - MTT (UTPR)</td>
+        <td>Interest charged on a Determination for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assessment - DTT</td>
+        <td>A discovery assessment raised by HMRC for Domestic Top-Up Tax where additional tax is found to be due.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assessment-MTT(IIR)</td>
+        <td>A discovery assessment raised by HMRC for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assessment-MTT(UTPR)</td>
+        <td>A discovery assessment raised by HMRC for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assessment int - DTT</td>
+        <td>Interest charged on a Discovery Assessment for Domestic Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assmnt int-MTT(IIR)</td>
+        <td>Interest charged on a Discovery Assessment for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        </tr>
+        <tr>
+        <td>Discovery Assmnt int-MTT(UTPR)</td>
+        <td>Interest charged on a Discovery Assessment for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        </tr>
+        <tr>
+        <td>Overpaid claim assmnt - DTT</td>
+        <td>Assessment raised by HMRC where a claim for overpaid Domestic Top-Up Tax is found to be incorrect.</td>
+        </tr>
+        <tr>
+        <td>O/paid claim assmnt-MTT (IIR)</td>
+        <td>Assessment raised by HMRC where a claim for overpaid Multinational Top-Up Tax under the Income Inclusion Rule is found to be incorrect.</td>
+        </tr>
+        <tr>
+        <td>O/paid claim assmnt-MTT (UTPR)</td>
+        <td>Assessment raised by HMRC where a claim for overpaid Multinational Top-Up Tax under the Undertaxed Profits Rule is found to be incorrect.</td>
+        </tr>
+        <tr>
+        <td>O/paid claim assmnt int - DTT</td>
+        <td>Interest charged on an Overpaid Claim Assessment for Domestic Top-Up Tax.</td>
+        </tr>
+        <tr>
+        <td>O/p claim assmnt int-MTT(IIR)</td>
+        <td>Interest charged on an Overpaid Claim Assessment for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        </tr>
+        <tr>
+        <td>O/p claim assmnt int-MTT(UTPR)</td>
+        <td>Interest charged on an Overpaid Claim Assessment for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        </tr>
+        <tr>
+        <td>Pillar 2 Payment on Account</td>
+        <td>A payment or repayment made towards a taxpayer's Pillar 2 account. </td>
+        </tr>
+
+        </tbody>
+        </table>
+
+        ### Error Codes
+        <p>This table contains a list of 422 error codes returned when a Retrieve Account Activity request is not processed successfully.</p>
+        <table>
+        <thead>
+        <tr>
+        <th>Error Message</th>
+        <th>Next Steps</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+        <td>001 - Regime missing or invalid</td>
+        <td>No data found for this Pillar 2 ID.</td>
+        </tr>
+        <tr>
+        <td>003 - Request could not be processed</td>
+        <td>The message could not be processed due to locking. Please check if there is currently an open enquiry on your tax account.</td>
+        </tr>
+        <tr>
+        <td>014 - No data found</td>
+        <td>No data found for this Pillar 2 ID.</td>
+        </tr>
+        </tbody>
+        </table>
 
       security:
         - userRestricted: [read:pillar2]
@@ -1997,7 +2214,7 @@ components:
           processingDate: "2026-01-27T12:06:29.577765Z"
           transactionDetails:
             - transactionType: DEBIT
-              transactionDesc: "Potential lost revenue penalty"
+              transactionDesc: "Schedule 24 inaccurate return"
               startDate: "2026-01-01"
               endDate: "2026-12-31"
               chargeRefNo: "XIN3456789011"
@@ -2019,7 +2236,7 @@ components:
               originalAmount: -30000
               clearedAmount: -30000
               clearingDetails:
-                - transactionDesc: "Potential lost revenue penalty"
+                - transactionDesc: "Schedule 24 inaccurate return"
                   chargeRefNo: "XIN3456789011"
                   dueDate: "2027-06-30"
                   amount: 30000
