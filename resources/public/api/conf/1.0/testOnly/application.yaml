@@ -2976,7 +2976,7 @@ components:
           processingDate: 2026-01-27T12:06:29.577765Z
           transactionDetails:
           - transactionType: DEBIT
-            transactionDesc: Schedule 24 inaccurate return
+            transactionDesc: Potential lost revenue penalty
             startDate: 2026-01-01
             endDate: 2026-12-31
             chargeRefNo: XIN3456789011
@@ -2998,7 +2998,7 @@ components:
             originalAmount: -30000
             clearedAmount: -30000
             clearingDetails:
-            - transactionDesc: Schedule 24 inaccurate return
+            - transactionDesc: Potential lost revenue penalty
               chargeRefNo: XIN3456789011
               dueDate: 2027-06-30
               amount: 30000
