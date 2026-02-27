@@ -24,11 +24,13 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.error._
-import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.btn.{BTNSuccess, BTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.hip.{ApiFailure, ApiFailureResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNServiceSpec._
 
-import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class SubmitBTNServiceSpec extends UnitTestBaseSpec {
@@ -39,8 +41,9 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "submitBTN() called with a valid tax return" should {
       "return 201 CREATED response" in {
 
+        val etmpResponse = BTNSuccessResponse(BTNSuccess(etmpDate))
         when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(okResponse), Map.empty)))
+          .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson(etmpResponse), Map.empty)))
 
         val result = await(submitBTNService.submitBTN(validBTNSubmission))
 
@@ -53,7 +56,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(201, Json.obj("success" -> "unexpected success response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
@@ -62,8 +65,11 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
   "submitBTN() valid 422 response back" should {
     "Runtime exception thrown" in {
 
+      val etmpResponse = ApiFailureResponse(ApiFailure(etmpDate, "093", "Invalid Return"))
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return")), Map.empty)))
+        .thenReturn(
+          Future.successful(HttpResponse.apply(422, Json.toJson(etmpResponse), Map.empty))
+        )
 
       intercept[DownstreamValidationError](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
@@ -73,7 +79,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
     "Runtime exception thrown" in {
 
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
-        .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
+        .thenReturn(Future.successful(HttpResponse.apply(422, Json.obj("errors" -> "unexpected error response"), Map.empty)))
 
       intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
@@ -102,5 +108,6 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
 object SubmitBTNServiceSpec {
   val validBTNSubmission = new BTNSubmission(LocalDate.now(), LocalDate.now().plus(365, ChronoUnit.DAYS))
 
-  val okResponse: SubmitBTNSuccessResponse = SubmitBTNSuccessResponse("2022-01-31")
+  val etmpDate:   ZonedDateTime            = ZonedDateTime.parse("2022-01-31T00:00:00Z")
+  val okResponse: SubmitBTNSuccessResponse = SubmitBTNSuccessResponse(etmpDate.toString)
 }

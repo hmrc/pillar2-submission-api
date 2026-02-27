@@ -32,13 +32,16 @@ import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
-import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{SubmitBTNErrorResponse, SubmitBTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.btn.{BTNSuccess, BTNSuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.hip.{ApiFailure, ApiFailureResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
+import java.time.ZonedDateTime
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
@@ -64,7 +67,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
+          Json.toJson(BTNSuccessResponse(BTNSuccess(ZonedDateTime.parse("2022-01-31T09:26:17Z"))))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[SubmitBTNSuccessResponse], 5.seconds)
@@ -118,7 +121,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
+          Json.toJson(BTNSuccessResponse(BTNSuccess(ZonedDateTime.parse("2022-01-31T09:26:17Z"))))
         )
 
         val result =
@@ -137,7 +140,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           UNPROCESSABLE_ENTITY,
-          Json.toJson(SubmitBTNErrorResponse("093", "Invalid Return"))
+          Json.toJson(ApiFailureResponse(ApiFailure(ZonedDateTime.now(), "093", "Invalid Return")))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -158,7 +161,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           UNAUTHORIZED,
-          Json.toJson(SubmitBTNErrorResponse("001", "Unauthorized"))
+          Json.toJson(ApiFailureResponse(ApiFailure(ZonedDateTime.now(), "001", "Unauthorized")))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -179,7 +182,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(SubmitBTNErrorResponse("999", "internal_server_error"))
+          Json.toJson(ApiFailureResponse(ApiFailure(ZonedDateTime.now(), "999", "internal_server_error")))
         )
 
         val result = Await.result(baseRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -221,7 +224,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           "POST",
           submitUrl,
           CREATED,
-          Json.toJson(SubmitBTNSuccessResponse("2022-01-31T09:26:17Z"))
+          Json.toJson(BTNSuccessResponse(BTNSuccess(ZonedDateTime.parse("2022-01-31T09:26:17Z"))))
         )
 
         val result =
