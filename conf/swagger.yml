@@ -1308,7 +1308,7 @@ components:
           type: string
           minLength: 1
           maxLength: 200
-          description: The name of the company that submitted the Overseas Return Notification (ORN).
+          description: The name of the company that submitted the GloBE Information Return (GIR).
         TIN:
           type: string
           minLength: 1
@@ -1348,7 +1348,7 @@ components:
         reportingEntityName:
           description: The name of the company that submitted the Overseas Return Notification (ORN).
         TIN:
-          description: The Tax Identification Number of the entity that submitted the Overseas Return Notification.
+          description: The Tax Identification Number of the entity submitting the GloBE Information Return (GIR).
         issuingCountryTIN:
           description: The country in which the Tax Identification Number was issued.
     uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission:

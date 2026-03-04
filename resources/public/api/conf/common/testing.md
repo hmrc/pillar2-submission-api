@@ -1,4 +1,4 @@
-API testing is performed in the [HMRC developer hub](https://developer.service.hmrc.gov.uk/api-documentation) “sandbox” environment. Once you have [registered for an account](https://developer.service.hmrc.gov.uk/developer/registration), you can conduct your own testing. The Pillar 2 API belongs to the "Corporation Tax" category. 
+API testing is performed in our [sandbox](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing) environment. Once you have [registered for an account](https://developer.service.hmrc.gov.uk/developer/registration), you can conduct your own testing. The Pillar 2 API belongs to the "Corporation Tax" category. 
 
 Work through the instructions on the [getting started](https://developer.service.hmrc.gov.uk/api-documentation/docs/using-the-hub) page to create an application, then locate and subscribe to the Pillar 2 API.
 
@@ -11,7 +11,7 @@ The next steps are outlined on the Open API Specification (**OAS**) page under "
 - Set up a test organisation.
 - Run a *Submit UK Tax Return* request.
 
-The [service guide](https://developer.service.hmrc.gov.uk/guides/pillar2-service-guide/) contains more detailed information on testing for each endpoint.
+The [Pillar 2 API Service Guide](https://developer.service.hmrc.gov.uk/guides/pillar2-service-guide/) contains more detailed information on testing for each endpoint.
 
 If you have a specific testing need that is not supported in the sandbox, please contact our [support team](https://developer.service.hmrc.gov.uk/developer/support).
 
