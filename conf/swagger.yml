@@ -1444,6 +1444,7 @@ components:
         - RECORD_KEEPING_PENALTY
         - REPAYMENT_CREDIT
         - INTEREST_REPAYMENT_CREDIT
+        - COMBINED_REPAYMENT
     uk.gov.hmrc.pillar2submissionapi.models.organisation.TestData:
       properties:
         accountActivityScenario:
@@ -2341,6 +2342,85 @@ components:
               transactionDate: "2026-01-27"
               originalAmount: -100
               outstandingAmount: -100
+    responses.AccountActivity.CombinedRepayment:
+      summary: "COMBINED_REPAYMENT - A payment that has been split between three charges and one repayment"
+      value:
+        success:
+          processingDate: "2026-03-05T15:24:20.071365Z"
+          transactionDetails:
+            - transactionType: DEBIT
+              transactionDesc: "UKTR - DTT"
+              startDate: "2026-01-01"
+              endDate: "2026-12-31"
+              chargeRefNo: "XR23456789014"
+              transactionDate: "2026-03-05"
+              dueDate: "2027-06-30"
+              originalAmount: 5000
+              clearedAmount: 5000
+              clearingDetails:
+                - transactionDesc: "Pillar 2 Payment on Account"
+                  dueDate: "2027-06-30"
+                  amount: 5000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Cleared by Payment"
+            - transactionType: DEBIT
+              transactionDesc: "UKTR - MTT (IIR)"
+              startDate: "2026-01-01"
+              endDate: "2026-12-31"
+              chargeRefNo: "XR23456789015"
+              transactionDate: "2026-03-05"
+              dueDate: "2027-06-30"
+              originalAmount: 2000
+              clearedAmount: 2000
+              clearingDetails:
+                - transactionDesc: "Pillar 2 Payment on Account"
+                  dueDate: "2027-06-30"
+                  amount: 2000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Cleared by Payment"
+            - transactionType: DEBIT
+              transactionDesc: "UKTR - MTT (UTPR)"
+              startDate: "2026-01-01"
+              endDate: "2026-12-31"
+              chargeRefNo: "XR23456789016"
+              transactionDate: "2026-03-05"
+              dueDate: "2027-06-30"
+              originalAmount: 3000
+              clearedAmount: 3000
+              clearingDetails:
+                - transactionDesc: "Pillar 2 Payment on Account"
+                  dueDate: "2027-06-30"
+                  amount: 3000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Cleared by Payment"
+            - transactionType: PAYMENT
+              transactionDesc: "Pillar 2 Payment on Account"
+              transactionDate: "2026-03-05"
+              originalAmount: -20000
+              clearedAmount: -20000
+              clearingDetails:
+                - transactionDesc: "Repayment"
+                  amount: -10000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Outgoing payment - Paid"
+                - transactionDesc: "UKTR - DTT"
+                  chargeRefNo: "XR23456789014"
+                  dueDate: "2027-06-30"
+                  amount: 1000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Allocated to Charge"
+                - transactionDesc: "UKTR - MTT (IIR)"
+                  chargeRefNo: "XR23456789015"
+                  dueDate: "2027-06-30"
+                  amount: 2000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Allocated to Charge"
+                - transactionDesc: "UKTR - MTT (UTPR)"
+                  chargeRefNo: "XR23456789016"
+                  dueDate: "2027-06-30"
+                  amount: 3000
+                  clearingDate: "2026-03-05"
+                  clearingReason: "Allocated to Charge"
     requests.BTNRequestExample:
       summary: "Request example"
       value:
