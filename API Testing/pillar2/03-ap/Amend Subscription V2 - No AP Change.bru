@@ -1,0 +1,51 @@
+meta {
+  name: Amend Subscription V2 - No AP Change
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{pillar2Url}}/subscription/v2/amend-subscription/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "replaceFilingMember": false,
+    "upeDetails": {
+      "plrReference": "{{testPlrId}}",
+      "customerIdentification1": "SA7743248",
+      "customerIdentification2": "1234567890",
+      "organisationName": "Test Corp",
+      "registrationDate": "2024-01-31",
+      "domesticOnly": false,
+      "filingMember": false
+    },
+    "accountingPeriod": {
+      "amendAccountingPeriod": false
+    },
+    "upeCorrespAddressDetails": {
+      "addressLine1": "20 New Street",
+      "addressLine2": "Manchester",
+      "addressLine3": "Greater Manchester",
+      "postCode": "M1 4BT",
+      "countryCode": "GB"
+    },
+    "primaryContactDetails": {
+      "name": "Primary Contact",
+      "telephone": "0115 9700 700",
+      "emailAddress": "primary.contact@example.com"
+    },
+    "secondaryContactDetails": {
+      "name": "Secondary Contact",
+      "telephone": "0115 9700 701",
+      "emailAddress": "secondary.contact@example.com"
+    }
+  }
+}

@@ -62,14 +62,14 @@ trait SubscriptionDataFixture {
       |          "countryCode": "GB"
       |      },
       |      "primaryContactDetails": {
-      |          "name": "Fred Flintstone",
+      |          "name": "Primary Contact",
       |          "telephone": "0115 9700 700",
-      |          "emailAddress": "fred.flintstone@aol.com"
+      |          "emailAddress": "primary.contact@example.com"
       |      },
       |      "secondaryContactDetails": {
-      |          "name": "Donald Trump",
+      |          "name": "Secondary Contact",
       |          "telephone": "0115 9700 701",
-      |          "emailAddress": "donald.trump@potus.com"
+      |          "emailAddress": "secondary.contact@example.com"
       |
       |      },
       |      "filingMemberDetails": {
