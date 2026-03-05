@@ -1,0 +1,54 @@
+meta {
+  name: Amend Subscription V2 - Replace Filing Member
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{pillar2Url}}/subscription/v2/amend-subscription/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "replaceFilingMember": true,
+    "upeDetails": {
+      "plrReference": "{{testPlrId}}",
+      "customerIdentification1": "SA7743248",
+      "customerIdentification2": "1234567890",
+      "organisationName": "Test Corp",
+      "registrationDate": "2024-01-31",
+      "domesticOnly": false,
+      "filingMember": false
+    },
+    "accountingPeriod": {
+      "amendAccountingPeriod": false
+    },
+    "upeCorrespAddressDetails": {
+      "addressLine1": "10 High Street",
+      "addressLine2": "Egham",
+      "addressLine3": "Surrey",
+      "addressLine4": "Wembley",
+      "postCode": "SU10 6HH",
+      "countryCode": "GB"
+    },
+    "primaryContactDetails": {
+      "name": "Primary Contact",
+      "telephone": "0115 9700 700",
+      "emailAddress": "primary.contact@example.com"
+    },
+    "filingMemberDetails": {
+      "addNewFilingMember": true,
+      "safeId": "XV9999888777666",
+      "customerIdentification1": "NEW1234567",
+      "customerIdentification2": "999888777",
+      "organisationName": "New Filing Member Ltd"
+    }
+  }
+}

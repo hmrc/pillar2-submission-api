@@ -1,0 +1,66 @@
+meta {
+  name: Amend Subscription V2 - Multiple APs
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{pillar2Url}}/subscription/v2/amend-subscription/{{testPlrId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: {{bearer_token}}
+}
+
+body:json {
+  {
+    "replaceFilingMember": false,
+    "upeDetails": {
+      "plrReference": "{{testPlrId}}",
+      "customerIdentification1": "SA7743248",
+      "customerIdentification2": "1234567890",
+      "organisationName": "Test Corp",
+      "registrationDate": "2024-01-31",
+      "domesticOnly": false,
+      "filingMember": false
+    },
+    "accountingPeriod": {
+      "amendAccountingPeriod": true,
+      "originalAccountingPeriods": [
+        {
+          "taxObligationStartDate": "2024-01-01",
+          "taxObligationEndDate": "2024-06-30"
+        },
+        {
+          "taxObligationStartDate": "2024-07-01",
+          "taxObligationEndDate": "2024-12-31"
+        }
+      ],
+      "newAccountingPeriod": {
+        "updateObligationStartDate": "2024-01-01",
+        "updateObligationEndDate": "2025-03-31"
+      }
+    },
+    "upeCorrespAddressDetails": {
+      "addressLine1": "10 High Street",
+      "addressLine2": "Egham",
+      "addressLine3": "Surrey",
+      "addressLine4": "Wembley",
+      "postCode": "SU10 6HH",
+      "countryCode": "GB"
+    },
+    "primaryContactDetails": {
+      "name": "Primary Contact",
+      "telephone": "0115 9700 700",
+      "emailAddress": "primary.contact@example.com"
+    },
+    "secondaryContactDetails": {
+      "name": "Secondary Contact",
+      "telephone": "0115 9700 701",
+      "emailAddress": "secondary.contact@example.com"
+    }
+  }
+}
