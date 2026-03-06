@@ -1245,6 +1245,8 @@ paths:
                   $ref: "#/components/examples/responses.AccountActivity.RepaymentCredit"
                 InterestRepaymentCredit:
                   $ref: "#/components/examples/responses.AccountActivity.InterestRepaymentCredit"
+                CombinedRepayment:
+                  $ref: "#/components/examples/responses.AccountActivity.CombinedRepayment"
         "400":
           description: Bad Request
           content:
