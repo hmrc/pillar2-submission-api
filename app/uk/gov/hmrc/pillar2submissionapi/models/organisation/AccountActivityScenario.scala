@@ -37,6 +37,7 @@ enum AccountActivityScenario:
   case RECORD_KEEPING_PENALTY
   case REPAYMENT_CREDIT
   case INTEREST_REPAYMENT_CREDIT
+  case COMBINED_REPAYMENT
 
 object AccountActivityScenario:
   given format: Format[AccountActivityScenario] = new Format[AccountActivityScenario]:
