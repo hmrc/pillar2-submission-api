@@ -8,6 +8,7 @@ The *Pillar 2 API* allows developers to
  - submit an Overseas Return Notification (**ORN**)
  - amend a submitted ORN
  - retrieve the details of a submitted ORN
+ - retrieve account activity
 
 
 The [Pillar 2 API Service Guide](https://developer.service.hmrc.gov.uk/guides/pillar2-service-guide) contains further information on integrating with the API, including a glossary of terms and acronyms relating to the Pillar 2 API. The [Pillar 2 API Roadmap](https://developer.service.hmrc.gov.uk/roadmaps/pillar2-roadmap/) contains information on the Pillar 2 API release schedule. 
