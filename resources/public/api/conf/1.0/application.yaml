@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.203.0
+  version: 0.205.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -624,6 +624,7 @@ paths:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       description: |
         Submits a UK Tax Return for a specified accounting period.
+        ### The MTT and DTT liabilities reported in the UKTR should be stated in sterling in accordance with s123(3) F(No. 2)A 2023.
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR request is not processed successfully.</p>
         <table>
@@ -809,7 +810,7 @@ paths:
                   $ref: "#/components/examples/errors.Submission.GenericServerError"
                 No Subscription Data:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
-      description: "Amends a UK tax return submitted for a specified accounting period.   \n\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\n"
+      description: "Amends a UK tax return submitted for a specified accounting period.   \n### The MTT and DTT liabilities reported in the UKTR should be stated in sterling in accordance with s123(3) F(No. 2)A 2023.\n### Error Codes\n<p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>\n"
       security:
       - userRestricted:
         - write:pillar2
@@ -1774,18 +1775,21 @@ components:
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         amountOwedIIR:
           type: number
           format: double
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         amountOwedUTPR:
           type: number
           format: double
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
       required:
       - ukChargeableEntityName
       - idType
@@ -1949,7 +1953,7 @@ components:
           description: The name of the company that submitted the Overseas Return Notification (ORN).
         TIN:
           type: string
-          description: The Tax Identification Number of the entity that submitted the Overseas Return Notification.
+          description: The Tax Identification Number of the entity submitting the GloBE Information Return (GIR).
         issuingCountryTIN:
           type: string
           description: The country in which the Tax Identification Number was issued.
@@ -1996,7 +2000,7 @@ components:
           type: string
           minLength: 1
           maxLength: 200
-          description: The name of the company that submitted the Overseas Return Notification (ORN).
+          description: The name of the company that submitted the GloBE Information Return (GIR).
         TIN:
           type: string
           minLength: 1
@@ -2104,24 +2108,28 @@ components:
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         totalLiabilityDTT:
           type: number
           format: double
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         totalLiabilityIIR:
           type: number
           format: double
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         totalLiabilityUTPR:
           type: number
           format: double
           minimum: 0
           maximum: 9.99999999999999E12
           multipleOf: 0.01
+          description: In pound sterling
         liableEntities:
           type: array
           minItems: 1

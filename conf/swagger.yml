@@ -13,6 +13,7 @@ paths:
       summary: Submit UK Tax Return
       description: |
         Submits a UK Tax Return for a specified accounting period.
+        ### The MTT and DTT liabilities reported in the UKTR should be stated in sterling in accordance with s123(3) F(No. 2)A 2023.
         ### Error Codes
         <p>This table contains a list of 422 error codes returned when a SubmitUKTR or AmendUKTR request is not processed successfully.</p>
         <table>
@@ -162,7 +163,7 @@ paths:
       summary: Amend UK Tax Return
       description: |
         Amends a UK tax return submitted for a specified accounting period.   
-
+        ### The MTT and DTT liabilities reported in the UKTR should be stated in sterling in accordance with s123(3) F(No. 2)A 2023.
         ### Error Codes
         <p>AmendUKTR generates the same error codes as Submit UKTR, please use the Error Codes table in the SubmitUKTR section above.</p>
       requestBody:
