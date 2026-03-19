@@ -5,7 +5,6 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 
 ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
-ThisBuild / dependencyOverrides += "org.lz4" % "lz4-java" % "1.10.1"
 
 val scalafixSettings = Seq(
   semanticdbEnabled := true,
