@@ -1537,7 +1537,7 @@ paths:
         Consumers can use these transaction descriptions in addition to the examples that have been provided to complete their implementation.
 
         ### Example Scenarios
-        <p>This table contains a list of transaction examples that are included in the request made to this endpoint.</p>
+        <p>This table contains a list of transaction examples that are included in the request made to this endpoint. Appeals and standovers can apply to some of the transaction description, excluding the following transactions: determinations </p>
         <table>
         <thead>
         <tr>
@@ -1853,7 +1853,7 @@ components:
           type: number
           format: double
           nullable: true
-          description: "Interest accrued by delayed payment of this transaction, in GBP."
+          description: "The total amount of interest based on a late payment (as of the date stated within the json payload) of a given transaction description. The interest amount is calculated from the day after the due date, up until the date of payment or when the interest is cleared."
           minimum: 0
           maximum: 9.999999999999E10
           multipleOf: 0.01
@@ -1897,14 +1897,14 @@ components:
           type: number
           format: double
           nullable: true
-          description: The portion of the transaction's monetary value (in GBP) for which collection is postponed.
+          description: An amount of tax that is not required to be paid while an appeal is active. The stoodover amount is excluded from the outstanding balance and is held separately from the amount currently due.
           minimum: -9.9999999999E8
           maximum: 9.9999999999E8
           multipleOf: 0.01
         appealFlag:
           type: boolean
           nullable: true
-          description: Indicates that the transaction is currently under appeal when present and true.
+          description: Indicates that the transaction is currently under appeal when present and true. A request to review a charge on a transaction. Appeals can be submitted for eligible transactions but do not apply to determinations or late payment interest charges.
         clearingDetails:
           type: array
           nullable: true
