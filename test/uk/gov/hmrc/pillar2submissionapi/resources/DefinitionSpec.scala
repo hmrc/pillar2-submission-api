@@ -21,7 +21,7 @@ import com.networknt.schema.{JsonSchemaFactory, SpecVersion}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
 import scala.io.Source
-import scala.jdk.CollectionConverters.*
+import scala.jdk.CollectionConverters._
 
 class DefinitionSpec extends UnitTestBaseSpec {
 
