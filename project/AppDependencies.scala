@@ -12,14 +12,14 @@ object AppDependencies {
   )
 
   val test = Seq(
-    "com.networknt"           % "json-schema-validator" % "1.5.7" % Test,
     "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapVersion % "test, it",
     "org.scalatest"          %% "scalatest"              % "3.2.19"         % Test,
     "com.vladsch.flexmark"    % "flexmark-all"           % "0.64.8"         % "test, it",
     "org.mockito"             % "mockito-core"           % "5.20.0"         % "test,it",
     "org.scalatestplus"      %% "mockito-4-11"           % "3.2.18.0"       % "test, it",
     "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.2"          % "test, it",
-    "org.scalatestplus"      %% "scalacheck-1-18"        % "3.2.19.0"       % "test"
+    "org.scalatestplus"      %% "scalacheck-1-18"        % "3.2.19.0"       % "test",
+    "com.networknt"           % "json-schema-validator"  % "1.5.7"          % Test
   )
 
   val it: Seq[ModuleID] = Seq(

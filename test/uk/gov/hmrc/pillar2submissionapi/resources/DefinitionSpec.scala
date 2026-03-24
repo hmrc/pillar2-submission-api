@@ -21,7 +21,7 @@ import com.networknt.schema.{JsonSchemaFactory, SpecVersion}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
 import scala.io.Source
-import scala.jdk.CollectionConverters.*
+import scala.jdk.CollectionConverters._
 
 class DefinitionSpec extends UnitTestBaseSpec {
 
@@ -29,21 +29,15 @@ class DefinitionSpec extends UnitTestBaseSpec {
 
   "API Definition" should {
     "conform to api-publisher schema" in {
-      val objectMapper = new ObjectMapper()
-
-      val schemaJson = {
-        val source = Source.fromURL(schemaUrl)
+      val mapper     = new ObjectMapper()
+      val source     = Source.fromURL(schemaUrl)
+      val schemaJson =
         try source.mkString
         finally source.close()
-      }
-
-      val schemaNode     = objectMapper.readTree(schemaJson)
-      val definitionNode = objectMapper.readTree(
-        getClass.getResourceAsStream("/public/api/definition.json")
-      )
-
-      val factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7)
-      val schema  = factory.getSchema(schemaNode)
+      val schemaNode     = mapper.readTree(schemaJson)
+      val definitionNode = mapper.readTree(getClass.getResourceAsStream("/public/api/definition.json"))
+      val factory        = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7)
+      val schema         = factory.getSchema(schemaNode)
 
       val errors = schema.validate(definitionNode).asScala.map(_.getMessage).toList
 
