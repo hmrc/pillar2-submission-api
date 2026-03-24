@@ -16,13 +16,12 @@
 
 package uk.gov.hmrc.pillar2submissionapi.resources
 
-import com.github.fge.jackson.JsonLoader
-import com.github.fge.jsonschema.core.report.LogLevel
-import com.github.fge.jsonschema.main.JsonSchemaFactory
-import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.networknt.schema.{JsonSchemaFactory, SpecVersion}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 
 import scala.io.Source
+import scala.jdk.CollectionConverters.*
 
 class DefinitionSpec extends UnitTestBaseSpec {
 
@@ -30,20 +29,17 @@ class DefinitionSpec extends UnitTestBaseSpec {
 
   "API Definition" should {
     "conform to api-publisher schema" in {
+      val mapper     = new ObjectMapper()
       val source     = Source.fromURL(schemaUrl)
       val schemaJson =
         try source.mkString
         finally source.close()
-      val schema     = JsonLoader.fromString(schemaJson)
-      val definition = JsonLoader.fromResource("/public/api/definition.json")
-      val validator  = JsonSchemaFactory.byDefault().getJsonSchema(schema)
+      val schemaNode     = mapper.readTree(schemaJson)
+      val definitionNode = mapper.readTree(getClass.getResourceAsStream("/public/api/definition.json"))
+      val factory        = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7)
+      val schema         = factory.getSchema(schemaNode)
 
-      val report = validator.validate(definition)
-
-      val errors = report
-        .filter(_.getLogLevel == LogLevel.ERROR)
-        .map(error => s"${error.asJson().get("instance")}: ${error.getMessage}")
-        .toList
+      val errors = schema.validate(definitionNode).asScala.map(_.getMessage).toList
 
       errors mustEqual List.empty
     }
