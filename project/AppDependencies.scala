@@ -6,14 +6,13 @@ object AppDependencies {
 
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30" % bootstrapVersion,
-    "org.mozilla"                   % "rhino"                     % "1.7.15.1",
-    "com.github.java-json-tools"    % "json-schema-validator"     % "2.2.14",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.20.0",
     "org.typelevel"                %% "cats-core"                 % "2.13.0",
     "com.beachape"                 %% "enumeratum-play-json"      % "1.9.0"
   )
 
   val test = Seq(
+    "com.networknt"           % "json-schema-validator" % "1.5.7" % Test,
     "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapVersion % "test, it",
     "org.scalatest"          %% "scalatest"              % "3.2.19"         % Test,
     "com.vladsch.flexmark"    % "flexmark-all"           % "0.64.8"         % "test, it",
