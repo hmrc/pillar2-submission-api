@@ -6,8 +6,6 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 
-ThisBuild / dependencyOverrides += "org.mozilla" % "rhino" % "1.7.15.1"
-
 val scalafixSettings = Seq(
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision
