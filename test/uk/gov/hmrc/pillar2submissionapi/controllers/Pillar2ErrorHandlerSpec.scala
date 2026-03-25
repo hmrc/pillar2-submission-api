@@ -38,7 +38,10 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
       val result = classUnderTest.onClientError(dummyRequest, statusCode, message)
       status(result) mustEqual statusCode
       val response = contentAsJson(result).as[Pillar2ErrorResponse]
-      response.message mustEqual message
+      response.message mustEqual (statusCode match {
+        case 400 => "Invalid request"
+        case _   => message
+      })
       response.code mustEqual (statusCode match {
         case 400 => "BAD_REQUEST"
         case 408 => "REQUEST_TIMEOUT"
