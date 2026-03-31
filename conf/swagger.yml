@@ -54,15 +54,15 @@ paths:
         </tr>
         <tr>
         <td>097 - Invalid Total Liability IIR</td>
-        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the <em>liableEntities</em> array. IIR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
+        <td>The <em>totalLiabilityIIR</em> value does not match the <em>amountIIR value</em> from the sum of <em>liableEntities</em> array. IIR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         <tr>
         <td>098 - Invalid Total Liability DTT</td>
-        <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
+        <td>The <em>totalLiabilityDTT</em> value does not match the <em>amountDTT</em> value from the sum of <em>liableEntities</em> array. Please check the value of these fields matches and submit the request again.</td>
         </tr>
         <tr>
         <td>099 - Invalid Total Liability UTPR</td>
-        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the sum of <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         </tbody>
         </table>
@@ -457,7 +457,7 @@ paths:
         </tr>
         <tr>
         <td>044 - Tax Obligation already fulfilled</td>
-        <td>A BTN for the specified period has already been submitted.</td>
+        <td>An ORN for the specified period has already been submitted.</td>
         </tr>
         <tr>
         <td>063 - Business Partner does not have an Active Subscription for this Regime</td>
@@ -995,7 +995,7 @@ paths:
         <tbody>
         <tr>
         <td>UKTR - DTT</td>
-        <td>Amount of Domestic Top-Up Tax payable as reported on the UK Pillar 2 Tax Return, applied to an account marked as domestic only.</td>
+        <td>Amount of Domestic Top-Up Tax payable as reported on the UK Pillar 2 Tax Return. A domestic-only or multinational can be liable for DTT.</td>
         </tr>
         <tr>
         <td>UKTR - MTT (IIR)</td>
@@ -1379,7 +1379,7 @@ components:
         accountingPeriodTo:
           description: The calendar date upon which a business' accounting period ends.
         obligationMTT:
-          description: Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`.
+          description: Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`. Where a group is 'multinational', the value can be `true` or `false`.
         electionUKGAAP:
           description: A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`.
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmissionNilReturn:
@@ -1391,7 +1391,7 @@ components:
         obligationMTT:
           description: Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`.
         electionUKGAAP:
-          description: A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`.
+          description: A means of calculating tax liability and profit. For domestic-only groups, the value can be `true` or `false`. For multinational groups, it must always be `false`.
     uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityNilReturn:
       description: |
         A liability is a return for UKTR per accounting period which needs to be submitted (unless a BTN has been submitted). This is to be returned annually, and certain groups will need to submit this, whereas others will not.
