@@ -38,7 +38,7 @@ paths:
         </tr>
         <tr>
         <td>093 - Invalid Return</td>
-        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em>, <em>amountOwedIIR</em>, <em>totalLiabilityUTPR</em> and <em>amountOwedUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Personal Details”.</td>
+        <td>There is an error with the tax return you’ve submitted in the request. Entities registered as UK only should check that <em>obligationMTT</em> is set to false, and <em>totalLiabilityIIR</em>, <em>amountOwedIIR</em>, <em>totalLiabilityUTPR</em> and <em>amountOwedUTPR</em> should be set to 0. The <em>accountingPeriodFrom</em> and <em>accountingPeriodTo</em> date range should match the period defined in the test organisation. If you need to check or amend the accounting period pattern, you can do this on the Pillar 2 site under “Manage group details”.</td>
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
@@ -62,7 +62,7 @@ paths:
         </tr>
         <tr>
         <td>099 - Invalid Total Liability UTPR</td>
-        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the sum of <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
+        <td>The <em>totalLiabilityUTPR</em> value does not match the <em>amountUTPR</em> value from the sum <em>liableEntities</em> array. UTPR values should only be entered by entities registered as a Multinational Enterprise. Please check the individual totals of each entity and submit the request again.</td>
         </tr>
         </tbody>
         </table>
@@ -995,15 +995,15 @@ paths:
         <tbody>
         <tr>
         <td>UKTR - DTT</td>
-        <td>Amount of Domestic Top-Up Tax payable as reported on the UK Pillar 2 Tax Return. A domestic-only or multinational can be liable for DTT.</td>
+        <td>Amount of Domestic Top-Up Tax (DTT) payable as reported on the UK Pillar 2 Tax Return. A domestic-only or multinational can be liable for DTT.</td>
         </tr>
         <tr>
         <td>UKTR - MTT (IIR)</td>
-        <td>Amount of Multinational Top-Up Tax due under the Income Inclusion Rule as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
+        <td>Amount of Multinational Top-Up Tax (MTT) due under the Income Inclusion Rule (IIR) as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
         </tr>
         <tr>
         <td>UKTR - MTT (UTPR)</td>
-        <td>Amount of Multinational Top-Up Tax due under the Undertaxed Profits Rule as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
+        <td>Amount of Multinational Top-Up Tax due under the Undertaxed Profits Rule (UTPR) as reported on the UK Pillar 2 Tax Return, applied to an account marked as non-domestic.</td>
         </tr>
         <tr>
         <td>Late UKTR pay int - DTT</td>
@@ -1011,11 +1011,11 @@ paths:
         </tr>
         <tr>
         <td>Late UKTR pay int - MTT(IIR)</td>
-        <td>Interest charged on late payment of Multinational Top-Up Tax under the Income Inclusion Rule. This charge is applied to an account marked as non-domestic.</td>
+        <td>Interest charged on late payment of Multinational Top-Up Tax under the Income Inclusion Rule. This charge is applied to an account marked as non-domestic. These charges will only show after the main debit is settled. In order for interest to have accrued, a group must have cleared their debt after the due date.</td>
         </tr>
         <tr>
         <td>Late UKTR pay int - MTT(UTPR)</td>
-        <td>Interest charged on late payment of Multinational Top-Up Tax under the Undertaxed Profits Rule. This charge is applied to an account marked as non-domestic.</td>
+        <td>Interest charged on late payment of Multinational Top-Up Tax under the Undertaxed Profits Rule. This charge is applied to an account marked as non-domestic. These charges will only show after the main debit is settled. In order for interest to have accrued, a group must have cleared their debt after the due date.</td>
         </tr>
         <tr>
         <td>Repayment interest - UKTR</td>
@@ -1055,15 +1055,15 @@ paths:
         </tr>
         <tr>
         <td>Late ORN/GIR sub pen - DTT</td>
-        <td>Penalty for late submission of the Overseas Return Notification or GloBE Information Return relating to Domestic Top-Up Tax. When the group is multinational, DTT and MTT penalties will apply. When the group is domestic-only, DTT penalties will apply.</td>
+        <td>Penalty for late submission of the Overseas Return Notification (ORN) or GloBE Information Return (GIR) relating to Domestic Top-Up Tax. When the group is multinational, DTT and MTT penalties will apply. When the group is domestic-only, DTT penalties will apply.</td>
         </tr>
         <tr>
         <td>Late ORN/GIR sub pen -DTT3mnth</td>
-        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 3 months late.</td>
+        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 3 months late. When the group is multinational, DTT and MTT penalties will apply. When the group is domestic-only, DTT penalties will apply.</td>
         </tr>
         <tr>
         <td>Late ORN/GIR sub pen -DTT6mnth</td>
-        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 6 months late.</td>
+        <td>Additional penalty where the ORN/GIR for Domestic Top-Up Tax is more than 6 months late. When the group is multinational, DTT and MTT penalties will apply. When the group is domestic-only, DTT penalties will apply.</td>
         </tr>
         <tr>
         <td>Late ORN/GIR sub pen - MTT</td>
@@ -1079,7 +1079,7 @@ paths:
         </tr>
         <tr>
         <td>Schedule 24 inaccurate return</td>
-        <td>Penalty for inaccuracies in a Pillar 2 return filed by a customer, that results in lost tax revenue.</td>
+        <td>Penalty for inaccuracies (careless or deliberate) in a Pillar 2 return filed by a customer, that results in lost tax revenue.</td>
         </tr>
         <tr>
         <td>Schedule 36 information notice</td>
@@ -1091,7 +1091,7 @@ paths:
         </tr>
         <tr>
         <td>General Anti Abuse Rule pen</td>
-        <td>Penalty for tax avoidance which falls within the General Anti Abuse Rule. When successful, 60% of the tax will be charged.</td>
+        <td>Penalty for tax avoidance which falls within the General Anti Abuse Rule. If the penalty applies, then 60% of the tax due will be charged.</td>
         </tr>
         <tr>
         <td>Determination - DTT</td>
@@ -1107,15 +1107,15 @@ paths:
         </tr>
         <tr>
         <td>Determination interest - DTT</td>
-        <td>Interest charged on a Determination for Domestic Top-Up Tax.</td>
+        <td>Interest charged on a failure to pay a Determination for Domestic Top-Up Tax.</td>
         </tr>
         <tr>
         <td>Determination int- MTT (IIR)</td>
-        <td>Interest charged on a Determination for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        <td>Interest charged on a failure to pay a Determination for Multinational Top-Up Tax under the Income Inclusion Rule (IIR).</td>
         </tr>
         <tr>
         <td>Determination int - MTT (UTPR)</td>
-        <td>Interest charged on a Determination for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        <td>Interest charged on a failure to pay a Determination for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
         </tr>
         <tr>
         <td>Discovery Assessment - DTT</td>
@@ -1131,43 +1131,43 @@ paths:
         </tr>
         <tr>
         <td>Discovery Assessment int - DTT</td>
-        <td>Interest charged on a Discovery Assessment for Domestic Top-Up Tax.</td>
+        <td>Interest charged on a failure to pay a Discovery Assessment for Domestic Top-Up Tax.</td>
         </tr>
         <tr>
         <td>Discovery Assmnt int-MTT(IIR)</td>
-        <td>Interest charged on a Discovery Assessment for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        <td>Interest charged on a failure to pay a Discovery Assessment for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
         </tr>
         <tr>
         <td>Discovery Assmnt int-MTT(UTPR)</td>
-        <td>Interest charged on a Discovery Assessment for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        <td>Interest charged on a failure to pay a Discovery Assessment for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
         </tr>
         <tr>
         <td>Overpaid claim assmnt - DTT</td>
-        <td>Assessment raised by HMRC where a claim for overpaid Domestic Top-Up Tax is found to be incorrect.</td>
+        <td>An assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Domestic Top-Up Tax.</td>
         </tr>
         <tr>
         <td>O/paid claim assmnt-MTT (IIR)</td>
-        <td>Assessment raised by HMRC where a claim for overpaid Multinational Top-Up Tax under the Income Inclusion Rule is found to be incorrect.</td>
+        <td>An assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Multinational Top-Up Tax under the Income Inclusion Rule.</td>
         </tr>
         <tr>
         <td>O/paid claim assmnt-MTT (UTPR)</td>
-        <td>Assessment raised by HMRC where a claim for overpaid Multinational Top-Up Tax under the Undertaxed Profits Rule is found to be incorrect.</td>
+        <td>An assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
         </tr>
         <tr>
         <td>O/paid claim assmnt int - DTT</td>
-        <td>Interest charged on an Overpaid Claim Assessment for Domestic Top-Up Tax.</td>
+        <td>Interest charged on a failure to pay an assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Domestic Top-Up Tax.</td>
         </tr>
         <tr>
         <td>O/p claim assmnt int-MTT(IIR)</td>
-        <td>Interest charged on an Overpaid Claim Assessment for Multinational Top-Up Tax under the Income Inclusion Rule.</td>
+        <td>Interest charged on a failure to pay an assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Multinational Top-Up Tax under the Income Inclusion Rule.</td>
         </tr>
         <tr>
         <td>O/p claim assmnt int-MTT(UTPR)</td>
-        <td>Interest charged on an Overpaid Claim Assessment for Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
+        <td>Interest charged on a failure to pay an assessment raised by HMRC where a repayment made to the group exceeds the amount due, enabling HMRC to recover the overpaid amount. This is only applicable to Multinational Top-Up Tax under the Undertaxed Profits Rule.</td>
         </tr>
         <tr>
         <td>Pillar 2 Payment on Account</td>
-        <td>A payment or repayment made towards a taxpayer's Pillar 2 account. </td>
+        <td>An advanced payment made without a liability to allocate the monies to. </td>
         </tr>
 
         </tbody>
