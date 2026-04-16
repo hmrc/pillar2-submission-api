@@ -31,18 +31,10 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .settings(scalaSettings *)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(DefaultBuildSettings.itSettings()))
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
-  )
-  .settings(
-    IntegrationTest / unmanagedSourceDirectories :=
-      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value,
-    IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
-    IntegrationTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
@@ -60,10 +52,14 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it
-  )
-  .settings(
-    DefaultBuildSettings.itSettings(),
+    Test / unmanagedSourceDirectories := {
+      val rootProjectDir = (microservice / baseDirectory).value
+      val itProjectDir   = (Test / baseDirectory).value
+      Seq(itProjectDir / "test", rootProjectDir / "test-common")
+    },
+    Test / unmanagedResourceDirectories := Seq((microservice / baseDirectory).value / "test-resources"),
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
+    libraryDependencies ++= AppDependencies.it,
     tpolecatExcludeOptions ++= Set(
       ScalacOptions.warnNonUnitStatement,
       ScalacOptions.warnValueDiscard,
