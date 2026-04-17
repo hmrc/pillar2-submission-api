@@ -33,7 +33,7 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
   .settings(scalaSettings *)
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
+    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test")).value,
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
   )
   .settings(JsonToYaml.settings *)
@@ -52,11 +52,7 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    Test / unmanagedSourceDirectories := {
-      val rootProjectDir = (microservice / baseDirectory).value
-      val itProjectDir   = (Test / baseDirectory).value
-      Seq(itProjectDir / "test", rootProjectDir / "test-common")
-    },
+    Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
     Test / unmanagedResourceDirectories := Seq((microservice / baseDirectory).value / "test-resources"),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
     libraryDependencies ++= AppDependencies.it,

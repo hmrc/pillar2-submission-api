@@ -18,7 +18,7 @@ object AppDependencies {
     "org.mockito"             % "mockito-core"           % "5.20.0"         % Test,
     "org.scalatestplus"      %% "mockito-4-11"           % "3.2.18.0"       % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.2"          % Test,
-    "org.scalatestplus"      %% "scalacheck-1-18"        % "3.2.19.0"       % "test",
+    "org.scalatestplus"      %% "scalacheck-1-18"        % "3.2.19.0"       % Test,
     "com.networknt"           % "json-schema-validator"  % "1.5.7"          % Test
   )
 
