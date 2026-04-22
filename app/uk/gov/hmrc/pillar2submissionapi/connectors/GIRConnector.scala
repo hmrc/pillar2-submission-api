@@ -45,4 +45,24 @@ class GIRConnector @Inject() (
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
   }
+
+  def amendGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
+    logger.info(s"Calling $url to amend GIR submission")
+
+    http
+      .put(URI.create(url).toURL)
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
+  }
+
+  def deleteGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
+    val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
+    logger.info(s"Calling $url to delete GIR submission")
+
+    http
+      .delete(URI.create(url).toURL)
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse]
+  }
 }

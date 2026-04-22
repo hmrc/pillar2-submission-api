@@ -69,7 +69,7 @@
 #           code: "500"
 #           message: "Failed to create organisation due to database error"
 ###
-POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.createTestOrganisation()
+POST          /setup/organisation                    uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.createTestOrganisation()
 
 ###
 # summary: Get a test organisation associated with your authed organisation
@@ -128,7 +128,7 @@ POST /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controlle
 #           code: "500"
 #           message: "Internal Server Error"
 ###
-GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.getTestOrganisation
+GET           /setup/organisation                    uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.getTestOrganisation
 
 ###
 # summary: Update the test organisation associated with your authed organisation
@@ -198,7 +198,7 @@ GET /setup/organisation                 uk.gov.hmrc.pillar2submissionapi.control
 #           code: "500"
 #           message: "Failed to update organisation due to database error"
 ###
-PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.updateTestOrganisation
+PUT           /setup/organisation                    uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.updateTestOrganisation
 
 ###
 # summary: Delete the test organisation and submission data associated with your authed organisation
@@ -253,7 +253,7 @@ PUT /setup/organisation              uk.gov.hmrc.pillar2submissionapi.controller
 #           code: "500"
 #           message: "Failed to delete organisation and submission data"
 ###
-DELETE /setup/organisation           uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.deleteTestOrganisation
+DELETE        /setup/organisation                    uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController.deleteTestOrganisation
 
 ###
 # summary: Create a test Globe Information Return submission
@@ -320,4 +320,6 @@ DELETE /setup/organisation           uk.gov.hmrc.pillar2submissionapi.controller
 #         schema:
 #           $ref: '#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse'
 ###
-POST /setup/globe-information-return              uk.gov.hmrc.pillar2submissionapi.controllers.test.GIRController.createGIR()
+POST          /setup/globe-information-return        uk.gov.hmrc.pillar2submissionapi.controllers.test.GIRController.createGIR()
+PUT           /setup/globe-information-return        uk.gov.hmrc.pillar2submissionapi.controllers.test.GIRController.amendGIR()
+DELETE        /setup/globe-information-return        uk.gov.hmrc.pillar2submissionapi.controllers.test.GIRController.deleteGIR()

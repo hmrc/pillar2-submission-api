@@ -45,6 +45,7 @@ class GIRController @Inject() (
 
   def createGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+
     checkTestEndpointsEnabled {
       request.body.asJson match {
         case Some(json) =>
@@ -53,6 +54,42 @@ class GIRController @Inject() (
               girService
                 .createGIR(value)
                 .map(response => Created(Json.toJson(response)))
+            case JsError(_) => Future.failed(InvalidJson)
+          }
+        case None => Future.failed(EmptyRequestBody)
+      }
+    }
+  }
+
+  def amendGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+
+    checkTestEndpointsEnabled {
+      request.body.asJson match {
+        case Some(json) =>
+          json.validate[GIRSubmission] match {
+            case JsSuccess(value, _) =>
+              girService
+                .amendGIR(value)
+                .map(response => Ok(Json.toJson(response)))
+            case JsError(_) => Future.failed(InvalidJson)
+          }
+        case None => Future.failed(EmptyRequestBody)
+      }
+    }
+  }
+
+  def deleteGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
+
+    checkTestEndpointsEnabled {
+      request.body.asJson match {
+        case Some(json) =>
+          json.validate[GIRSubmission] match {
+            case JsSuccess(value, _) =>
+              girService
+                .deleteGIR(value)
+                .map(response => Ok(Json.toJson(response)))
             case JsError(_) => Future.failed(InvalidJson)
           }
         case None => Future.failed(EmptyRequestBody)
