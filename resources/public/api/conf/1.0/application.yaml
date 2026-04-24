@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.209.0
+  version: 0.210.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -653,11 +653,11 @@ paths:
         </tr>
         <tr>
         <td>094 - Invalid DTT Election</td>
-        <td>The DTT values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0. This number represents the number of liable entities that owe a DTT amount greater than 0. The total number of liable entities who owe DTT in the payload should be the same as the number in <em>numberSubGroupDTT</em>.</td>
+        <td>If <em>electionDTTSingleMember</em> is true, the <em>numberSubGroupDTT</em> should be greater than 0, else Error 094 will be returned. If <em>electionDTTSingleMember</em> is false, no validation will be performed.</td>
         </tr>
         <tr>
         <td>095 - Invalid UTPR Election</td>
-        <td>The UTPR values in the request are invalid. Please complete the following checks, then submit the request again. If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0. This number represents the number of liable entities that owe a UTPR amount greater than 0. The total number of liable entities who owe UTPR in the payload should be the same as the number in <em>numberSubGroupUTPR</em>.</td>
+        <td>If <em>electionUTPRSingleMember</em> is true, the <em>numberSubGroupUTPR</em> should be greater than 0, else Error 095 will be returned. If <em>electionUTPRSingleMember</em> is false, no validation will be performed.</td>
         </tr>
         <tr>
         <td>096 - Invalid Total Liability</td>
