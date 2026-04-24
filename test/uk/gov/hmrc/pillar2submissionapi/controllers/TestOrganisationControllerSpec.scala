@@ -25,8 +25,8 @@ import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.controllers.test.TestOrganisationController
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 
 import java.time.{Instant, LocalDate}

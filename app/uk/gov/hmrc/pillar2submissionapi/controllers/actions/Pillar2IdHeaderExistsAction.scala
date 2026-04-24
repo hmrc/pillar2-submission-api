@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.Inject
 import play.api.mvc.{BodyParsers, Request}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.MissingHeader.MissingPillar2Id
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.MissingHeader.MissingPillar2Id
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -23,7 +23,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn._
 
 import java.time.LocalDate

@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.routes
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{InvalidDateFormat, InvalidDateRange, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormat, InvalidDateRange, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{AccountActivityDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse

@@ -23,8 +23,8 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions._
 
 import java.time.LocalDate

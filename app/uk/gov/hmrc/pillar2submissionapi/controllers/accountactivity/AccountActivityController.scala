@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{AccountActivityNotAvailable, InvalidDateFormat, InvalidDateRange}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{AccountActivityNotAvailable, InvalidDateFormat, InvalidDateRange}
 import uk.gov.hmrc.pillar2submissionapi.services.AccountActivityService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
