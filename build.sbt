@@ -5,16 +5,19 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 
 ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
-
-val scalafixSettings = Seq(
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / scalacOptions ++= Seq(
+  "-Wconf:src=routes/.*:s",
+  "-Wconf:msg=Flag.*set repeatedly:s",
+  "-Wconf:msg=Setting -Wunused set to all redundantly:s"
 )
 
-lazy val microservice = Project("pillar2-submission-api", file("."))
+lazy val microservice: Project = Project("pillar2-submission-api", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin, ScalafixPlugin, SwaggerPlugin)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    majorVersion := 0,
+    playDefaultPort := 10054,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    semanticdbEnabled := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     Compile / tpolecatExcludeOptions ++= Set(
@@ -22,48 +25,26 @@ lazy val microservice = Project("pillar2-submission-api", file("."))
       ScalacOptions.warnValueDiscard,
       ScalacOptions.warnUnusedImports
     ),
-    playDefaultPort := 10054,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    scalafixSettings
-  )
-  .settings(CodeCoverageSettings.settings *)
-  .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources"),
+    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test")).value
   )
   .settings(scalaSettings *)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(DefaultBuildSettings.itSettings()))
-  .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    Test / unmanagedSourceDirectories := (Test / baseDirectory)(base => Seq(base / "test", base / "test-common")).value,
-    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
-  )
-  .settings(
-    IntegrationTest / unmanagedSourceDirectories :=
-      (IntegrationTest / baseDirectory)(base => Seq(base / "it", base / "test-common")).value,
-    IntegrationTest / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
-    IntegrationTest / unmanagedResourceDirectories := Seq(baseDirectory.value / "test-resources")
-  )
+  .settings(CodeCoverageSettings.settings *)
   .settings(JsonToYaml.settings *)
   .settings(Validate.settings *)
   .settings(PublishTestOnlyOas.settings *)
   .settings(PlaySwagger.settings *)
-  .disablePlugins(JUnitXmlReportPlugin)
 
-addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
-addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
-addCommandAlias("createOpenAPISpec", ";clean;routesToYamlOas; validateOas")
-addCommandAlias("publishTestOnlyOas", ";createOpenAPISpec; publishOas")
-
-lazy val it = project
+lazy val it: Project = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(
     DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it
-  )
-  .settings(
-    DefaultBuildSettings.itSettings(),
+    libraryDependencies ++= AppDependencies.it,
+    Test / unmanagedSourceDirectories := Seq((Test / baseDirectory).value / "test"),
+    Test / unmanagedResourceDirectories := Seq((microservice / baseDirectory).value / "test-resources"),
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/test-reports/html-it-report"),
     tpolecatExcludeOptions ++= Set(
       ScalacOptions.warnNonUnitStatement,
       ScalacOptions.warnValueDiscard,
@@ -71,8 +52,7 @@ lazy val it = project
     )
   )
 
-ThisBuild / scalacOptions ++= Seq(
-  "-Wconf:src=routes/.*:s",
-  "-Wconf:msg=Flag.*set repeatedly:s",
-  "-Wconf:msg=Setting -Wunused set to all redundantly:s"
-)
+addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
+addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
+addCommandAlias("createOpenAPISpec", "; clean; routesToYamlOas; validateOas")
+addCommandAlias("publishTestOnlyOas", "; createOpenAPISpec; publishOas")
