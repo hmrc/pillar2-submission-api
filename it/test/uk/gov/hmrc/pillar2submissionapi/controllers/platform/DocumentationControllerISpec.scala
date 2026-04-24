@@ -41,7 +41,7 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
       val url        = s"$baseUrl${routes.DocumentationController.definition().url}"
       val definition = Await.result(client.get(URI.create(url).toURL).execute[HttpResponse], 5.seconds)
       val json       = definition.json
-      (json \ "api" \ "name").as[String] mustEqual "Pillar 2 API"
+      (json \ "api" \ "name").as[String] mustEqual "Pillar 2"
       (json \ "api" \ "description").as[String] mustEqual "An API for managing and retrieving Pillar 2 data"
       (json \ "api" \ "context").as[String] mustEqual "organisations/pillar-two"
       (json \ "api" \ "categories").as[List[String]] must have size 1
