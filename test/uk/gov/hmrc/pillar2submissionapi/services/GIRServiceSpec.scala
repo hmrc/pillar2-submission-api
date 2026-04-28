@@ -80,5 +80,89 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
       }
     }
+
+    "amendGIR() called with a valid submission" should {
+      "return 200 OK response" in {
+        when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(okResponse), Map.empty)))
+
+        val result = await(service.amendGIR(validSubmission))
+        result mustBe okResponse
+      }
+    }
+    "amendGIR() valid 422 response back" should {
+      "throw DownstreamValidationError" in {
+        when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(errorResponse), Map.empty)))
+
+        intercept[DownstreamValidationError](await(service.amendGIR(validSubmission)))
+      }
+    }
+    "amendGIR() unexpected 200 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+      }
+    }
+    "amendGIR() unexpected 422 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+      }
+    }
+    "amendGIR() 500 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+      }
+    }
+
+    "deleteGIR() called with a valid submission" should {
+      "return 200 OK response" in {
+        when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson(okResponse), Map.empty)))
+
+        val result = await(service.deleteGIR(validSubmission))
+        result mustBe okResponse
+      }
+    }
+    "deleteGIR() valid 422 response back" should {
+      "throw DownstreamValidationError" in {
+        when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(errorResponse), Map.empty)))
+
+        intercept[DownstreamValidationError](await(service.deleteGIR(validSubmission)))
+      }
+    }
+    "deleteGIR() unexpected 200 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+      }
+    }
+    "deleteGIR() unexpected 422 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+      }
+    }
+    "deleteGIR() 500 response back" should {
+      "throw UnexpectedResponse" in {
+        when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
+          .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
+
+        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+      }
+    }
   }
 }

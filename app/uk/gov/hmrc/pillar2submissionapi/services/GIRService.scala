@@ -40,9 +40,15 @@ class GIRService @Inject() (
   ): Future[SubmitGIRSuccessResponse] =
     girConnector.createGIR(submission).map(convertToResult)
 
+  def amendGIR(submission: GIRSubmission)(implicit hc: HeaderCarrier): Future[SubmitGIRSuccessResponse] =
+    girConnector.amendGIR(submission).map(convertToResult)
+
+  def deleteGIR(submission: GIRSubmission)(implicit hc: HeaderCarrier): Future[SubmitGIRSuccessResponse] =
+    girConnector.deleteGIR(submission).map(convertToResult)
+
   private def convertToResult(response: HttpResponse): SubmitGIRSuccessResponse =
     response.status match {
-      case 201 =>
+      case 200 | 201 =>
         response.json.validate[SubmitGIRSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(e)            =>

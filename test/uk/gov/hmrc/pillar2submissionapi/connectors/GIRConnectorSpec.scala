@@ -79,6 +79,66 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
         result.status should be(NOT_FOUND)
       }
     }
+
+    "amendGIR" must {
+      "forward the X-Pillar2-Id header" in {
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        stubRequestWithPillar2Id("PUT", submitUrl, OK, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
+
+        val result = await(girConnector.amendGIR(validGIRSubmission))
+
+        result.status should be(OK)
+        server.verify(
+          putRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
+      }
+      "return 200 OK for valid request" in {
+        stubRequest("PUT", submitUrl, OK, JsObject.empty)
+        val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
+        result.status should be(OK)
+      }
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("PUT", submitUrl, BAD_REQUEST, JsObject.empty)
+        val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
+        result.status should be(BAD_REQUEST)
+      }
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
+        val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
+        result.status should be(NOT_FOUND)
+      }
+    }
+
+    "deleteGIR" must {
+      "forward the X-Pillar2-Id header" in {
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        stubRequestWithPillar2Id("DELETE", submitUrl, OK, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
+
+        val result = await(girConnector.deleteGIR(validGIRSubmission))
+
+        result.status should be(OK)
+        server.verify(
+          deleteRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+        )
+      }
+      "return 200 OK for valid request" in {
+        stubRequest("DELETE", submitUrl, OK, JsObject.empty)
+        val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
+        result.status should be(OK)
+      }
+      "return 400 BAD_REQUEST for invalid request" in {
+        stubRequest("DELETE", submitUrl, BAD_REQUEST, JsObject.empty)
+        val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
+        result.status should be(BAD_REQUEST)
+      }
+      "return 404 NOT_FOUND for incorrect URL" in {
+        stubRequest("DELETE", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
+        val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
+        result.status should be(NOT_FOUND)
+      }
+    }
   }
 }
 
