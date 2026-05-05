@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
 import uk.gov.hmrc.pillar2submissionapi.models.organisation.TestOrganisationRequest
 import uk.gov.hmrc.pillar2submissionapi.services.TestOrganisationService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
