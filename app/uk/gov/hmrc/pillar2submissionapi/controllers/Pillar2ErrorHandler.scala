@@ -21,7 +21,8 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.json.Json
 import play.api.mvc.Results.Status
 import play.api.mvc.{RequestHeader, Result, Results}
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 import scala.concurrent.Future
@@ -53,10 +54,10 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
           case DatabaseError(_) | UnexpectedResponse | NoSubscriptionData(_) =>
             Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
-        logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} statuscode", exception)
+        logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} status code", exception)
         Future.successful(ret)
       case _ =>
-        logger.warn("Unhandled exception. Returning 500 statuscode", exception)
+        logger.warn("Unhandled exception. Returning 500 status code", exception)
         Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
     }
 }

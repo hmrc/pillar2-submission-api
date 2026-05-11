@@ -35,8 +35,8 @@ import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction._
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec._
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.UUID

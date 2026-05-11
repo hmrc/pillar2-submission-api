@@ -21,7 +21,7 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.SubmitGIRErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.SubmitGIRSuccessResponse
@@ -29,6 +29,7 @@ import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.SubmitGIRS
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
+
 @Singleton
 class GIRService @Inject() (
   girConnector: GIRConnector

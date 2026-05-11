@@ -23,7 +23,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.controllers.error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
 import uk.gov.hmrc.pillar2submissionapi.models.organisation.{AccountingPeriod, OrgDetails, TestOrganisation}
 
 import java.time.{Instant, LocalDate}

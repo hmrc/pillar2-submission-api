@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.controllers.error.NoSubscriptionData
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionData
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
