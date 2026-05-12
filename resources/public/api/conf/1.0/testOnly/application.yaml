@@ -2164,7 +2164,7 @@ components:
           description: "Specifies whether a multinational group owes IIR or UTPR Pillar 2 tax. In the case where a group is 'domestic only', then the value must be `false`. Where a group is 'multinational', the value can be `true` or `false`."
         electionUKGAAP:
           type: boolean
-          description: "A means of calculating tax liability and profit. For domestic-only groups, the value must be `true`. For multinational groups, it must be `false`."
+          description: "A means of calculating tax liability and profit. For domestic-only groups, the value can be `true` or `false`. For multinational groups, it must be `false`."
         liabilities:
           $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.LiabilityData"
       required:
