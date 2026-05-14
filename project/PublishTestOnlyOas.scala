@@ -16,7 +16,7 @@ object PublishTestOnlyOas {
 
       IO.createDirectory(targetDir)
       IO.copyFile(sourceFile, targetFile)
-      println(s"Successfully copied OpenAPI spec to: ${targetFile.getAbsolutePath}")
+      streams.value.log.info(s"Successfully copied OpenAPI spec to: ${targetFile.getAbsolutePath}")
     }
   )
 }
