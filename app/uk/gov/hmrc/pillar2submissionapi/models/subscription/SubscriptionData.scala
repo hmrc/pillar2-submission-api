@@ -25,12 +25,11 @@ final case class SubscriptionData(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         AccountingPeriod,
+  accountingPeriod:         Seq[AccountingPeriod],
   accountStatus:            Option[AccountStatus]
 )
 
 object SubscriptionData {
-
   given format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
 }
 

@@ -35,7 +35,7 @@ trait SubscriptionDataFixture {
     primaryContactDetails = contactDetails,
     secondaryContactDetails = None,
     filingMemberDetails = None,
-    accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
+    accountingPeriod = Seq(AccountingPeriod(currentDate, currentDate.plusYears(1))),
     accountStatus = Some(AccountStatus(false))
   )
 
@@ -78,11 +78,13 @@ trait SubscriptionDataFixture {
       |          "customerIdentification1": "1234Z678",
       |          "customerIdentification2": "1234567Y"
       |      },
-      |      "accountingPeriod": {
+      |      "accountingPeriod": [
+      |        {
       |          "startDate": "2024-01-06",
       |          "endDate": "2025-04-06",
       |          "dueDate": "2024-04-06"
-      |      },
+      |        }
+      |      ],
       |      "accountStatus": {
       |          "inactive": true
       |      }
