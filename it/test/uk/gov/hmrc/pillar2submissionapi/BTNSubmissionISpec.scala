@@ -59,7 +59,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
     "submitBTN as a organisation" must {
       "return 201 CREATED when given valid submission data" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -77,7 +77,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 400 BAD_REQUEST for invalid request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -89,7 +89,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 400 BAD_REQUEST for empty request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -101,7 +101,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 400 BAD_REQUEST for missing request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -113,7 +113,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 201 CREATED for request with duplicate fields and additional fields" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -132,7 +132,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -153,7 +153,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -174,7 +174,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -216,7 +216,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
