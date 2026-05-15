@@ -62,7 +62,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "submitORN as a organisation" must {
       "return 201 CREATED when given valid submission data" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -81,7 +81,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for invalid request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -93,7 +93,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for empty request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -105,7 +105,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for missing request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -117,7 +117,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when countryGIR is longer than 2 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -132,7 +132,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -146,7 +146,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when reportingEntityName is empty" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -160,7 +160,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when TIN is empty" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -174,7 +174,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -188,7 +188,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -202,7 +202,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 201 CREATED for request with duplicate fields and additional fields" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -222,7 +222,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -243,7 +243,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -264,7 +264,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -286,7 +286,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "amendORN as a organisation" must {
       "return 200 CREATED when given valid submission data" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -305,7 +305,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for invalid request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -317,7 +317,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for empty request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -329,7 +329,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST for missing request body" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -341,7 +341,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when countryGIR is longer than 2 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -356,7 +356,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -370,7 +370,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when reportingEntityName is empty" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -384,7 +384,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when TIN is empty" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -398,7 +398,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -412,7 +412,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -426,7 +426,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 200 OK for request with duplicate fields and additional fields" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -446,7 +446,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -467,7 +467,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -488,7 +488,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -511,7 +511,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     "retrieveORN as an organisation" must {
       "return 200 OK when given valid period parameters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -554,7 +554,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR when ORN doesn't exist" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -582,7 +582,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -610,7 +610,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -638,7 +638,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed JSON on successful response" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -666,7 +666,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed error JSON on 422 response" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -693,7 +693,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
       "return 400 BAD_REQUEST when missing parameters" in {
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -733,7 +733,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -777,7 +777,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )
@@ -819,7 +819,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           )
 
         stubGet(
-          "/report-pillar2-top-up-taxes/subscription/read-subscription/XCCVRUGFJG788",
+          s"$readSubscriptionPath/XCCVRUGFJG788",
           OK,
           Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
         )

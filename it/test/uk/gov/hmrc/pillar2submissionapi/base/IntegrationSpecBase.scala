@@ -62,7 +62,7 @@ trait IntegrationSpecBase
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
   val plrReference         = "XCCVRUGFJG788"
-  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
+  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
 
   val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   val ENROLMENT_IDENTIFIER = "PLRID"
