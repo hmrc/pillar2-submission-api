@@ -37,7 +37,9 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
-      case Left(_)                 => Future.failed(NoSubscriptionData(request.clientPillar2Id))
+      case Left(result) =>
+        logger.warn(s"Cannot find subscription with result: ${result.header.headers} and ${result.body}")
+        Future.failed(NoSubscriptionData(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
           SubscriptionDataRequest(
