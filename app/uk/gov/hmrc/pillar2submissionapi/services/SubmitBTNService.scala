@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubmitBTNConnector
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.btn.BTNSuccessResponse
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.hip.ApiFailureResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,17 +41,17 @@ class SubmitBTNService @Inject() (submitBTNConnector: SubmitBTNConnector)(using 
           case JsSuccess(wrapper, _) => SubmitBTNSuccessResponse(wrapper.success.processingDate.toString)
           case JsError(_)            =>
             logger.error("Failed to parse success response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[ApiFailureResponse] match {
           case JsSuccess(apiFailure, _) => throw DownstreamValidationError(apiFailure.errors.code, apiFailure.errors.text)
           case JsError(_)               =>
             logger.error("Failed to parse unprocessible entity response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error calling pillar2 backend. Got response: $status")
-        throw UnexpectedResponse
+        throw UnexpectedResponseError
     }
 }

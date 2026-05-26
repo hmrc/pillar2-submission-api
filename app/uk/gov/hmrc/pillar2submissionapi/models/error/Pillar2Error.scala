@@ -17,107 +17,104 @@
 package uk.gov.hmrc.pillar2submissionapi.models.error
 
 sealed trait Pillar2Error extends Exception {
-  val code:    String
-  val message: String
+  def code:    String
+  def message: String
+
+  override def getMessage: String = s"Code: '$code' Message: '$message'"
 }
 
 object Pillar2Error {
 
-  case object InvalidDateRange extends Pillar2Error {
-    val code    = "INVALID_DATE_RANGE"
-    val message = "Invalid date range"
+  case object InvalidDateRangeError extends Pillar2Error {
+    val code:    String = "INVALID_DATE_RANGE"
+    val message: String = "Invalid date range"
   }
 
-  case object InvalidDateFormat extends Pillar2Error {
-    val code    = "INVALID_DATE_FORMAT"
-    val message = "Invalid date format"
+  case object InvalidDateFormatError extends Pillar2Error {
+    val code:    String = "INVALID_DATE_FORMAT"
+    val message: String = "Invalid date format"
   }
 
-  case object InvalidJson extends Pillar2Error {
-    val code    = "INVALID_JSON"
-    val message = "Invalid JSON payload"
+  case object InvalidJsonError extends Pillar2Error {
+    val code:    String = "INVALID_JSON"
+    val message: String = "Invalid JSON payload"
   }
 
-  case object EmptyRequestBody extends Pillar2Error {
-    val code    = "EMPTY_REQUEST_BODY"
-    val message = "Empty request body"
+  case object EmptyRequestBodyError extends Pillar2Error {
+    val code:    String = "EMPTY_REQUEST_BODY"
+    val message: String = "Empty request body"
   }
 
-  case object UnexpectedResponse extends Pillar2Error {
+  case object MissingCredentialsError extends Pillar2Error {
+    val code:    String = "MISSING_CREDENTIALS"
+    val message: String = "Authentication information is not provided"
+  }
+
+  case object InvalidCredentialsError extends Pillar2Error {
+    val code:    String = "INVALID_CREDENTIALS"
+    val message: String = "Invalid Authentication information provided"
+  }
+
+  final case class MissingHeaderError(headerName: String) extends Pillar2Error {
+    val code:    String = "MISSING_HEADER"
+    val message: String = s"Please provide the $headerName header"
+  }
+
+  case object ForbiddenError extends Pillar2Error {
+    val code:    String = "FORBIDDEN"
+    val message: String = "Access to the requested resource is forbidden"
+  }
+
+  case object IncorrectHeaderValueError extends Pillar2Error {
+    val code:    String = "INCORRECT_HEADER_VALUE"
+    val message: String = "X-Pillar2-Id Header value does not match the bearer token"
+  }
+
+  case object InvalidEnrolmentError extends Pillar2Error {
+    val code:    String = "INVALID_ENROLMENT"
+    val message: String = "Invalid Pillar 2 enrolment"
+  }
+
+  case object TestEndpointDisabledError extends Pillar2Error {
+    val code:    String = "TEST_ENDPOINT_DISABLED"
+    val message: String = "Test endpoints are not available in this environment"
+  }
+
+  case object ORNNotFoundError extends Pillar2Error {
+    val code:    String = "NOT_FOUND"
+    val message: String = "The requested ORN could not be found"
+  }
+
+  case object AccountActivityNotAvailableError extends Pillar2Error {
+    val code:    String = "NOT_IMPLEMENTED"
+    val message: String = "Account activity is not available in this environment"
+  }
+
+  final case class NoSubscriptionDataError(pillar2Id: String) extends Pillar2Error {
+    val code:    String = "004"
+    val message: String = s"No Pillar2 subscription found for $pillar2Id"
+  }
+
+  final case class OrganisationNotFoundError(pillar2Id: String) extends Pillar2Error {
+    val code:    String = "404"
+    val message: String = s"Organisation not found for pillar2Id: $pillar2Id"
+  }
+
+  final case class OrganisationAlreadyExistsError(pillar2Id: String) extends Pillar2Error {
+    val code:    String = "409"
+    val message: String = s"Organisation with pillar2Id: $pillar2Id already exists"
+  }
+
+  final case class DatabaseError(operation: String) extends Pillar2Error {
+    val code:    String = "500"
+    val message: String = s"Failed to $operation organisation due to database error"
+  }
+
+  case object UnexpectedResponseError extends Pillar2Error {
     val code:    String = "500"
     val message: String = "Internal Server Error"
   }
 
-  case object MissingCredentials extends Pillar2Error {
-    val code = "MISSING_CREDENTIALS"
-    val message: String = "Authentication information is not provided"
-  }
-
-  case object InvalidCredentials extends Pillar2Error {
-    val code = "INVALID_CREDENTIALS"
-    val message: String = "Invalid Authentication information provided"
-  }
-
-  case class NoSubscriptionData(pillar2Id: String) extends Pillar2Error {
-    val code = "004"
-    val message: String = s"No Pillar2 subscription found for $pillar2Id"
-  }
-
-  case class MissingHeader(message: String) extends Pillar2Error {
-    val code = "MISSING_HEADER"
-  }
-
-  object MissingHeader {
-    val MissingPillar2Id: MissingHeader = MissingHeader(
-      "Please provide the X-Pillar2-Id header"
-    )
-  }
-
-  case object ForbiddenError extends Pillar2Error {
-    val code    = "FORBIDDEN"
-    val message = "Access to the requested resource is forbidden"
-  }
-
-  case object IncorrectHeaderValue extends Pillar2Error {
-    val code    = "INCORRECT_HEADER_VALUE"
-    val message = "X-Pillar2-Id Header value does not match the bearer token"
-  }
-
-  case object InvalidEnrolment extends Pillar2Error {
-    val code    = "INVALID_ENROLMENT"
-    val message = "Invalid Pillar 2 enrolment"
-  }
-
-  case class DownstreamValidationError(code: String, message: String) extends Pillar2Error
-
-  case class OrganisationAlreadyExists(pillar2Id: String) extends Pillar2Error {
-    override val code:    String = "409"
-    override val message: String = s"Organisation with pillar2Id: $pillar2Id already exists"
-  }
-
-  case class OrganisationNotFound(pillar2Id: String) extends Pillar2Error {
-    override val code:    String = "404"
-    override val message: String = s"Organisation not found for pillar2Id: $pillar2Id"
-  }
-
-  case class DatabaseError(operation: String) extends Pillar2Error {
-    override val code:    String = "500"
-    override val message: String = s"Failed to $operation organisation due to database error"
-  }
-
-  case object TestEndpointDisabled extends Pillar2Error {
-    override val code:    String = "TEST_ENDPOINT_DISABLED"
-    override val message: String = "Test endpoints are not available in this environment"
-  }
-
-  case object ORNNotFoundException extends Pillar2Error {
-    override val code:    String = "NOT_FOUND"
-    override val message: String = "The requested ORN could not be found"
-  }
-
-  case object AccountActivityNotAvailable extends Pillar2Error {
-    override val code:    String = "NOT_IMPLEMENTED"
-    override val message: String = "Account activity is not available in this environment"
-  }
+  final case class DownstreamValidationError(code: String, message: String) extends Pillar2Error
 
 }

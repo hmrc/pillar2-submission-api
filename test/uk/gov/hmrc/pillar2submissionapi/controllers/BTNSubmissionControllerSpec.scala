@@ -28,7 +28,7 @@ import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.BTNSubmissionControllerSpec._
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.BTNSubmissionController
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBody, InvalidJson, MissingHeader}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, MissingHeaderError}
 
 import scala.concurrent.Future
 
@@ -60,17 +60,17 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
     "submitBTN() called with an invalid request" should {
       "return InvalidJson response" in
-        result(invalidRequestJson_data).shouldFailWith(InvalidJson)
+        result(invalidRequestJson_data).shouldFailWith(InvalidJsonError)
     }
 
     "submitBTN called with an invalid json request" should {
       "return InvalidJson response" in
-        result(invalidRequest_Json).shouldFailWith(InvalidJson)
+        result(invalidRequest_Json).shouldFailWith(InvalidJsonError)
     }
 
     "submitBTN called with an empty json object" should {
       "return InvalidJson response" in
-        result(invalidRequest_emptyBody).shouldFailWith(InvalidJson)
+        result(invalidRequest_emptyBody).shouldFailWith(InvalidJsonError)
     }
 
     "submitBTN called with an non-json request" should {
@@ -80,7 +80,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
             .withHeaders("X-Pillar2-Id" -> pillar2Id)
             .withTextBody(invalidRequest_wrongType)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -89,7 +89,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -98,7 +98,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest()
         )
-        result.shouldFailWith(MissingHeader.MissingPillar2Id)
+        result.shouldFailWith(MissingHeaderError("X-Pillar2-Id"))
       }
     }
 

@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionData
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionDataError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -39,7 +39,7 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
       case Left(result) =>
         logger.warn(s"Cannot find subscription with result: ${result.header.headers} and ${result.body}")
-        Future.failed(NoSubscriptionData(request.clientPillar2Id))
+        Future.failed(NoSubscriptionDataError(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
           SubscriptionDataRequest(

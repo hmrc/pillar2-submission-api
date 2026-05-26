@@ -57,20 +57,20 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return InvalidJson for invalid request" in {
           val result = controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidRequestJson))
 
-          result.shouldFailWith(InvalidJson)
+          result.shouldFailWith(InvalidJsonError)
         }
 
         "return EmptyRequestBody for missing body" in {
           val result = controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result.shouldFailWith(EmptyRequestBody)
+          result.shouldFailWith(EmptyRequestBodyError)
         }
 
         "return InvalidDateRange for invalid accounting period" in {
           val result =
             controller().createTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidAccountingPeriodJson))
 
-          result.shouldFailWith(InvalidDateRange)
+          result.shouldFailWith(InvalidDateRangeError)
         }
       }
 
@@ -100,20 +100,20 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return InvalidJson for invalid request" in {
           val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidRequestJson))
 
-          result.shouldFailWith(InvalidJson)
+          result.shouldFailWith(InvalidJsonError)
         }
 
         "return EmptyRequestBody for missing body" in {
           val result = controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result.shouldFailWith(EmptyRequestBody)
+          result.shouldFailWith(EmptyRequestBodyError)
         }
 
         "return InvalidDateRange for invalid accounting period" in {
           val result =
             controller().updateTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidAccountingPeriodJson))
 
-          result.shouldFailWith(InvalidDateRange)
+          result.shouldFailWith(InvalidDateRangeError)
         }
       }
 
@@ -136,7 +136,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
 
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
 
@@ -144,7 +144,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return 403 FORBIDDEN" in {
           val result = controller(testEndpointsEnabled = false).getTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
 
@@ -154,7 +154,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
 
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
 
@@ -162,7 +162,7 @@ class TestOrganisationControllerSpec extends ControllerBaseSpec {
         "return 403 FORBIDDEN" in {
           val result = controller(testEndpointsEnabled = false).deleteTestOrganisation(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
 
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
     }

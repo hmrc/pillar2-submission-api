@@ -21,7 +21,7 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnector
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.SubmitGIRErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.SubmitGIRSuccessResponse
@@ -54,17 +54,17 @@ class GIRService @Inject() (
           case JsSuccess(success, _) => success
           case JsError(e)            =>
             logger.error(s"Error while parsing the backend response" + response.body + e)
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[SubmitGIRErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.errors.code, response.errors.text)
           case JsError(e)             =>
             logger.error(s"Error while unprocessable entity response" + response.body + e)
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error while calling pillar2 backend. Got status: $status")
-        throw UnexpectedResponse
+        throw UnexpectedResponseError
     }
 }

@@ -56,7 +56,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         )
         stubRequest("POST", url(pillar2Id), CONFLICT, errorResponse)
 
-        intercept[OrganisationAlreadyExists] {
+        intercept[OrganisationAlreadyExistsError] {
           await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
@@ -76,7 +76,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return UnexpectedResponse for any other status code" in {
         stubRequest("POST", url(pillar2Id), BAD_REQUEST, Json.obj())
 
-        intercept[UnexpectedResponse.type] {
+        intercept[UnexpectedResponseError.type] {
           await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
@@ -99,7 +99,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         )
         stubRequest("GET", url(pillar2Id), NOT_FOUND, errorResponse)
 
-        intercept[OrganisationNotFound] {
+        intercept[OrganisationNotFoundError] {
           await(connector.getTestOrganisation(pillar2Id)(using hc))
         }
       }
@@ -107,7 +107,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return UnexpectedResponse for any other status code" in {
         stubRequest("GET", url(pillar2Id), BAD_REQUEST, Json.obj())
 
-        intercept[UnexpectedResponse.type] {
+        intercept[UnexpectedResponseError.type] {
           await(connector.getTestOrganisation(pillar2Id)(using hc))
         }
       }
@@ -130,7 +130,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         )
         stubRequest("PUT", url(pillar2Id), NOT_FOUND, errorResponse)
 
-        intercept[OrganisationNotFound] {
+        intercept[OrganisationNotFoundError] {
           await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
@@ -150,7 +150,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return UnexpectedResponse for any other status code" in {
         stubRequest("PUT", url(pillar2Id), BAD_REQUEST, Json.obj())
 
-        intercept[UnexpectedResponse.type] {
+        intercept[UnexpectedResponseError.type] {
           await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
@@ -172,7 +172,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
         )
         stubRequest("DELETE", url(pillar2Id), NOT_FOUND, errorResponse)
 
-        intercept[OrganisationNotFound] {
+        intercept[OrganisationNotFoundError] {
           await(connector.deleteTestOrganisation(pillar2Id)(using hc))
         }
       }
@@ -192,7 +192,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return UnexpectedResponse for any other status code" in {
         stubRequest("DELETE", url(pillar2Id), BAD_REQUEST, Json.obj())
 
-        intercept[UnexpectedResponse.type] {
+        intercept[UnexpectedResponseError.type] {
           await(connector.deleteTestOrganisation(pillar2Id)(using hc))
         }
       }

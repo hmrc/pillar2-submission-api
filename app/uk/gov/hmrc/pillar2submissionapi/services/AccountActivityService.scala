@@ -24,7 +24,7 @@ import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.AccountActivityConnector
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivityErrorResponse, AccountActivitySuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.error._
 
 import java.time.LocalDate
@@ -47,36 +47,36 @@ class AccountActivityService @Inject() (accountActivityConnector: AccountActivit
       Try(response.json.validate[AccountActivitySuccessResponse]).fold(
         error =>
           logger.error(s"Exception reading json body from 200: $error")
-          UnexpectedResponse.asLeft
+          UnexpectedResponseError.asLeft
         ,
         {
           case JsError(errors) =>
             logger.error(s"Failed to parse json in 200: $errors")
-            UnexpectedResponse.asLeft
+            UnexpectedResponseError.asLeft
           case JsSuccess(parsed, _) => parsed.asRight
         }
       )
 
     case BAD_REQUEST | UNAUTHORIZED | INTERNAL_SERVER_ERROR =>
       logger.warn(s"Hit error status ${response.status}, but mapping to 500.")
-      UnexpectedResponse.asLeft
+      UnexpectedResponseError.asLeft
 
     case UNPROCESSABLE_ENTITY =>
       Try(response.json.validate[AccountActivityErrorResponse]).fold(
         error =>
           logger.error(s"Failed to parse unprocessable entity body from 422: $error")
-          UnexpectedResponse.asLeft
+          UnexpectedResponseError.asLeft
         ,
         {
           case JsSuccess(response, _) => DownstreamValidationError(code = response.code, message = response.message).asLeft
           case JsError(errors)        =>
             logger.error(s"Failed to parse unprocessable entity body from 422: $errors")
-            UnexpectedResponse.asLeft
+            UnexpectedResponseError.asLeft
         }
       )
 
     case unexpectedStatus =>
       logger.error(s"Unexpected status $unexpectedStatus from account activity")
-      UnexpectedResponse.asLeft
+      UnexpectedResponseError.asLeft
   }
 }

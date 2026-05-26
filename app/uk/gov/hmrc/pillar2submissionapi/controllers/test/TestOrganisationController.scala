@@ -41,7 +41,7 @@ class TestOrganisationController @Inject() (
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
-    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
+    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabledError)
 
   def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
@@ -50,15 +50,15 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRangeError)
               else
                 testOrganisationService
                   .createTestOrganisation(request.clientPillar2Id, value)
                   .map(response => Created(Json.toJson(response)))
 
-            case JsError(_) => Future.failed(InvalidJson)
+            case JsError(_) => Future.failed(InvalidJsonError)
           }
-        case None => Future.failed(EmptyRequestBody)
+        case None => Future.failed(EmptyRequestBodyError)
       }
     }
   }
@@ -79,14 +79,14 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRange)
+              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRangeError)
               else
                 testOrganisationService
                   .updateTestOrganisation(request.clientPillar2Id, value)
                   .map(response => Ok(Json.toJson(response)))
-            case JsError(_) => Future.failed(InvalidJson)
+            case JsError(_) => Future.failed(InvalidJsonError)
           }
-        case None => Future.failed(EmptyRequestBody)
+        case None => Future.failed(EmptyRequestBodyError)
       }
     }
   }

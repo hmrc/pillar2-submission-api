@@ -58,7 +58,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.obj("success" -> "unexpected success response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponseError.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 
@@ -81,7 +81,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.obj("errors" -> "unexpected error response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponseError.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 
@@ -91,7 +91,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponseError.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 
@@ -100,7 +100,7 @@ class SubmitBTNServiceSpec extends UnitTestBaseSpec {
       when(mockSubmitBTNConnector.submitBTN(any[BTNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(400, Json.obj("code" -> "INVALID", "message" -> "Bad Request"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(submitBTNService.submitBTN(validBTNSubmission)))
+      intercept[UnexpectedResponseError.type](await(submitBTNService.submitBTN(validBTNSubmission)))
     }
   }
 }

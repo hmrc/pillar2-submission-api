@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.routes
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormat, InvalidDateRange, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormatError, InvalidDateRangeError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{AccountActivityDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
@@ -81,14 +81,14 @@ class AccountActivityISpec
       val result = request("not-a-date", toDate).execute[HttpResponse].futureValue
 
       result.status mustBe BAD_REQUEST
-      result.json mustBe Json.toJson(Pillar2ErrorResponse(InvalidDateFormat.code, InvalidDateFormat.message))
+      result.json mustBe Json.toJson(Pillar2ErrorResponse(InvalidDateFormatError.code, InvalidDateFormatError.message))
     }
 
     "return bad request on an invalid date range" in {
       val result = request(localDateFrom.toString, localDateFrom.minusDays(1).toString).execute[HttpResponse].futureValue
 
       result.status mustBe BAD_REQUEST
-      result.json mustBe Json.toJson(Pillar2ErrorResponse(InvalidDateRange.code, InvalidDateRange.message))
+      result.json mustBe Json.toJson(Pillar2ErrorResponse(InvalidDateRangeError.code, InvalidDateRangeError.message))
     }
 
     "return unprocessable entity when the backend does" in {
@@ -122,7 +122,7 @@ class AccountActivityISpec
       val result = request(fromDate, toDate).execute[HttpResponse].futureValue
 
       result.status mustBe INTERNAL_SERVER_ERROR
-      result.json mustBe Json.toJson(Pillar2ErrorResponse(UnexpectedResponse.code, UnexpectedResponse.message))
+      result.json mustBe Json.toJson(Pillar2ErrorResponse(UnexpectedResponseError.code, UnexpectedResponseError.message))
 
       server.verify(
         getRequestedFor(urlEqualTo(backendEndpoint(fromDate, toDate))).withHeader("X-Pillar2-Id", equalTo(plrReference))
@@ -140,7 +140,7 @@ class AccountActivityISpec
       val result = request(fromDate, toDate).execute[HttpResponse].futureValue
 
       result.status mustBe INTERNAL_SERVER_ERROR
-      result.json mustBe Json.toJson(Pillar2ErrorResponse(UnexpectedResponse.code, UnexpectedResponse.message))
+      result.json mustBe Json.toJson(Pillar2ErrorResponse(UnexpectedResponseError.code, UnexpectedResponseError.message))
 
       server.verify(
         getRequestedFor(urlEqualTo(backendEndpoint(fromDate, toDate))).withHeader("X-Pillar2-Id", equalTo(plrReference))

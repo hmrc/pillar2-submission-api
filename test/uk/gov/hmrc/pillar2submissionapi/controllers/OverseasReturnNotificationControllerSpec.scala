@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBody, InvalidJson, MissingHeader}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, MissingHeaderError}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
 import scala.concurrent.Future
@@ -72,17 +72,17 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
 
     "submitORN called with an invalid request" should {
       "return InvalidJson response" in
-        callWithBody(invalidRequestJson_data).shouldFailWith(InvalidJson)
+        callWithBody(invalidRequestJson_data).shouldFailWith(InvalidJsonError)
     }
 
     "submitORN called with an invalid json request" should {
       "return InvalidJson response" in
-        callWithBody(invalidRequest_Json).shouldFailWith(InvalidJson)
+        callWithBody(invalidRequest_Json).shouldFailWith(InvalidJsonError)
     }
 
     "submitORN called with an empty json object" should {
       "return InvalidJson response" in
-        callWithBody(invalidRequest_emptyBody).shouldFailWith(InvalidJson)
+        callWithBody(invalidRequest_emptyBody).shouldFailWith(InvalidJsonError)
     }
 
     "submitORN called without X-Pillar2-Id" should {
@@ -91,7 +91,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
           .submitORN(
             FakeRequest()
           )
-          .shouldFailWith(MissingHeader.MissingPillar2Id)
+          .shouldFailWith(MissingHeaderError("X-Pillar2-Id"))
     }
 
     "submitORN called with an non-json request" should {
@@ -101,7 +101,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
             .withTextBody(invalidRequest_wrongType)
             .withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -110,7 +110,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.submitORN(
           FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -129,22 +129,22 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "submitORN called with invalid field lengths" should {
 
       "return InvalidJson response when countryGIR is longer than 2 characters" in
-        callWithBody(invalidCountryGIRJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidCountryGIRJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when issuingCountryTIN is longer than 2 characters" in
-        callWithBody(invalidIssuingCountryTINJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidIssuingCountryTINJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when reportingEntityName is empty" in
-        callWithBody(invalidReportingEntityNameJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidReportingEntityNameJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when TIN is empty" in
-        callWithBody(invalidTinJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidTinJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when reportingEntityName exceeds 200 characters" in
-        callWithBody(invalidLongReportingEntityJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidLongReportingEntityJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when TIN exceeds 200 characters" in
-        callWithBody(invalidLongTinJson).shouldFailWith(InvalidJson)
+        callWithBody(invalidLongTinJson).shouldFailWith(InvalidJsonError)
     }
 
     "amendORN() called with a valid request" should {
@@ -162,17 +162,17 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
 
     "amendORN called with an invalid request" should {
       "return InvalidJson response" in
-        callAmendWithBody(invalidRequestJson_data).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidRequestJson_data).shouldFailWith(InvalidJsonError)
     }
 
     "amendORN called with an invalid json request" should {
       "return InvalidJson response" in
-        callAmendWithBody(invalidRequest_Json).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidRequest_Json).shouldFailWith(InvalidJsonError)
     }
 
     "amendORN called with an empty json object" should {
       "return InvalidJson response" in
-        callAmendWithBody(invalidRequest_emptyBody).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidRequest_emptyBody).shouldFailWith(InvalidJsonError)
     }
 
     "amendORN called without X-Pillar2-Id" should {
@@ -181,7 +181,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
           .amendORN(
             FakeRequest()
           )
-          .shouldFailWith(MissingHeader.MissingPillar2Id)
+          .shouldFailWith(MissingHeaderError("X-Pillar2-Id"))
     }
 
     "amendORN called with an non-json request" should {
@@ -191,7 +191,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
             .withTextBody(invalidRequest_wrongType)
             .withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -200,7 +200,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.amendORN(
           FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
         )
-        result.shouldFailWith(EmptyRequestBody)
+        result.shouldFailWith(EmptyRequestBodyError)
       }
     }
 
@@ -219,22 +219,22 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "amendORN called with invalid field lengths" should {
 
       "return InvalidJson response when countryGIR is longer than 2 characters" in
-        callAmendWithBody(invalidCountryGIRJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidCountryGIRJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when issuingCountryTIN is longer than 2 characters" in
-        callAmendWithBody(invalidIssuingCountryTINJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidIssuingCountryTINJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when reportingEntityName is empty" in
-        callAmendWithBody(invalidReportingEntityNameJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidReportingEntityNameJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when TIN is empty" in
-        callAmendWithBody(invalidTinJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidTinJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when reportingEntityName exceeds 200 characters" in
-        callAmendWithBody(invalidLongReportingEntityJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidLongReportingEntityJson).shouldFailWith(InvalidJsonError)
 
       "return InvalidJson response when TIN exceeds 200 characters" in
-        callAmendWithBody(invalidLongTinJson).shouldFailWith(InvalidJson)
+        callAmendWithBody(invalidLongTinJson).shouldFailWith(InvalidJsonError)
     }
   }
 }

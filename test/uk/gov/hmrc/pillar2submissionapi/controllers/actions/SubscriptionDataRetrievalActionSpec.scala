@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionData
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionDataError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.duration.DurationInt
@@ -66,7 +66,7 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
       val result = action
         .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
 
-      intercept[NoSubscriptionData] {
+      intercept[NoSubscriptionDataError] {
         Await.result(result, 5.seconds)
       }
     }

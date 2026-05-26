@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBody, InvalidJson, TestEndpointDisabled}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, TestEndpointDisabledError}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission
 import uk.gov.hmrc.pillar2submissionapi.services.GIRService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -41,7 +41,7 @@ class GIRController @Inject() (
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
-    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabled)
+    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabledError)
 
   def createGIR: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
@@ -54,9 +54,9 @@ class GIRController @Inject() (
               girService
                 .createGIR(value)
                 .map(response => Created(Json.toJson(response)))
-            case JsError(_) => Future.failed(InvalidJson)
+            case JsError(_) => Future.failed(InvalidJsonError)
           }
-        case None => Future.failed(EmptyRequestBody)
+        case None => Future.failed(EmptyRequestBodyError)
       }
     }
   }
@@ -72,9 +72,9 @@ class GIRController @Inject() (
               girService
                 .amendGIR(value)
                 .map(response => Ok(Json.toJson(response)))
-            case JsError(_) => Future.failed(InvalidJson)
+            case JsError(_) => Future.failed(InvalidJsonError)
           }
-        case None => Future.failed(EmptyRequestBody)
+        case None => Future.failed(EmptyRequestBodyError)
       }
     }
   }
@@ -90,9 +90,9 @@ class GIRController @Inject() (
               girService
                 .deleteGIR(value)
                 .map(response => Ok(Json.toJson(response)))
-            case JsError(_) => Future.failed(InvalidJson)
+            case JsError(_) => Future.failed(InvalidJsonError)
           }
-        case None => Future.failed(EmptyRequestBody)
+        case None => Future.failed(EmptyRequestBodyError)
       }
     }
   }

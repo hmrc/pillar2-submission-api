@@ -53,7 +53,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.submitORN(ornRequestFixture)))
     }
   }
 
@@ -73,7 +73,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.submitORN(ornRequestFixture)))
     }
   }
 
@@ -83,7 +83,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.submitORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.submitORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.submitORN(ornRequestFixture)))
     }
   }
 
@@ -107,7 +107,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.amendORN(ornRequestFixture)))
     }
   }
 
@@ -127,7 +127,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.amendORN(ornRequestFixture)))
     }
   }
 
@@ -137,7 +137,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.amendORN(any[ORNSubmission])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.amendORN(ornRequestFixture)))
+      intercept[UnexpectedResponseError.type](await(ornService.amendORN(ornRequestFixture)))
     }
   }
 
@@ -159,7 +159,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[UnexpectedResponseError.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
@@ -168,7 +168,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(404, Json.toJson("Not Found"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[UnexpectedResponseError.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
@@ -177,7 +177,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson(ORNErrorResponse("005", "No Form Bundle found")), Map.empty)))
 
-      intercept[ORNNotFoundException.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[ORNNotFoundError.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
@@ -195,7 +195,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[UnexpectedResponseError.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 
@@ -204,7 +204,7 @@ class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDat
       when(mockOverseasReturnNotificationConnector.retrieveORN(any[String], any[String])(using any[HeaderCarrier]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
+      intercept[UnexpectedResponseError.type](await(ornService.retrieveORN("2024-01-01", "2024-12-31")))
     }
   }
 }

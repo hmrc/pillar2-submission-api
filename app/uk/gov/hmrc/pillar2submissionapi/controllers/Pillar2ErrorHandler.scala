@@ -43,15 +43,16 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
     exception match {
       case e: Pillar2Error =>
         val ret = e match {
-          case InvalidDateRange | InvalidDateFormat | InvalidJson | EmptyRequestBody | MissingHeader(_) | IncorrectHeaderValue =>
+          case InvalidDateRangeError | InvalidDateFormatError | InvalidJsonError | EmptyRequestBodyError | MissingHeaderError(_) |
+              IncorrectHeaderValueError =>
             Results.BadRequest(Pillar2ErrorResponse(e.code, e.message))
-          case MissingCredentials | InvalidCredentials                       => Results.Unauthorized(Pillar2ErrorResponse(e.code, e.message))
-          case ForbiddenError | InvalidEnrolment | TestEndpointDisabled      => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
-          case OrganisationNotFound(_) | ORNNotFoundException                => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
-          case OrganisationAlreadyExists(_)                                  => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
-          case DownstreamValidationError(_, _)                               => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
-          case AccountActivityNotAvailable                                   => Results.NotImplemented(Pillar2ErrorResponse(e.code, e.message))
-          case DatabaseError(_) | UnexpectedResponse | NoSubscriptionData(_) =>
+          case MissingCredentialsError | InvalidCredentialsError                  => Results.Unauthorized(Pillar2ErrorResponse(e.code, e.message))
+          case ForbiddenError | InvalidEnrolmentError | TestEndpointDisabledError => Results.Forbidden(Pillar2ErrorResponse(e.code, e.message))
+          case OrganisationNotFoundError(_) | ORNNotFoundError                    => Results.NotFound(Pillar2ErrorResponse(e.code, e.message))
+          case OrganisationAlreadyExistsError(_)                                  => Results.Conflict(Pillar2ErrorResponse(e.code, e.message))
+          case DownstreamValidationError(_, _)  => Results.UnprocessableEntity(Pillar2ErrorResponse(e.code, e.message))
+          case AccountActivityNotAvailableError => Results.NotImplemented(Pillar2ErrorResponse(e.code, e.message))
+          case DatabaseError(_) | UnexpectedResponseError | NoSubscriptionDataError(_) =>
             Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
         logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} status code", exception)

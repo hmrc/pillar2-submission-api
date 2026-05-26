@@ -48,11 +48,11 @@ class TestOrganisationConnector @Inject() (
       .map { response =>
         response.status match {
           case 201 => Json.parse(response.body).as[TestOrganisationWithId]
-          case 409 => throw OrganisationAlreadyExists(pillar2Id)
+          case 409 => throw OrganisationAlreadyExistsError(pillar2Id)
           case 500 => throw DatabaseError("create")
           case _   =>
             logger.warn(s"Unexpected response from create organisation with status: ${response.status}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       }
   }
@@ -67,10 +67,10 @@ class TestOrganisationConnector @Inject() (
       .map { response =>
         response.status match {
           case 200 => Json.parse(response.body).as[TestOrganisationWithId]
-          case 404 => throw OrganisationNotFound(pillar2Id)
+          case 404 => throw OrganisationNotFoundError(pillar2Id)
           case _   =>
             logger.warn(s"Unexpected response from get organisation with status: ${response.status}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       }
   }
@@ -86,11 +86,11 @@ class TestOrganisationConnector @Inject() (
       .map { response =>
         response.status match {
           case 200 => Json.parse(response.body).as[TestOrganisationWithId]
-          case 404 => throw OrganisationNotFound(pillar2Id)
+          case 404 => throw OrganisationNotFoundError(pillar2Id)
           case 500 => throw DatabaseError("update")
           case _   =>
             logger.warn(s"Unexpected response from update organisation with status: ${response.status}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       }
   }
@@ -105,11 +105,11 @@ class TestOrganisationConnector @Inject() (
       .map { response =>
         response.status match {
           case 204 => ()
-          case 404 => throw OrganisationNotFound(pillar2Id)
+          case 404 => throw OrganisationNotFoundError(pillar2Id)
           case 500 => throw DatabaseError("Failed to delete organisation and submission data")
           case _   =>
             logger.warn(s"Unexpected response from delete organisation with status: ${response.status}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       }
   }

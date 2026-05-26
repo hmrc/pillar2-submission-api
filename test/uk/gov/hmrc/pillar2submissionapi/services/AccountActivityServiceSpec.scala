@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.AccountActivityConnector
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 
 import scala.concurrent.Future
 
@@ -63,7 +63,7 @@ class AccountActivityServiceSpec
             .value
             .futureValue
             .left
-            .value mustBe UnexpectedResponse
+            .value mustBe UnexpectedResponseError
         }
       }
 
@@ -74,7 +74,7 @@ class AccountActivityServiceSpec
             .value
             .futureValue
             .left
-            .value mustBe UnexpectedResponse
+            .value mustBe UnexpectedResponseError
         }
       }
 
@@ -98,7 +98,7 @@ class AccountActivityServiceSpec
             .value
             .futureValue
             .left
-            .value mustBe UnexpectedResponse
+            .value mustBe UnexpectedResponseError
         }
       }
     }
@@ -111,7 +111,7 @@ class AccountActivityServiceSpec
             .value
             .futureValue
             .left
-            .value mustBe UnexpectedResponse
+            .value mustBe UnexpectedResponseError
         }
       }
       "the body is valid json but not in the expected shape" must {
@@ -121,7 +121,7 @@ class AccountActivityServiceSpec
             .value
             .futureValue
             .left
-            .value mustBe UnexpectedResponse
+            .value mustBe UnexpectedResponseError
         }
       }
       "error body meets spec" must {
@@ -143,7 +143,7 @@ class AccountActivityServiceSpec
           .value
           .futureValue
           .left
-          .value mustBe UnexpectedResponse
+          .value mustBe UnexpectedResponseError
       }
     }
   }

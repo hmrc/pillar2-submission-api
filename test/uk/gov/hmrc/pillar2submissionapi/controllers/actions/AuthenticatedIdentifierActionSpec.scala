@@ -189,26 +189,26 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           )
             .thenThrow(FailedRelationship("NO_RELATIONSHIP;HMRC-PILLAR2-ORG"))
 
-          val result = intercept[InvalidCredentials.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+          val result = intercept[InvalidCredentialsError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
           result.message mustEqual "Invalid Authentication information provided"
         }
 
         "Authorization is missing" when {
           "Authorization header is missing" in {
-            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
+            val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestMissingAuthorization)))
 
             result.message mustEqual "Authentication information is not provided"
           }
 
           "Authorization header exists but is empty" in {
-            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestEmptyAuthorization)))
+            val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestEmptyAuthorization)))
 
             result.message mustEqual "Authentication information is not provided"
           }
 
           "Authorization header exists but has space characters only" in {
-            val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestSpacesOnlyAuthorization)))
+            val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestSpacesOnlyAuthorization)))
 
             result.message mustEqual "Authentication information is not provided"
           }
@@ -361,7 +361,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[InvalidEnrolment.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+        val result = intercept[InvalidEnrolmentError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
         result.message mustEqual "Invalid Pillar 2 enrolment"
       }
@@ -379,7 +379,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
             )
           )
 
-        val result = intercept[IncorrectHeaderValue.type](await(identifierAction.refine(fakeRequestWithDifferentPillar2Id)))
+        val result = intercept[IncorrectHeaderValueError.type](await(identifierAction.refine(fakeRequestWithDifferentPillar2Id)))
 
         result.message mustEqual "X-Pillar2-Id Header value does not match the bearer token"
       }
@@ -394,12 +394,12 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
           emptyAppConfig
         )(using ec)
 
-        val result = intercept[InvalidCredentials.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+        val result = intercept[InvalidCredentialsError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
 
         result.message mustEqual "Invalid Authentication information provided"
       }
       "user is unauthorized for providing no credentials" in {
-        val result = intercept[MissingCredentials.type](await(identifierAction.refine(requestMissingAuthorization)))
+        val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestMissingAuthorization)))
 
         result.message mustEqual "Authentication information is not provided"
       }
