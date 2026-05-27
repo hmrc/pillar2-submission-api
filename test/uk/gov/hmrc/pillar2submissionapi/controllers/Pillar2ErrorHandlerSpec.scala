@@ -97,7 +97,7 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     status(response) mustEqual 500
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "500"
-    result.message mustEqual "Internal Server Error"
+    result.message mustEqual "An unexpected error occurred"
   }
 
   test("EmptyRequestBody error response") {
@@ -217,6 +217,6 @@ class Pillar2ErrorHandlerSpec extends AnyFunSuite with ScalaCheckDrivenPropertyC
     status(response) mustEqual 500
     val result = contentAsJson(response).as[Pillar2ErrorResponse]
     result.code mustEqual "500"
-    result.message mustEqual "Internal Server Error"
+    result.message mustEqual "An unexpected error occurred"
   }
 }

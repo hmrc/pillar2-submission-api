@@ -192,7 +192,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[UKTRSubmitErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
@@ -209,7 +209,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[UKTRSubmitErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
     }
 
@@ -393,7 +393,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[Pillar2ErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
@@ -410,7 +410,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[Pillar2ErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
     }
 

@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.response
 import play.api.http.Writeable
 import play.api.libs.json.{JsValue, Json, OFormat}
 
-case class Pillar2ErrorResponse(code: String, message: String)
+final case class Pillar2ErrorResponse(code: String, message: String)
 
 object Pillar2ErrorResponse {
   given format: OFormat[Pillar2ErrorResponse] = Json.format[Pillar2ErrorResponse]

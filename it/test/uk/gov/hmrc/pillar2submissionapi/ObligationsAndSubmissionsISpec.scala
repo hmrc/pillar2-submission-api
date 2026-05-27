@@ -112,7 +112,7 @@ class ObligationsAndSubmissionsISpec
         result.status mustEqual INTERNAL_SERVER_ERROR
         val error = result.json.as[Pillar2ErrorResponse]
         error.code mustEqual "500"
-        error.message mustEqual "Internal Server Error"
+        error.message mustEqual "An unexpected error occurred"
       }
 
       "return 400 BAD_REQUEST for invalid date range" in {
@@ -167,7 +167,7 @@ class ObligationsAndSubmissionsISpec
         result.status mustEqual INTERNAL_SERVER_ERROR
         val error = result.json.as[Pillar2ErrorResponse]
         error.code mustEqual "500"
-        error.message mustEqual "Internal Server Error"
+        error.message mustEqual "An unexpected error occurred"
       }
     }
   }

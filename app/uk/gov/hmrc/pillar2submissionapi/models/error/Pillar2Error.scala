@@ -45,7 +45,7 @@ object Pillar2Error {
 
   case object UnexpectedResponse extends Pillar2Error {
     val code:    String = "500"
-    val message: String = "Internal Server Error"
+    val message: String = "An unexpected error occurred"
   }
 
   case object MissingCredentials extends Pillar2Error {
