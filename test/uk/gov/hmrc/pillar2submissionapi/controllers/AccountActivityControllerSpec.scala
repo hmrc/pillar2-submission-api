@@ -69,35 +69,35 @@ class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActiv
         val badFirstDate:  Future[Result] = controllerUnderTest.retrieveAccountActivity("not-a-date", toDate)(request)
         val badSecondDate: Future[Result] = controllerUnderTest.retrieveAccountActivity(fromDate, "not-a-date")(request)
 
-        badFirstDate.shouldFailWith(InvalidDateFormat)
-        badSecondDate.shouldFailWith(InvalidDateFormat)
+        badFirstDate.shouldFailWith(InvalidDateFormatError)
+        badSecondDate.shouldFailWith(InvalidDateFormatError)
       }
 
       "fail with InvalidDateRange when from is after to" in new TestCase(accountActivityJsonParsed.asRight) {
         controllerUnderTest
           .retrieveAccountActivity(localDateFrom.toString, localDateFrom.minusDays(1).toString)(request)
-          .shouldFailWith(InvalidDateRange)
+          .shouldFailWith(InvalidDateRangeError)
       }
 
       "return MissingHeader when X-Pillar2-Id header not provided" in new TestCase(accountActivityJsonParsed.asRight) {
         controllerUnderTest
           .retrieveAccountActivity(fromDate, toDate)(FakeRequest())
-          .shouldFailWith(MissingHeader.MissingPillar2Id)
+          .shouldFailWith(MissingHeaderError("X-Pillar2-Id"))
       }
 
       "return the cause when an upstream layer fails in the Future's error channel" in new TestCase(accountActivityJsonParsed.asRight) {
         when(mockAccountActivityService.retrieveAccountActivity(eqTo(localDateFrom), eqTo(localDateTo))(using any[HeaderCarrier]))
-          .thenReturn(EitherT.liftF(Future.failed(UnexpectedResponse)))
+          .thenReturn(EitherT.liftF(Future.failed(UnexpectedResponseError)))
 
         controllerUnderTest
           .retrieveAccountActivity(fromDate, toDate)(request)
-          .shouldFailWith(UnexpectedResponse)
+          .shouldFailWith(UnexpectedResponseError)
       }
 
-      "return the cause when an upstream layer fails in the Either error channel" in new TestCase(UnexpectedResponse.asLeft) {
+      "return the cause when an upstream layer fails in the Either error channel" in new TestCase(UnexpectedResponseError.asLeft) {
         controllerUnderTest
           .retrieveAccountActivity(fromDate, toDate)(request)
-          .shouldFailWith(UnexpectedResponse)
+          .shouldFailWith(UnexpectedResponseError)
       }
     }
 
@@ -105,7 +105,7 @@ class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActiv
       "return AccountActivityNotAvailable (501 Not Implemented)" in new TestCase(accountActivityJsonParsed.asRight, accountActivityEnabled = false) {
         controllerUnderTest
           .retrieveAccountActivity(fromDate, toDate)(request)
-          .shouldFailWith(AccountActivityNotAvailable)
+          .shouldFailWith(AccountActivityNotAvailableError)
       }
     }
   }

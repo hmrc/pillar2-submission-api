@@ -21,7 +21,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction, SubscriptionDataRetrievalAction}
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.BTNSubmission
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBody, InvalidJson}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError}
 import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -48,9 +48,9 @@ class BTNSubmissionController @Inject() (
             submitBTNService
               .submitBTN(value)
               .map(response => Created(Json.toJson(response)))
-          case JsError(_) => Future.failed(InvalidJson)
+          case JsError(_) => Future.failed(InvalidJsonError)
         }
-      case None => Future.failed(EmptyRequestBody)
+      case None => Future.failed(EmptyRequestBodyError)
     }
   }
 }

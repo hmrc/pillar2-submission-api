@@ -25,7 +25,7 @@ import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBody, InvalidJson, TestEndpointDisabled}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, TestEndpointDisabledError}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.{GIRSubmission, GIRSuccess, SubmitGIRSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.services.GIRService
 
@@ -66,11 +66,11 @@ class GIRControllerSpec extends ControllerBaseSpec {
         "return InvalidJson for invalid request" in {
           val invalidJson = Json.obj("badField" -> "badValue")
           val result      = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(invalidJson))
-          result.shouldFailWith(InvalidJson)
+          result.shouldFailWith(InvalidJsonError)
         }
         "return EmptyRequestBody for missing body" in {
           val result = controller().createGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
-          result.shouldFailWith(EmptyRequestBody)
+          result.shouldFailWith(EmptyRequestBodyError)
         }
       }
 
@@ -86,11 +86,11 @@ class GIRControllerSpec extends ControllerBaseSpec {
         }
         "return InvalidJson for invalid request" in {
           val result = controller().amendGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(Json.obj("badField" -> "badValue")))
-          result.shouldFailWith(InvalidJson)
+          result.shouldFailWith(InvalidJsonError)
         }
         "return EmptyRequestBody for missing body" in {
           val result = controller().amendGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
-          result.shouldFailWith(EmptyRequestBody)
+          result.shouldFailWith(EmptyRequestBodyError)
         }
       }
 
@@ -106,11 +106,11 @@ class GIRControllerSpec extends ControllerBaseSpec {
         }
         "return InvalidJson for invalid request" in {
           val result = controller().deleteGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(Json.obj("badField" -> "badValue")))
-          result.shouldFailWith(InvalidJson)
+          result.shouldFailWith(InvalidJsonError)
         }
         "return EmptyRequestBody for missing body" in {
           val result = controller().deleteGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
-          result.shouldFailWith(EmptyRequestBody)
+          result.shouldFailWith(EmptyRequestBodyError)
         }
       }
     }
@@ -121,7 +121,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
           val result = controller(testEndpointsEnabled = false).createGIR(
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
 
@@ -130,7 +130,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
           val result = controller(testEndpointsEnabled = false).amendGIR(
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
 
@@ -139,7 +139,7 @@ class GIRControllerSpec extends ControllerBaseSpec {
           val result = controller(testEndpointsEnabled = false).deleteGIR(
             FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson)
           )
-          result.shouldFailWith(TestEndpointDisabled)
+          result.shouldFailWith(TestEndpointDisabledError)
         }
       }
     }

@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.OverseasReturnNotificationConnector
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, ORNNotFoundException, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, ORNNotFoundError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,18 +45,18 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
           case JsSuccess(success, _) => success
           case JsError(errors)       =>
             logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_)             =>
             logger.error("Failed to parse unprocessible entity response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error calling pillar2 backend. Got response: $status")
-        throw UnexpectedResponse
+        throw UnexpectedResponseError
     }
 
   private def convertToRetrieveResult(response: HttpResponse): ORNRetrieveSuccessResponse =
@@ -70,22 +70,22 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
           case JsError(errors) =>
             logger.error(s"Failed to parse success response. Errors: ${errors.toString()}")
             logger.error(s"JSON structure: ${Json.prettyPrint(response.json)}")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) =>
             if (response.code == "005" && response.message.contains("No Form Bundle found")) {
-              throw ORNNotFoundException
+              throw ORNNotFoundError
             } else {
               throw DownstreamValidationError(response.code, response.message)
             }
           case JsError(_) =>
             logger.error("Failed to parse unprocessible entity response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error calling pillar2 backend. Got response: $status")
-        throw UnexpectedResponse
+        throw UnexpectedResponseError
     }
 }

@@ -23,7 +23,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnector
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn._
 
 import java.time.LocalDate
@@ -61,7 +61,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(201, Json.toJson("unexpected success response"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.createGIR(validSubmission)))
       }
     }
     "createGIR() unexpected 422 response back" should {
@@ -69,7 +69,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.createGIR(validSubmission)))
       }
     }
     "createGIR() 500 response back" should {
@@ -77,7 +77,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.createGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.createGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.createGIR(validSubmission)))
       }
     }
 
@@ -103,7 +103,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.amendGIR(validSubmission)))
       }
     }
     "amendGIR() unexpected 422 response back" should {
@@ -111,7 +111,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.amendGIR(validSubmission)))
       }
     }
     "amendGIR() 500 response back" should {
@@ -119,7 +119,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.amendGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.amendGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.amendGIR(validSubmission)))
       }
     }
 
@@ -145,7 +145,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.deleteGIR(validSubmission)))
       }
     }
     "deleteGIR() unexpected 422 response back" should {
@@ -153,7 +153,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.deleteGIR(validSubmission)))
       }
     }
     "deleteGIR() 500 response back" should {
@@ -161,7 +161,7 @@ class GIRServiceSpec extends UnitTestBaseSpec {
         when(mockGIRConnector.deleteGIR(any[GIRSubmission])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson("InternalServerError"), Map.empty)))
 
-        intercept[UnexpectedResponse.type](await(service.deleteGIR(validSubmission)))
+        intercept[UnexpectedResponseError.type](await(service.deleteGIR(validSubmission)))
       }
     }
   }

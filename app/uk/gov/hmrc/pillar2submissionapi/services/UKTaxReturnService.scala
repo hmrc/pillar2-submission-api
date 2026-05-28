@@ -22,7 +22,7 @@ import play.api.http.Status.{CREATED, OK, UNPROCESSABLE_ENTITY}
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.UKTaxReturnConnector
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 
@@ -44,17 +44,17 @@ class UKTaxReturnService @Inject() (ukTaxReturnConnector: UKTaxReturnConnector)(
           case JsSuccess(success, _) => success
           case JsError(_)            =>
             logger.error(s"Error while parsing the backend response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case UNPROCESSABLE_ENTITY =>
         response.json.validate[UKTRSubmitErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_)             =>
             logger.error(s"Error while unprocessable entity response")
-            throw UnexpectedResponse
+            throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error while calling pillar2 backend. Got status: $status")
-        throw UnexpectedResponse
+        throw UnexpectedResponseError
     }
 }

@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject() (
     enrolments
   ) match {
     case Some(pillar2Id) =>
-      if (request.pillar2Id != pillar2Id) throw IncorrectHeaderValue
+      if (request.pillar2Id != pillar2Id) throw IncorrectHeaderValueError
       else
         Future.successful(
           IdentifierRequest(
@@ -70,12 +70,12 @@ class AuthenticatedIdentifierAction @Inject() (
         )
     case None =>
       logger.warn(s"Invalid Pillar2 enrolment - userId: $internalId")
-      Future.failed(InvalidEnrolment)
+      Future.failed(InvalidEnrolmentError)
   }
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentials
+    if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentialsError
     else {
       val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
         Retrievals.allEnrolments and Retrievals.affinityGroup and
@@ -96,7 +96,7 @@ class AuthenticatedIdentifierAction @Inject() (
             Future.failed(ForbiddenError)
         } recoverWith { case e: AuthorisationException =>
         logger.warn(s"Authorization failed", e)
-        Future.failed(InvalidCredentials)
+        Future.failed(InvalidCredentialsError)
       }
     }
   }

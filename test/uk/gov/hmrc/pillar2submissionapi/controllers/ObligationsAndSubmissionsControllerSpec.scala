@@ -52,27 +52,27 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
   "return InvalidDateFormat when date format is invalid" in {
     val result = request("invalid-date", toDate)
 
-    result.shouldFailWith(InvalidDateFormat)
+    result.shouldFailWith(InvalidDateFormatError)
   }
 
   "return MissingHeader when X-Pillar2-Id header not provided" in {
     val result = obligationsAndSubmissionsController.retrieveData(fromDate, toDate)(FakeRequest())
 
-    result.shouldFailWith(MissingHeader.MissingPillar2Id)
+    result.shouldFailWith(MissingHeaderError("X-Pillar2-Id"))
   }
 
   "return InvalidDateRange when date range is invalid" in {
     val result = request(toDate, fromDate)
 
-    result.shouldFailWith(InvalidDateRange)
+    result.shouldFailWith(InvalidDateRangeError)
   }
 
   "return InternalServerError when service call fails" in {
     when(mockObligationsAndSubmissionsService.handleData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
-      .thenReturn(Future.failed(UnexpectedResponse))
+      .thenReturn(Future.failed(UnexpectedResponseError))
 
     val result = request(fromDate, toDate)
 
-    result.shouldFailWith(UnexpectedResponse)
+    result.shouldFailWith(UnexpectedResponseError)
   }
 }

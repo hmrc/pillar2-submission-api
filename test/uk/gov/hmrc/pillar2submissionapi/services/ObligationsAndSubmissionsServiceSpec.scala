@@ -24,7 +24,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.obligationsandsubmissions._
 
 import java.time.LocalDate
@@ -52,7 +52,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
       when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(200, Json.toJson("unexpected success response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
+      intercept[UnexpectedResponseError.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
     }
   }
 
@@ -72,7 +72,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
       when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(422, Json.toJson("unexpected error response"), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
+      intercept[UnexpectedResponseError.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
     }
   }
 
@@ -81,7 +81,7 @@ class ObligationsAndSubmissionsServiceSpec extends UnitTestBaseSpec with Obligat
       when(mockObligationAndSubmissionsConnector.getData(any[LocalDate], any[LocalDate])(using any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(HttpResponse.apply(500, Json.toJson(InternalServerError.toString()), Map.empty)))
 
-      intercept[UnexpectedResponse.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
+      intercept[UnexpectedResponseError.type](await(obligationAndSubmissionsService.handleData(localDateFrom, localDateTo)))
     }
   }
 }

@@ -22,7 +22,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.{IdentifierAction, Pillar2IdHeaderExistsAction}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{AccountActivityNotAvailable, InvalidDateFormat, InvalidDateRange}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{AccountActivityNotAvailableError, InvalidDateFormatError, InvalidDateRangeError}
 import uk.gov.hmrc.pillar2submissionapi.services.AccountActivityService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -42,7 +42,7 @@ class AccountActivityController @Inject() (
     with Logging {
 
   private def checkAccountActivityEnabled[A](block: => Future[A]): Future[A] =
-    if (config.accountActivityEnabled) block else Future.failed(AccountActivityNotAvailable)
+    if (config.accountActivityEnabled) block else Future.failed(AccountActivityNotAvailableError)
 
   def retrieveAccountActivity(fromDate: String, toDate: String): Action[AnyContent] =
     (pillar2IdAction andThen identify).async { request =>
@@ -52,9 +52,9 @@ class AccountActivityController @Inject() (
         Try(LocalDate.parse(fromDate))
           .flatMap(from => Try(LocalDate.parse(toDate)).map(to => (from, to)))
           .fold(
-            _ => Future.failed(InvalidDateFormat),
+            _ => Future.failed(InvalidDateFormatError),
             (from, to) =>
-              if from.isAfter(to) then Future.failed(InvalidDateRange)
+              if from.isAfter(to) then Future.failed(InvalidDateRangeError)
               else {
                 accountActivityService
                   .retrieveAccountActivity(fromDate = from, toDate = to)

@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.Inject
 import play.api.mvc.{BodyParsers, Request}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.MissingHeader.MissingPillar2Id
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.MissingHeaderError
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,7 +32,7 @@ case class Pillar2IdHeaderExistsAction @Inject() (
       .get("X-Pillar2-Id")
       .fold(
         Future.failed[RequestWithPillar2Id[A]](
-          MissingPillar2Id
+          MissingHeaderError("X-Pillar2-Id")
         )
       )(pillar2Id => Future.successful(RequestWithPillar2Id(pillar2Id = pillar2Id, request = request)))
 

@@ -51,9 +51,9 @@ class OverseasReturnNotificationController @Inject() (
             ornService
               .submitORN(value)
               .map(response => Created(Json.toJson(response)))
-          case JsError(_) => Future.failed(InvalidJson)
+          case JsError(_) => Future.failed(InvalidJsonError)
         }
-      case None => Future.failed(EmptyRequestBody)
+      case None => Future.failed(EmptyRequestBodyError)
     }
   }
 
@@ -66,9 +66,9 @@ class OverseasReturnNotificationController @Inject() (
             ornService
               .amendORN(value)
               .map(response => Ok(Json.toJson(response)))
-          case JsError(_) => Future.failed(InvalidJson)
+          case JsError(_) => Future.failed(InvalidJsonError)
         }
-      case None => Future.failed(EmptyRequestBody)
+      case None => Future.failed(EmptyRequestBodyError)
     }
   }
 
@@ -83,7 +83,7 @@ class OverseasReturnNotificationController @Inject() (
           ornService
             .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(using hc)
             .map(response => Ok(Json.toJson(response)))
-        } else { Future.failed(InvalidDateRange) }
-      }.getOrElse(Future.failed(InvalidDateFormat))
+        } else { Future.failed(InvalidDateRangeError) }
+      }.getOrElse(Future.failed(InvalidDateFormatError))
     }
 }

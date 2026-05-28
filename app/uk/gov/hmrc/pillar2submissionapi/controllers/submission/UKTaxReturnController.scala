@@ -53,9 +53,9 @@ class UKTaxReturnController @Inject() (
             ukTaxReturnService
               .submitUKTR(value)
               .map(response => Created(Json.toJson(response)))
-          case JsError(_) => Future.failed(InvalidJson)
+          case JsError(_) => Future.failed(InvalidJsonError)
         }
-      case None => Future.failed(EmptyRequestBody)
+      case None => Future.failed(EmptyRequestBodyError)
     }
   }
 
@@ -71,9 +71,9 @@ class UKTaxReturnController @Inject() (
             ukTaxReturnService
               .amendUKTR(value)
               .map(response => Ok(Json.toJson(response)))
-          case JsError(_) => Future.failed(InvalidJson)
+          case JsError(_) => Future.failed(InvalidJsonError)
         }
-      case None => Future.failed(EmptyRequestBody)
+      case None => Future.failed(EmptyRequestBodyError)
     }
   }
 }
