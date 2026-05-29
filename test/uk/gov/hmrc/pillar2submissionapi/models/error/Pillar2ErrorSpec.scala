@@ -111,7 +111,7 @@ class Pillar2ErrorSpec extends AnyFreeSpec with Matchers {
 
     "return the custom detail message for UnexpectedResponseError" in {
       val error = UnexpectedResponseError
-      error.getMessage mustBe "Code: '500' Message: 'Internal Server Error'"
+      error.getMessage mustBe "Code: '500' Message: 'An unexpected error occurred'"
     }
 
     "return the custom detail message for DownstreamValidationError" in {
