@@ -35,6 +35,6 @@ tests {
   test("should include error details", function() {
     expect(res.body).to.not.be.undefined;
     expect(res.body.code).to.equal("003");
-    expect(res.body.message).to.include("Internal server error");
+    expect(res.body.message).to.equal("An unexpected error occurred");
   });
 }

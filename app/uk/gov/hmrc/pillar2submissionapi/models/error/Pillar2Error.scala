@@ -112,7 +112,7 @@ object Pillar2Error {
 
   case object UnexpectedResponseError extends Pillar2Error {
     val code:    String = "500"
-    val message: String = "Internal Server Error"
+    val message: String = "An unexpected error occurred"
   }
 
   final case class DownstreamValidationError(code: String, message: String) extends Pillar2Error

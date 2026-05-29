@@ -39,6 +39,7 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
     }
     Future.successful(Status(statusCode)(Json.toJson(errorResponse)))
   }
+
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
     exception match {
       case e: Pillar2Error =>
@@ -59,6 +60,7 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
         Future.successful(ret)
       case _ =>
         logger.warn("Unhandled exception. Returning 500 status code", exception)
-        Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "Internal Server Error")))
+        Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "An unexpected error occurred")))
     }
+
 }

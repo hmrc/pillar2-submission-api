@@ -251,7 +251,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           UNAUTHORIZED,
-          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
+          Json.toJson(ORNErrorResponse("500", "An unexpected error occurred"))
         )
 
         val result = Await.result(submitRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -259,7 +259,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
@@ -272,7 +272,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "POST",
           submitUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
+          Json.toJson(ORNErrorResponse("500", "An unexpected error occurred"))
         )
 
         val result = Await.result(submitRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -280,7 +280,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
     }
     "amendORN as a organisation" must {
@@ -475,7 +475,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           UNAUTHORIZED,
-          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
+          Json.toJson(ORNErrorResponse("500", "An unexpected error occurred"))
         )
 
         val result = Await.result(amendRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -483,7 +483,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
@@ -496,7 +496,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           "PUT",
           amendUrl,
           INTERNAL_SERVER_ERROR,
-          Json.toJson(ORNErrorResponse("500", "Internal Server Error"))
+          Json.toJson(ORNErrorResponse("500", "An unexpected error occurred"))
         )
 
         val result = Await.result(amendRequest.withBody(validRequestJson).execute[HttpResponse], 5.seconds)
@@ -504,7 +504,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
     }
 
@@ -577,7 +577,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
@@ -621,7 +621,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         stubGet(
           retrieveUrl(fromDate, toDate),
           INTERNAL_SERVER_ERROR,
-          Json.toJson(ORNErrorResponse("500", "Internal Server Error")).toString()
+          Json.toJson(ORNErrorResponse("500", "An unexpected error occurred")).toString()
         )
 
         val retrieveRequest = client
@@ -633,7 +633,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed JSON on successful response" in {
@@ -661,7 +661,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed error JSON on 422 response" in {
@@ -689,7 +689,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         result.status mustEqual INTERNAL_SERVER_ERROR
         val errorResponse = result.json.as[ORNErrorResponse]
         errorResponse.code mustEqual "500"
-        errorResponse.message mustEqual "Internal Server Error"
+        errorResponse.message mustEqual "An unexpected error occurred"
       }
       "return 400 BAD_REQUEST when missing parameters" in {
         stubGet(

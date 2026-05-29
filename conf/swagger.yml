@@ -2689,8 +2689,8 @@ components:
     errors.Submission.GenericServerError:
       summary: Generic server error
       value:
-        code: 500
-        message: Internal Server Error
+        code: "500"
+        message: An unexpected error occurred
     errors.InvalidScope:
       summary: Invalid scope
       value:

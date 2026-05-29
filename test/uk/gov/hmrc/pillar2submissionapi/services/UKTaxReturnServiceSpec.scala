@@ -81,7 +81,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.submitUKTR(validNilSubmission)))
         val result = intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
         result.code.toInt mustEqual INTERNAL_SERVER_ERROR
-        result.message mustEqual "Internal Server Error"
+        result.message mustEqual "An unexpected error occurred"
       }
     }
 
@@ -106,7 +106,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
         val result = intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)))
         result.code.toInt mustEqual INTERNAL_SERVER_ERROR
-        result.message mustEqual "Internal Server Error"
+        result.message mustEqual "An unexpected error occurred"
       }
     }
 
@@ -164,7 +164,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.amendUKTR(validNilSubmission)))
         val result = intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.amendUKTR(validLiabilitySubmission)))
         result.code.toInt mustEqual INTERNAL_SERVER_ERROR
-        result.message mustEqual "Internal Server Error"
+        result.message mustEqual "An unexpected error occurred"
       }
     }
 
@@ -189,7 +189,7 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
         intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.amendUKTR(validLiabilitySubmission)))
         val result = intercept[UnexpectedResponseError.type](await(mockUkTaxReturnService.amendUKTR(validLiabilitySubmission)))
         result.code.toInt mustEqual INTERNAL_SERVER_ERROR
-        result.message mustEqual "Internal Server Error"
+        result.message mustEqual "An unexpected error occurred"
       }
     }
 
