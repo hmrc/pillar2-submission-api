@@ -93,7 +93,8 @@ sbt createOpenAPISpec
 
 This command runs `routesToYamlOas` and validates the result. The spec is generated into the **`target/swagger`** directory.
 
-You will need to manually copy the generated file to replace the relevant configuration file in `resources/public/api/conf/1.0`.
+You will need to manually copy the generated file (`/target/swagger/application.yaml`) and replace the relevant
+configuration file in `resources/public/api/conf/1.0`.
 
 ### Spec Versions
 
