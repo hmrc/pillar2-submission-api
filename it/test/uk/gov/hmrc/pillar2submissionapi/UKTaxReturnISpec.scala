@@ -22,12 +22,13 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status._
+import play.api.Application
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
@@ -44,16 +45,26 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
+trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
   lazy val str:      String               = s"http://localhost:$port${routes.UKTaxReturnController.submitUKTR.url}"
+
   def requestWithBody(body: JsValue = validLiabilityReturn): RequestBuilder =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
   def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
-  def getSubscriptionStub: StubMapping = stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
+
+  def getSubscriptionStub: StubMapping = {
+    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
+
+    if (v2Enabled) {
+      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
+    } else {
+      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
+    }
+  }
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
   private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"
@@ -455,4 +466,16 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
       }
     }
   }
+}
+
+class UKTaxReturnV1ISpec extends UKTaxReturnBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
+      .build()
+}
+
+class UKTaxReturnV2ISpec extends UKTaxReturnBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
+      .build()
 }

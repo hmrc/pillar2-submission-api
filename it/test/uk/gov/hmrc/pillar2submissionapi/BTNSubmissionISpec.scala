@@ -16,36 +16,37 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status._
+import play.api.Application
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
+import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec.*
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.SubmitBTNSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.btn.{BTNSuccess, BTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.hip.{ApiFailure, ApiFailureResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import java.time.ZonedDateTime
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
+trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
@@ -55,14 +56,20 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
+  def getSubscriptionStub: StubMapping = {
+    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
+
+    if (v2Enabled) {
+      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
+    } else {
+      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
+    }
+  }
+
   "BTNSubmissionController" when {
     "submitBTN as a organisation" must {
       "return 201 CREATED when given valid submission data" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -76,11 +83,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 400 BAD_REQUEST for invalid request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(baseRequest.withBody(invalidRequestJson).execute[HttpResponse], 5.seconds)
 
@@ -88,11 +91,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 400 BAD_REQUEST for empty request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(baseRequest.withBody(JsObject.empty).execute[HttpResponse], 5.seconds)
 
@@ -100,11 +99,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 400 BAD_REQUEST for missing request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(baseRequest.execute[HttpResponse], 5.seconds)
 
@@ -112,11 +107,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 201 CREATED for request with duplicate fields and additional fields" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -131,11 +122,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -152,11 +139,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -173,11 +156,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -215,11 +194,7 @@ class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -257,4 +232,16 @@ object BTNSubmissionISpec {
                  |  "extraField1": "value1",
                  |  "extraField1": "value2"
                  |}""".stripMargin)
+}
+
+class BTNSubmissionV1ISpec extends BTNSubmissionBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
+      .build()
+}
+
+class BTNSubmissionV2ISpec extends BTNSubmissionBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
+      .build()
 }

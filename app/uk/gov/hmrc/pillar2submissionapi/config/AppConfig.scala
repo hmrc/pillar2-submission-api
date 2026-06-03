@@ -15,6 +15,7 @@
  */
 
 package uk.gov.hmrc.pillar2submissionapi.config
+
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
@@ -33,5 +34,7 @@ case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
   lazy val testOrganisationEnabled: Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
 
-  lazy val accountActivityEnabled: Boolean = servicesConfig.getBoolean("features.accountActivityEnabled")
+  lazy val accountActivityEnabled:    Boolean = servicesConfig.getBoolean("features.accountActivityEnabled")
+  lazy val readSubscriptionV2Enabled: Boolean = servicesConfig.getBoolean("features.readSubscriptionV2Enabled")
+
 }

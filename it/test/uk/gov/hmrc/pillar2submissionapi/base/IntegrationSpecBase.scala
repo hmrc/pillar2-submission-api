@@ -61,8 +61,7 @@ trait IntegrationSpecBase
 
   type RetrievalsType = Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
-  val plrReference         = "XCCVRUGFJG788"
-  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+  val plrReference = "XCCVRUGFJG788"
 
   val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   val ENROLMENT_IDENTIFIER = "PLRID"
@@ -105,15 +104,15 @@ trait IntegrationSpecBase
     super.beforeEach()
   }
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure("microservice.services.pillar2.port" -> wiremockPort)
-    .configure("microservice.services.stub.port" -> wiremockPort)
-    .configure("features.testOrganisationEnabled" -> true)
-    .configure("features.api-platform.status" -> "BETA")
-    .configure("features.api-platform.endpoints-enabled" -> true)
-    .overrides(
-      inject.bind[AuthConnector].toInstance(mockAuthConnector)
-    )
-    .build()
+  protected def guiceAppBuilder(extraConfig: (String, Any)*): GuiceApplicationBuilder =
+    new GuiceApplicationBuilder()
+      .configure("microservice.services.pillar2.port" -> wiremockPort)
+      .configure("microservice.services.stub.port" -> wiremockPort)
+      .configure("features.testOrganisationEnabled" -> true)
+      .configure("features.api-platform.status" -> "BETA")
+      .configure("features.api-platform.endpoints-enabled" -> true)
+      .configure(extraConfig*)
+      .overrides(inject.bind[AuthConnector].toInstance(mockAuthConnector))
 
+  override lazy val app: Application = guiceAppBuilder().build()
 }

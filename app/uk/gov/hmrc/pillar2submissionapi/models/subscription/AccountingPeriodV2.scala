@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionRead
+import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionDataRequest[A](
-  request:          Request[A],
-  userId:           String,
-  clientPillar2Id:  String,
-  subscriptionData: SubscriptionRead
-) extends WrappedRequest[A](request)
+import java.time.LocalDate
+
+final case class AccountingPeriodV2(
+  startDate:         LocalDate,
+  endDate:           LocalDate,
+  dueDate:           Option[LocalDate] = None,
+  canAmendStartDate: Boolean,
+  canAmendEndDate:   Boolean
+)
+
+object AccountingPeriodV2 {
+  given format: OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+}

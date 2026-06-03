@@ -16,33 +16,34 @@
 
 package uk.gov.hmrc.pillar2submissionapi
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.http.Status._
+import play.api.Application
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
+import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec.*
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionSuccess
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixture {
+trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with OptionValues with ORNDataFixture {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
@@ -58,14 +59,20 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
   private def retrieveUrl(from: String, to: String) =
     s"/report-pillar2-top-up-taxes/overseas-return-notification/$from/$to"
 
+  def getSubscriptionStub: StubMapping = {
+    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
+
+    if (v2Enabled) {
+      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
+    } else {
+      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
+    }
+  }
+
   "ORNSubmissionController" when {
     "submitORN as a organisation" must {
       "return 201 CREATED when given valid submission data" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -80,11 +87,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for invalid request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(invalidRequestJson).execute[HttpResponse], 5.seconds)
 
@@ -92,11 +95,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for empty request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(JsObject.empty).execute[HttpResponse], 5.seconds)
 
@@ -104,11 +103,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for missing request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.execute[HttpResponse], 5.seconds)
 
@@ -116,11 +111,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when countryGIR is longer than 2 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(invalidCountryGIRJson).execute[HttpResponse], 5.seconds)
 
@@ -131,11 +122,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(invalidIssuingCountryTINJson).execute[HttpResponse], 5.seconds)
 
@@ -145,11 +132,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when reportingEntityName is empty" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(emptyReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
@@ -159,11 +142,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when TIN is empty" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(emptyTINJson).execute[HttpResponse], 5.seconds)
 
@@ -173,11 +152,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(longReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
@@ -187,11 +162,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(submitRequest.withBody(longTINJson).execute[HttpResponse], 5.seconds)
 
@@ -201,11 +172,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 201 CREATED for request with duplicate fields and additional fields" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -221,11 +188,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -242,11 +205,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -263,11 +222,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -285,11 +240,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
     }
     "amendORN as a organisation" must {
       "return 200 CREATED when given valid submission data" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -304,11 +255,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for invalid request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(invalidRequestJson).execute[HttpResponse], 5.seconds)
 
@@ -316,11 +263,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for empty request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(JsObject.empty).execute[HttpResponse], 5.seconds)
 
@@ -328,11 +271,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST for missing request body" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.execute[HttpResponse], 5.seconds)
 
@@ -340,11 +279,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when countryGIR is longer than 2 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(invalidCountryGIRJson).execute[HttpResponse], 5.seconds)
 
@@ -355,11 +290,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when issuingCountryTIN is longer than 2 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(invalidIssuingCountryTINJson).execute[HttpResponse], 5.seconds)
 
@@ -369,11 +300,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when reportingEntityName is empty" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(emptyReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
@@ -383,11 +310,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when TIN is empty" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(emptyTINJson).execute[HttpResponse], 5.seconds)
 
@@ -397,11 +320,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when reportingEntityName exceeds 200 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(longReportingEntityNameJson).execute[HttpResponse], 5.seconds)
 
@@ -411,11 +330,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 400 BAD_REQUEST when TIN exceeds 200 characters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val result = Await.result(amendRequest.withBody(longTINJson).execute[HttpResponse], 5.seconds)
 
@@ -425,11 +340,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 200 OK for request with duplicate fields and additional fields" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -445,11 +356,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid return from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -466,11 +373,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR for unauthorized response from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -487,11 +390,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -510,11 +409,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
 
     "retrieveORN as an organisation" must {
       "return 200 OK when given valid period parameters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -553,11 +448,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR when ORN doesn't exist" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -581,11 +472,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 422 UNPROCESSABLE_ENTITY for invalid parameters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -609,11 +496,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR for internal server error from ETMP" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -637,11 +520,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed JSON on successful response" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -665,11 +544,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
       }
 
       "return 500 INTERNAL_SERVER_ERROR when receiving malformed error JSON on 422 response" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -691,12 +566,9 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
         errorResponse.code mustEqual "500"
         errorResponse.message mustEqual "An unexpected error occurred"
       }
+
       "return 400 BAD_REQUEST when missing parameters" in {
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val retrieveRequest = client
           .get(URI.create(s"http://localhost:$port/overseas-return-notification?accountingPeriodFrom=2024-01-01").toURL)
@@ -732,11 +604,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "POST",
           submitUrl,
@@ -776,11 +644,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
         stubRequest(
           "PUT",
           amendUrl,
@@ -818,11 +682,7 @@ class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionVal
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
 
-        stubGet(
-          s"$readSubscriptionPath/XCCVRUGFJG788",
-          OK,
-          Json.toJson(SubscriptionSuccess(subscriptionData)).toString()
-        )
+        getSubscriptionStub
 
         val fromDate = "2023-01-01"
         val toDate   = "2024-12-31"
@@ -964,4 +824,16 @@ object OverseasReturnNotificationISpec {
                  |  "TIN" : "US12345678",
                  |  "issuingCountryTIN" : "US"
                  |}""".stripMargin)
+}
+
+class OverseasReturnNotificationV1ISpec extends OverseasReturnNotificationBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
+      .build()
+}
+
+class OverseasReturnNotificationV2ISpec extends OverseasReturnNotificationBehaviours {
+  override lazy val app: Application =
+    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
+      .build()
 }
