@@ -84,9 +84,9 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
 
       "return BadRequest when ETMP returns 200 with an unparseable body" in {
         given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionV2Url, OK, invalidSubscriptionJson)
+        stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, invalidSubscriptionJson)
 
-        await(subscriptionConnectorV2.readSubscription(plrReference)) mustBe Left(BadRequest)
+        await(subscriptionConnectorV1.readSubscription(plrReference)) mustBe Left(BadRequest)
       }
 
       "return BadRequest when ETMP returns non-200" in {
