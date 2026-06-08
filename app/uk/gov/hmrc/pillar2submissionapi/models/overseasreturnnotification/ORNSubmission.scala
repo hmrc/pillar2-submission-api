@@ -33,6 +33,11 @@ case class ORNSubmission(
 
 object ORNSubmission {
 
+  private val filedDateGIRReads: Reads[LocalDate] =
+    implicitly[Reads[LocalDate]].filter(JsonValidationError("filedDateGIR must not be in the future"))(date =>
+      date.isBefore(LocalDate.now.plusDays(1))
+    )
+
   private val countryGIRReads: Reads[String] =
     implicitly[Reads[String]].filter(JsonValidationError("countryGIR must be 1 or 2 characters"))(str => str.length >= 1 && str.length <= 2)
 
@@ -50,7 +55,7 @@ object ORNSubmission {
   given reads: Reads[ORNSubmission] = (
     (JsPath \ "accountingPeriodFrom").read[LocalDate] and
       (JsPath \ "accountingPeriodTo").read[LocalDate] and
-      (JsPath \ "filedDateGIR").read[LocalDate] and
+      (JsPath \ "filedDateGIR").read(using filedDateGIRReads) and
       (JsPath \ "countryGIR").read(using countryGIRReads) and
       (JsPath \ "reportingEntityName").read(using reportingEntityNameReads) and
       (JsPath \ "TIN").read(using tinReads) and
