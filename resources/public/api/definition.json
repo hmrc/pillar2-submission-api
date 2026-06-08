@@ -1,6 +1,6 @@
 {
   "api": {
-    "name": "Pillar 2",
+    "name": "Pillar 2 API",
     "description": "An API for managing and retrieving Pillar 2 data",
     "context": "organisations/pillar-two",
     "categories": ["CORPORATION_TAX"],
