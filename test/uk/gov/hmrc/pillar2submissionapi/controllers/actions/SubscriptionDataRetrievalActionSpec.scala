@@ -36,38 +36,49 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)
   }
 
-  "Subscription Data Retrieval Action" should {
+  "Subscription Data Retrieval Action" when {
+    "the connector returns Right" must {
+      "build a SubscriptionData object (V1 shape) and add it to the request" in {
+        when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future(Right(subscriptionData)))
 
-    "build a SubscriptionData object and add it to the request" in {
+        val action = new Harness(mockSubscriptionConnector)
 
-      when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(
-        Future(
-          Right(subscriptionData)
-        )
-      )
-      val action = new Harness(mockSubscriptionConnector)
+        val result = action
+          .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+          .futureValue
 
-      val result = action
-        .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
-        .futureValue
+        result.subscriptionData mustBe subscriptionData
+      }
 
-      result.subscriptionData mustBe subscriptionData
+      "build a SubscriptionData object (V2 shape) and add it to the request" in {
+        when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future.successful(Right(subscriptionDataV2)))
+
+        val action = new Harness(mockSubscriptionConnector)
+
+        val result = action
+          .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+          .futureValue
+
+        result.subscriptionData mustBe subscriptionDataV2
+      }
     }
 
-    "return a BadRequest when an error occurs while retrieving SubscriptionData which results in a RuntimeException being thrown" in {
+    "the connector returns Left" must {
 
-      when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]())).thenReturn(
-        Future(
-          Left(BadRequest)
-        )
-      )
-      val action = new Harness(mockSubscriptionConnector)
+      "fail with a NoSubscriptionDataError" in {
+        when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
+          .thenReturn(Future(Left(BadRequest)))
 
-      val result = action
-        .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+        val action = new Harness(mockSubscriptionConnector)
 
-      intercept[NoSubscriptionDataError] {
-        Await.result(result, 5.seconds)
+        val result = action
+          .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
+
+        intercept[NoSubscriptionDataError] {
+          Await.result(result, 5.seconds)
+        }
       }
     }
   }

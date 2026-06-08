@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class AccountingPeriod(
+final case class AccountingPeriod(
   startDate: LocalDate,
   endDate:   LocalDate,
   dueDate:   Option[LocalDate] = None
