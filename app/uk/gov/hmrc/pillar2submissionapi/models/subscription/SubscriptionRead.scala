@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
+sealed trait SubscriptionRead
+
 final case class SubscriptionData(
   formBundleNumber:         String,
   upeDetails:               UpeDetails,
@@ -25,17 +27,25 @@ final case class SubscriptionData(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         Seq[AccountingPeriod],
+  accountingPeriod:         AccountingPeriod,
   accountStatus:            Option[AccountStatus]
-)
+) extends SubscriptionRead
 
 object SubscriptionData {
   given format: OFormat[SubscriptionData] = Json.format[SubscriptionData]
 }
 
-final case class SubscriptionSuccess(success: SubscriptionData)
+final case class SubscriptionDataV2(
+  formBundleNumber:         String,
+  upeDetails:               UpeDetails,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberDetails],
+  accountingPeriod:         Option[Seq[AccountingPeriodV2]],
+  accountStatus:            Option[AccountStatus]
+) extends SubscriptionRead
 
-object SubscriptionSuccess {
-
-  given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+object SubscriptionDataV2 {
+  given format: OFormat[SubscriptionDataV2] = Json.format[SubscriptionDataV2]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.models.requests
+package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionRead
+import play.api.libs.json.{Json, OFormat}
 
-case class SubscriptionDataRequest[A](
-  request:          Request[A],
-  userId:           String,
-  clientPillar2Id:  String,
-  subscriptionData: SubscriptionRead
-) extends WrappedRequest[A](request)
+final case class SubscriptionSuccess(
+  success: SubscriptionData
+)
+
+object SubscriptionSuccess {
+  given format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+}

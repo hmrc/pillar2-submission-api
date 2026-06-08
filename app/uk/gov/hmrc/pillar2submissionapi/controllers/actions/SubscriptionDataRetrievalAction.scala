@@ -50,7 +50,6 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
           )
         )
     }
-
   }
 
 }

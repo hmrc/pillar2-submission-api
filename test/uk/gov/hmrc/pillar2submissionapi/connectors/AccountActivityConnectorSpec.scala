@@ -27,9 +27,11 @@ import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
 
 class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixture with ScalaFutures {
+
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
+
   lazy val accountActivityConnector: AccountActivityConnector = app.injector.instanceOf[AccountActivityConnector]
 
   private val getUrl = s"/report-pillar2-top-up-taxes/account-activity?fromDate=$fromDate&toDate=$toDate"
