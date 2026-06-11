@@ -23,18 +23,16 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
 
-  lazy val pillar2BaseUrl:              String  = servicesConfig.baseUrl("pillar2")
-  lazy val stubBaseUrl:                 String  = servicesConfig.baseUrl("stub")
-  lazy val apiPlatformStatus:           String  = servicesConfig.getString("features.api-platform.status")
+  lazy val pillar2BaseUrl: String = servicesConfig.baseUrl("pillar2")
+  lazy val stubBaseUrl:    String = servicesConfig.baseUrl("stub")
+
+  lazy val apiPlatformStatus: String = servicesConfig.getString("features.api-platform.status")
+
   lazy val apiPlatformEndpointsEnabled: Boolean = servicesConfig.getBoolean("features.api-platform.endpoints-enabled")
   lazy val testOnlyOasEnabled:          Boolean = servicesConfig.getBoolean("features.testOnlyOasEnabled")
-
-  lazy val allowTestUsers: Boolean =
-    servicesConfig.getBoolean("features.allow-test-users")
-
-  lazy val testOrganisationEnabled: Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
-
-  lazy val accountActivityEnabled:    Boolean = servicesConfig.getBoolean("features.accountActivityEnabled")
-  lazy val readSubscriptionV2Enabled: Boolean = servicesConfig.getBoolean("features.readSubscriptionV2Enabled")
+  lazy val allowTestUsers:              Boolean = servicesConfig.getBoolean("features.allow-test-users")
+  lazy val testOrganisationEnabled:     Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
+  lazy val accountActivityEnabled:      Boolean = servicesConfig.getBoolean("features.accountActivityEnabled")
+  lazy val readSubscriptionV2Enabled:   Boolean = servicesConfig.getBoolean("features.readSubscriptionV2Enabled")
 
 }

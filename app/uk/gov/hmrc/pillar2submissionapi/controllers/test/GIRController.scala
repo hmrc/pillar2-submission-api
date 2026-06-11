@@ -89,7 +89,7 @@ class GIRController @Inject() (
             case JsSuccess(value, _) =>
               girService
                 .deleteGIR(value)
-                .map(response => Ok(Json.toJson(response)))
+                .map(_ => NoContent)
             case JsError(_) => Future.failed(InvalidJsonError)
           }
         case None => Future.failed(EmptyRequestBodyError)
