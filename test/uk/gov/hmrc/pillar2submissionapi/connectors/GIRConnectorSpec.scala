@@ -123,16 +123,19 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
           deleteRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
         )
       }
-      "return 200 OK for valid request" in {
-        stubRequest("DELETE", submitUrl, OK, JsObject.empty)
+
+      "return 204 NO_CONTENT for valid request" in {
+        stubRequest("DELETE", submitUrl, NO_CONTENT, JsObject.empty)
         val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
-        result.status should be(OK)
+        result.status should be(NO_CONTENT)
       }
+
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("DELETE", submitUrl, BAD_REQUEST, JsObject.empty)
         val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
         result.status should be(BAD_REQUEST)
       }
+
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("DELETE", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
         val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
