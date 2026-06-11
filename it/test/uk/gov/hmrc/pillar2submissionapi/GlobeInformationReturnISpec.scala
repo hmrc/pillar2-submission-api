@@ -34,8 +34,8 @@ class GlobeInformationReturnISpec extends IntegrationSpecBase with OptionValues 
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val baseUrl = s"http://localhost:$port/setup/globe-information-return"
 
+  private val baseUrl = s"http://localhost:$port/setup/globe-information-return"
   private val stubUrl = "/pillar2/test/globe-information-return"
 
   "GIRController" when {
@@ -107,6 +107,164 @@ class GlobeInformationReturnISpec extends IntegrationSpecBase with OptionValues 
         val result = Await.result(
           client
             .post(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "amendGIR" must {
+      "return 200 OK for valid request" in {
+        stubRequest(
+          "PUT",
+          stubUrl,
+          OK,
+          Json.obj("success" -> Json.obj("processingDate" -> "2024-01-01T12:00:00Z"))
+        )
+
+        val result = Await.result(
+          client
+            .put(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual OK
+      }
+
+      "return 400 BAD_REQUEST for invalid request body" in {
+        val result = Await.result(
+          client
+            .put(URI.create(baseUrl).toURL)
+            .withBody(invalidRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual BAD_REQUEST
+      }
+
+      "return 422 UNPROCESSABLE_ENTITY for unprocessable entity" in {
+        stubRequest(
+          "PUT",
+          stubUrl,
+          UNPROCESSABLE_ENTITY,
+          Json.obj("errors" -> Json.obj("code" -> "093", "text" -> "Invalid Return"))
+        )
+
+        val result = Await.result(
+          client
+            .put(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual UNPROCESSABLE_ENTITY
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for backend error" in {
+        stubRequest(
+          "PUT",
+          stubUrl,
+          INTERNAL_SERVER_ERROR,
+          Json.obj("code" -> "500", "message" -> "Database error")
+        )
+
+        val result = Await.result(
+          client
+            .put(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "deleteGIR" must {
+      "return 204 NO_CONTENT for valid request" in {
+        stubRequest(
+          "DELETE",
+          stubUrl,
+          OK,
+          Json.obj("success" -> Json.obj("processingDate" -> "2024-01-01T12:00:00Z"))
+        )
+
+        val result = Await.result(
+          client
+            .delete(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual NO_CONTENT
+      }
+
+      "return 400 BAD_REQUEST for invalid request body" in {
+        val result = Await.result(
+          client
+            .delete(URI.create(baseUrl).toURL)
+            .withBody(invalidRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual BAD_REQUEST
+      }
+
+      "return 422 UNPROCESSABLE_ENTITY for unprocessable entity" in {
+        stubRequest(
+          "DELETE",
+          stubUrl,
+          UNPROCESSABLE_ENTITY,
+          Json.obj("errors" -> Json.obj("code" -> "093", "text" -> "Invalid Return"))
+        )
+
+        val result = Await.result(
+          client
+            .delete(URI.create(baseUrl).toURL)
+            .withBody(validRequestJson)
+            .setHeader("X-Pillar2-Id" -> plrReference)
+            .setHeader("Authorization" -> "bearerToken")
+            .execute[HttpResponse],
+          5.seconds
+        )
+
+        result.status mustEqual UNPROCESSABLE_ENTITY
+      }
+
+      "return 500 INTERNAL_SERVER_ERROR for backend error" in {
+        stubRequest(
+          "DELETE",
+          stubUrl,
+          INTERNAL_SERVER_ERROR,
+          Json.obj("code" -> "500", "message" -> "Database error")
+        )
+
+        val result = Await.result(
+          client
+            .delete(URI.create(baseUrl).toURL)
             .withBody(validRequestJson)
             .setHeader("X-Pillar2-Id" -> plrReference)
             .setHeader("Authorization" -> "bearerToken")
