@@ -36,9 +36,7 @@ class GIRService @Inject() (
 )(using ec: ExecutionContext)
     extends Logging {
 
-  def createGIR(submission: GIRSubmission)(implicit
-    hc: HeaderCarrier
-  ): Future[SubmitGIRSuccessResponse] =
+  def createGIR(submission: GIRSubmission)(implicit hc: HeaderCarrier): Future[SubmitGIRSuccessResponse] =
     girConnector.createGIR(submission).map(convertToResult)
 
   def amendGIR(submission: GIRSubmission)(implicit hc: HeaderCarrier): Future[SubmitGIRSuccessResponse] =

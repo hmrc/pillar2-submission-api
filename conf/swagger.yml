@@ -909,7 +909,7 @@ paths:
         - userRestricted: [write:pillar2]
   /setup/globe-information-return:
     post:
-      summary: Create A Test GloBE Information Return
+      summary: Create a Test GloBE Information Return
       description: |
         Creates a GloBE Information Return for a test organisation.
       requestBody:
@@ -975,6 +975,131 @@ paths:
                   $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
       security:
         - userRestricted: [write:pillar2]
+    put:
+      summary: Amend a Test GloBE Information Return
+      description: |
+        Amends a GloBE Information Return for a test organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              AmendTestGlobeInformationReturnRequestExample:
+                $ref: "#/components/examples/requests.AmendTestGlobeInformationReturnRequestExample"
+      responses:
+        "200":
+          description: Globe Information Return Amended
+          content:
+            application/json:
+              examples:
+                CreateTestGlobeInformationReturnResponseExample:
+                  $ref: "#/components/examples/responses.AmendTestGlobeInformationReturnResponseExample"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Active Subscription Found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+      security:
+        - userRestricted: [write:pillar2]
+    delete:
+      summary: Delete a Test GloBE Information Return
+      description: |
+        Deletes a GloBE Information Return for a test organisation.
+      requestBody:
+        content:
+          application/json:
+            examples:
+              DeleteTestGlobeInformationReturnRequestExample:
+                $ref: "#/components/examples/requests.DeleteTestGlobeInformationReturnRequestExample"
+      responses:
+        "204":
+          description: Globe Information Return Deleted
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid JSON:
+                  $ref: "#/components/examples/errors.InvalidJson"
+                Empty Body:
+                  $ref: "#/components/examples/errors.EmptyBody"
+                Incorrect Header Value:
+                  $ref: "#/components/examples/errors.IncorrectHeaderValue"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Missing Credentials:
+                  $ref: "#/components/examples/errors.MissingCredentials"
+                Invalid Credentials:
+                  $ref: "#/components/examples/errors.InvalidCredentials"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              examples:
+                Invalid Scope:
+                  $ref: "#/components/examples/errors.InvalidScope"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              examples:
+                Invalid Request:
+                  $ref: "#/components/examples/errors.Submission.InvalidRequest"
+                No Active Subscription Found:
+                  $ref: "#/components/examples/errors.Submission.NoActiveSubscription"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              examples:
+                Generic Server Error:
+                  $ref: "#/components/examples/errors.Submission.GenericServerError"
+                No Subscription Data:
+                  $ref: "#/components/examples/errors.Submission.NoSubscriptionData"
+      security:
+        - userRestricted: [ write:pillar2 ]
   /account-activity:
     get:
       summary: Retrieve Account Activity
@@ -1464,7 +1589,9 @@ components:
             - ORN_CREATE
             - ORN_AMEND
             - BTN
-            - GIR
+            - GIR_CREATE
+            - GIR_AMEND
+            - GIR_DELETE
         receivedDate:
           type: string
           format: date-time
@@ -2443,15 +2570,33 @@ components:
       summary: "Success response"
       value:
         processingDate: "2026-06-26T09:26:17Z"
-    responses.CreateTestGlobeInformationReturnResponseExample:
-      summary: "Success response"
-      value:
-        processingDate: "2026-06-26T09:26:17Z"
     requests.CreateTestGlobeInformationReturnRequestExample:
       summary: "Request example"
       value:
         accountingPeriodFrom: "2024-01-01"
         accountingPeriodTo: "2024-12-31"
+    requests.AmendTestGlobeInformationReturnRequestExample:
+      summary: "Request example"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+    requests.DeleteTestGlobeInformationReturnRequestExample: # FIXME: why does the Delete have a request body???
+      summary: "Request example"
+      value:
+        accountingPeriodFrom: "2024-01-01"
+        accountingPeriodTo: "2024-12-31"
+    responses.CreateTestGlobeInformationReturnResponseExample:
+      summary: "Success response"
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+    responses.AmendTestGlobeInformationReturnResponseExample:
+      summary: "Success response"
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
+    responses.DeleteTestGlobeInformationReturnResponseExample:
+      summary: "Success response"
+      value:
+        processingDate: "2026-06-26T09:26:17Z"
     #mne and uk
     requests.UKTRNilReturnMneAndUk:
       summary: "Nil Return - MNE and UK"

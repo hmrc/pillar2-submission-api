@@ -36,33 +36,33 @@ class GIRConnector @Inject() (
 )(using ec: ExecutionContext)
     extends Logging {
 
+  private val globeInformationReturnUrl: String = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
+
   def createGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
-    val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
-    logger.info(s"Calling $url to create GIR submission")
+    logger.info(s"Calling $globeInformationReturnUrl to create GIR submission")
 
     http
-      .post(URI.create(url).toURL)
+      .post(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
   }
 
   def amendGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
-    val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
-    logger.info(s"Calling $url to amend GIR submission")
+    logger.info(s"Calling $globeInformationReturnUrl to amend GIR submission")
 
     http
-      .put(URI.create(url).toURL)
+      .put(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
   }
 
   def deleteGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
-    val url = s"${config.stubBaseUrl}/pillar2/test/globe-information-return"
-    logger.info(s"Calling $url to delete GIR submission")
+    logger.info(s"Calling $globeInformationReturnUrl to delete GIR submission")
 
     http
-      .delete(URI.create(url).toURL)
+      .delete(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
   }
+
 }

@@ -1,4 +1,3 @@
-
 # pillar2-submission-api
 
 Backend microservice for the Pillar 2 project. Pillar 2 refers to the Global Minimum Tax being introduced by the Organisation for Economic Cooperation and Development (OECD).
@@ -117,6 +116,31 @@ To validate the generated OAS against OpenAPI standards (this is also run as par
 ```bash
 sbt validateOas
 ```
+
+### Previewing the OpenAPI Specification Locally
+
+To preview the OpenAPI Specification (OAS) locally, start the `DEVHUB_PREVIEW_OPENAPI` service with the Service Manager:
+```shell
+sm2 --start DEVHUB_PREVIEW_OPENAPI
+```
+
+If the service is running on the Service Manager, stop it:
+```shell
+sm2 --stop PILLAR_2_SUBMISSION_API
+```
+
+and run the Pillar 2 Submission API locally:
+```shell
+sbt run
+```
+
+Go to the local preview page at http://localhost:9680/api-documentation/docs/openapi/preview
+
+In the URL field enter the URL of the local OpenAPI Specification (OAS) file:
+
+http://localhost:10054/api/conf/1.0/application.yaml
+
+and click "Submit".
 
 ### Publishing
 

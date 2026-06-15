@@ -95,27 +95,28 @@ class GIRControllerSpec extends ControllerBaseSpec {
       }
 
       "deleteGIR" must {
-        "return 200 OK for valid request" in {
+        "return 204 NO_CONTENT for valid request" in {
           when(mockGIRService.deleteGIR(eqTo(validSubmission))(using any[HeaderCarrier]))
             .thenReturn(Future.successful(validResponse))
 
           val result = controller().deleteGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(validRequestJson))
 
-          status(result) mustBe OK
-          contentAsJson(result) mustBe validResponseJson
+          status(result) mustBe NO_CONTENT
         }
+
         "return InvalidJson for invalid request" in {
           val result = controller().deleteGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id).withJsonBody(Json.obj("badField" -> "badValue")))
           result.shouldFailWith(InvalidJsonError)
         }
+
         "return EmptyRequestBody for missing body" in {
           val result = controller().deleteGIR(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
           result.shouldFailWith(EmptyRequestBodyError)
         }
       }
     }
-    "test endpoints are disabled" when {
 
+    "test endpoints are disabled" when {
       "createGIR" must {
         "return 403 FORBIDDEN" in {
           val result = controller(testEndpointsEnabled = false).createGIR(
