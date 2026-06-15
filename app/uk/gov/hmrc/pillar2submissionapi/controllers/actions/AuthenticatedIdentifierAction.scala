@@ -89,6 +89,8 @@ class AuthenticatedIdentifierAction @Inject() (
             processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
           case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
             agentAuth[A](request, request.pillar2Id)
+          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(Assistant) ~ Some(_) =>
+            agentAuth[A](request, request.pillar2Id)
           case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
             agentAuth[A](request, request.pillar2Id)
           case _ =>
