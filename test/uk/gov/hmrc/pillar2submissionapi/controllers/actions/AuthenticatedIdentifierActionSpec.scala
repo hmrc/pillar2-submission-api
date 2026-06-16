@@ -79,12 +79,11 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
     "a user is a registered Agent" should {
       "fail if agent is a test user and test users are disabled" in {
-        val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
+        val disallowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
 
-        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
-          mockAuthConnector,
-          allowTestUsers
-        )(using ec)
+        val identifierAction: AuthenticatedIdentifierAction =
+          new AuthenticatedIdentifierAction(mockAuthConnector, disallowTestUsers)(using ec)
+
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
@@ -103,10 +102,9 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "pass if agent is a test user and test users are enabled" in {
         val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> true))))
 
-        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
-          mockAuthConnector,
-          allowTestUsers
-        )(using ec)
+        val identifierAction: AuthenticatedIdentifierAction =
+          new AuthenticatedIdentifierAction(mockAuthConnector, allowTestUsers)(using ec)
+
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
@@ -137,8 +135,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         }
       }
 
-      "pass if agent is a delegated entity of an org" in {
-
+      "pass if agent is a delegated entity of an org with User (Admin) credential role" in {
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
             any[HeaderCarrier](),
@@ -157,6 +154,41 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         )
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
+
+        result.map { identifierRequest =>
+          identifierRequest.userId             must be(id)
+          identifierRequest.groupId            must be(Some(groupId))
+          identifierRequest.clientPillar2Id    must be(pillar2Id)
+          identifierRequest.userIdForEnrolment must be(providerId)
+        }
+      }
+
+      "pass if agent is a delegated entity of an org with Assistant (Standard) credential role" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(Assistant) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(Assistant) ~ Some(Credentials(providerId, providerType))
+            )
           )
 
         val result = await(identifierAction.refine(fakeRequestWithPillar2Id))
