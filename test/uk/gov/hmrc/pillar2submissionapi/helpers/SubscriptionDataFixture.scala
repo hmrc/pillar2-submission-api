@@ -84,11 +84,11 @@ trait SubscriptionDataFixture {
       accountingPeriod = Some(
         Seq(
           AccountingPeriodV2(
-            startDate = accountingPeriodStartDate,
-            endDate = accountingPeriodEndDate,
+            startDate = Some(accountingPeriodStartDate),
+            endDate = Some(accountingPeriodEndDate),
             dueDate = Some(accountingPeriodDueDate),
-            canAmendStartDate = true,
-            canAmendEndDate = true
+            canAmendStartDate = Some(true),
+            canAmendEndDate = Some(true)
           )
         )
       ),
