@@ -19,7 +19,7 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.{LocalDate, ZonedDateTime}
 
-case class AccountActivitySuccessResponse(processingDate: ZonedDateTime, transactionDetails: Seq[AccountActivityTransaction])
+case class AccountActivitySuccessResponse(processingDate: ZonedDateTime, transactionDetails: Option[Seq[AccountActivityTransaction]])
 
 case class AccountActivityTransaction(
   transactionType:   String,
