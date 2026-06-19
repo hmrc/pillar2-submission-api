@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 0.238.0
+  version: 0.240.0
   title: Pillar 2 API
   description: An API for managing and retrieving data in accordance with Pillar 2 tax rules.
 tags: []
@@ -2058,12 +2058,12 @@ components:
           description: The date and time that an event took place.
         transactionDetails:
           type: array
+          nullable: true
           items:
             $ref: "#/components/schemas/uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivityTransaction"
           description: Records of a change to a Pillar ID's circumstances from the chosen time period.
       required:
       - processingDate
-      - transactionDetails
     uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNRetrieveSuccessResponse:
       properties:
         processingDate:
