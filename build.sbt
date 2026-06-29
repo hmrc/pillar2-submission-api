@@ -5,6 +5,7 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 
 ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
+ThisBuild / semanticdbEnabled := true
 ThisBuild / scalacOptions ++= Seq(
   "-Wconf:src=routes/.*:s",
   "-Wconf:msg=Flag.*set repeatedly:s",
@@ -52,7 +53,7 @@ lazy val it: Project = project
     )
   )
 
-addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
-addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
+addCommandAlias("prePrChecks", "; scalafmtCheckAll; it/scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check; it/scalafixAll --check")
+addCommandAlias("lint", "; scalafmtAll; it/scalafmtAll; scalafmtSbt; it/scalafixAll; scalafixAll")
 addCommandAlias("createOpenAPISpec", "; clean; routesToYamlOas; validateOas")
 addCommandAlias("publishTestOnlyOas", "; createOpenAPISpec; publishOas")

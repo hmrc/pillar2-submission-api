@@ -22,16 +22,16 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.Application
-import play.api.http.Status.*
+import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec.*
+import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
@@ -47,8 +47,8 @@ trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with Opti
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val submitStr = s"http://localhost:$port${routes.OverseasReturnNotificationController.submitORN.url}"
-  lazy val amendStr  = s"http://localhost:$port${routes.OverseasReturnNotificationController.amendORN.url}"
+  lazy val submitStr: String = s"http://localhost:$port${routes.OverseasReturnNotificationController.submitORN.url}"
+  lazy val amendStr: String  = s"http://localhost:$port${routes.OverseasReturnNotificationController.amendORN.url}"
   lazy val submitRequest: RequestBuilder =
     client.post(URI.create(submitStr).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
   lazy val amendRequest: RequestBuilder =
