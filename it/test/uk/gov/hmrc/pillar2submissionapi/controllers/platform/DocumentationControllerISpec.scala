@@ -22,6 +22,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -29,13 +30,12 @@ import java.net.URI
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.io.Source
-import uk.gov.hmrc.http.client.HttpClientV2
 
 class DocumentationControllerISpec extends IntegrationSpecBase {
 
   val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
-  val client: HttpClientV2   = provider.get()
-  val baseUrl: String  = s"http://localhost:$port"
+  val client:   HttpClientV2         = provider.get()
+  val baseUrl:  String               = s"http://localhost:$port"
 
   "DocumentationController" should {
     "return definition" in {
