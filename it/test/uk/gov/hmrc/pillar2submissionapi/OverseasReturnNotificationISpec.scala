@@ -45,11 +45,11 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with OptionValues with ORNDataFixture {
 
-  lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
-  lazy val client:   HttpClientV2         = provider.get()
-  lazy val submitStr: String = s"http://localhost:$port${routes.OverseasReturnNotificationController.submitORN.url}"
-  lazy val amendStr: String  = s"http://localhost:$port${routes.OverseasReturnNotificationController.amendORN.url}"
-  lazy val submitRequest: RequestBuilder =
+  lazy val provider:      HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
+  lazy val client:        HttpClientV2         = provider.get()
+  lazy val submitStr:     String               = s"http://localhost:$port${routes.OverseasReturnNotificationController.submitORN.url}"
+  lazy val amendStr:      String               = s"http://localhost:$port${routes.OverseasReturnNotificationController.amendORN.url}"
+  lazy val submitRequest: RequestBuilder       =
     client.post(URI.create(submitStr).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
   lazy val amendRequest: RequestBuilder =
     client.put(URI.create(amendStr).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")

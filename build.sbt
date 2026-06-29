@@ -18,7 +18,6 @@ lazy val microservice: Project = Project("pillar2-submission-api", file("."))
   .settings(
     playDefaultPort := 10054,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    semanticdbEnabled := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     Compile / tpolecatExcludeOptions ++= Set(
