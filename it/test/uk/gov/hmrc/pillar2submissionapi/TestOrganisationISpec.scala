@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi
 import org.scalatest.OptionValues
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -26,7 +27,6 @@ import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.models.organisation._
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
-import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 
 import java.net.URI
 import java.time.{Instant, LocalDate}
@@ -37,7 +37,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
-  lazy val baseUrl = s"http://localhost:$port/setup/organisation"
+  lazy val baseUrl:  String               = s"http://localhost:$port/setup/organisation"
 
   private val stubUrl = "/pillar2/test/organisation"
 
@@ -292,7 +292,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
     )
   )
 
-  val validOrganisation = TestOrganisation(
+  val validOrganisation: TestOrganisation = TestOrganisation(
     orgDetails = OrgDetails(
       domesticOnly = true,
       organisationName = "Test Organisation Ltd",
@@ -306,7 +306,7 @@ class TestOrganisationISpec extends IntegrationSpecBase with OptionValues {
     lastUpdated = Instant.parse("2024-01-01T12:00:00Z")
   )
 
-  val validOrganisationWithId = TestOrganisationWithId(
+  val validOrganisationWithId: TestOrganisationWithId = TestOrganisationWithId(
     pillar2Id = plrReference,
     organisation = validOrganisation
   )

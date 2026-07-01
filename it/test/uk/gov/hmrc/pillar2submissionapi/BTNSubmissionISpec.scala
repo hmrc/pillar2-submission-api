@@ -22,16 +22,16 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
 import play.api.Application
-import play.api.http.Status.*
+import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.User
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec.*
+import uk.gov.hmrc.pillar2submissionapi.BTNSubmissionISpec._
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
@@ -48,10 +48,10 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
 
-  lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
-  lazy val client:   HttpClientV2         = provider.get()
-  lazy val str = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
-  lazy val baseRequest: RequestBuilder =
+  lazy val provider:    HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
+  lazy val client:      HttpClientV2         = provider.get()
+  lazy val str:         String               = s"http://localhost:$port${routes.BTNSubmissionController.submitBTN.url}"
+  lazy val baseRequest: RequestBuilder       =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"

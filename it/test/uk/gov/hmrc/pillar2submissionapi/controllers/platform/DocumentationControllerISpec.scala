@@ -19,9 +19,10 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, status, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -32,9 +33,9 @@ import scala.io.Source
 
 class DocumentationControllerISpec extends IntegrationSpecBase {
 
-  val provider = app.injector.instanceOf[HttpClientV2Provider]
-  val client   = provider.get()
-  val baseUrl  = s"http://localhost:$port"
+  val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
+  val client:   HttpClientV2         = provider.get()
+  val baseUrl:  String               = s"http://localhost:$port"
 
   "DocumentationController" should {
     "return definition" in {

@@ -21,16 +21,16 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import play.api.http.Status.{BAD_GATEWAY, BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED, UNPROCESSABLE_ENTITY}
+import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.routes
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormatError, InvalidDateRangeError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.helpers.{AccountActivityDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormatError, InvalidDateRangeError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
@@ -111,7 +111,9 @@ class AccountActivityISpec
       )
     }
 
-    "return unexpected response for statuses from schema that we can't recover from" in forAll(Gen.oneOf(BAD_REQUEST, UNAUTHORIZED, INTERNAL_SERVER_ERROR)) { status =>
+    "return unexpected response for statuses from schema that we can't recover from" in forAll(
+      Gen.oneOf(BAD_REQUEST, UNAUTHORIZED, INTERNAL_SERVER_ERROR)
+    ) { status =>
       stubRequest(
         method = "GET",
         expectedUrl = backendEndpoint(fromDate, toDate),
