@@ -34,7 +34,7 @@ class AccountActivityController @Inject() (
   accountActivityService: AccountActivityService,
   identify:               IdentifierAction,
   pillar2IdAction:        Pillar2IdHeaderExistsAction,
-  cc: ControllerComponents
+  cc:                     ControllerComponents
 )(using ExecutionContext)
     extends BackendController(cc)
     with Logging {

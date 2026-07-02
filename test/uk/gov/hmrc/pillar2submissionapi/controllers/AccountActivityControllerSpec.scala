@@ -59,7 +59,7 @@ class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActiv
     }
 
     "fail with InvalidDateFormat when either of the query parameters can't be parsed" in new TestCase(accountActivityJsonParsed.asRight) {
-      val badFirstDate: Future[Result] = controllerUnderTest.retrieveAccountActivity("not-a-date", toDate)(request)
+      val badFirstDate:  Future[Result] = controllerUnderTest.retrieveAccountActivity("not-a-date", toDate)(request)
       val badSecondDate: Future[Result] = controllerUnderTest.retrieveAccountActivity(fromDate, "not-a-date")(request)
 
       badFirstDate.shouldFailWith(InvalidDateFormatError)
