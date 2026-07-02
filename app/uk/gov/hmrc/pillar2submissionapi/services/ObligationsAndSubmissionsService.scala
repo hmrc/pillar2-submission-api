@@ -41,19 +41,20 @@ class ObligationsAndSubmissionsService @Inject() (
       case 200 =>
         response.json.validate[ObligationsAndSubmissionsSuccessResponse] match {
           case JsSuccess(success, _) => success
-          case JsError(_)            =>
-            logger.error("Failed to parse success response")
+          case error: JsError =>
+            logger.error(s"Failed to parse success response: ${JsError.toJson(error)}")
             throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[ObligationsAndSubmissionsErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
-          case JsError(_)             =>
-            logger.error("Failed to parse unprocessible entity response")
+          case error: JsError =>
+            logger.error(s"Failed to parse unprocessable entity response: ${JsError.toJson(error)}")
             throw UnexpectedResponseError
         }
       case status =>
         logger.error(s"Error calling pillar2 backend. Got response: $status")
         throw UnexpectedResponseError
     }
+
 }
