@@ -1,0 +1,31 @@
+meta {
+  name: Delete Organisation
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{externalTestStubUrl}}/pillar2/test/organisation/{{testPlrId}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: valid bearerToken
+}
+
+assert {
+  res.status: eq 204
+}
+
+script:pre-request {
+  if (bru.getEnvVar("organisationCreated") === false) {
+    throw new Error("Organisation not created. Run the 'Delete Organisation' request first.");
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 204) {
+    bru.setEnvVar("organisationCreated", false);
+  }
+}

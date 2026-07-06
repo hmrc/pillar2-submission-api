@@ -1,0 +1,32 @@
+meta {
+  name: pillar2
+  seq: 2
+}
+
+script:pre-request {
+
+  // Environment check
+  if (bru.getEnvVar("environment") !== 'local') {
+    if (req.getExecutionMode() == "standalone") {
+      throw new Error('Environment must be set to Local.');
+    } else {
+      bru.runner.skipRequest();
+      return;
+    }
+  }
+
+  if (req.getTags().includes('auth')) {
+    return;
+  }
+
+  // Bearer token check
+  if (!bru.getEnvVar("bearerToken")) {
+    if (req.getExecutionMode() == "standalone") {
+      throw new Error("'bearerToken' is not set. Run the 'Create Bearer Token' request first.");
+    } else {
+      bru.runner.skipRequest();
+      return;
+    }
+  }
+
+}

@@ -2,6 +2,9 @@ meta {
   name: Create Bearer Token
   type: http
   seq: 1
+  tags: [
+    auth
+  ]
 }
 
 post {
@@ -41,5 +44,5 @@ script:post-response {
     bearer = arr[0]
   else
     bearer = arr[1]
-  bru.setEnvVar("bearer_token",bearer)
+  bru.setEnvVar("bearerToken",bearer)
 }

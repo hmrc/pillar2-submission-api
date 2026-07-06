@@ -1,7 +1,7 @@
 meta {
-  name: Amend Subscription - No AP Change
+  name: Amend Subscription V2 - Trigger 422
   type: http
-  seq: 2
+  seq: 8
 }
 
 put {
@@ -28,17 +28,28 @@ body:json {
       "filingMember": false
     },
     "accountingPeriod": {
-      "amendAccountingPeriod": false
+      "amendAccountingPeriod": true,
+      "originalAccountingPeriods": [
+        {
+          "taxObligationStartDate": "2024-01-01",
+          "taxObligationEndDate": "2024-12-31"
+        }
+      ],
+      "newAccountingPeriod": {
+        "updateObligationStartDate": "2024-01-01",
+        "updateObligationEndDate": "2025-03-31"
+      }
     },
     "upeCorrespAddressDetails": {
-      "addressLine1": "20 New Street",
-      "addressLine2": "Manchester",
-      "addressLine3": "Greater Manchester",
-      "postCode": "M1 4BT",
+      "addressLine1": "10 High Street",
+      "addressLine2": "Egham",
+      "addressLine3": "Surrey",
+      "addressLine4": "Wembley",
+      "postCode": "SU10 6HH",
       "countryCode": "GB"
     },
     "primaryContactDetails": {
-      "name": "Primary Contact",
+      "name": "422",
       "telephone": "0115 9700 700",
       "emailAddress": "primary.contact@example.com"
     },
@@ -46,6 +57,17 @@ body:json {
       "name": "Secondary Contact",
       "telephone": "0115 9700 701",
       "emailAddress": "secondary.contact@example.com"
+    },
+    "filingMemberDetails": {
+      "addNewFilingMember": false,
+      "safeId": "XV5277988337712",
+      "customerIdentification1": "DD17743248",
+      "customerIdentification2": "431234567890",
+      "organisationName": "Acme Upe Ltd"
     }
   }
+}
+
+assert {
+  res.status: eq 422
 }
