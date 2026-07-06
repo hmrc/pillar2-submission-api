@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnector
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
-import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn._
+import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.*
 
 import java.time.LocalDate
 import scala.concurrent.Future

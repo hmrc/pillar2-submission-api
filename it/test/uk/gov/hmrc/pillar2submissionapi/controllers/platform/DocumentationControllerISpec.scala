@@ -19,8 +19,8 @@ package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.test.Helpers.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase

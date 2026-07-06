@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Results.Status
 import play.api.mvc.{RequestHeader, Result, Results}
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 
 import scala.concurrent.Future

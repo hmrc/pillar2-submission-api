@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.services
 
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatest.EitherValues

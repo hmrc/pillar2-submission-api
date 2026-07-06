@@ -22,7 +22,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.OverseasReturnNotificationConnector
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, ORNNotFoundError, UnexpectedResponseError}
-import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification._
+import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.organisation
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 enum AccountActivityScenario:
   case DTT_CHARGE

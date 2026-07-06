@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class ORNRetrieveSuccessResponse(
   processingDate:       String,

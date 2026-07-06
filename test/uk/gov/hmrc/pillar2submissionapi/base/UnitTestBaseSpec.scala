@@ -23,12 +23,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Configuration
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.Helpers.stubControllerComponents
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.HttpClientSupport
-import uk.gov.hmrc.pillar2submissionapi.connectors._
+import uk.gov.hmrc.pillar2submissionapi.connectors.*
 import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

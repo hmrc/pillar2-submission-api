@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.controllers
 
 import cats.data.EitherT
 import cats.syntax.either.given
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import play.api.http.Status.OK
 import play.api.mvc.{AnyContentAsEmpty, Result}
@@ -30,7 +30,7 @@ import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.AccountActiv
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
 import uk.gov.hmrc.pillar2submissionapi.services.AccountActivityService
 
 import scala.concurrent.Future

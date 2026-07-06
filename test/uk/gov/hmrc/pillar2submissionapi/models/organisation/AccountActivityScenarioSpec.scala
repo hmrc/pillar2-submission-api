@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.organisation
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
+import play.api.libs.json.*
 
 class AccountActivityScenarioSpec extends AnyWordSpec with Matchers {
 

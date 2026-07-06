@@ -25,9 +25,9 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.models.belowthresholdnotification.{BTNSubmission, SubmitBTNSuccessResponse}
 import uk.gov.hmrc.pillar2submissionapi.models.btn.{BTNSuccess, BTNSuccessResponse}
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error._
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
 import uk.gov.hmrc.pillar2submissionapi.models.hip.{ApiFailure, ApiFailureResponse}
-import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNServiceSpec._
+import uk.gov.hmrc.pillar2submissionapi.services.SubmitBTNServiceSpec.*
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}

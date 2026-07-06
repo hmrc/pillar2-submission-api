@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers.platform
 
 import controllers.Assets
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController

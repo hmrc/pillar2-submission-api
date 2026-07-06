@@ -19,13 +19,13 @@ package uk.gov.hmrc.pillar2submissionapi.services
 import cats.data.EitherT
 import cats.syntax.either.given
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.connectors.AccountActivityConnector
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivityErrorResponse, AccountActivitySuccessResponse}
+import uk.gov.hmrc.pillar2submissionapi.models.error.*
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{DownstreamValidationError, UnexpectedResponseError}
-import uk.gov.hmrc.pillar2submissionapi.models.error._
 
 import java.time.LocalDate
 import javax.inject.Inject

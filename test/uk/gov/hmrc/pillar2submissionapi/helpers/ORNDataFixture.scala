@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.helpers
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNRetrieveSuccessResponse, ORNSubmission, ORNSuccessResponse}
 
 import java.time.LocalDate

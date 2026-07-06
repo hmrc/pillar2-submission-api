@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.pillar2submissionapi.models.WrappedValue
 
 class IdTypeSpec extends AnyWordSpec with Matchers {

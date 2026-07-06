@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
