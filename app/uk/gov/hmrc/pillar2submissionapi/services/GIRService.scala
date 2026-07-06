@@ -51,14 +51,14 @@ class GIRService @Inject() (
         response.json.validate[SubmitGIRSuccessResponse] match {
           case JsSuccess(success, _) => success
           case JsError(e)            =>
-            logger.error(s"Error while parsing the backend response" + response.body + e)
+            logger.error(s"Error while parsing the backend response with error: $e")
             throw UnexpectedResponseError
         }
       case 422 =>
         response.json.validate[SubmitGIRErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.errors.code, response.errors.text)
           case JsError(e)             =>
-            logger.error(s"Error while unprocessable entity response" + response.body + e)
+            logger.error(s"Error while unprocessable entity response with error: $e")
             throw UnexpectedResponseError
         }
       case status =>

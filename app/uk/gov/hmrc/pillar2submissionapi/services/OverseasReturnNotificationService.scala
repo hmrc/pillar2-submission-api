@@ -62,7 +62,6 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
   private def convertToRetrieveResult(response: HttpResponse): ORNRetrieveSuccessResponse =
     response.status match {
       case 200 =>
-        logger.info(s"Received response body: ${response.body}")
         response.json.validate[ORNRetrieveSuccessResponse](using ORNRetrieveSuccessResponse.reads) match {
           case JsSuccess(success, _) =>
             logger.info(s"Successfully parsed response: $success")
