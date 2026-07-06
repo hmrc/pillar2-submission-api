@@ -38,7 +38,6 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
 
     subscriptionConnector.readSubscription(request.clientPillar2Id).flatMap {
       case Left(result) =>
-        logger.warn(s"Cannot find subscription with result: ${result.header.headers} and ${result.body}")
         Future.failed(NoSubscriptionDataError(request.clientPillar2Id))
       case Right(subscriptionData) =>
         Future.successful(
