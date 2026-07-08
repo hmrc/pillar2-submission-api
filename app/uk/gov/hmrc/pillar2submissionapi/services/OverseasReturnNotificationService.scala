@@ -74,7 +74,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
       case 422 =>
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) =>
-            if (response.code == "005" && response.message.contains("No Form Bundle found")) {
+            if response.code == "005" && response.message.contains("No Form Bundle found") then {
               throw ORNNotFoundError
             } else {
               throw DownstreamValidationError(response.code, response.message)

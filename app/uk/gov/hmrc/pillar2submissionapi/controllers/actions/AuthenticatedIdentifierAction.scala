@@ -40,7 +40,7 @@ class AuthenticatedIdentifierAction @Inject() (
     with AuthorisedFunctions
     with Logging {
 
-  import AuthenticatedIdentifierAction._
+  import AuthenticatedIdentifierAction.*
   private def getPillar2Id(enrolments: Enrolments): Option[String] =
     for {
       pillar2Enrolment <- enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY)
@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject() (
     enrolments
   ) match {
     case Some(pillar2Id) =>
-      if (request.pillar2Id != pillar2Id) throw IncorrectHeaderValueError
+      if request.pillar2Id != pillar2Id then throw IncorrectHeaderValueError
       else
         Future.successful(
           IdentifierRequest(
@@ -75,7 +75,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    if (!request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty)) throw MissingCredentialsError
+    if !request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty) then throw MissingCredentialsError
     else {
       val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
         Retrievals.allEnrolments and Retrievals.affinityGroup and

@@ -79,7 +79,7 @@ class OverseasReturnNotificationController @Inject() (
       Try {
         val accountingPeriod =
           ObligationsAndSubmissions(fromDate = LocalDate.parse(accountingPeriodFrom), toDate = LocalDate.parse(accountingPeriodTo))
-        if (accountingPeriod.validDateRange) {
+        if accountingPeriod.validDateRange then {
           ornService
             .retrieveORN(accountingPeriodFrom, accountingPeriodTo)(using hc)
             .map(response => Ok(Json.toJson(response)))

@@ -62,7 +62,7 @@ trait OverseasReturnNotificationBehaviours extends IntegrationSpecBase with Opti
   def getSubscriptionStub: StubMapping = {
     val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
 
-    if (v2Enabled) {
+    if v2Enabled then {
       stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
     } else {
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)

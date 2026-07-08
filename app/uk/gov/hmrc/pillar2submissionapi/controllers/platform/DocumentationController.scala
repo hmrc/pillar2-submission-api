@@ -44,7 +44,7 @@ class DocumentationController @Inject() (assets: Assets, cc: ControllerComponent
   }
 
   def specification(version: String, file: String): Action[AnyContent] =
-    if (appConfig.testOnlyOasEnabled) {
+    if appConfig.testOnlyOasEnabled then {
       assets.at(s"/public/api/conf/$version/testOnly", file)
     } else assets.at(s"/public/api/conf/$version", file)
 }

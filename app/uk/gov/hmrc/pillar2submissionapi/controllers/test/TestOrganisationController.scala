@@ -41,7 +41,7 @@ class TestOrganisationController @Inject() (
     extends BackendController(cc) {
 
   private def checkTestEndpointsEnabled[A](block: => Future[A]): Future[A] =
-    if (config.testOrganisationEnabled) block else Future.failed(TestEndpointDisabledError)
+    if config.testOrganisationEnabled then block else Future.failed(TestEndpointDisabledError)
 
   def createTestOrganisation: Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
@@ -50,7 +50,7 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRangeError)
+              if !value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate) then Future.failed(InvalidDateRangeError)
               else
                 testOrganisationService
                   .createTestOrganisation(request.clientPillar2Id, value)
@@ -79,7 +79,7 @@ class TestOrganisationController @Inject() (
         case Some(json) =>
           json.validate[TestOrganisationRequest] match {
             case JsSuccess(value, _) =>
-              if (!value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate)) Future.failed(InvalidDateRangeError)
+              if !value.accountingPeriod.endDate.isAfter(value.accountingPeriod.startDate) then Future.failed(InvalidDateRangeError)
               else
                 testOrganisationService
                   .updateTestOrganisation(request.clientPillar2Id, value)
