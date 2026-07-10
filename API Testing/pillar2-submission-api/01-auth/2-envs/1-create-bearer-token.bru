@@ -1,0 +1,40 @@
+meta {
+  name: Create Bearer Token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/oauth/token
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  content-type: application/x-www-form-urlencoded
+}
+
+body:form-urlencoded {
+  client_id: {{clientId}}
+  client_secret: {{clientSecret}}
+  grant_type: client_credentials
+}
+
+assert {
+  res.status: eq 200
+  res.body.access_token: isNotEmpty
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("clientId")) {
+    throw new Error('Please set the value of "clientId" in the environment configuration.');
+  }
+  
+  if (!bru.getEnvVar("clientSecret")) {
+    throw new Error('Please set the value of "clientSecret" in the environment configuration.');
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("accessToken", res.body.access_token)
+}

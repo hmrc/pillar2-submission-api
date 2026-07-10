@@ -1,0 +1,15 @@
+meta {
+  name: Environments
+  seq: 2
+}
+
+script:pre-request {
+  if (!['development', 'qa', 'external-test'].includes(bru.getEnvVar("environment"))) {
+    if (req.getExecutionMode() == "standalone") {
+      throw new Error('Environment must be set to Development, QA or External Test.');
+    } else {
+      bru.runner.skipRequest();
+      return;
+    }
+  }
+}

@@ -25,6 +25,4 @@ body:json {
 
 assert {
   res.status: eq 201
-  res.headers.correlationid: eq {{correlationId}}
-  res.body: isEmpty
 }

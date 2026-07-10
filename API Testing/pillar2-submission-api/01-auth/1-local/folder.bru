@@ -1,0 +1,15 @@
+meta {
+  name: Local
+  seq: 1
+}
+
+script:pre-request {
+  if (bru.getEnvVar("environment") !== 'local') {
+    if (req.getExecutionMode() == "standalone") {
+      throw new Error('Environment must be set to Local.');
+    } else {
+      bru.runner.skipRequest();
+      return;
+    }
+  }
+}

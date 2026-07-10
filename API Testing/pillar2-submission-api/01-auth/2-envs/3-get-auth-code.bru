@@ -1,0 +1,32 @@
+meta {
+  name: Get Auth Code
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{auth_code_url}}/oauth/authorize?client_id={{clientId}}&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=write:pillar2 read:pillar2&response_type=code
+  body: none
+  auth: none
+}
+
+params:query {
+  clientId: {{clientId}}
+  redirect_uri: urn:ietf:wg:oauth:2.0:oob
+  scope: write:pillar2 read:pillar2
+  response_type: code
+  ~testUserId: {{testUserId}}
+  ~testUserPassword: {{testUserPassword}}
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("testUserId")) {
+    throw new Error('"testUserId" not set. Run the "Create Test User" request first.');
+  }
+  if (!bru.getEnvVar("testUserPassword")) {
+    throw new Error('"testUserPassword" not set. Run the "Create Test User" request first.');
+  }
+  if (!bru.getEnvVar("testPlrId")) {
+    throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
+  }
+}

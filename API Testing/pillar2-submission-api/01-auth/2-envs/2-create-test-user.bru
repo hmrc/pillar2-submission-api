@@ -1,0 +1,42 @@
+meta {
+  name: Create Test User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/create-test-user/organisations
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{accessToken}}
+}
+
+body:json {
+  {
+    "serviceNames": [
+      "pillar-2"
+    ]
+  }
+}
+
+assert {
+  res.status: eq 201
+  res.body.userId: isNotEmpty
+  res.body.password: isNotEmpty
+  res.body.pillar2Id: isNotEmpty
+}
+
+script:pre-request {
+  if (!bru.getEnvVar("accessToken")) {
+    throw new Error('"accessToken" not set. Run the "Create Bearer Token" request first.');
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("testUserId", res.body.userId)
+  bru.setEnvVar("testUserPassword", res.body.password)
+  bru.setEnvVar("testPlrId", res.body.pillar2Id)
+}

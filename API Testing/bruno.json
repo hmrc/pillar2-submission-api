@@ -1,15 +1,15 @@
 {
   "version": "1",
-  "name": "API Testing",
+  "name": "Pillar 2 API Testing",
   "type": "collection",
   "collections": [
     {
-      "name": "pillar2",
-      "path": "pillar2"
-    },
-    {
       "name": "pillar2-submission-api",
       "path": "pillar2-submission-api"
+    },
+    {
+      "name": "pillar2",
+      "path": "pillar2"
     },
     {
       "name": "pillar2-external-test-stub",
