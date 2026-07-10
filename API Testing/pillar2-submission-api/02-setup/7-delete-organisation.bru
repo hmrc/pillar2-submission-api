@@ -1,7 +1,7 @@
 meta {
   name: Delete Organisation
   type: http
-  seq: 5
+  seq: 7
 }
 
 delete {
@@ -11,6 +11,11 @@ delete {
 }
 
 headers {
+  Authorization: {{bearerToken}}
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearer_token}}
+}
+
+assert {
+  res.status: eq 204
+  res.body: isEmpty
 }

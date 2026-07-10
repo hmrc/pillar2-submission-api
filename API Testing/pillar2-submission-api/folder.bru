@@ -2,3 +2,13 @@ meta {
   name: pillar2-submission-api
   seq: 1
 }
+
+script:pre-request {
+  if (bru.getEnvVar('environment') === 'qa') {
+    const ggPlrId = bru.getEnvVar('governmentGatewayPlrId');
+    if (!ggPlrId) {
+      throw new Error('QA requires "governmentGatewayPlrId" in the environment.');
+    }
+    bru.setEnvVar('testPlrId', ggPlrId);
+  }
+}

@@ -1,17 +1,17 @@
 meta {
-  name: Submit ORN
+  name: Amend ORN
   type: http
-  seq: 1
+  seq: 2
 }
 
-post {
+put {
   url: {{apiUrl}}/overseas-return-notification
   body: json
   auth: none
 }
 
 headers {
-  Authorization: {{bearer_token}}
+  Authorization: {{bearerToken}}
   X-Pillar2-Id: {{testPlrId}}
   Accept: application/vnd.hmrc.1.0+json
 }

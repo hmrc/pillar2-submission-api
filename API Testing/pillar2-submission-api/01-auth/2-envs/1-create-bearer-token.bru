@@ -27,7 +27,7 @@ assert {
 
 script:pre-request {
   if (!bru.getEnvVar("clientId")) {
-    throw new Error('Please set the value of "clientId" in the environment configuration.');
+    throw new Error('Please set the value of "clientId" in the environment configuration (Developer Hub.');
   }
   
   if (!bru.getEnvVar("clientSecret")) {
@@ -36,5 +36,5 @@ script:pre-request {
 }
 
 script:post-response {
-  bru.setEnvVar("accessToken", res.body.access_token)
+  bru.setEnvVar("applicationToken", res.body.access_token)
 }

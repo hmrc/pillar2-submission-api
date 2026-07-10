@@ -1,7 +1,7 @@
 meta {
   name: Update Organisation
   type: http
-  seq: 4
+  seq: 6
 }
 
 put {
@@ -11,8 +11,8 @@ put {
 }
 
 headers {
+  Authorization: {{bearerToken}}
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearer_token}}
 }
 
 body:json {
@@ -30,4 +30,12 @@ body:json {
       "accountActivityScenario": "DTT_CHARGE"
     }
   }
+}
+
+assert {
+  res.status: eq 200
+  res.body.pillar2Id: eq {{testPlrId}}
+  res.body.organisation: isNotEmpty
+  res.body.organisation.orgDetails.organisationName: eq "Updated Test Organisation Ltd"
+  res.body.organisation.accountingPeriod: isNotEmpty
 }

@@ -165,8 +165,8 @@ For deployed environments, you need to perform the full OAuth flow:
 
 1. Open `01-auth/envs/Exchange auth code`
 2. Paste the code into the request body
-3. Run the request - the script saves `bearer_token` and `refresh_token` to environment variables
+3. Run the request - the script saves `bearerToken` and `refreshToken` to environment variables
 
 #### Step 4: Refresh Token (when expired)
 
-Run `01-auth/envs/Create Refresh Token` to generate a new `bearer_token` using the saved `refresh_token`.
+Run `01-auth/envs/Create Refresh Token` to generate a new `bearerToken` using the saved `refreshToken`.

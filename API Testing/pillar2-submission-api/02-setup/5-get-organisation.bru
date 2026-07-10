@@ -1,0 +1,23 @@
+meta {
+  name: Get Organisation
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{apiUrl}}/setup/organisation
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{bearerToken}}
+  X-Pillar2-Id: {{testPlrId}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.pillar2Id: eq {{testPlrId}}
+  res.body.organisation: isNotEmpty
+  res.body.organisation.accountingPeriod: isNotEmpty
+}

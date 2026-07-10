@@ -39,3 +39,4 @@ tmp
 .vscode/
 *.zip
 *.tar.gz
+node_modules/

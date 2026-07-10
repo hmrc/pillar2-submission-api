@@ -1,7 +1,7 @@
 meta {
   name: Create Organisation (Invalid Scenario)
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
@@ -11,8 +11,8 @@ post {
 }
 
 headers {
+  Authorization: {{bearerToken}}
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearer_token}}
 }
 
 body:json {
@@ -32,13 +32,9 @@ body:json {
   }
 }
 
-tests {
-  test("should return 400 Bad Request for invalid accountActivityScenario", function() {
-    expect(res.status).to.equal(400);
-  });
-  
-  test("response should contain INVALID_JSON error", function() {
-    var jsonData = res.getBody();
-    expect(jsonData.code).to.equal("INVALID_JSON");
-  });
+assert {
+  res.status: eq 400
+  res.body: isNotEmpty
+  res.body.code: eq "INVALID_JSON"
+  res.body.message: eq "Invalid JSON payload"
 }

@@ -11,7 +11,7 @@ get {
 }
 
 params:query {
-  clientId: {{clientId}}
+  client_id: {{clientId}}
   redirect_uri: urn:ietf:wg:oauth:2.0:oob
   scope: write:pillar2 read:pillar2
   response_type: code
@@ -20,13 +20,36 @@ params:query {
 }
 
 script:pre-request {
-  if (!bru.getEnvVar("testUserId")) {
-    throw new Error('"testUserId" not set. Run the "Create Test User" request first.');
+  const helpers = require('./_lib/helpers');
+  
+  const isQa = bru.getEnvVar('environment') === 'qa';
+  const ggUserId   = bru.getEnvVar('governmentGatewayId');
+  const ggPassword = bru.getEnvVar('governmentGatewayPassword');
+  
+  if (isQa) {
+    if (!ggUserId || !ggPassword) {
+      throw new Error('QA requires "governmentGatewayId" and "governmentGatewayPassword" env vars (your Government Gateway sign-in details).');
+    }
+  } else {
+    if (!bru.getEnvVar('testUserId'))      {
+      throw new Error('"testUserId" not set. Run the "Create Test User" request first.');
+    }
+    if (!bru.getEnvVar('testUserPassword')) {
+      throw new Error('"testUserPassword" not set. Run the "Create Test User" request first.');
+    }
+    if (!bru.getEnvVar('testPlrId')) {
+      throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
+    }
   }
-  if (!bru.getEnvVar("testUserPassword")) {
-    throw new Error('"testUserPassword" not set. Run the "Create Test User" request first.');
-  }
-  if (!bru.getEnvVar("testPlrId")) {
-    throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
-  }
+  
+  const code = await helpers.getAuthCode({
+    authCodeUrl: bru.getEnvVar('auth_code_url'),
+    clientId:    bru.getEnvVar('clientId'),
+    userId:      ggUserId   || bru.getEnvVar('testUserId'),
+    password:    ggPassword || bru.getEnvVar('testUserPassword'),
+    accessCode:  bru.getEnvVar('accessCode'),
+    headless:    bru.getEnvVar('headlessPlaywright') !== 'false',
+  });
+  
+  bru.setEnvVar('authCode', code);
 }

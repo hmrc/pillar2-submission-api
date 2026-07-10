@@ -1,7 +1,7 @@
 meta {
   name: Create Organisation (All Scenarios)
   type: http
-  seq: 4
+  seq: 3
 }
 
 post {
@@ -11,8 +11,8 @@ post {
 }
 
 headers {
+  Authorization: {{bearerToken}}
   X-Pillar2-Id: {{testPlrId}}
-  Authorization: {{bearer_token}}
 }
 
 body:json {

@@ -3,12 +3,18 @@ vars {
   url: https://api.qa.tax.service.gov.uk
   apiUrl: {{url}}/organisations/pillar-two
   auth_code_url: https://www.qa.tax.service.gov.uk
-  testUserId:
-  testUserPassword:
+  headlessPlaywright: false
+  accessCode: 123456
+  testPlrId: 
 }
 vars:secret [
+  clientId,
   clientSecret,
+  governmentGatewayId,
+  governmentGatewayPassword,
+  governmentGatewayPlrId,
   bearerToken,
   refreshToken,
-  appBearerToken
+  applicationToken,
+  authCode
 ]
