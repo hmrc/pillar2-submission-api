@@ -51,8 +51,7 @@ class DocumentationControllerISpec extends IntegrationSpecBase {
       (json \ "api" \ "versions" \ 0 \ "version").as[String] mustEqual "1.0"
       (json \ "api" \ "versions" \ 0 \ "status").as[String] mustEqual "BETA"
       (json \ "api" \ "versions" \ 0 \ "endpointsEnabled").as[Boolean] mustEqual true
-      (json \ "api" \ "versions" \ 0 \ "access" \ "type").as[String] mustEqual "PRIVATE"
-      (json \ "api" \ "versions" \ 0 \ "access" \ "isTrial").as[Boolean] mustEqual true
+      (json \ "api" \ "versions" \ 0 \ "access").as[String] mustEqual "CONTROLLED"
     }
 
     "return API documentation" when {
