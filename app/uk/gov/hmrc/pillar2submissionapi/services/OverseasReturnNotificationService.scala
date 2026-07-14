@@ -51,7 +51,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
         response.json.validate[ORNErrorResponse] match {
           case JsSuccess(response, _) => throw DownstreamValidationError(response.code, response.message)
           case JsError(_)             =>
-            logger.error("Failed to parse unprocessible entity response")
+            logger.error("Failed to parse unprocessable entity response")
             throw UnexpectedResponseError
         }
       case status =>
@@ -80,7 +80,7 @@ class OverseasReturnNotificationService @Inject() (connector: OverseasReturnNoti
               throw DownstreamValidationError(response.code, response.message)
             }
           case JsError(_) =>
-            logger.error("Failed to parse unprocessible entity response")
+            logger.error("Failed to parse unprocessable entity response")
             throw UnexpectedResponseError
         }
       case status =>
