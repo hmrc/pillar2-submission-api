@@ -38,13 +38,23 @@ class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClien
 
   def submitUKTR(uktrSubmission: UKTRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling pillar2 backend: $uktrSubmissionUrl")
-    val request = http.post(URI.create(uktrSubmissionUrl).toURL()).withBody(Json.toJson(uktrSubmission))
-    request.execute[HttpResponse]
+    val request = http.post(URI.create(uktrSubmissionUrl).toURL).withBody(Json.toJson(uktrSubmission))
+    request
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to submit UKTR", exception)
+        Future.failed(exception)
+      }
   }
 
   def amendUKTR(uktrSubmission: UKTRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
     logger.info(s"Calling pillar2 backend: $uktrAmendmentUrl")
-    val request = http.put(URI.create(uktrAmendmentUrl).toURL()).withBody(Json.toJson(uktrSubmission))
-    request.execute[HttpResponse]
+    val request = http.put(URI.create(uktrAmendmentUrl).toURL).withBody(Json.toJson(uktrSubmission))
+    request
+      .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to amend UKTR", exception)
+        Future.failed(exception)
+      }
   }
 }

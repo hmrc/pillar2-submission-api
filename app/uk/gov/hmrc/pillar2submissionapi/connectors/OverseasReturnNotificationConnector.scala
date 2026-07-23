@@ -44,6 +44,10 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .post(URI.create(ORNSubmitUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to submit ORN", exception)
+        Future.failed(exception)
+      }
   }
 
   def amendORN(ORNSubmission: ORNSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -52,6 +56,10 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
       .put(URI.create(ORNAmendUrl).toURL)
       .withBody(Json.toJson(ORNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to amend ORN", exception)
+        Future.failed(exception)
+      }
   }
 
   def retrieveORN(accountingPeriodFrom: String, accountingPeriodTo: String)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -60,5 +68,9 @@ class OverseasReturnNotificationConnector @Inject() (val config: AppConfig, val 
     http
       .get(URI.create(url).toURL)
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve ORN", exception)
+        Future.failed(exception)
+      }
   }
 }

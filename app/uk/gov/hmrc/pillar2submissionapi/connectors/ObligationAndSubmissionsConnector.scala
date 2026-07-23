@@ -36,5 +36,9 @@ class ObligationAndSubmissionsConnector @Inject() (val config: AppConfig, val ht
     http
       .get(url"$url")
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve Obligations and Submissions from downstream systems", exception)
+        Future.failed(exception)
+      }
   }
 }

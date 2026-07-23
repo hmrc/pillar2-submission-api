@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.controllers.obligationsandsubmissions
 
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,7 +38,8 @@ class ObligationsAndSubmissionsController @Inject() (
   pillar2IdAction:                 Pillar2IdHeaderExistsAction,
   obligationAndSubmissionsService: ObligationsAndSubmissionsService
 )(using ec: ExecutionContext)
-    extends BackendController(cc) {
+    extends BackendController(cc)
+    with Logging {
 
   def retrieveData(fromDate: String, toDate: String): Action[AnyContent] = (pillar2IdAction andThen identify).async { request =>
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request).withExtraHeaders("X-Pillar2-Id" -> request.clientPillar2Id)
@@ -50,5 +52,9 @@ class ObligationsAndSubmissionsController @Inject() (
           .map(response => Ok(Json.toJson(response)))
       } else { Future.failed(InvalidDateRangeError) }
     }.getOrElse(Future.failed(InvalidDateFormatError))
+      .recoverWith { case exception =>
+        logger.error("Failed to retrieve Obligations and Submissions", exception)
+        Future.failed(exception)
+      }
   }
 }

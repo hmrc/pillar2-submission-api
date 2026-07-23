@@ -45,6 +45,10 @@ class GIRConnector @Inject() (
       .post(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to create GIR", exception)
+        Future.failed(exception)
+      }
   }
 
   def amendGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -54,6 +58,10 @@ class GIRConnector @Inject() (
       .put(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to amend GIR", exception)
+        Future.failed(exception)
+      }
   }
 
   def deleteGIR(request: GIRSubmission)(using hc: HeaderCarrier): Future[HttpResponse] = {
@@ -63,6 +71,10 @@ class GIRConnector @Inject() (
       .delete(URI.create(globeInformationReturnUrl).toURL)
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to delete GIR", exception)
+        Future.failed(exception)
+      }
   }
 
 }

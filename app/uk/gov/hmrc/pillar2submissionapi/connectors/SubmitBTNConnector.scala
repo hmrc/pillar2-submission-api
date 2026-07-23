@@ -41,5 +41,9 @@ class SubmitBTNConnector @Inject() (val config: AppConfig, val http: HttpClientV
       .post(URI.create(BTNSubmissionUrl).toURL)
       .withBody(Json.toJson(BTNSubmission))
       .execute[HttpResponse]
+      .recoverWith { case exception =>
+        logger.error("Failed to submit BTN", exception)
+        Future.failed(exception)
+      }
   }
 }

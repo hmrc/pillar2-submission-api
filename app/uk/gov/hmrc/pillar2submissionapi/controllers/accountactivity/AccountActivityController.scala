@@ -61,6 +61,10 @@ class AccountActivityController @Inject() (
                 }
             }
         )
+        .recoverWith { case exception =>
+          logger.error("Failed to retrieve account activity", exception)
+          Future.failed(exception)
+        }
 
     }
 }
