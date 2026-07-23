@@ -53,13 +53,13 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
             .validate[SubscriptionSuccess]
             .fold(
               errors => {
-                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V1) response: $errors")
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription response: $errors")
                 Left(BadRequest)
               },
               parsedSubscriptionSuccess => Right(parsedSubscriptionSuccess.success)
             )
         case resp =>
-          logger.warn(s"Connection issue when calling read subscription (V1) with status: ${resp.status}")
+          logger.warn(s"Connection issue when calling read subscription with status: ${resp.status}")
           Left(BadRequest)
       }
       .recoverWith { case exception =>
@@ -81,7 +81,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
             .validate[SubscriptionSuccessV2]
             .fold(
               errors => {
-                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V2) response: $errors")
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription response: $errors")
                 Left(BadRequest)
               },
               parsedSubscriptionSuccessV2 => Right(parsedSubscriptionSuccessV2.success)
