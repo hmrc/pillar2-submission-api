@@ -53,7 +53,7 @@ class ObligationsAndSubmissionsController @Inject() (
       } else { Future.failed(InvalidDateRangeError) }
     }.getOrElse(Future.failed(InvalidDateFormatError))
       .recoverWith { case exception =>
-        logger.error("Failed to retrieve Obligations and Submissions", exception)
+        logger.error(s"Failed to retrieve Obligations and Submissions for plrReference ${request.clientPillar2Id}", exception)
         Future.failed(exception)
       }
   }

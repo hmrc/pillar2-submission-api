@@ -62,7 +62,7 @@ class AccountActivityController @Inject() (
             }
         )
         .recoverWith { case exception =>
-          logger.error("Failed to retrieve account activity", exception)
+          logger.error(s"Failed to retrieve account activity for plrReference ${request.clientPillar2Id}", exception)
           Future.failed(exception)
         }
 
