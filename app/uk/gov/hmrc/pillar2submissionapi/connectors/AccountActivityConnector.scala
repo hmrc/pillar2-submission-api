@@ -32,7 +32,7 @@ class AccountActivityConnector @Inject() (config: AppConfig, httpClient: HttpCli
     val url = url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/account-activity?fromDate=$fromDate&toDate=$toDate"
 
     httpClient.get(url).execute[HttpResponse].recoverWith { case exception =>
-      logger.error("Failed to retrieve account activity", exception)
+      logger.error("[AccountActivityConnector] Failed to retrieve account activity", exception)
       Future.failed(exception)
     }
   }

@@ -55,14 +55,14 @@ class AccountActivityController @Inject() (
                 .value
                 .flatMap {
                   case Left(error) =>
-                    logger.warn(s"Encountered $error while fetching account activity.")
+                    logger.warn(s"[AccountActivityController] Encountered $error while fetching account activity.")
                     Future.failed(error)
                   case Right(accountActivity) => Future.successful(Ok(Json.toJson(accountActivity)))
                 }
             }
         )
         .recoverWith { case exception =>
-          logger.error(s"Failed to retrieve account activity for plrReference ${request.clientPillar2Id}", exception)
+          logger.error(s"[AccountActivityController] Failed to retrieve account activity for plrReference ${request.clientPillar2Id}", exception)
           Future.failed(exception)
         }
 

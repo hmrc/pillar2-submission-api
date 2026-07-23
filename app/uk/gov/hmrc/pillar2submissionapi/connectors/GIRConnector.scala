@@ -46,7 +46,7 @@ class GIRConnector @Inject() (
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
       .recoverWith { case exception =>
-        logger.error("Failed to create GIR", exception)
+        logger.error("[GIRConnector] Failed to create GIR", exception)
         Future.failed(exception)
       }
   }
@@ -59,7 +59,7 @@ class GIRConnector @Inject() (
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
       .recoverWith { case exception =>
-        logger.error("Failed to amend GIR", exception)
+        logger.error("[GIRConnector] Failed to amend GIR", exception)
         Future.failed(exception)
       }
   }
@@ -72,7 +72,7 @@ class GIRConnector @Inject() (
       .withBody(Json.toJson(request))
       .execute[HttpResponse]
       .recoverWith { case exception =>
-        logger.error("Failed to delete GIR", exception)
+        logger.error("[GIRConnector] Failed to delete GIR", exception)
         Future.failed(exception)
       }
   }

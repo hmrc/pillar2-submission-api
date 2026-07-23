@@ -52,7 +52,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
             .validate[SubscriptionSuccess]
             .fold(
               errors => {
-                logger.warn(s"Failed to parse read subscription (V1) response: $errors")
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V1) response: $errors")
                 Left(BadRequest)
               },
               parsedSubscriptionSuccess => Right(parsedSubscriptionSuccess.success)
@@ -62,7 +62,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
           Left(BadRequest)
       }
       .recoverWith { case exception =>
-        logger.error("Failed to read subscription data", exception)
+        logger.error("[SubscriptionConnector] Failed to read subscription data", exception)
         Future.failed(exception)
       }
   }
@@ -80,17 +80,17 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
             .validate[SubscriptionSuccessV2]
             .fold(
               errors => {
-                logger.warn(s"Failed to parse read subscription (V2) response: $errors")
+                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription (V2) response: $errors")
                 Left(BadRequest)
               },
               parsedSubscriptionSuccessV2 => Right(parsedSubscriptionSuccessV2.success)
             )
         case resp =>
-          logger.warn(s"Connection issue when calling read subscription (V2) with status: ${resp.status}")
+          logger.warn(s"[SubscriptionConnector] Connection issue when calling read subscription (V2) with status: ${resp.status}")
           Left(BadRequest)
       }
       .recoverWith { case exception =>
-        logger.error("Failed to read subscription data (V2)", exception)
+        logger.error("[SubscriptionConnector] Failed to read subscription data (V2)", exception)
         Future.failed(exception)
       }
   }

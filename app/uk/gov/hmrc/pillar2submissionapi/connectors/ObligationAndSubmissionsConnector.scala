@@ -37,7 +37,7 @@ class ObligationAndSubmissionsConnector @Inject() (val config: AppConfig, val ht
       .get(url"$url")
       .execute[HttpResponse]
       .recoverWith { case exception =>
-        logger.error("Failed to retrieve Obligations and Submissions", exception)
+        logger.error("[ObligationAndSubmissionsConnector] Failed to retrieve Obligations and Submissions", exception)
         Future.failed(exception)
       }
   }
