@@ -24,6 +24,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.UKTRSubmission
 
 import java.net.URI
@@ -43,7 +44,7 @@ class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClien
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[UKTaxReturnConnector] Failed to submit UKTR", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -54,7 +55,7 @@ class UKTaxReturnConnector @Inject() (val config: AppConfig, val http: HttpClien
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[UKTaxReturnConnector] Failed to amend UKTR", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 }

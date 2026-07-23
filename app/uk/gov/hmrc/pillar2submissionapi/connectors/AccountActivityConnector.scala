@@ -21,6 +21,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class AccountActivityConnector @Inject() (config: AppConfig, httpClient: HttpCli
 
     httpClient.get(url).execute[HttpResponse].recoverWith { case exception =>
       logger.error("[AccountActivityConnector] Failed to retrieve account activity", exception)
-      Future.failed(exception)
+      Future.failed(UnexpectedResponseError)
     }
   }
 

@@ -21,6 +21,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -38,7 +39,7 @@ class ObligationAndSubmissionsConnector @Inject() (val config: AppConfig, val ht
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[ObligationAndSubmissionsConnector] Failed to retrieve Obligations and Submissions", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 }

@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.GIRSubmission
 
 import java.net.URI
@@ -47,7 +48,7 @@ class GIRConnector @Inject() (
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[GIRConnector] Failed to create GIR", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -60,7 +61,7 @@ class GIRConnector @Inject() (
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[GIRConnector] Failed to amend GIR", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -73,7 +74,7 @@ class GIRConnector @Inject() (
       .execute[HttpResponse]
       .recoverWith { case exception =>
         logger.error("[GIRConnector] Failed to delete GIR", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 

@@ -57,7 +57,7 @@ class TestOrganisationConnector @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[TestOrganisationConnector] Failed to create test organisation", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -79,7 +79,7 @@ class TestOrganisationConnector @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[TestOrganisationConnector] Failed to retrieve test organisation", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -103,7 +103,7 @@ class TestOrganisationConnector @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("Failed to update test organisation", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -126,7 +126,7 @@ class TestOrganisationConnector @Inject() (
       }
       .recoverWith { case exception =>
         logger.error("[TestOrganisationConnector] Failed to delete test organisation", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 }

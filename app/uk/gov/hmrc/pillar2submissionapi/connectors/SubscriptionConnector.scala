@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.*
 
 import java.net.URI
@@ -63,7 +64,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
       }
       .recoverWith { case exception =>
         logger.error("[SubscriptionConnector] Failed to read subscription data", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -91,7 +92,7 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
       }
       .recoverWith { case exception =>
         logger.error("[SubscriptionConnector] Failed to read subscription data (V2)", exception)
-        Future.failed(exception)
+        Future.failed(UnexpectedResponseError)
       }
   }
 
