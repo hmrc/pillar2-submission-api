@@ -18,28 +18,17 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionDataV2(
-                                     formBundleNumber:         String,
-                                     upeDetails:               UpeDetails,
-                                     upeCorrespAddressDetails: UpeCorrespAddressDetails,
-                                     primaryContactDetails:    ContactDetailsType,
-                                     secondaryContactDetails:  Option[ContactDetailsType],
-                                     filingMemberDetails:      Option[FilingMemberDetails],
-                                     accountingPeriod:         Option[Seq[AccountingPeriodDisplay]],
-                                     accountStatus:            Option[AccountStatus]
+final case class SubscriptionDataDisplay(
+  formBundleNumber:         String,
+  upeDetails:               UpeDetails,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberDetails],
+  accountingPeriod:         Option[Seq[AccountingPeriodDisplay]],
+  accountStatus:            Option[AccountStatus]
 )
 
-//final case class SubscriptionDataDisplay(
-//  formBundleNumber:         String,
-//  upeDetails:               UpeDetails,
-//  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-//  primaryContactDetails:    ContactDetailsType,
-//  secondaryContactDetails:  Option[ContactDetailsType],
-//  filingMemberDetails:      Option[FilingMemberDetails],
-//  accountingPeriod:         Option[Seq[AccountingPeriodDisplay]],
-//  accountStatus:            Option[AccountStatus]
-//)
-
-object SubscriptionDataV2 {
-  given format: OFormat[SubscriptionDataV2] = Json.format[SubscriptionDataV2]
+object SubscriptionDataDisplay {
+  given format: OFormat[SubscriptionDataDisplay] = Json.format[SubscriptionDataDisplay]
 }

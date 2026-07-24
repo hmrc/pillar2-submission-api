@@ -23,8 +23,7 @@ import java.time.LocalDate
 
 trait SubscriptionDataFixture {
 
-  val readSubscriptionPath   = "/report-pillar2-top-up-taxes/subscription/read-subscription"
-  val readSubscriptionV2Path = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
 
   private val accountingPeriodStartDate: LocalDate = LocalDate.of(2024, 1, 6)
   private val accountingPeriodEndDate:   LocalDate = accountingPeriodStartDate.plusYears(1)
@@ -58,23 +57,8 @@ trait SubscriptionDataFixture {
       emailAddress = "primary.contact@example.com"
     )
 
-  val subscriptionData: SubscriptionData =
-    SubscriptionData(
-      formBundleNumber = "123456789012",
-      upeDetails = upeDetails,
-      upeCorrespAddressDetails = upeCorrespondenceAddress,
-      primaryContactDetails = contactDetails,
-      secondaryContactDetails = None,
-      filingMemberDetails = None,
-      accountingPeriod = AccountingPeriod(
-        startDate = accountingPeriodStartDate,
-        endDate = accountingPeriodEndDate
-      ),
-      accountStatus = Some(AccountStatus(false))
-    )
-
-  val subscriptionDataV2: SubscriptionDataV2 =
-    SubscriptionDataV2(
+  val subscriptionData: SubscriptionDataDisplay =
+    SubscriptionDataDisplay(
       formBundleNumber = "123456789012",
       upeDetails = upeDetails,
       upeCorrespAddressDetails = upeCorrespondenceAddress,
@@ -83,7 +67,7 @@ trait SubscriptionDataFixture {
       filingMemberDetails = None,
       accountingPeriod = Some(
         Seq(
-          AccountingPeriodV2(
+          AccountingPeriodDisplay(
             startDate = Some(accountingPeriodStartDate),
             endDate = Some(accountingPeriodEndDate),
             dueDate = Some(accountingPeriodDueDate),
@@ -164,6 +148,7 @@ trait SubscriptionDataFixture {
       |}""".stripMargin
   )
 
-  val subscriptionSuccessJson:   JsValue = Json.toJson(SubscriptionSuccess(subscriptionData))
-  val subscriptionSuccessV2Json: JsValue = Json.toJson(SubscriptionSuccessV2(subscriptionDataV2))
+  val subscriptionSuccessJson: JsValue = Json.toJson(SubscriptionDisplayResponse(subscriptionData))
+
+  val invalidSubscriptionJson: JsValue = Json.obj("invalidField" -> "invalidValue")
 }

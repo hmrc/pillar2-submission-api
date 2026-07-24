@@ -18,10 +18,10 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class SubscriptionSuccessV2(
+final case class SubscriptionDisplayResponse(
   success: SubscriptionDataDisplay
 )
 
-object SubscriptionSuccessV2 {
-  given format: OFormat[SubscriptionSuccessV2] = Json.format[SubscriptionSuccessV2]
+object SubscriptionDisplayResponse {
+  given format: OFormat[SubscriptionDisplayResponse] = Json.format[SubscriptionDisplayResponse]
 }

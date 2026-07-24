@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.Application
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
@@ -46,7 +45,7 @@ import java.time.ZonedDateTime
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
+class BTNSubmissionISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider:    HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:      HttpClientV2         = provider.get()
@@ -56,15 +55,8 @@ trait BTNSubmissionBehaviours extends IntegrationSpecBase with OptionValues {
 
   private val submitUrl = "/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
-  def getSubscriptionStub: StubMapping = {
-    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
-
-    if v2Enabled then {
-      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
-    } else {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
-    }
-  }
+  def getSubscriptionStub: StubMapping =
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
 
   "BTNSubmissionController" when {
     "submitBTN as a organisation" must {
@@ -232,16 +224,4 @@ object BTNSubmissionISpec {
                  |  "extraField1": "value1",
                  |  "extraField1": "value2"
                  |}""".stripMargin)
-}
-
-class BTNSubmissionV1ISpec extends BTNSubmissionBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
-      .build()
-}
-
-class BTNSubmissionV2ISpec extends BTNSubmissionBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
-      .build()
 }

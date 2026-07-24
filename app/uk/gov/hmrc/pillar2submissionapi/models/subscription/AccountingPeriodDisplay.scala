@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-final case class AccountingPeriodV2(
+final case class AccountingPeriodDisplay(
   startDate:         Option[LocalDate] = None,
   endDate:           Option[LocalDate] = None,
   dueDate:           Option[LocalDate] = None,
@@ -28,6 +28,6 @@ final case class AccountingPeriodV2(
   canAmendEndDate:   Option[Boolean] = Some(false)
 )
 
-object AccountingPeriodV2 {
-  given format: OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+object AccountingPeriodDisplay {
+  given format: OFormat[AccountingPeriodDisplay] = Json.format[AccountingPeriodDisplay]
 }

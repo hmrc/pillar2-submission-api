@@ -18,7 +18,6 @@ package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
@@ -27,81 +26,42 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""
 
-  "readSubscription" when {
-    "readSubscriptionV2Enabled is false" must {
-      "return SubscriptionData (V1) when the backend responds 200 with valid JSON" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> false).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+  "readSubscription" must {
+    "return SubscriptionData when the backend responds 200 with valid JSON" in {
+      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
+      val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
-        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
+      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
 
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
+      val result = subscriptionConnector.readSubscription(plrReference).futureValue
 
-        result.isRight mustBe true
-        result.value mustBe subscriptionData
-      }
-
-      "return a BadRequest when the backend responds 200 but with invalid JSON" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> false).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-
-        stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
-
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
-
-      "return a BadRequest when the backend responses with a non-200 status" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> false).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-
-        stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
-
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
+      result.isRight mustBe true
+      result.value mustBe subscriptionData
     }
 
-    "readSubscriptionV2Enabled is true" must {
-      "return SubscriptionData (V2) when the backend responds 200 with valid JSON" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+    "return a BadRequest when the backend responds 200 but with invalid JSON" in {
+      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
+      val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
-        stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
+      stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
 
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
+      val result = subscriptionConnector.readSubscription(plrReference).futureValue
 
-        result.isRight mustBe true
-        result.value mustBe subscriptionDataV2
-      }
-
-      "return a BadRequest when the backend responds 200 but with invalid JSON" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-
-        stubGet(s"$readSubscriptionV2Path/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
-
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
-
-      "return a BadRequest when the backend responses with a non-200 status" in {
-        val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
-        val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
-
-        stubGet(s"$readSubscriptionV2Path/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
-
-        val result = subscriptionConnector.readSubscription(plrReference).futureValue
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
+      result.isLeft mustBe true
+      result mustBe Left(BadRequest)
     }
+
+    "return a BadRequest when the backend responses with a non-200 status" in {
+      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
+      val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
+
+      stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
+
+      val result = subscriptionConnector.readSubscription(plrReference).futureValue
+
+      result.isLeft mustBe true
+      result mustBe Left(BadRequest)
+    }
+    
   }
 }

@@ -17,11 +17,11 @@
 package uk.gov.hmrc.pillar2submissionapi.models.requests
 
 import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionRead
+import uk.gov.hmrc.pillar2submissionapi.models.subscription.SubscriptionDataDisplay
 
 case class SubscriptionDataRequest[A](
   request:          Request[A],
   userId:           String,
   clientPillar2Id:  String,
-  subscriptionData: SubscriptionRead
+  subscriptionData: SubscriptionDataDisplay
 ) extends WrappedRequest[A](request)

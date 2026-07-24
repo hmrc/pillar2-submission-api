@@ -56,15 +56,8 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
   def requestWithBodyAsAgent(body: JsValue = validLiabilityReturn): RequestBuilder =
     client.post(URI.create(str).toURL).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken").withBody(body)
 
-  def getSubscriptionStub: StubMapping = {
-    val v2Enabled = app.configuration.getOptional[Boolean]("features.readSubscriptionV2Enabled").getOrElse(false)
-
-    if v2Enabled then {
-      stubGet(s"$readSubscriptionV2Path/$plrReference", OK, subscriptionSuccessV2Json.toString)
-    } else {
-      stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
-    }
-  }
+  def getSubscriptionStub: StubMapping =
+    stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
 
   private val submitUrl = "/report-pillar2-top-up-taxes/submit-uk-tax-return"
   private val amendUrl  = "/report-pillar2-top-up-taxes/amend-uk-tax-return"

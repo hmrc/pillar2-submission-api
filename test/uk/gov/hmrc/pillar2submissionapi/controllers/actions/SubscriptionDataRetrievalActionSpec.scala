@@ -38,9 +38,9 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
 
   "Subscription Data Retrieval Action" when {
     "the connector returns Right" must {
-      "build a SubscriptionData object (V1 shape) and add it to the request" in {
+      "build a SubscriptionData object and add it to the request" in {
         when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future(Right(subscriptionData)))
+          .thenReturn(Future.successful(Right(subscriptionData)))
 
         val action = new Harness(mockSubscriptionConnector)
 
@@ -49,19 +49,6 @@ class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with Subscripti
           .futureValue
 
         result.subscriptionData mustBe subscriptionData
-      }
-
-      "build a SubscriptionData object (V2 shape) and add it to the request" in {
-        when(mockSubscriptionConnector.readSubscription(any[String]())(using any[HeaderCarrier](), any[ExecutionContext]()))
-          .thenReturn(Future.successful(Right(subscriptionDataV2)))
-
-        val action = new Harness(mockSubscriptionConnector)
-
-        val result = action
-          .callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = "pillar2Id"))
-          .futureValue
-
-        result.subscriptionData mustBe subscriptionDataV2
       }
     }
 

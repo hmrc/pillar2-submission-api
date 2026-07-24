@@ -16,8 +16,7 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.http.Fault
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -26,156 +25,78 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
-class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFixture {
-
-  lazy val v1App: Application = new GuiceApplicationBuilder()
-    .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
-    .configure("features.readSubscriptionV2Enabled" -> false)
-    .build()
+class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFixtures {
 
   lazy val v2App: Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
-    .configure("features.readSubscriptionV2Enabled" -> true)
     .build()
 
-  lazy val subscriptionConnectorV1: SubscriptionConnector = v1App.injector.instanceOf[SubscriptionConnector]
   lazy val subscriptionConnectorV2: SubscriptionConnector = v2App.injector.instanceOf[SubscriptionConnector]
 
   private val plrReference = "XAPLR0000000001"
 
-  private val readSubscriptionUrl   = s"$readSubscriptionPath/$plrReference"
-  private val readSubscriptionV2Url = s"$readSubscriptionV2Path/$plrReference"
+  private val readSubscriptionUrl = s"$readSubscriptionPath/$plrReference"
 
   private val invalidSubscriptionJson: JsObject = JsObject.empty
 
-  "SubscriptionConnector.readSubscription" when {
+  "SubscriptionConnector.readSubscription" must {
+    "forward the X-Pillar2-Id header" in {
+      given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
+      stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
 
-    "readSubscriptionV2Enabled is false" must {
-      "verify the test application configuration has the V2 feature disabled" in {
-        v1App.configuration.get[Boolean]("features.readSubscriptionV2Enabled") mustBe false
-      }
+      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
 
-      "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
-
-        val result = await(subscriptionConnectorV1.readSubscription(plrReference))
-
-        result.isRight mustBe true
-        server.verify(
-          getRequestedFor(urlEqualTo(readSubscriptionUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
-        )
-      }
-
-      "return json when the backend has returned 200 OK with data" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
-
-        val result = await(subscriptionConnectorV1.readSubscription(plrReference))
-
-        result.isRight mustBe true
-        result mustBe Right(subscriptionData)
-
-        server.verify(
-          getRequestedFor(urlEqualTo(readSubscriptionUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
-        )
-      }
-
-      "return BadRequest when ETMP returns 200 with an unparseable body" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, invalidSubscriptionJson)
-
-        await(subscriptionConnectorV1.readSubscription(plrReference)) mustBe Left(BadRequest)
-      }
-
-      "return BadRequest when ETMP returns non-200" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionUrl, BAD_REQUEST, invalidSubscriptionJson)
-
-        val result = await(subscriptionConnectorV1.readSubscription(plrReference))
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
-
-      "return UnexpectedResponseError when the request fails" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-
-        server.stubFor(
-          get(urlEqualTo(readSubscriptionUrl))
-            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
-        )
-
-        val result = await(subscriptionConnectorV1.readSubscription(plrReference).failed)
-
-        result should be(UnexpectedResponseError)
-      }
+      result.isRight mustBe true
+      server.verify(
+        getRequestedFor(urlEqualTo(readSubscriptionUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
+      )
     }
 
-    "readSubscriptionV2Enabled is true" must {
+    "return json when the backend has returned 200 OK with data" in {
+      given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
+      stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
 
-      "verify the test application configuration has the V2 feature enabled" in {
-        v2App.configuration.get[Boolean]("features.readSubscriptionV2Enabled") mustBe true
-      }
+      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
 
-      "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionV2Url, OK, subscriptionSuccessV2Json)
+      result.isRight mustBe true
+      result mustBe Right(subscriptionData)
 
-        val result = await(subscriptionConnectorV2.readSubscription(plrReference))
+      server.verify(
+        getRequestedFor(urlEqualTo(readSubscriptionUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
+      )
+    }
 
-        result.isRight mustBe true
-        server.verify(
-          getRequestedFor(urlEqualTo(readSubscriptionV2Url)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
-        )
-      }
+    "return BadRequest ETMP returns non-parseable JSON" in {
+      given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
+      stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, invalidSubscriptionJson)
 
-      "return json when the backend has returned 200 OK with data" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionV2Url, OK, subscriptionSuccessV2Json)
+      await(subscriptionConnectorV2.readSubscription(plrReference)) mustBe Left(BadRequest)
+    }
 
-        val result = await(subscriptionConnectorV2.readSubscription(plrReference))
+    "return BadRequest when ETMP returns non-200" in {
+      given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
+      stubRequestWithPillar2Id("GET", readSubscriptionUrl, BAD_REQUEST, invalidSubscriptionJson)
 
-        result.isRight mustBe true
-        result mustBe Right(subscriptionDataV2)
+      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
 
-        server.verify(
-          getRequestedFor(urlEqualTo(readSubscriptionV2Url)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
-        )
-      }
+      result.isLeft mustBe true
+      result mustBe Left(BadRequest)
+    }
 
-      "return BadRequest when V2 is enabled but ETMP returns a V1-shaped body" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionV2Url, OK, subscriptionSuccessJson)
+    "return UnexpectedResponseError when the request fails" in {
+      given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
-        await(subscriptionConnectorV2.readSubscription(plrReference)) mustBe Left(BadRequest)
-      }
+      server.stubFor(
+        get(urlEqualTo(readSubscriptionV2Url))
+          .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+      )
 
-      "return BadRequest when ETMP returns non-200" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-        stubRequestWithPillar2Id("GET", readSubscriptionV2Url, BAD_REQUEST, invalidSubscriptionJson)
+      val result = await(subscriptionConnectorV2.readSubscription(plrReference).failed)
 
-        val result = await(subscriptionConnectorV2.readSubscription(plrReference))
-
-        result.isLeft mustBe true
-        result mustBe Left(BadRequest)
-      }
-
-      "return UnexpectedResponseError when the request fails" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
-
-        server.stubFor(
-          get(urlEqualTo(readSubscriptionV2Url))
-            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
-        )
-
-        val result = await(subscriptionConnectorV2.readSubscription(plrReference).failed)
-
-        result should be(UnexpectedResponseError)
-      }
+      result should be(UnexpectedResponseError)
     }
   }
 

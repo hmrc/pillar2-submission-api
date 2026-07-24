@@ -32,6 +32,5 @@ case class AppConfig @Inject() (servicesConfig: ServicesConfig) {
   lazy val testOnlyOasEnabled:          Boolean = servicesConfig.getBoolean("features.testOnlyOasEnabled")
   lazy val allowTestUsers:              Boolean = servicesConfig.getBoolean("features.allow-test-users")
   lazy val testOrganisationEnabled:     Boolean = servicesConfig.getBoolean("features.testOrganisationEnabled")
-  lazy val readSubscriptionV2Enabled:   Boolean = servicesConfig.getBoolean("features.readSubscriptionV2Enabled")
 
 }

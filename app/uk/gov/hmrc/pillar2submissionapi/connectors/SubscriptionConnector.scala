@@ -33,44 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClientV2) extends Logging {
 
-  def readSubscription(plrReference: String)(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionRead]] =
-    if config.readSubscriptionV2Enabled then {
-      readSubscriptionDataV2(plrReference)
-    } else {
-      readSubscriptionData(plrReference)
-    }
-
-  private def readSubscriptionData(
-    plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionData]] = {
-    val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
-    http
-      .get(URI.create(url).toURL)
-      .execute[HttpResponse]
-      .map {
-        case httpResponse if httpResponse.status == 200 =>
-          httpResponse.json
-            .validate[SubscriptionSuccess]
-            .fold(
-              errors => {
-                logger.warn(s"[SubscriptionConnector] Failed to parse read subscription response: $errors")
-                Left(BadRequest)
-              },
-              parsedSubscriptionSuccess => Right(parsedSubscriptionSuccess.success)
-            )
-        case resp =>
-          logger.warn(s"Connection issue when calling read subscription with status: ${resp.status}")
-          Left(BadRequest)
-      }
-      .recoverWith { case exception =>
-        logger.error("[SubscriptionConnector] Failed to read subscription data", exception)
-        Future.failed(UnexpectedResponseError)
-      }
-  }
-
-  private def readSubscriptionDataV2(
-    plrReference: String
-  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionDataV2]] = {
+  def readSubscription(plrReference: String)(using hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Result, SubscriptionDataDisplay]] =
     val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/v2/read-subscription/$plrReference"
     http
       .get(URI.create(url).toURL)
@@ -78,22 +41,21 @@ class SubscriptionConnector @Inject() (val config: AppConfig, val http: HttpClie
       .map {
         case httpResponse if httpResponse.status == 200 =>
           httpResponse.json
-            .validate[SubscriptionSuccessV2]
+            .validate[SubscriptionDisplayResponse]
             .fold(
               errors => {
                 logger.warn(s"[SubscriptionConnector] Failed to parse read subscription response: $errors")
                 Left(BadRequest)
               },
-              parsedSubscriptionSuccessV2 => Right(parsedSubscriptionSuccessV2.success)
+              subscriptionDisplayResponse => Right(subscriptionDisplayResponse.success)
             )
         case resp =>
-          logger.warn(s"[SubscriptionConnector] Connection issue when calling read subscription (V2) with status: ${resp.status}")
+          logger.warn(s"[SubscriptionConnector] Connection issue when calling read subscription with status: ${resp.status}")
           Left(BadRequest)
       }
       .recoverWith { case exception =>
-        logger.error("[SubscriptionConnector] Failed to read subscription data (V2)", exception)
+        logger.error("[SubscriptionConnector] Failed to read subscription data", exception)
         Future.failed(UnexpectedResponseError)
       }
-  }
 
 }
