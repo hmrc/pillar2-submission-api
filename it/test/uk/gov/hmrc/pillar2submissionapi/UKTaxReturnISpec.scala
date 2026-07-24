@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.OptionValues
-import play.api.Application
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
@@ -34,8 +33,8 @@ import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
+import uk.gov.hmrc.pillar2submissionapi.fixtures.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
-import uk.gov.hmrc.pillar2submissionapi.helpers.UKTRErrorCodes.INVALID_RETURN_093
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
 import uk.gov.hmrc.pillar2submissionapi.models.uktrsubmissions.responses.UKTRSubmitSuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.services.UKTRSubmitErrorResponse
@@ -45,7 +44,7 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
+class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
   lazy val provider: HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:   HttpClientV2         = provider.get()
@@ -459,16 +458,4 @@ trait UKTaxReturnBehaviours extends IntegrationSpecBase with OptionValues {
       }
     }
   }
-}
-
-class UKTaxReturnV1ISpec extends UKTaxReturnBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> false)
-      .build()
-}
-
-class UKTaxReturnV2ISpec extends UKTaxReturnBehaviours {
-  override lazy val app: Application =
-    guiceAppBuilder("features.readSubscriptionV2Enabled" -> true)
-      .build()
 }

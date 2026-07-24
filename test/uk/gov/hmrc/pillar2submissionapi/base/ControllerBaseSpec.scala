@@ -30,7 +30,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.*
-import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture}
+import uk.gov.hmrc.pillar2submissionapi.fixtures.{SubscriptionDataFixtures, UKTaxReturnDataFixtures}
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 import uk.gov.hmrc.pillar2submissionapi.services.*
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -38,7 +38,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixture with UKTaxReturnDataFixture {
+trait ControllerBaseSpec extends PlaySpec with Results with Matchers with MockitoSugar with SubscriptionDataFixtures with UKTaxReturnDataFixtures {
 
   given ec:                      ExecutionContext      = scala.concurrent.ExecutionContext.Implicits.global
   given system:                  ActorSystem           = ActorSystem()

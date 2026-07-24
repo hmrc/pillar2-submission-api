@@ -20,15 +20,14 @@ import org.scalatest.EitherValues
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.http.Status.{BAD_REQUEST, OK}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 
-class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDataFixture with EitherValues {
+class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDataFixtures with EitherValues {
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""
 
   "readSubscription" must {
     "return SubscriptionData when the backend responds 200 with valid JSON" in {
-      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
       val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
       stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccessJson.toString)
@@ -40,7 +39,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
     }
 
     "return a BadRequest when the backend responds 200 but with invalid JSON" in {
-      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
       val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
       stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)
@@ -52,7 +50,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
     }
 
     "return a BadRequest when the backend responses with a non-200 status" in {
-      // val app: Application = guiceAppBuilder("features.readSubscriptionV2Enabled" -> true).build()
       val subscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
       stubGet(s"$readSubscriptionPath/$plrReference", BAD_REQUEST, unsuccessfulResponseJson)

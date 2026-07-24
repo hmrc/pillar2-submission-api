@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.helpers
+package uk.gov.hmrc.pillar2submissionapi.fixtures
 
 import play.api.libs.json.*
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNRetrieveSuccessResponse, ORNSubmission, ORNSuccessResponse}
 
 import java.time.LocalDate
 
-trait ORNDataFixture {
+trait ORNDataFixtures {
 
   val ornRequestFixture: ORNSubmission = ORNSubmission(
     accountingPeriodFrom = LocalDate.now(),

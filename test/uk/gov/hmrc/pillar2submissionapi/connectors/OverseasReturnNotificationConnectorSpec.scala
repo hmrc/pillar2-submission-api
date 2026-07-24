@@ -26,10 +26,10 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 
-class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixture {
+class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixtures {
 
   lazy val ornConnector:          OverseasReturnNotificationConnector = app.injector.instanceOf[OverseasReturnNotificationConnector]
   override def fakeApplication(): Application                         = new GuiceApplicationBuilder()

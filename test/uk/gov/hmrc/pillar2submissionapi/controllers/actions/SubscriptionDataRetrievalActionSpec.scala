@@ -23,14 +23,14 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ActionBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.SubscriptionConnector
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.NoSubscriptionDataError
 import uk.gov.hmrc.pillar2submissionapi.models.requests.{IdentifierRequest, SubscriptionDataRequest}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixture {
+class SubscriptionDataRetrievalActionSpec extends ActionBaseSpec with SubscriptionDataFixtures {
 
   class Harness(subscriptionConnector: SubscriptionConnector) extends SubscriptionDataRetrievalActionImpl(subscriptionConnector)(using ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SubscriptionDataRequest[A]] = transform(request)

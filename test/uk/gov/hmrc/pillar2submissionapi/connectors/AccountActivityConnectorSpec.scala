@@ -25,10 +25,10 @@ import play.api.libs.json.Json
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
+import uk.gov.hmrc.pillar2submissionapi.fixtures.AccountActivityDataFixtures
 
-class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixture with ScalaFutures {
+class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixtures with ScalaFutures {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))

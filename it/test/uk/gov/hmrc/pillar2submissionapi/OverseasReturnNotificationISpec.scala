@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.OverseasReturnNotificationISpec.*
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.~
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNRetrieveSuccessResponse, ORNSuccessResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
@@ -42,7 +42,7 @@ import java.net.URI
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixture {
+class OverseasReturnNotificationISpec extends IntegrationSpecBase with OptionValues with ORNDataFixtures {
 
   lazy val provider:      HttpClientV2Provider = app.injector.instanceOf[HttpClientV2Provider]
   lazy val client:        HttpClientV2         = provider.get()

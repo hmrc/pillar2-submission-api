@@ -90,7 +90,7 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
       given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
       server.stubFor(
-        get(urlEqualTo(readSubscriptionV2Url))
+        get(urlEqualTo(readSubscriptionUrl))
           .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
       )
 

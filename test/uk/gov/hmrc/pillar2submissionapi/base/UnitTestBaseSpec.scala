@@ -29,7 +29,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.connectors.*
-import uk.gov.hmrc.pillar2submissionapi.helpers.{UKTaxReturnDataFixture, WireMockServerHandler}
+import uk.gov.hmrc.pillar2submissionapi.fixtures.UKTaxReturnDataFixtures
+import uk.gov.hmrc.pillar2submissionapi.helpers.WireMockServerHandler
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -41,7 +42,7 @@ trait UnitTestBaseSpec
     with GuiceOneAppPerSuite
     with MockitoSugar
     with WireMockServerHandler
-    with UKTaxReturnDataFixture
+    with UKTaxReturnDataFixtures
     with HttpClientSupport {
 
   given cc:           ControllerComponents = stubControllerComponents()

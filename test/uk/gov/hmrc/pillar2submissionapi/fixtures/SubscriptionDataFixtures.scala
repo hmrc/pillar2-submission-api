@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.helpers
+package uk.gov.hmrc.pillar2submissionapi.fixtures
 
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.subscription.*
 
 import java.time.LocalDate
 
-trait SubscriptionDataFixture {
+trait SubscriptionDataFixtures {
 
   val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
 

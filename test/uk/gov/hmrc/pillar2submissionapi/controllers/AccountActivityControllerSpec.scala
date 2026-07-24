@@ -27,7 +27,7 @@ import play.api.test.Helpers.{contentAsJson, status, given}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.AccountActivityController
-import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.AccountActivityDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
@@ -35,7 +35,7 @@ import uk.gov.hmrc.pillar2submissionapi.services.AccountActivityService
 
 import scala.concurrent.Future
 
-class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActivityDataFixture {
+class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActivityDataFixtures {
 
   trait TestCase(result: Either[Pillar2Error, AccountActivitySuccessResponse]) {
     val mockAccountActivityService: AccountActivityService = {

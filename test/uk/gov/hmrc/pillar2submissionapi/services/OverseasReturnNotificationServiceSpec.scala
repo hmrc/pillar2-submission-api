@@ -23,13 +23,13 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.{ORNErrorResponse, ORNSubmission}
 
 import scala.concurrent.Future
 
-class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDataFixture {
+class OverseasReturnNotificationServiceSpec extends UnitTestBaseSpec with ORNDataFixtures {
 
   val ornService: OverseasReturnNotificationService = new OverseasReturnNotificationService(mockOverseasReturnNotificationConnector)
 

@@ -2580,7 +2580,7 @@ components:
       value:
         accountingPeriodFrom: "2024-01-01"
         accountingPeriodTo: "2024-12-31"
-    requests.DeleteTestGlobeInformationReturnRequestExample: # FIXME: why does the Delete have a request body???
+    requests.DeleteTestGlobeInformationReturnRequestExample:
       summary: "Request example"
       value:
         accountingPeriodFrom: "2024-01-01"

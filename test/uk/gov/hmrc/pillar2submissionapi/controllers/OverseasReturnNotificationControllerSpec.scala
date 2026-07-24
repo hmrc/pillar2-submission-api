@@ -26,13 +26,13 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.ControllerBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.controllers.submission.OverseasReturnNotificationController
-import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.ORNDataFixtures
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{EmptyRequestBodyError, InvalidJsonError, MissingHeaderError}
 import uk.gov.hmrc.pillar2submissionapi.models.overseasreturnnotification.ORNSubmission
 
 import scala.concurrent.Future
 
-class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with ORNDataFixture {
+class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with ORNDataFixtures {
 
   val ornController: OverseasReturnNotificationController =
     new OverseasReturnNotificationController(

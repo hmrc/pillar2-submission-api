@@ -28,7 +28,8 @@ import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.pillar2submissionapi.base.IntegrationSpecBase
 import uk.gov.hmrc.pillar2submissionapi.controllers.accountactivity.routes
-import uk.gov.hmrc.pillar2submissionapi.helpers.{AccountActivityDataFixture, WireMockServerHandler}
+import uk.gov.hmrc.pillar2submissionapi.fixtures.AccountActivityDataFixtures
+import uk.gov.hmrc.pillar2submissionapi.helpers.WireMockServerHandler
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.AccountActivitySuccessResponse
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.{InvalidDateFormatError, InvalidDateRangeError, UnexpectedResponseError}
 import uk.gov.hmrc.pillar2submissionapi.models.response.Pillar2ErrorResponse
@@ -39,7 +40,7 @@ import java.net.URI
 class AccountActivityISpec
     extends IntegrationSpecBase
     with OptionValues
-    with AccountActivityDataFixture
+    with AccountActivityDataFixtures
     with WireMockServerHandler
     with ScalaCheckDrivenPropertyChecks
     with ScalaFutures

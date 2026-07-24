@@ -37,7 +37,8 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.HttpClientSupport
 import uk.gov.hmrc.pillar2submissionapi.base.TestAuthRetrievals.~
-import uk.gov.hmrc.pillar2submissionapi.helpers.{SubscriptionDataFixture, UKTaxReturnDataFixture, WireMockServerHandler}
+import uk.gov.hmrc.pillar2submissionapi.fixtures.{SubscriptionDataFixtures, UKTaxReturnDataFixtures}
+import uk.gov.hmrc.pillar2submissionapi.helpers.WireMockServerHandler
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,8 +51,8 @@ trait IntegrationSpecBase
     with WireMockServerHandler
     with HttpClientSupport
     with GuiceOneServerPerSuite
-    with SubscriptionDataFixture
-    with UKTaxReturnDataFixture
+    with SubscriptionDataFixtures
+    with UKTaxReturnDataFixtures
     with BeforeAndAfterEach {
 
   given system:       ActorSystem      = ActorSystem()

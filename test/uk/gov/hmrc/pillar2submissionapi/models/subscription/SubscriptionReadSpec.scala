@@ -19,11 +19,11 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsError, JsObject, Json}
-import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 
-class SubscriptionReadSpec extends AnyWordSpec with Matchers with SubscriptionDataFixture {
+class SubscriptionReadSpec extends AnyWordSpec with Matchers with SubscriptionDataFixtures {
 
-  "SubscriptionDataV2" must {
+  "SubscriptionDataDisplay" must {
     "successfully deserialise" when {
       "given a valid V2 payload (accountingPeriod as an array)" in {
         v2Json.as[SubscriptionDataDisplay] mustBe subscriptionData
@@ -34,6 +34,7 @@ class SubscriptionReadSpec extends AnyWordSpec with Matchers with SubscriptionDa
         withoutPeriods.as[SubscriptionDataDisplay].accountingPeriod mustBe None
       }
 
+      // TODO:
       "given a V2 payload with accountingPeriod empty array" in {
         val withEmptyPeriods = v2Json.as[JsObject] + ("accountingPeriod" -> Json.arr())
         withEmptyPeriods.as[SubscriptionDataDisplay].accountingPeriod mustBe Some(Seq.empty)

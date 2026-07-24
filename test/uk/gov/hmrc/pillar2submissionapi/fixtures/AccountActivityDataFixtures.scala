@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2submissionapi.helpers
+package uk.gov.hmrc.pillar2submissionapi.fixtures
 
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.pillar2submissionapi.models.accountactivity.{AccountActivityClearance, AccountActivitySuccessResponse, AccountActivityTransaction}
 
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 
-trait AccountActivityDataFixture {
+trait AccountActivityDataFixtures {
   val fromDate:      String    = "2024-01-01"
   val localDateFrom: LocalDate = LocalDate.parse(fromDate)
   val toDate:        String    = "2024-12-31"
