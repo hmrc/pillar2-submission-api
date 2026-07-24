@@ -59,10 +59,6 @@ class TestOrganisationConnector @Inject() (
             throw UnexpectedResponseError
         }
       }
-      .recoverWith { case exception =>
-        logger.error("[TestOrganisationConnector] Failed to create test organisation", exception)
-        Future.failed(UnexpectedResponseError)
-      }
   }
 
   def getTestOrganisation(pillar2Id: String)(using hc: HeaderCarrier): Future[TestOrganisationWithId] = {
@@ -84,10 +80,6 @@ class TestOrganisationConnector @Inject() (
             logger.warn(s"[TestOrganisationConnector] Unexpected response from get organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
-      }
-      .recoverWith { case exception =>
-        logger.error("[TestOrganisationConnector] Failed to retrieve test organisation", exception)
-        Future.failed(UnexpectedResponseError)
       }
   }
 
@@ -113,10 +105,6 @@ class TestOrganisationConnector @Inject() (
             throw UnexpectedResponseError
         }
       }
-      .recoverWith { case exception =>
-        logger.error("Failed to update test organisation", exception)
-        Future.failed(UnexpectedResponseError)
-      }
   }
 
   def deleteTestOrganisation(pillar2Id: String)(using hc: HeaderCarrier): Future[Unit] = {
@@ -139,10 +127,6 @@ class TestOrganisationConnector @Inject() (
             logger.warn(s"[TestOrganisationConnector] Unexpected response from delete organisation with status: ${response.status}")
             throw UnexpectedResponseError
         }
-      }
-      .recoverWith { case exception =>
-        logger.error("[TestOrganisationConnector] Failed to delete test organisation", exception)
-        Future.failed(UnexpectedResponseError)
       }
   }
 }
