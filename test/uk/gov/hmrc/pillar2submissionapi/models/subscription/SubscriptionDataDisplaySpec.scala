@@ -21,33 +21,32 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsError, JsObject, Json}
 import uk.gov.hmrc.pillar2submissionapi.fixtures.SubscriptionDataFixtures
 
-class SubscriptionReadSpec extends AnyWordSpec with Matchers with SubscriptionDataFixtures {
+class SubscriptionDataDisplaySpec extends AnyWordSpec with Matchers with SubscriptionDataFixtures {
 
   "SubscriptionDataDisplay" must {
     "successfully deserialise" when {
-      "given a valid V2 payload (accountingPeriod as an array)" in {
-        v2Json.as[SubscriptionDataDisplay] mustBe subscriptionData
+      "given a valid payload (accountingPeriod as an array)" in {
+        subscriptionDataDisplayJson.as[SubscriptionDataDisplay] mustBe subscriptionData
       }
 
-      "given a V2 payload with no accounting period" in {
-        val withoutPeriods = v2Json.as[JsObject] - "accountingPeriod"
+      "given a payload with no accounting period" in {
+        val withoutPeriods = subscriptionDataDisplayJson.as[JsObject] - "accountingPeriod"
         withoutPeriods.as[SubscriptionDataDisplay].accountingPeriod mustBe None
       }
 
-      // TODO:
-      "given a V2 payload with accountingPeriod empty array" in {
-        val withEmptyPeriods = v2Json.as[JsObject] + ("accountingPeriod" -> Json.arr())
+      "given a payload with accountingPeriod empty array" in {
+        val withEmptyPeriods = subscriptionDataDisplayJson.as[JsObject] + ("accountingPeriod" -> Json.arr())
         withEmptyPeriods.as[SubscriptionDataDisplay].accountingPeriod mustBe Some(Seq.empty)
       }
     }
 
     "successfully serialise" in {
-      Json.toJson(subscriptionData) mustBe v2Json
+      Json.toJson(subscriptionData) mustBe subscriptionDataDisplayJson
     }
 
     "fail to deserialise" when {
-      "given a V1 payload (accountingPeriod as a single object)" in {
-        v1Json.validate[SubscriptionDataDisplay] mustBe a[JsError]
+      "given a invalid payload" in {
+        invalidSubscriptionJson.validate[SubscriptionDataDisplay] mustBe a[JsError]
       }
     }
   }

@@ -75,7 +75,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
         server.verify(
           postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
@@ -93,7 +93,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody().execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -108,7 +108,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -151,7 +151,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(requestWithBody(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -254,7 +254,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
         val resultAsResponseModel = result.json.as[UKTRSubmitSuccessResponse]
 
         result.status mustBe CREATED
-        resultAsResponseModel.chargeReference.value mustEqual pillar2Id
+        resultAsResponseModel.chargeReference.value mustEqual testPillar2Id
         resultAsResponseModel.formBundleNumber mustEqual formBundleNumber
       }
     }
@@ -276,7 +276,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
         server.verify(
           putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(plrReference))
@@ -294,7 +294,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -309,7 +309,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(validNilReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -340,7 +340,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
 
         val result = Await.result(amendRequest(liabilityReturnDuplicateFields).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
 
@@ -453,7 +453,7 @@ class UKTaxReturnISpec extends IntegrationSpecBase with OptionValues {
             client.put(URI.create(str).toURL).withBody(body).setHeader("X-Pillar2-Id" -> plrReference, "Authorization" -> "bearerToken")
         val result = Await.result(amendRequest(validLiabilityReturn).execute[UKTRSubmitSuccessResponse], 5.seconds)
 
-        result.chargeReference.value mustEqual pillar2Id
+        result.chargeReference.value mustEqual testPillar2Id
         result.formBundleNumber mustEqual formBundleNumber
       }
     }

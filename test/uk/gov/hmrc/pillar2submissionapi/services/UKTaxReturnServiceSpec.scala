@@ -43,11 +43,11 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
           .thenReturn(Future.successful(HttpResponse.apply(CREATED, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
         val result =
-          await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)(using hc = hc.withExtraHeaders("X-Pillar2-Id" -> pillar2Id)))
+          await(mockUkTaxReturnService.submitUKTR(validLiabilitySubmission)(using hc = hc.withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
         captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
-        captor.getValue.extraHeaders.map(_._2).head mustEqual pillar2Id
+        captor.getValue.extraHeaders.map(_._2).head mustEqual testPillar2Id
       }
     }
 
@@ -126,11 +126,11 @@ class UKTaxReturnServiceSpec extends UnitTestBaseSpec {
           .thenReturn(Future.successful(HttpResponse.apply(OK, Json.toJson(uktrSubmissionSuccessResponse), Map.empty)))
 
         val result =
-          await(mockUkTaxReturnService.amendUKTR(validLiabilitySubmission)(using hc = hc.withExtraHeaders("X-Pillar2-Id" -> pillar2Id)))
+          await(mockUkTaxReturnService.amendUKTR(validLiabilitySubmission)(using hc = hc.withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)))
 
         assertEquals(uktrSubmissionSuccessResponse, result)
         captor.getValue.extraHeaders.map(_._1) must contain("X-Pillar2-Id")
-        captor.getValue.extraHeaders.map(_._2).head mustEqual pillar2Id
+        captor.getValue.extraHeaders.map(_._2).head mustEqual testPillar2Id
       }
     }
 

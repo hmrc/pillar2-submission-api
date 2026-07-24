@@ -43,23 +43,23 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
   "TestOrganisationConnector" when {
     "createTestOrganisation" must {
       "return 201 CREATED for valid request" in {
-        stubRequest("POST", url(pillar2Id), CREATED, validResponseJson)
+        stubRequest("POST", url(testPillar2Id), CREATED, validResponseJson)
 
-        val result = await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        val result = await(connector.createTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
 
-        result.pillar2Id                                shouldBe pillar2Id
+        result.pillar2Id                                shouldBe testPillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
       }
 
       "return 409 CONFLICT when organisation already exists" in {
         val errorResponse = Json.obj(
           "code"    -> "409",
-          "message" -> s"Organisation with pillar2Id: $pillar2Id already exists"
+          "message" -> s"Organisation with pillar2Id: $testPillar2Id already exists"
         )
-        stubRequest("POST", url(pillar2Id), CONFLICT, errorResponse)
+        stubRequest("POST", url(testPillar2Id), CONFLICT, errorResponse)
 
         intercept[OrganisationAlreadyExistsError] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
 
@@ -68,18 +68,18 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
           "code"    -> "500",
           "message" -> "Database error"
         )
-        stubRequest("POST", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
+        stubRequest("POST", url(testPillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }.operation shouldBe "create"
       }
 
       "return UnexpectedResponse for any other status code" in {
-        stubRequest("POST", url(pillar2Id), BAD_REQUEST, Json.obj())
+        stubRequest("POST", url(testPillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
 
@@ -97,31 +97,31 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
     "getTestOrganisation" must {
       "return organisation details for valid request" in {
-        stubRequest("GET", url(pillar2Id), OK, validResponseJson)
+        stubRequest("GET", url(testPillar2Id), OK, validResponseJson)
 
-        val result = await(connector.getTestOrganisation(pillar2Id)(using hc))
+        val result = await(connector.getTestOrganisation(testPillar2Id)(using hc))
 
-        result.pillar2Id                                shouldBe pillar2Id
+        result.pillar2Id                                shouldBe testPillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
       }
 
       "return 404 NOT_FOUND when organisation doesn't exist" in {
         val errorResponse = Json.obj(
           "code"    -> "404",
-          "message" -> s"Organisation not found for pillar2Id: $pillar2Id"
+          "message" -> s"Organisation not found for pillar2Id: $testPillar2Id"
         )
-        stubRequest("GET", url(pillar2Id), NOT_FOUND, errorResponse)
+        stubRequest("GET", url(testPillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFoundError] {
-          await(connector.getTestOrganisation(pillar2Id)(using hc))
+          await(connector.getTestOrganisation(testPillar2Id)(using hc))
         }
       }
 
       "return UnexpectedResponse for any other status code" in {
-        stubRequest("GET", url(pillar2Id), BAD_REQUEST, Json.obj())
+        stubRequest("GET", url(testPillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.getTestOrganisation(pillar2Id)(using hc))
+          await(connector.getTestOrganisation(testPillar2Id)(using hc))
         }
       }
 
@@ -139,23 +139,23 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
     "updateTestOrganisation" must {
       "return updated organisation details for valid request" in {
-        stubRequest("PUT", url(pillar2Id), OK, validResponseJson)
+        stubRequest("PUT", url(testPillar2Id), OK, validResponseJson)
 
-        val result = await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        val result = await(connector.updateTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
 
-        result.pillar2Id                                shouldBe pillar2Id
+        result.pillar2Id                                shouldBe testPillar2Id
         result.organisation.orgDetails.organisationName shouldBe "Test Organisation Ltd"
       }
 
       "return 404 NOT_FOUND when organisation doesn't exist" in {
         val errorResponse = Json.obj(
           "code"    -> "404",
-          "message" -> s"Organisation not found for pillar2Id: $pillar2Id"
+          "message" -> s"Organisation not found for pillar2Id: $testPillar2Id"
         )
-        stubRequest("PUT", url(pillar2Id), NOT_FOUND, errorResponse)
+        stubRequest("PUT", url(testPillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFoundError] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
 
@@ -164,18 +164,18 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
           "code"    -> "500",
           "message" -> "Database error"
         )
-        stubRequest("PUT", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
+        stubRequest("PUT", url(testPillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }.operation shouldBe "update"
       }
 
       "return UnexpectedResponse for any other status code" in {
-        stubRequest("PUT", url(pillar2Id), BAD_REQUEST, Json.obj())
+        stubRequest("PUT", url(testPillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
 
@@ -193,9 +193,9 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
     "deleteTestOrganisation" must {
       "return 204 NO_CONTENT for valid request" in {
-        stubRequest("DELETE", url(pillar2Id), NO_CONTENT, JsObject.empty)
+        stubRequest("DELETE", url(testPillar2Id), NO_CONTENT, JsObject.empty)
 
-        val result = await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+        val result = await(connector.deleteTestOrganisation(testPillar2Id)(using hc))
 
         result shouldBe (())
       }
@@ -203,12 +203,12 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
       "return 404 NOT_FOUND when organisation doesn't exist" in {
         val errorResponse = Json.obj(
           "code"    -> "404",
-          "message" -> s"Organisation not found for pillar2Id: $pillar2Id"
+          "message" -> s"Organisation not found for pillar2Id: $testPillar2Id"
         )
-        stubRequest("DELETE", url(pillar2Id), NOT_FOUND, errorResponse)
+        stubRequest("DELETE", url(testPillar2Id), NOT_FOUND, errorResponse)
 
         intercept[OrganisationNotFoundError] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(testPillar2Id)(using hc))
         }
       }
 
@@ -217,18 +217,18 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
           "code"    -> "500",
           "message" -> "Database error"
         )
-        stubRequest("DELETE", url(pillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
+        stubRequest("DELETE", url(testPillar2Id), INTERNAL_SERVER_ERROR, errorResponse)
 
         intercept[DatabaseError] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(testPillar2Id)(using hc))
         }.operation shouldBe "Failed to delete organisation and submission data"
       }
 
       "return UnexpectedResponse for any other status code" in {
-        stubRequest("DELETE", url(pillar2Id), BAD_REQUEST, Json.obj())
+        stubRequest("DELETE", url(testPillar2Id), BAD_REQUEST, Json.obj())
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(testPillar2Id)(using hc))
         }
       }
 
@@ -260,7 +260,7 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
   )
 
   val validResponseJson: JsObject = Json.obj(
-    "pillar2Id"    -> pillar2Id,
+    "pillar2Id"    -> testPillar2Id,
     "organisation" -> Json.obj(
       "orgDetails" -> Json.obj(
         "domesticOnly"     -> true,

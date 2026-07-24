@@ -46,13 +46,13 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
   def callWithBody(jsRequest: JsValue): Future[Result] = ornController.submitORN(
     FakeRequest()
       .withJsonBody(jsRequest)
-      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+      .withHeaders("X-Pillar2-Id" -> testPillar2Id)
   )
 
   def callAmendWithBody(jsRequest: JsValue): Future[Result] = ornController.amendORN(
     FakeRequest()
       .withJsonBody(jsRequest)
-      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+      .withHeaders("X-Pillar2-Id" -> testPillar2Id)
   )
 
   "OverseasReturnNotificationController" when {
@@ -99,7 +99,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.submitORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
-            .withHeaders("X-Pillar2-Id" -> pillar2Id)
+            .withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -108,7 +108,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "submitORN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = ornController.submitORN(
-          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+          FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -189,7 +189,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
         val result: Future[Result] = ornController.amendORN(
           FakeRequest()
             .withTextBody(invalidRequest_wrongType)
-            .withHeaders("X-Pillar2-Id" -> pillar2Id)
+            .withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }
@@ -198,7 +198,7 @@ class OverseasReturnNotificationControllerSpec extends ControllerBaseSpec with O
     "amendORN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = ornController.amendORN(
-          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+          FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }

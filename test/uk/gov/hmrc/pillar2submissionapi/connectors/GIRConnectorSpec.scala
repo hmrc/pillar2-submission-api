@@ -46,14 +46,14 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
   "GIRConnector" when {
     "createGIR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
 
         val result = await(girConnector.createGIR(validGIRSubmission))
 
         result.status should be(CREATED)
         server.verify(
-          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 
@@ -95,7 +95,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
 
     "amendGIR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         stubRequestWithPillar2Id("PUT", submitUrl, OK, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
 
@@ -103,7 +103,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
 
         result.status should be(OK)
         server.verify(
-          putRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          putRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 
@@ -139,7 +139,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
 
     "deleteGIR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         stubRequestWithPillar2Id("DELETE", submitUrl, OK, Json.toJson(SubmitGIRSuccessResponse(GIRSuccess("2024-01-01"))))
 
@@ -147,7 +147,7 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
 
         result.status should be(OK)
         server.verify(
-          deleteRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          deleteRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 

@@ -48,7 +48,7 @@ class AccountActivityControllerSpec extends ControllerBaseSpec with AccountActiv
     val controllerUnderTest: AccountActivityController =
       AccountActivityController(mockAccountActivityService, identifierAction, pillar2IdAction, cc)
 
-    val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+    val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
   }
 
   "retrieveAccountActivity" when {

@@ -39,7 +39,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
 
   def result(jsRequest: JsValue): Future[Result] = BTNSubmissionController.submitBTN(
     FakeRequest()
-      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+      .withHeaders("X-Pillar2-Id" -> testPillar2Id)
       .withJsonBody(jsRequest)
   )
 
@@ -77,7 +77,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
           FakeRequest()
-            .withHeaders("X-Pillar2-Id" -> pillar2Id)
+            .withHeaders("X-Pillar2-Id" -> testPillar2Id)
             .withTextBody(invalidRequest_wrongType)
         )
         result.shouldFailWith(EmptyRequestBodyError)
@@ -87,7 +87,7 @@ class BTNSubmissionControllerSpec extends ControllerBaseSpec {
     "submitBTN called with no request body" should {
       "return EmptyRequestBody response" in {
         val result: Future[Result] = BTNSubmissionController.submitBTN(
-          FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id)
+          FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id)
         )
         result.shouldFailWith(EmptyRequestBodyError)
       }

@@ -36,7 +36,7 @@ class ObligationsAndSubmissionsControllerSpec extends ControllerBaseSpec with Ob
     new ObligationsAndSubmissionsController(cc, identifierAction, pillar2IdAction, mockObligationsAndSubmissionsService)
 
   def request(fromDate: String, toDate: String): Future[Result] =
-    obligationsAndSubmissionsController.retrieveData(fromDate, toDate)(FakeRequest().withHeaders("X-Pillar2-Id" -> pillar2Id))
+    obligationsAndSubmissionsController.retrieveData(fromDate, toDate)(FakeRequest().withHeaders("X-Pillar2-Id" -> testPillar2Id))
 
   "retrieveData" should {
     "return OK with obligations data when valid dates are provided and service call is successful" in {

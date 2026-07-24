@@ -41,7 +41,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
   "AccountActivityConnector" when {
     "retrieving account activity" must {
       "forward the response in the happy path" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         stubRequestWithPillar2Id("GET", getUrl, OK, accountActivityJsonResponse)
 
@@ -49,11 +49,11 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
 
         result.status mustBe OK
         result.body mustBe Json.stringify(accountActivityJsonResponse)
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
 
       "forward unhappy responses" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         val serverErrorResponse = Json.obj(
           "code"    -> "500",
@@ -66,7 +66,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
 
         result.status mustBe INTERNAL_SERVER_ERROR
         result.body mustBe Json.stringify(serverErrorResponse)
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
 
       "return UnexpectedResponseError when the request fails" in {

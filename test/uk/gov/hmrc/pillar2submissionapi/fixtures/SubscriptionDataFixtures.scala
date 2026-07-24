@@ -79,39 +79,7 @@ trait SubscriptionDataFixtures {
       accountStatus = Some(AccountStatus(false))
     )
 
-  val v1Json: JsValue = Json.parse(
-    """{
-      |  "formBundleNumber": "123456789012",
-      |  "upeDetails": {
-      |    "customerIdentification1": "12345678",
-      |    "customerIdentification2": "87654321",
-      |    "organisationName": "International Organisation Inc.",
-      |    "registrationDate": "2024-01-31",
-      |    "domesticOnly": false,
-      |    "filingMember": false
-      |  },
-      |  "upeCorrespAddressDetails": {
-      |    "addressLine1": "1 High Street",
-      |    "addressLine2": "Egham",
-      |    "addressLine3": "Wycombe",
-      |    "addressLine4": "Surrey",
-      |    "postCode": "HP13 6TT",
-      |    "countryCode": "GB"
-      |  },
-      |  "primaryContactDetails": {
-      |    "name": "Primary Contact",
-      |    "telephone": "0123 4567 890",
-      |    "emailAddress": "primary.contact@example.com"
-      |  },
-      |  "accountingPeriod": {
-      |    "startDate": "2024-01-06",
-      |    "endDate": "2025-01-06"
-      |  },
-      |  "accountStatus": { "inactive": false }
-      |}""".stripMargin
-  )
-
-  val v2Json: JsValue = Json.parse(
+  val subscriptionDataDisplayJson: JsValue = Json.parse(
     """{
       |  "formBundleNumber": "123456789012",
       |  "upeDetails": {

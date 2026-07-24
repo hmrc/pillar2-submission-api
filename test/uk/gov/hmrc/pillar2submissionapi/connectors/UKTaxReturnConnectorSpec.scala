@@ -41,14 +41,14 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
   "UKTaxReturnConnector" when {
     "submitUKTR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission))
 
         result.status should be(CREATED)
         server.verify(
-          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 
@@ -90,14 +90,14 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
     "amendUKTR" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("PUT", amendUrl, OK, JsObject.empty)
 
         val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission))
 
         result.status should be(OK)
         server.verify(
-          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          putRequestedFor(urlEqualTo(amendUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 

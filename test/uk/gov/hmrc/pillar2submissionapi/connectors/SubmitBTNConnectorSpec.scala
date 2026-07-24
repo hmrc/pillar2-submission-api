@@ -45,14 +45,14 @@ class SubmitBTNConnectorSpec extends UnitTestBaseSpec {
   "SubmitBTNConnector" when {
     "submitBTN" must {
       "forward the X-Pillar2-Id header" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
         stubRequestWithPillar2Id("POST", submitUrl, CREATED, JsObject.empty)
 
         val result = await(submitBTNConnector.submitBTN(validBTNSubmission))
 
         result.status should be(CREATED)
         server.verify(
-          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
+          postRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id))
         )
       }
 

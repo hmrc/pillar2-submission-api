@@ -33,10 +33,10 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
   "TestOrganisationService" when {
     "createTestOrganisation" must {
       "return organisation details for valid request" in {
-        when(mockTestOrganisationConnector.createTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.createTestOrganisation(eqTo(testPillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-        val result = await(service.createTestOrganisation(pillar2Id, validOrganisationDetailsRequest))
+        val result = await(service.createTestOrganisation(testPillar2Id, validOrganisationDetailsRequest))
 
         result mustBe validOrganisationDetailsWithId
       }
@@ -44,10 +44,10 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "getTestOrganisation" must {
       "return organisation details" in {
-        when(mockTestOrganisationConnector.getTestOrganisation(eqTo(pillar2Id))(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.getTestOrganisation(eqTo(testPillar2Id))(using any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-        val result = await(service.getTestOrganisation(pillar2Id))
+        val result = await(service.getTestOrganisation(testPillar2Id))
 
         result mustBe validOrganisationDetailsWithId
       }
@@ -55,10 +55,10 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "updateTestOrganisation" must {
       "return updated organisation details" in {
-        when(mockTestOrganisationConnector.updateTestOrganisation(eqTo(pillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.updateTestOrganisation(eqTo(testPillar2Id), any[TestOrganisation])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(validOrganisationDetailsWithId))
 
-        val result = await(service.updateTestOrganisation(pillar2Id, validOrganisationDetailsRequest))
+        val result = await(service.updateTestOrganisation(testPillar2Id, validOrganisationDetailsRequest))
 
         result mustBe validOrganisationDetailsWithId
       }
@@ -66,10 +66,10 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
 
     "deleteTestOrganisation" must {
       "return unit when successful" in {
-        when(mockTestOrganisationConnector.deleteTestOrganisation(eqTo(pillar2Id))(using any[HeaderCarrier]))
+        when(mockTestOrganisationConnector.deleteTestOrganisation(eqTo(testPillar2Id))(using any[HeaderCarrier]))
           .thenReturn(Future.successful(()))
 
-        val result = await(service.deleteTestOrganisation(pillar2Id))
+        val result = await(service.deleteTestOrganisation(testPillar2Id))
 
         result mustBe (())
       }
@@ -110,7 +110,7 @@ class TestOrganisationServiceSpec extends UnitTestBaseSpec {
   )
 
   val validOrganisationDetailsWithId: TestOrganisationWithId = TestOrganisationWithId(
-    pillar2Id = pillar2Id,
+    pillar2Id = testPillar2Id,
     organisation = validOrganisationDetails
   )
 }
