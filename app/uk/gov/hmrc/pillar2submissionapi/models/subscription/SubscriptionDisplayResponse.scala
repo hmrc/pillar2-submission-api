@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 import play.api.libs.json.{Json, OFormat}
 
 final case class SubscriptionSuccessV2(
-  success: SubscriptionDataV2
+  success: SubscriptionDataDisplay
 )
 
 object SubscriptionSuccessV2 {

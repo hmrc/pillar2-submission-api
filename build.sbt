@@ -8,6 +8,7 @@ ThisBuild / majorVersion := 0
 ThisBuild / semanticdbEnabled := true
 ThisBuild / scalacOptions ++= Seq(
   "-Wconf:src=routes/.*:s",
+  "-Wconf:cat=deprecation:i", // TODO: remove - temporary deprecations are warnings not errors
   "-Wconf:msg=Flag.*set repeatedly:s",
   "-Wconf:msg=Setting -Wunused set to all redundantly:s"
 )
