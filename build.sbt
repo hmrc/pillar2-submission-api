@@ -54,6 +54,7 @@ lazy val it: Project = project
   )
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; it/scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check; it/scalafixAll --check")
+addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
 addCommandAlias("lint", "; scalafmtAll; it/scalafmtAll; scalafmtSbt; it/scalafixAll; scalafixAll")
 addCommandAlias("createOpenAPISpec", "; clean; routesToYamlOas; validateOas")
 addCommandAlias("publishTestOnlyOas", "; createOpenAPISpec; publishOas")
