@@ -57,6 +57,14 @@ trait SubscriptionDataFixtures {
       emailAddress = "primary.contact@example.com"
     )
 
+  private val filingMemberDetails: FilingMemberDetails =
+    FilingMemberDetails(
+      safeId = "testSafeId",
+      customerIdentification1 = Some("FM_CID1"),
+      customerIdentification2 = Some("FM_CID2"),
+      organisationName = "Filing Member Ltd"
+    )
+
   val subscriptionData: SubscriptionDataDisplay =
     SubscriptionDataDisplay(
       formBundleNumber = "123456789012",
@@ -64,7 +72,7 @@ trait SubscriptionDataFixtures {
       upeCorrespAddressDetails = upeCorrespondenceAddress,
       primaryContactDetails = contactDetails,
       secondaryContactDetails = None,
-      filingMemberDetails = None,
+      filingMemberDetails = Some(filingMemberDetails),
       accountingPeriod = Some(
         Seq(
           AccountingPeriodDisplay(
@@ -102,6 +110,12 @@ trait SubscriptionDataFixtures {
       |    "name": "Primary Contact",
       |    "telephone": "0123 4567 890",
       |    "emailAddress": "primary.contact@example.com"
+      |  },
+      |  "filingMemberDetails": {
+      |    "safeId": "testSafeId",
+      |    "customerIdentification1": "FM_CID1",
+      |    "customerIdentification2": "FM_CID2",
+      |    "organisationName": "Filing Member Ltd"
       |  },
       |  "accountingPeriod": [
       |    {

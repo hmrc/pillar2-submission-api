@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2submissionapi.models.subscription
 
 import play.api.libs.json.{Json, OFormat}
 
-case class FilingMemberDetails(
+final case class FilingMemberDetails(
   safeId:                  String,
   customerIdentification1: Option[String],
   customerIdentification2: Option[String],
