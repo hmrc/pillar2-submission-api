@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -27,6 +28,7 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.connectors.GIRConnectorSpec.validGIRSubmission
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.models.globeinformationreturn.{GIRSubmission, GIRSuccess, SubmitGIRSuccessResponse}
 
 import java.time.LocalDate
@@ -78,6 +80,17 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
 
         result.status should be(NOT_FOUND)
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(submitUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(girConnector.createGIR(validGIRSubmission)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
+      }
     }
 
     "amendGIR" must {
@@ -93,20 +106,34 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
           putRequestedFor(urlEqualTo(submitUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id))
         )
       }
+
       "return 200 OK for valid request" in {
         stubRequest("PUT", submitUrl, OK, JsObject.empty)
         val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
         result.status should be(OK)
       }
+
       "return 400 BAD_REQUEST for invalid request" in {
         stubRequest("PUT", submitUrl, BAD_REQUEST, JsObject.empty)
         val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
         result.status should be(BAD_REQUEST)
       }
+
       "return 404 NOT_FOUND for incorrect URL" in {
         stubRequest("PUT", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
         val result = await(girConnector.amendGIR(validGIRSubmission)(using hc))
         result.status should be(NOT_FOUND)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(submitUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(girConnector.createGIR(validGIRSubmission)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
 
@@ -140,6 +167,17 @@ class GIRConnectorSpec extends UnitTestBaseSpec {
         stubRequest("DELETE", "/INCORRECT_URL", NOT_FOUND, JsObject.empty)
         val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc))
         result.status should be(NOT_FOUND)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          delete(urlEqualTo(submitUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(girConnector.deleteGIR(validGIRSubmission)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
   }

@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -80,6 +82,17 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
           await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(url(pillar2Id)))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        intercept[UnexpectedResponseError.type] {
+          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        }
+      }
     }
 
     "getTestOrganisation" must {
@@ -106,6 +119,17 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponse for any other status code" in {
         stubRequest("GET", url(pillar2Id), BAD_REQUEST, Json.obj())
+
+        intercept[UnexpectedResponseError.type] {
+          await(connector.getTestOrganisation(pillar2Id)(using hc))
+        }
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          get(urlEqualTo(url(pillar2Id)))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
 
         intercept[UnexpectedResponseError.type] {
           await(connector.getTestOrganisation(pillar2Id)(using hc))
@@ -154,6 +178,17 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
           await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
         }
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          put(urlEqualTo(url(pillar2Id)))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        intercept[UnexpectedResponseError.type] {
+          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+        }
+      }
     }
 
     "deleteTestOrganisation" must {
@@ -191,6 +226,17 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponse for any other status code" in {
         stubRequest("DELETE", url(pillar2Id), BAD_REQUEST, Json.obj())
+
+        intercept[UnexpectedResponseError.type] {
+          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+        }
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          delete(urlEqualTo(url(pillar2Id)))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
 
         intercept[UnexpectedResponseError.type] {
           await(connector.deleteTestOrganisation(pillar2Id)(using hc))

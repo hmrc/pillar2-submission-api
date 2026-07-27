@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -26,6 +27,7 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.ORNDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORNDataFixture {
 
@@ -74,6 +76,17 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
 
         result.status should be(NOT_FOUND)
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(submitUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(ornConnector.submitORN(ornRequestFixture)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
+      }
     }
   }
 
@@ -113,6 +126,17 @@ class OverseasReturnNotificationConnectorSpec extends UnitTestBaseSpec with ORND
         val result = await(ornConnector.amendORN(ornRequestFixture)(using hc))
 
         result.status should be(NOT_FOUND)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          put(urlEqualTo(amendUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(ornConnector.amendORN(ornRequestFixture)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
   }

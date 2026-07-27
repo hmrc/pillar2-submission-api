@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -25,6 +26,7 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.AccountActivityDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixture with ScalaFutures {
 
@@ -64,6 +66,20 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
 
         result.status mustBe INTERNAL_SERVER_ERROR
         result.body mustBe Json.stringify(serverErrorResponse)
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        server.stubFor(
+          get(urlEqualTo(getUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = accountActivityConnector.getAccountActivity(localDateFrom, localDateTo).failed.futureValue
+
+        result mustBe UnexpectedResponseError
         server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
       }
     }

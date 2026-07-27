@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -25,6 +26,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
@@ -73,6 +75,17 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
 
         result.status should be(NOT_FOUND)
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          post(urlEqualTo(submitUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(ukTaxReturnConnector.submitUKTR(validLiabilitySubmission)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
+      }
     }
 
     "amendUKTR" must {
@@ -110,6 +123,17 @@ class UKTaxReturnConnectorSpec extends UnitTestBaseSpec {
         val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(using hc))
 
         result.status should be(NOT_FOUND)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          put(urlEqualTo(amendUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(ukTaxReturnConnector.amendUKTR(validLiabilitySubmission)(using hc).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
   }

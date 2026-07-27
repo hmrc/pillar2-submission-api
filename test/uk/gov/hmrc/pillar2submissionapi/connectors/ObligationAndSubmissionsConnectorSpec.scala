@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -26,6 +27,7 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.ObligationsAndSubmissionsDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class ObligationAndSubmissionsConnectorSpec extends UnitTestBaseSpec with ObligationsAndSubmissionsDataFixture {
 
@@ -70,6 +72,17 @@ class ObligationAndSubmissionsConnectorSpec extends UnitTestBaseSpec with Obliga
         val result = await(obligationAndSubmissionsConnector.getData(localDateFrom, localDateTo))
 
         result.status should be(NOT_FOUND)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        server.stubFor(
+          get(urlEqualTo(getUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(obligationAndSubmissionsConnector.getData(localDateFrom, localDateTo).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
   }

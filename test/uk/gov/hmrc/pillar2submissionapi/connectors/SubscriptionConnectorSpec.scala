@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -26,6 +27,7 @@ import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
 import uk.gov.hmrc.pillar2submissionapi.helpers.SubscriptionDataFixture
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFixture {
 
@@ -98,6 +100,19 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
         result.isLeft mustBe true
         result mustBe Left(BadRequest)
       }
+
+      "return UnexpectedResponseError when the request fails" in {
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        server.stubFor(
+          get(urlEqualTo(readSubscriptionUrl))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(subscriptionConnectorV1.readSubscription(plrReference).failed)
+
+        result should be(UnexpectedResponseError)
+      }
     }
 
     "readSubscriptionV2Enabled is true" must {
@@ -147,6 +162,19 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
 
         result.isLeft mustBe true
         result mustBe Left(BadRequest)
+      }
+
+      "return UnexpectedResponseError when the request fails" in {
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+
+        server.stubFor(
+          get(urlEqualTo(readSubscriptionV2Url))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = await(subscriptionConnectorV2.readSubscription(plrReference).failed)
+
+        result should be(UnexpectedResponseError)
       }
     }
   }
