@@ -25,8 +25,8 @@ import play.api.libs.json.Json
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.pillar2submissionapi.base.UnitTestBaseSpec
-import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 import uk.gov.hmrc.pillar2submissionapi.fixtures.AccountActivityDataFixtures
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResponseError
 
 class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivityDataFixtures with ScalaFutures {
 
@@ -70,7 +70,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
       }
 
       "return UnexpectedResponseError when the request fails" in {
-        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> pillar2Id)
+        given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
 
         server.stubFor(
           get(urlEqualTo(getUrl))
@@ -80,7 +80,7 @@ class AccountActivityConnectorSpec extends UnitTestBaseSpec with AccountActivity
         val result = accountActivityConnector.getAccountActivity(localDateFrom, localDateTo).failed.futureValue
 
         result mustBe UnexpectedResponseError
-        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(pillar2Id)))
+        server.verify(getRequestedFor(urlEqualTo(getUrl)).withHeader("X-Pillar2-Id", equalTo(testPillar2Id)))
       }
     }
   }

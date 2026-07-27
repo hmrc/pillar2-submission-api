@@ -85,12 +85,12 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponseError when the request fails" in {
         server.stubFor(
-          post(urlEqualTo(url(pillar2Id)))
+          post(urlEqualTo(url(testPillar2Id)))
             .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
         )
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.createTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.createTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
     }
@@ -127,12 +127,12 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponseError when the request fails" in {
         server.stubFor(
-          get(urlEqualTo(url(pillar2Id)))
+          get(urlEqualTo(url(testPillar2Id)))
             .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
         )
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.getTestOrganisation(pillar2Id)(using hc))
+          await(connector.getTestOrganisation(testPillar2Id)(using hc))
         }
       }
     }
@@ -181,12 +181,12 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponseError when the request fails" in {
         server.stubFor(
-          put(urlEqualTo(url(pillar2Id)))
+          put(urlEqualTo(url(testPillar2Id)))
             .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
         )
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.updateTestOrganisation(pillar2Id, validOrganisationDetails)(using hc))
+          await(connector.updateTestOrganisation(testPillar2Id, validOrganisationDetails)(using hc))
         }
       }
     }
@@ -234,12 +234,12 @@ class TestOrganisationConnectorSpec extends UnitTestBaseSpec {
 
       "return UnexpectedResponseError when the request fails" in {
         server.stubFor(
-          delete(urlEqualTo(url(pillar2Id)))
+          delete(urlEqualTo(url(testPillar2Id)))
             .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
         )
 
         intercept[UnexpectedResponseError.type] {
-          await(connector.deleteTestOrganisation(pillar2Id)(using hc))
+          await(connector.deleteTestOrganisation(testPillar2Id)(using hc))
         }
       }
     }

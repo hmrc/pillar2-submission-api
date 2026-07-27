@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2submissionapi.connectors
 
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo, get, getRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.http.Fault
 import org.scalatest.matchers.should.Matchers.should
 import play.api.http.Status.*
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -30,11 +31,11 @@ import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.UnexpectedResp
 
 class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFixtures {
 
-  lazy val v2App: Application = new GuiceApplicationBuilder()
+  override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(Configuration("microservice.services.pillar2.port" -> server.port()))
     .build()
 
-  lazy val subscriptionConnectorV2: SubscriptionConnector = v2App.injector.instanceOf[SubscriptionConnector]
+  lazy val subscriptionConnector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
 
   private val plrReference = "XAPLR0000000001"
 
@@ -47,7 +48,7 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
       given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
       stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
 
-      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
+      val result = await(subscriptionConnector.readSubscription(plrReference))
 
       result.isRight mustBe true
       server.verify(
@@ -59,7 +60,7 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
       given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
       stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, subscriptionSuccessJson)
 
-      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
+      val result = await(subscriptionConnector.readSubscription(plrReference))
 
       result.isRight mustBe true
       result mustBe Right(subscriptionData)
@@ -73,14 +74,14 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
       given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
       stubRequestWithPillar2Id("GET", readSubscriptionUrl, OK, invalidSubscriptionJson)
 
-      await(subscriptionConnectorV2.readSubscription(plrReference)) mustBe Left(BadRequest)
+      await(subscriptionConnector.readSubscription(plrReference)) mustBe Left(BadRequest)
     }
 
     "return BadRequest when ETMP returns non-200" in {
       given hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("X-Pillar2-Id" -> testPillar2Id)
       stubRequestWithPillar2Id("GET", readSubscriptionUrl, BAD_REQUEST, invalidSubscriptionJson)
 
-      val result = await(subscriptionConnectorV2.readSubscription(plrReference))
+      val result = await(subscriptionConnector.readSubscription(plrReference))
 
       result.isLeft mustBe true
       result mustBe Left(BadRequest)
@@ -94,7 +95,7 @@ class SubscriptionConnectorSpec extends UnitTestBaseSpec with SubscriptionDataFi
           .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
       )
 
-      val result = await(subscriptionConnectorV2.readSubscription(plrReference).failed)
+      val result = await(subscriptionConnector.readSubscription(plrReference).failed)
 
       result should be(UnexpectedResponseError)
     }

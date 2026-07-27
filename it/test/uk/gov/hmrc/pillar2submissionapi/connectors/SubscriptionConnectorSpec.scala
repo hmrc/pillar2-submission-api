@@ -59,6 +59,6 @@ class SubscriptionConnectorSpec extends IntegrationSpecBase with SubscriptionDat
       result.isLeft mustBe true
       result mustBe Left(BadRequest)
     }
-    
+
   }
 }
