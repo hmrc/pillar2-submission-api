@@ -39,3 +39,9 @@ assert {
   res.body.organisation.orgDetails.organisationName: eq "Updated Test Organisation Ltd"
   res.body.organisation.accountingPeriod: isNotEmpty
 }
+
+script:pre-request {
+  if (bru.getEnvVar("organisationCreated") === false) {
+    throw new Error('Organisation has not been created. Run a "Create Organisation" request first.');
+  }
+}

@@ -22,13 +22,19 @@ params:query {
 script:pre-request {
   const helpers = require('./_lib/helpers');
   
-  const isQa = bru.getEnvVar('environment') === 'qa';
   const ggUserId   = bru.getEnvVar('governmentGatewayId');
   const ggPassword = bru.getEnvVar('governmentGatewayPassword');
   
-  if (isQa) {
+  let CHROMIUM;
+  try {
+    CHROMIUM = require("playwright").chromium;
+  } catch (e) {
+    throw new Error("Missing dependency: playwright. Run 'npm install' in the collection folder.");
+  }
+  
+  if (bru.getEnvVar('environment') === 'qa') {
     if (!ggUserId || !ggPassword) {
-      throw new Error('QA requires "governmentGatewayId" and "governmentGatewayPassword" env vars (your Government Gateway sign-in details).');
+      throw new Error('QA environment requires "governmentGatewayId" and "governmentGatewayPassword" env vars (your Government Gateway sign-in details).');
     }
   } else {
     if (!bru.getEnvVar('testUserId'))      {

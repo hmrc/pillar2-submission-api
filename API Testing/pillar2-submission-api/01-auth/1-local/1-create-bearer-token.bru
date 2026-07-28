@@ -33,6 +33,11 @@ body:json {
   }
 }
 
+assert {
+  res.status: eq 201
+  res.body.gatewayToken: isNotEmpty
+}
+
 script:post-response {
   let authHeader = res.headers.authorization
   let arr = authHeader.split(",")

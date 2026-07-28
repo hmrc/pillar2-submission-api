@@ -92,14 +92,14 @@ bru run pillar2-submission-api/99-qa/orn --env local -r
 
 The `environments/local.bru` file defines:
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `apiUrl` | `http://localhost:10054/pillar2/submission` | Submission API base URL |
-| `pillar2Url` | `http://localhost:10055/RESTAdapter/plr` | Pillar 2 backend URL |
-| `externalTestStubUrl` | `http://localhost:10055` | External test stub URL |
-| `authUrl` | `http://localhost:10054/pillar2/test/auth-login-stub` | Local auth endpoint |
-| `testPlrId` | `XEPLR0000000000` | Test Pillar 2 ID |
-| `bearer_token` | (set by auth script) | Authentication token |
+| Variable              | Value                                                 | Description             |
+|-----------------------|-------------------------------------------------------|-------------------------|
+| `apiUrl`              | `http://localhost:10054/pillar2/submission`           | Submission API base URL |
+| `pillar2Url`          | `http://localhost:10055/RESTAdapter/plr`              | Pillar 2 backend URL    |
+| `externalTestStubUrl` | `http://localhost:10055`                              | External test stub URL  |
+| `authUrl`             | `http://localhost:10054/pillar2/test/auth-login-stub` | Local auth endpoint     |
+| `testPlrId`           | `XEPLR0000000000`                                     | Test Pillar 2 ID        |
+| `bearerToken`         | (set by auth script)                                  | Authentication token    |
 
 ## Test Data Configuration
 
@@ -119,11 +119,11 @@ When creating or updating test organisations, you can optionally include a `test
 
 The `accountActivityScenario` field controls what financial data is returned by the Account Activity endpoint. Available scenarios are defined in the [pillar2-external-test-stub documentation](https://github.com/hmrc/pillar2-external-test-stub?tab=readme-ov-file#8-account-activity).
 
-| Scenario | Description |
-|----------|-------------|
-| `DTT_CHARGE` | Simulates a DTT charge transaction |
-| `PAYMENT_ON_ACCOUNT` | Simulates a payment on account |
-| `REPAYMENT` | Simulates a repayment transaction |
+| Scenario             | Description                        |
+|----------------------|------------------------------------|
+| `DTT_CHARGE`         | Simulates a DTT charge transaction |
+| `PAYMENT_ON_ACCOUNT` | Simulates a payment on account     |
+| `REPAYMENT`          | Simulates a repayment transaction  |
 
 > **Note**: The `testData` field is optional. If omitted, the organisation will be created without a linked activity scenario.
 
@@ -148,11 +148,11 @@ For deployed environments, you need to perform the full OAuth flow:
 
 #### Step 1: Create or Obtain a User
 
-| Environment | Method |
-|-------------|--------|
-| **Development** | Run `01-auth/envs/Create Test User` |
-| **External Test** | Run `01-auth/envs/Create Test User` |
-| **QA** | Create a Government Gateway user manually via the QA frontend and register for Pillar 2 |
+| Environment       | Method                                                                                  |
+|-------------------|-----------------------------------------------------------------------------------------|
+| **Development**   | Run `01-auth/envs/Create Test User`                                                     |
+| **External Test** | Run `01-auth/envs/Create Test User`                                                     |
+| **QA**            | Create a Government Gateway user manually via the QA frontend and register for Pillar 2 |
 
 #### Step 2: Get Authorization Code
 

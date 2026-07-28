@@ -19,3 +19,15 @@ assert {
   res.status: eq 204
   res.body: isEmpty
 }
+
+script:pre-request {
+  if (bru.getEnvVar("organisationCreated") === false) {
+    throw new Error('Cannot delete organisation that has not been created. Run a "Create Organisation" request first.');
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 204) {
+    bru.setEnvVar("organisationCreated", false);
+  }
+}

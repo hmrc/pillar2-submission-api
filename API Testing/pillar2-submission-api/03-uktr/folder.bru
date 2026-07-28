@@ -2,3 +2,13 @@ meta {
   name: 03 UK Tax Return
   seq: 8
 }
+
+script:pre-request {
+  if (!bru.getEnvVar("bearerToken")) {
+    throw new Error('"bearerToken" not set. Run the "Exchange Auth Code" request first.');
+  }
+
+  if (!bru.getEnvVar("testPlrId")) {
+    throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
+  }
+}

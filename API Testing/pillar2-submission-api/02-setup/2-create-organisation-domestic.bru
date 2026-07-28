@@ -36,3 +36,15 @@ assert {
   res.body.organisation.orgDetails.domesticOnly: eq true
   res.body.organisation.accountingPeriod: isNotEmpty
 }
+
+script:pre-request {
+  if (bru.getEnvVar("organisationCreated") === true) {
+    throw new Error('Organisation already exists. Run the "Delete Organisation" request first.');
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("organisationCreated", true);
+  }
+}

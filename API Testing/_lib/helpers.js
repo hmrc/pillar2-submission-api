@@ -1,4 +1,9 @@
-const { chromium } = require('playwright');
+let chromium;
+try {
+  chromium = require("playwright").chromium;
+} catch (e) {
+  throw new Error("Missing dependency: playwright.\nRun 'npm install' in the collection folder.");
+}
 
 const buildAuthorizeUrl = ({ authCodeUrl, clientId }) =>
     `${authCodeUrl}/oauth/authorize` +
@@ -16,13 +21,13 @@ const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode
         const page = await browser.newPage();
         await page.goto(buildAuthorizeUrl({ authCodeUrl, clientId }));
 
-        // Page 1: "Continue" button
+        // Page 1: Click on "Continue" button
         if (page.url().includes('/oauth/start')) {
             await page.locator('a.govuk-button').click();
             await page.waitForLoadState('networkidle');
         }
 
-        // Page 2: "Sign in to the HMRC online service" link
+        // Page 2: Click on the "Sign in to the HMRC online service" link
         if (page.url().includes('/oauth/whatYouWillNeed')) {
             await page.locator('a#signIn').click();
             await page.waitForLoadState('networkidle');
@@ -35,7 +40,7 @@ const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode
             await page.waitForLoadState('networkidle');
         }
 
-        // Page 3 (QA only): Government Gateway credentials form
+        // Page 3 (QA only): Fillin in the Government Gateway credentials form
         if (page.url().includes('/login/signin/creds')) {
             await page.locator('#user_id').fill(userId);
             await page.locator('#password').fill(password);
@@ -43,7 +48,7 @@ const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode
             await page.waitForLoadState('networkidle');
         }
 
-        // Page 3 (other envs): test credentials form
+        // Page 3 (other envs): Fill in the test credentials form
         if (page.url().includes('/api-test-login/sign-in')) {
             await page.locator('#userId').fill(userId);
             await page.locator('#password').fill(password);
@@ -51,20 +56,20 @@ const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode
             await page.waitForLoadState('networkidle');
         }
 
-        // Page 3a: 2FA code - QA environment only
+        // Page 3a (QA only): Provide the 2FA code
         if (page.url().includes('/multi-factor/challenge/')) {
             await page.locator('#oneTimePassword').fill(accessCode);
             await page.locator('#continue').click();
             await page.waitForLoadState('networkidle');
         }
 
-        // Page 4: /oauth/grantscope - "Give permission"
+        // Page 4: Click on the "Give permission" button
         if (page.url().includes('/oauth/grantscope')) {
             await page.locator('button#givePermission').click();
             await page.waitForLoadState('networkidle');
         }
 
-        // Final page: authorisation code
+        // Final page: Get the authorisation code
         const code = await page.locator('#authorisation-code').innerText();
         return code.trim();
     } finally {
