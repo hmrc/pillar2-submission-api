@@ -2,3 +2,17 @@ meta {
   name: 03 Overseas Return Notification
   seq: 7
 }
+
+script:pre-request {
+  if (!bru.getEnvVar("bearerToken")) {
+    throw new Error('"bearerToken" not set. Run the "Exchange Auth Code" request first.');
+  }
+
+  if (!bru.getEnvVar("testPlrId")) {
+    throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
+  }
+
+  if (bru.getEnvVar("organisationCreated") === false) {
+    throw new Error('Organisation has not been created. Run a "Create Organisation" request first.');
+  }
+}
