@@ -381,6 +381,9 @@ paths:
         <td>No data found for this Pillar 2 ID.</td>
         </tr>
         <tr>
+        <td>089 - ID number missing or invalid</td>
+        <td>The Pillar 2 ID provided in the request was not recognised by HMRC. Please contact the central support team.</td>
+        </tr>
         </tbody>
         </table>
       responses:
@@ -407,6 +410,8 @@ paths:
                   $ref: "#/components/examples/errors.Submission.InvalidRequest"
                 No Data Found:
                   $ref: "#/components/examples/errors.Submission.NoDataFound"
+                ID Missing or Invalid:
+                  $ref: "#/components/examples/errors.Submission.IdMissingOrInvalid"
         "401":
           description: Unauthorized
           content:
@@ -2861,6 +2866,11 @@ components:
       value:
         code: "004"
         message: Duplicate submission
+    errors.Submission.IdMissingOrInvalid:
+      summary: ID number missing or invalid
+      value:
+        code: '089'
+        message: ID number missing or invalid
     errors.Submission.InvalidUTPR:
       summary: Invalid UTPR Election
       value:
