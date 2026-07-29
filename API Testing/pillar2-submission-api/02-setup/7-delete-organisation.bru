@@ -22,7 +22,7 @@ assert {
 
 script:pre-request {
   if (bru.getEnvVar("organisationCreated") === false) {
-    throw new Error('Cannot delete organisation that has not been created. Run a "Create Organisation" request first.');
+    throw new Error('Organisation has not been created. Run a "Create Organisation" request first.');
   }
 }
 

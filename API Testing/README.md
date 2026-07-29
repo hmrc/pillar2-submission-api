@@ -28,8 +28,9 @@ Most of the team uses the [Bruno desktop application](https://www.usebruno.com/d
 1. Download and install Bruno from https://www.usebruno.com/downloads
 2. Open Bruno and select "Open Collection"
 3. Navigate to the `API Testing` folder and open any of the collection folders
-4. Select the `local` environment from the environment dropdown
-5. Run individual requests or use "Run Folder" to execute multiple tests
+4. Open Terminal, change to the `API Testing` directory and run `npm install` to install Playwright.
+5. Select the `local` environment from the environment dropdown
+6. Run individual requests or use "Run Folder" to execute multiple tests
 
 ### Using the Bruno CLI
 
@@ -56,7 +57,8 @@ Alternatively, you can use the Bruno CLI:
 
 The `-r` flag runs tests recursively through all subfolders.
 
-Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they target deployed environment URLs. This is expected.
+Note: The `01-auth/envs/` requests in `pillar2-submission-api` will fail when running with `--env local` as they
+target deployed environment URLs. This is expected.
 
 ### Prerequisites for Local Testing
 
@@ -72,7 +74,6 @@ Bruno runs tests in sequence order defined by the `seq` field in each `.bru` fil
 1. **Authentication** (`01-auth/`): Obtains bearer tokens for authenticated requests
 2. **Setup** (`02-setup/` or inline): Creates test organisations and data
 3. **Functional Tests** (`03-*/` or `99-qa/`): Tests actual API endpoints
-4. **Cleanup**: Deletes test data
 
 When running the full collection recursively, earlier tests set up data that subsequent tests depend on.
 
@@ -136,7 +137,7 @@ For local testing, authentication is simplified:
 1. Run the full collection from the root - the auth script runs first automatically
 2. Or manually run the `01-auth/local/create-bearer-token` request
 
-The `create-bearer-token` script uses `auth-login-stub` to generate a token and saves it to the `bearer_token` environment variable.
+The `create-bearer-token` script uses `auth-login-stub` to generate a token and saves it to the `bearerToken` environment variable.
 
 ### Deployed Environments (Development, QA, External Test)
 

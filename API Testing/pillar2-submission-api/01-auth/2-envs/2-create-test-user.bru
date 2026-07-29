@@ -31,7 +31,7 @@ assert {
 
 script:pre-request {
   if (bru.getEnvVar("environment") == 'qa') {
-    throw new Error('You do not need to run this request on the QA environment to generate ID and password. The Government Gateway credentials are required.');
+    throw new Error('Do not run this request on QA environment to generate testUserID and testUserPassword. The Government Gateway credentials (environment variables) are used.');
   }
   if (!bru.getEnvVar("applicationToken")) {
     throw new Error('"applicationToken" not set. Run the "Create Bearer Token" request first.');
