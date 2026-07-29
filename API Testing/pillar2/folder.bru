@@ -1,10 +1,9 @@
 meta {
   name: pillar2
-  seq: 2
+  seq: 3
 }
 
 script:pre-request {
-
   // Environment check
   if (bru.getEnvVar("environment") !== 'local') {
     if (req.getExecutionMode() == "standalone") {
@@ -14,11 +13,11 @@ script:pre-request {
       return;
     }
   }
-
+  
   if (req.getTags().includes('auth')) {
     return;
   }
-
+  
   // Bearer token check
   if (!bru.getEnvVar("bearerToken")) {
     if (req.getExecutionMode() == "standalone") {
@@ -28,5 +27,5 @@ script:pre-request {
       return;
     }
   }
-
+  
 }

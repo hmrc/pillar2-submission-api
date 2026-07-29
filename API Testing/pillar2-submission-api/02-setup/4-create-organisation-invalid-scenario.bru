@@ -38,15 +38,3 @@ assert {
   res.body.code: eq "INVALID_JSON"
   res.body.message: eq "Invalid JSON payload"
 }
-
-script:pre-request {
-  if (bru.getEnvVar("organisationCreated") === true) {
-    throw new Error('Organisation already exists. Run the "Delete Organisation" request first.');
-  }
-}
-
-script:post-response {
-  if (res.getStatus() === 201) {
-    bru.setEnvVar("organisationCreated", true);
-  }
-}

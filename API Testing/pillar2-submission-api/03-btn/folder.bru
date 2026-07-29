@@ -12,7 +12,8 @@ script:pre-request {
     throw new Error('"testPlrId" not set. Run the "Create Test User" request first.');
   }
 
-  if (bru.getEnvVar("organisationCreated") === false) {
+  if (bru.getVar("organisationCreatedFor") !== bru.getEnvVar("testPlrId")) {
     throw new Error('Organisation has not been created. Run a "Create Organisation" request first.');
   }
 }
+

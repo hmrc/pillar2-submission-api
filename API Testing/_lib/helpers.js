@@ -1,25 +1,26 @@
-let chromium;
-try {
-  chromium = require("playwright").chromium;
-} catch (e) {
-  throw new Error("Missing dependency: playwright.\nRun 'npm install' in the collection folder.");
-}
+const getChromium = () => {
+  try {
+    return require("playwright").chromium;
+  } catch (e) {
+    throw new Error("Missing dependency: playwright.\nRun 'npm install' in the collection folder.");
+  }
+};
 
-const buildAuthorizeUrl = ({ authCodeUrl, clientId }) =>
+const buildAuthorizeUrl = ({authCodeUrl, clientId}) =>
     `${authCodeUrl}/oauth/authorize` +
     `?client_id=${clientId}` +
     `&redirect_uri=urn:ietf:wg:oauth:2.0:oob` +
     `&scope=write:pillar2 read:pillar2` +
     `&response_type=code`;
 
-const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode, headless = true }) => {
-    const url = buildAuthorizeUrl({ authCodeUrl, clientId });
-    console.log('Authorisation URL:\n',url);
+const getAuthCode = async ({authCodeUrl, clientId, userId, password, accessCode, headless = true}) => {
+    const url = buildAuthorizeUrl({authCodeUrl, clientId});
+    console.log('Authorisation URL:\n', url);
 
-    const browser = await chromium.launch({ headless });
+    const browser = await getChromium().launch({ headless });
     try {
         const page = await browser.newPage();
-        await page.goto(buildAuthorizeUrl({ authCodeUrl, clientId }));
+        await page.goto(url);
 
         // Page 1: Click on "Continue" button
         if (page.url().includes('/oauth/start')) {
@@ -36,7 +37,7 @@ const getAuthCode = async ({ authCodeUrl, clientId, userId, password, accessCode
         // Page 2a (QA only): Select "Government Gateway" login
         if (page.url().includes('/sign-in-to-hmrc-online-services/identity/sign-in/')) {
             await page.locator('#signInType').check();
-            await page.locator('#continue').click({ timeout: 15000 });
+            await page.locator('#continue').click({timeout: 15000});
             await page.waitForLoadState('networkidle');
         }
 

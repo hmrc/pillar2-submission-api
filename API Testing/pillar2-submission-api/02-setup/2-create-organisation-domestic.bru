@@ -38,13 +38,17 @@ assert {
 }
 
 script:pre-request {
-  if (bru.getEnvVar("organisationCreated") === true) {
-    throw new Error('Organisation already exists. Run the "Delete Organisation" request first.');
+  if (bru.getVar("organisationCreatedFor") === bru.getEnvVar("testPlrId")) {
+    throw new Error('Organisation already exists for ' + bru.getEnvVar("testPlrId") + '. Run the "Delete Organisation" request first.');
   }
 }
 
 script:post-response {
-  if (res.getStatus() === 201) {
-    bru.setEnvVar("organisationCreated", true);
+  if (res.getStatus() === 201 || res.getStatus() === 409) {
+    bru.setVar("organisationCreatedFor", bru.getEnvVar("testPlrId"));
+  }
+  
+  if (res.getStatus() === 409) {
+    console.warn('Organisation already exists for ' + bru.getEnvVar("testPlrId") + '. Run the "Delete Organisation" request first.');
   }
 }

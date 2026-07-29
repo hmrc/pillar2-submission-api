@@ -19,13 +19,13 @@ assert {
 }
 
 script:pre-request {
-  if (bru.getEnvVar("organisationCreated") === false) {
-    throw new Error("Organisation not created. Run the 'Delete Organisation' request first.");
+  if (bru.getVar("organisationCreatedFor") !== bru.getEnvVar("testPlrId")) {
+    throw new Error("Organisation not created. Run the 'Create Organisation' request first.");
   }
 }
 
 script:post-response {
-  if (res.getStatus() === 204) {
-    bru.setEnvVar("organisationCreated", false);
+  if (res.getStatus() === 204 || res.getStatus() === 404) {
+    bru.setVar("organisationCreatedFor", "");
   }
 }

@@ -21,13 +21,13 @@ assert {
 }
 
 script:pre-request {
-  if (bru.getEnvVar("organisationCreated") === false) {
+  if (bru.getVar("organisationCreatedFor") !== bru.getEnvVar("testPlrId")) {
     throw new Error('Organisation has not been created. Run a "Create Organisation" request first.');
   }
 }
 
 script:post-response {
-  if (res.getStatus() === 204) {
-    bru.setEnvVar("organisationCreated", false);
+  if (res.getStatus() === 204 || res.getStatus() === 404) {
+    bru.setVar("organisationCreatedFor", "");
   }
 }

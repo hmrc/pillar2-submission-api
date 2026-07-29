@@ -44,14 +44,14 @@ script:pre-request {
     }
   }
   
-  if (bru.getEnvVar("organisationCreated") === true) {
+  if (bru.getVar("organisationCreatedFor") === bru.getEnvVar("testPlrId")) {
     throw new Error("Organisation already created. Run the 'Delete Organisation' request first.");
   }
   
 }
 
 script:post-response {
-  if (res.getStatus() === 201) {
-    bru.setEnvVar("organisationCreated", true);
+  if (res.getStatus() === 201 || res.getStatus() === 409) {
+    bru.setVar("organisationCreatedFor", bru.getEnvVar("testPlrId"));
   }
 }
