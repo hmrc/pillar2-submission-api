@@ -23,7 +23,7 @@ import java.time.LocalDate
 
 trait SubscriptionDataFixtures {
 
-  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/v2/read-subscription"
+  val readSubscriptionPath = "/report-pillar2-top-up-taxes/subscription/read-subscription"
 
   private val accountingPeriodStartDate: LocalDate = LocalDate.of(2024, 1, 6)
   private val accountingPeriodEndDate:   LocalDate = accountingPeriodStartDate.plusYears(1)
