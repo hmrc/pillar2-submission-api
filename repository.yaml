@@ -4,3 +4,4 @@ service-type: backend
 tags: ["api"]
 test-repositories:
   - pillar2-api-tests
+serviceNowMapping: SNSVC0017621
