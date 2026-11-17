@@ -22,19 +22,25 @@ import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.{HeaderCarrier, HeaderNames}
 import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
+import uk.gov.hmrc.pillar2submissionapi.models.audit.{AuthDetails, AuthorisationFailureAuditEvent}
+import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
 import uk.gov.hmrc.pillar2submissionapi.models.requests.IdentifierRequest
+import uk.gov.hmrc.pillar2submissionapi.services.AuditService
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
-  val config:                 AppConfig
+  val config:                 AppConfig,
+  auditService:               AuditService
 )(using val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
@@ -47,18 +53,59 @@ class AuthenticatedIdentifierAction @Inject() (
       identifier       <- pillar2Enrolment.getIdentifier(ENROLMENT_IDENTIFIER)
     } yield identifier.value
 
+  private def authDetails(retrieved: AuthRetrievals): AuthDetails = retrieved match {
+    case internalId ~ groupId ~ enrolments ~ affinityGroup ~ credentialRole ~ credentials =>
+      AuthDetails(
+        internalId = internalId,
+        groupId = groupId,
+        credId = credentials.map(_.providerId),
+        affinityGroup = affinityGroup.map(_.toString),
+        credentialRole = credentialRole.map(_.toString),
+        enrolmentPillar2Id = getPillar2Id(enrolments),
+        enrolments = enrolments.enrolments.toSeq.map(enrolment => s"${enrolment.key}:${enrolment.state}").sorted
+      )
+  }
+
+  private def recordFailure(
+    message: String,
+    error:   Pillar2Error,
+    request: RequestWithPillar2Id[?],
+    user:    Option[AuthDetails] = None,
+    reason:  Option[String] = None
+  )(using hc: HeaderCarrier): Unit = {
+    val userLog = user.fold("") { details =>
+      s" userId=${details.internalId.getOrElse("-")} affinityGroup=${details.affinityGroup.getOrElse("-")}" +
+        s" credentialRole=${details.credentialRole.getOrElse("-")} enrolments=[${details.enrolments.mkString(",")}]"
+    }
+    logger.warn(
+      s"$message - code=${error.code} pillar2Id=${request.pillar2Id}" +
+        reason.fold("")(r => s" reason=$r") + userLog
+    )
+
+    val event       = AuthorisationFailureAuditEvent(request.pillar2Id, error.code, reason, user)
+    val auditFailed = s"Failed to send the audit event - code=${error.code} pillar2Id=${request.pillar2Id}"
+    Future.fromTry(Try(auditService.auditAuthorisationFailure(event))).flatten.onComplete {
+      case Success(failure: AuditResult.Failure) => logger.error(auditFailed, failure)
+      case Failure(e)                            => logger.error(auditFailed, e)
+      case Success(_)                            => ()
+    }
+  }
+
   private def processPillar2Enrolment[A](
     request:    RequestWithPillar2Id[A],
     enrolments: Enrolments,
     internalId: String,
     groupId:    String,
-    providerId: String
-  ): Future[IdentifierRequest[A]] = getPillar2Id(
+    providerId: String,
+    retrieved:  AuthRetrievals
+  )(using hc: HeaderCarrier): Future[IdentifierRequest[A]] = getPillar2Id(
     enrolments
   ) match {
     case Some(pillar2Id) =>
-      if request.pillar2Id != pillar2Id then throw IncorrectHeaderValueError
-      else
+      if request.pillar2Id != pillar2Id then {
+        recordFailure("X-Pillar2-Id header does not match the Pillar2 enrolment", IncorrectHeaderValueError, request, Some(authDetails(retrieved)))
+        throw IncorrectHeaderValueError
+      } else
         Future.successful(
           IdentifierRequest(
             request = request,
@@ -69,41 +116,47 @@ class AuthenticatedIdentifierAction @Inject() (
           )
         )
     case None =>
-      logger.warn(s"Invalid Pillar2 enrolment - userId: $internalId")
+      recordFailure("Invalid Pillar2 enrolment", InvalidEnrolmentError, request, Some(authDetails(retrieved)))
       Future.failed(InvalidEnrolmentError)
   }
 
   override protected def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] = {
     given hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
-    if !request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty) then throw MissingCredentialsError
-    else {
+    if !request.headers.get(HeaderNames.authorisation).exists(_.trim.nonEmpty) then {
+      recordFailure("Authorization header is missing", MissingCredentialsError, request)
+      throw MissingCredentialsError
+    } else {
       val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
         Retrievals.allEnrolments and Retrievals.affinityGroup and
         Retrievals.credentialRole and Retrievals.credentials
 
       authorised(AuthProviders(GovernmentGateway) and ConfidenceLevel.L50)
-        .retrieve(retrievals) {
-          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ None ~ Some(credentials) if config.allowTestUsers =>
-            processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
-          case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
-            processPillar2Enrolment(request = request, enrolments = enrolments, internalId = internalId, groupId = groupId, credentials.providerId)
-          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
-            agentAuth[A](request, request.pillar2Id)
-          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(Assistant) ~ Some(_) =>
-            agentAuth[A](request, request.pillar2Id)
-          case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
-            agentAuth[A](request, request.pillar2Id)
-          case _ =>
-            logger.warn("User is not valid for this API")
-            Future.failed(ForbiddenError)
+        .retrieve(retrievals) { retrieved =>
+          retrieved match {
+            case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ None ~ Some(credentials) if config.allowTestUsers =>
+              processPillar2Enrolment(request, enrolments, internalId, groupId, credentials.providerId, retrieved)
+            case Some(internalId) ~ Some(groupId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
+              processPillar2Enrolment(request, enrolments, internalId, groupId, credentials.providerId, retrieved)
+            case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(User) ~ Some(_) =>
+              agentAuth[A](request, request.pillar2Id, retrieved)
+            case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ Some(Assistant) ~ Some(_) =>
+              agentAuth[A](request, request.pillar2Id, retrieved)
+            case Some(_) ~ Some(_) ~ _ ~ Some(Agent) ~ None ~ Some(_) if config.allowTestUsers =>
+              agentAuth[A](request, request.pillar2Id, retrieved)
+            case _ =>
+              recordFailure("User is not valid for this API", ForbiddenError, request, Some(authDetails(retrieved)))
+              Future.failed(ForbiddenError)
+          }
         } recoverWith { case e: AuthorisationException =>
-        logger.warn(s"Authorization failed", e)
+        recordFailure("Authorization failed", InvalidCredentialsError, request, reason = Some(e.reason))
         Future.failed(InvalidCredentialsError)
       }
     }
   }
 
-  private def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String)(using hc: HeaderCarrier): Future[IdentifierRequest[A]] = {
+  private def agentAuth[A](request: RequestWithPillar2Id[A], pillar2Id: String, retrieved: AuthRetrievals)(using
+    hc: HeaderCarrier
+  ): Future[IdentifierRequest[A]] = {
     val retrievals = Retrievals.internalId and Retrievals.groupIdentifier and
       Retrievals.allEnrolments and Retrievals.affinityGroup and
       Retrievals.credentialRole and Retrievals.credentials
@@ -113,21 +166,28 @@ class AuthenticatedIdentifierAction @Inject() (
         Enrolment(HMRC_PILLAR2_ORG_KEY)
           .withIdentifier(ENROLMENT_IDENTIFIER, pillar2Id)
           .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
-    ).retrieve(retrievals) {
-      case Some(internalId) ~ Some(groupId) ~ _ ~ Some(_) ~ _ ~ Some(credentials) =>
-        logger.info(
-          s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment"
-        )
-        Future.successful(
-          IdentifierRequest(
-            request,
-            internalId,
-            Some(groupId),
-            clientPillar2Id = pillar2Id,
-            userIdForEnrolment = credentials.providerId
+    ).retrieve(retrievals) { agentRetrieved =>
+      agentRetrieved match {
+        case Some(internalId) ~ Some(groupId) ~ _ ~ Some(_) ~ _ ~ Some(credentials) =>
+          logger.info(
+            s"EnrolmentAuthIdentifierAction - Successfully retrieved Agent enrolment"
           )
-        )
-      case _ => Future.failed(ForbiddenError)
+          Future.successful(
+            IdentifierRequest(
+              request,
+              internalId,
+              Some(groupId),
+              clientPillar2Id = pillar2Id,
+              userIdForEnrolment = credentials.providerId
+            )
+          )
+        case _ =>
+          recordFailure("Agent is not valid for this API", ForbiddenError, request, Some(authDetails(agentRetrieved)))
+          Future.failed(ForbiddenError)
+      }
+    } recoverWith { case e: AuthorisationException =>
+      recordFailure("Agent authorization failed", InvalidCredentialsError, request, Some(authDetails(retrieved)), Some(e.reason))
+      Future.failed(InvalidCredentialsError)
     }
   }
 }
@@ -136,4 +196,7 @@ object AuthenticatedIdentifierAction {
   val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
   val ENROLMENT_IDENTIFIER = "PLRID"
   val DELEGATED_AUTH_RULE  = "pillar2-auth"
+
+  private type AuthRetrievals =
+    Option[String] ~ Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 }

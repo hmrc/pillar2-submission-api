@@ -56,11 +56,12 @@ class Pillar2ErrorHandler extends HttpErrorHandler with Logging {
           case DatabaseError(_) | UnexpectedResponseError | NoSubscriptionDataError(_) =>
             Results.InternalServerError(Pillar2ErrorResponse(e.code, e.message))
         }
-        logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} status code", exception)
+        logger.warn(s"Caught Pillar2Error. Returning ${ret.header.status} status code - code=${e.code} pillar2Id=${pillar2Id(request)}", exception)
         Future.successful(ret)
       case _ =>
-        logger.warn("Unhandled exception. Returning 500 status code", exception)
+        logger.warn(s"Unhandled exception. Returning 500 status code - pillar2Id=${pillar2Id(request)}", exception)
         Future.successful(Results.InternalServerError(Pillar2ErrorResponse("500", "An unexpected error occurred")))
     }
 
+  private def pillar2Id(request: RequestHeader): String = request.headers.get("X-Pillar2-Id").getOrElse("-")
 }
