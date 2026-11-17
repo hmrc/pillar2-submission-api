@@ -17,9 +17,11 @@
 package uk.gov.hmrc.pillar2submissionapi.controllers.actions
 
 import com.google.inject.Inject
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, verify, verifyNoInteractions, when}
+import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import play.api.mvc.*
 import play.api.test.FakeRequest
@@ -36,20 +38,34 @@ import uk.gov.hmrc.pillar2submissionapi.config.AppConfig
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierAction.*
 import uk.gov.hmrc.pillar2submissionapi.controllers.actions.AuthenticatedIdentifierActionSpec.*
 import uk.gov.hmrc.pillar2submissionapi.helpers.TestAuthRetrievals.*
+import uk.gov.hmrc.pillar2submissionapi.models.audit.{AuthDetails, AuthorisationFailureAuditEvent}
 import uk.gov.hmrc.pillar2submissionapi.models.error.Pillar2Error.*
+import uk.gov.hmrc.pillar2submissionapi.services.AuditService
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
+class AuthenticatedIdentifierActionSpec extends ActionBaseSpec with BeforeAndAfterEach {
 
-  val emptyAppConfig: AppConfig = AppConfig(new ServicesConfig(Configuration.empty))
-
+  val emptyAppConfig:   AppConfig                     = AppConfig(new ServicesConfig(Configuration.empty))
+  val mockAuditService: AuditService                  = mock[AuditService]
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    emptyAppConfig
+    emptyAppConfig,
+    mockAuditService
   )(using ec)
+
+  override def beforeEach(): Unit = {
+    reset(mockAuditService)
+    super.beforeEach()
+  }
+
+  private def auditedFailure: AuthorisationFailureAuditEvent = {
+    val captor: ArgumentCaptor[AuthorisationFailureAuditEvent] = ArgumentCaptor.forClass(classOf[AuthorisationFailureAuditEvent])
+    verify(mockAuditService).auditAuthorisationFailure(captor.capture())(using any[HeaderCarrier]())
+    captor.getValue
+  }
 
   "IdentifierAction - different types of user" when {
     "a user is a registered organisation" must {
@@ -82,7 +98,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val disallowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> false))))
 
         val identifierAction: AuthenticatedIdentifierAction =
-          new AuthenticatedIdentifierAction(mockAuthConnector, disallowTestUsers)(using ec)
+          new AuthenticatedIdentifierAction(mockAuthConnector, disallowTestUsers, mockAuditService)(using ec)
 
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
@@ -103,7 +119,7 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val allowTestUsers = AppConfig(new ServicesConfig(Configuration.from(Map("features.allow-test-users" -> true))))
 
         val identifierAction: AuthenticatedIdentifierAction =
-          new AuthenticatedIdentifierAction(mockAuthConnector, allowTestUsers)(using ec)
+          new AuthenticatedIdentifierAction(mockAuthConnector, allowTestUsers, mockAuditService)(using ec)
 
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
@@ -332,7 +348,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          allowTestUsers
+          allowTestUsers,
+          mockAuditService
         )(using ec)
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
@@ -359,7 +376,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
 
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           mockAuthConnector,
-          disallowTestUsers
+          disallowTestUsers,
+          mockAuditService
         )(using ec)
         when(
           mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
@@ -423,7 +441,8 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
       "user is unauthorized for providing invalid credentials" in {
         val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
           new FakeFailingAuthConnector,
-          emptyAppConfig
+          emptyAppConfig,
+          mockAuditService
         )(using ec)
 
         val result = intercept[InvalidCredentialsError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
@@ -434,6 +453,185 @@ class AuthenticatedIdentifierActionSpec extends ActionBaseSpec {
         val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestMissingAuthorization)))
 
         result.message mustEqual "Authentication information is not provided"
+      }
+    }
+  }
+
+  "IdentifierAction - auditing of rejected requests" when {
+    "an organisation does not hold the Pillar2 enrolment" should {
+      "audit the request and what auth returned for the user" in {
+        val request = RequestWithPillar2Id(
+          pillar2Id,
+          FakeRequest(method = "", path = "").withHeaders("Authorization" -> "bearerToken")
+        )
+        val otherEnrolments = Enrolments(Set(Enrolment("IR-CT", Seq(EnrolmentIdentifier("UTR", "1234567890")), "Activated", None)))
+
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ otherEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        intercept[InvalidEnrolmentError.type](await(identifierAction.refine(request)))
+
+        auditedFailure mustEqual AuthorisationFailureAuditEvent(
+          pillar2Id = pillar2Id,
+          errorCode = "INVALID_ENROLMENT",
+          reason = None,
+          user = Some(
+            AuthDetails(
+              internalId = Some(id),
+              groupId = Some(groupId),
+              credId = Some(providerId),
+              affinityGroup = Some("Organisation"),
+              credentialRole = Some("User"),
+              enrolmentPillar2Id = None,
+              enrolments = Seq("IR-CT:Activated")
+            )
+          )
+        )
+      }
+    }
+
+    "auth rejects the bearer token" should {
+      "audit the reason given by auth" in {
+        val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
+          new FakeFailingAuthConnector,
+          emptyAppConfig,
+          mockAuditService
+        )(using ec)
+
+        intercept[InvalidCredentialsError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+
+        auditedFailure mustEqual AuthorisationFailureAuditEvent(
+          pillar2Id = pillar2Id,
+          errorCode = "INVALID_CREDENTIALS",
+          reason = Some("Bearer token not supplied"),
+          user = None
+        )
+      }
+    }
+
+    "the X-Pillar2-Id header does not match the Pillar2 enrolment" should {
+      "audit both Pillar2 IDs" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        intercept[IncorrectHeaderValueError.type](await(identifierAction.refine(fakeRequestWithDifferentPillar2Id)))
+
+        val audited = auditedFailure
+        audited.errorCode mustEqual "INCORRECT_HEADER_VALUE"
+        audited.pillar2Id mustEqual anotherPillar2Id
+        audited.user.flatMap(_.enrolmentPillar2Id) mustEqual Some(pillar2Id)
+      }
+    }
+
+    "the user is not allowed to use the API" should {
+      "audit the affinity group and credential role" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(Assistant) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+
+        val audited = auditedFailure
+        audited.errorCode mustEqual "FORBIDDEN"
+        audited.user.flatMap(_.affinityGroup) mustEqual Some("Organisation")
+        audited.user.flatMap(_.credentialRole) mustEqual Some("Assistant")
+      }
+    }
+
+    "the Authorization header is missing" should {
+      "audit the request without user details" in {
+        intercept[MissingCredentialsError.type](await(identifierAction.refine(requestMissingAuthorization)))
+
+        auditedFailure mustEqual AuthorisationFailureAuditEvent(
+          pillar2Id = pillar2Id,
+          errorCode = "MISSING_CREDENTIALS",
+          reason = None,
+          user = None
+        )
+      }
+    }
+
+    "auth returns incomplete details for a delegated agent" should {
+      "reject the request and audit it" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredAgentPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(None ~ Some(groupId) ~ pillar2Enrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
+          )
+
+        intercept[ForbiddenError.type](await(identifierAction.refine(fakeRequestWithPillar2Id)))
+
+        auditedFailure.errorCode mustEqual "FORBIDDEN"
+      }
+    }
+
+    "sending the audit event fails" should {
+      "still reject the request with the original error" in {
+        when(mockAuditService.auditAuthorisationFailure(any[AuthorisationFailureAuditEvent]())(using any[HeaderCarrier]()))
+          .thenThrow(new RuntimeException("audit failed"))
+
+        val result = intercept[MissingCredentialsError.type](await(identifierAction.refine(requestMissingAuthorization)))
+
+        result.message mustEqual "Authentication information is not provided"
+      }
+    }
+
+    "the request is authorised" should {
+      "not send an audit event" in {
+        when(
+          mockAuthConnector.authorise[RetrievalsType](ArgumentMatchers.eq(requiredOrgPredicate), ArgumentMatchers.eq(requiredRetrievals))(using
+            any[HeaderCarrier](),
+            any[ExecutionContext]()
+          )
+        )
+          .thenReturn(
+            Future.successful(
+              Some(id) ~ Some(groupId) ~ pillar2Enrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+            )
+          )
+
+        await(identifierAction.refine(fakeRequestWithPillar2Id))
+
+        verifyNoInteractions(mockAuditService)
       }
     }
   }

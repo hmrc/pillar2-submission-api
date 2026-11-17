@@ -53,12 +53,13 @@ trait ControllerBaseSpec extends PlaySpec with Results with Matchers with Mockit
   val mockTestOrganisationService:           TestOrganisationService           = mock[TestOrganisationService]
   val appConfig:                             AppConfig                         = AppConfig(new ServicesConfig(Configuration.empty))
   val mockOverseasReturnNotificationService: OverseasReturnNotificationService = mock[OverseasReturnNotificationService]
-
-  val pillar2IdAction: Pillar2IdHeaderExistsAction = Pillar2IdHeaderExistsAction(new BodyParsers.Default)
+  val mockAuditService:                      AuditService                      = mock[AuditService]
+  val pillar2IdAction:                       Pillar2IdHeaderExistsAction       = Pillar2IdHeaderExistsAction(new BodyParsers.Default)
 
   val identifierAction: AuthenticatedIdentifierAction = new AuthenticatedIdentifierAction(
     mockAuthConnector,
-    appConfig
+    appConfig,
+    mockAuditService
   ) {
     override def transform[A](request: RequestWithPillar2Id[A]): Future[IdentifierRequest[A]] =
       Future.successful(IdentifierRequest(request, "internalId", Some("groupID"), userIdForEnrolment = "userId", clientPillar2Id = request.pillar2Id))
